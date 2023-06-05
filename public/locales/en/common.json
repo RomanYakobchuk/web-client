@@ -5,12 +5,17 @@
       "signin": "Sign in",
       "signup": "Sign up",
       "divider": "or",
+      "activate": "Activate",
+      "notHaveAct": "Please enter your email",
+      "notHave": "Please enter your email and password",
       "fields": {
-        "email": "Email",
-        "password": "Password"
+        "email": "Email Address",
+        "password": "Password",
+        "role": "Role"
       },
       "errors": {
-        "validEmail": "Invalid email address"
+        "validEmail": "Invalid email address",
+        "active": "It looks like your account is inactive"
       },
       "buttons": {
         "submit": "Login",
@@ -34,7 +39,10 @@
     "register": {
       "title": "Sign up for your account",
       "fields": {
-        "email": "Email",
+        "email": "Email address",
+        "name": "Name",
+        "phone": "Phone",
+        "dOB": "Date of Birth",
         "password": "Password"
       },
       "errors": {
@@ -52,14 +60,15 @@
         "confirmPassword": "Confirm new password"
       },
       "errors": {
-        "confirmPasswordNotMatch": "Passwords do not match"
+        "confirmPasswordNotMatch": "Passwords do not match",
+        "timeIsUp": "Time is up"
       },
       "buttons": {
         "submit": "Update"
       }
     },
     "error": {
-      "info": "You may have forgotten to add the {{action}} component to {{resource}} resource.",
+      "info": "",
       "404": "Sorry, the page you visited does not exist.",
       "resource404": "Are you sure you have created the {{resource}} resource.",
       "backHome": "Back Home"
@@ -69,24 +78,37 @@
     "list": "List",
     "create": "Create",
     "edit": "Edit",
-    "show": "Show"
+    "show": "Show",
+    "delete": "Delete",
+    "confirmDelete": "Are you sure you want to delete {{value}}?"
   },
   "buttons": {
     "create": "Create",
+    "details": "Details",
     "save": "Save",
     "logout": "Logout",
+    "loadMore": "Load more",
     "delete": "Delete",
     "edit": "Edit",
     "cancel": "Cancel",
-    "confirm": "Are you sure?",
+    "close": "Close",
+    "confirm": "Confirm",
+    "send": "Send",
     "filter": "Filter",
     "clear": "Clear",
+    "reset": "Reset",
     "refresh": "Refresh",
     "show": "Show",
     "undo": "Undo",
+    "search": "Search",
     "import": "Import",
     "clone": "Clone",
-    "notAccessTitle": "You don't have permission to access"
+    "submitting": "Submitting...",
+    "notAccessTitle": "You don't have permission to access",
+    "isPublished": "Published",
+    "isDraft": "Expect",
+    "isRejected": "Rejected",
+    "reply": "Reply"
   },
   "warnWhenUnsavedChanges": "Are you sure you want to leave? You have unsaved changes.",
   "notifications": {
@@ -99,47 +121,372 @@
     "deleteError": "Error when deleting {{resource}} (status code: {{statusCode}})",
     "editSuccess": "Successfully edited {{resource}}",
     "editError": "Error when editing {{resource}} (status code: {{statusCode}})",
-    "importProgress": "Importing: {{processed}}/{{total}}"
+    "importProgress": "Importing: {{processed}}/{{total}}",
+    "addSuccess": "Successfully added {{resource}}",
+    "allField": "All fields must be filled"
   },
-  "loading": "Loading",
+  "loading": "Loading...",
   "tags": {
     "clone": "Clone"
   },
   "dashboard": {
     "title": "Dashboard"
   },
-  "blog_posts": {
-    "blog_posts": "Blog Posts",
+  "posts": {
+    "posts": "Posts",
     "fields": {
       "id": "Id",
       "title": "Title",
+      "category": {
+        "title": "Category",
+        "filter": {
+          "placeholder": "Select Category"
+        }
+      },
+      "status": {
+        "title": "Status",
+        "published": "Published",
+        "draft": "Draft",
+        "private": "Private",
+        "rejected": "Rejected",
+        "email": {
+          "true": "Activated",
+          "false": "Not activated",
+          "title": "Activation by mail"
+        },
+        "phone": {
+          "title": "Number verification",
+          "true": "Verified",
+          "false": "Not verified"
+        }
+      },
       "content": "Content",
-      "status": "Status",
-      "category": "Category",
       "createdAt": "Created At"
     },
     "titles": {
-      "create": "Create Blog Post",
-      "edit": "Edit Blog Post",
-      "list": "Blog Posts",
-      "show": "Show Blog Post"
+      "create": "Create Post",
+      "edit": "Edit Post",
+      "list": "Posts",
+      "show": "Show Post"
     }
   },
-  "categories": {
-    "categories": "Categories",
-    "fields": {
-      "id": "Id",
-      "title": "Title",
-      "createdAt": "Created At"
+  "home": {
+    "home": "Home",
+    "title": "All Institutions",
+    "one": "Institution",
+    "owner": "Owner",
+    "notHave": "There are no institutions",
+    "search": "Search by title, description, city, features",
+    "searchByTag": "Search by #tag",
+    "sortByType": {
+      "all": "All",
+      "bar": "Bar",
+      "cafe": "Cafe",
+      "restaurant": "Restaurant",
+      "browse": "Browse by type",
+      "popularPlace": "Popular place"
     },
-    "titles": {
-      "create": "Create Category",
-      "edit": "Edit Category",
-      "list": "Categories",
-      "show": "Show Category"
+    "pages": {
+      "show": "Show",
+      "page": "Page",
+      "of": "of"
+    },
+    "sort": "Sort",
+    "sortRating": "Sort rating",
+    "sortByABC": {
+      "title": "Sort alphabetically",
+      "a-z": "(A-Z)",
+      "z-a": "(Z-A)"
+    },
+    "reset": "Reset",
+    "tags": "Tags",
+    "default": "Default",
+    "create": {
+      "title": "Add institution",
+      "confirmTitle": "Confirm the addition",
+      "message": "If the data is entered correctly, you can add an institution. \nThe institution will be publicly available after verification by an administrator",
+      "mainPhoto": "Add a main photo",
+      "name": "Name of the institution",
+      "description": "Description",
+      "otherPhoto": {
+        "title": "Add additional photo",
+        "message": "Select variant for display",
+        "variant": "Variant",
+        "inputPlace": "Enter the order number for the photo",
+        "label": "Order number",
+        "max": "The maximum number of additional images is Frevie",
+        "deleteAll": "Remove all",
+        "count": "Number of images"
+      },
+      "city": "Inhabited locality",
+      "address": "Street",
+      "type": {
+        "title": "Type of institution",
+        "bar": "Bar",
+        "cafe": "Cafe",
+        "restaurant": "Restaurant"
+      },
+      "workSchedule": {
+        "title": "Work schedule",
+        "dayName": {
+          "monday": "Monday",
+          "tuesday": "Tuesday",
+          "wednesday": "Wednesday",
+          "thursday": "Thursday",
+          "friday": "Friday",
+          "saturday": "Saturday",
+          "sunday": "Sunday"
+        },
+        "workDays": {
+          "title": "Working days",
+          "days": {
+            "title": "Days",
+            "from": "From",
+            "to": "to"
+          },
+          "time": {
+            "title": "Working hours",
+            "from": "From",
+            "to": "to"
+          }
+        },
+        "weekend": {
+          "title": "Weekend",
+          "from": "From",
+          "to": "to",
+          "example": "Example"
+        }
+      },
+      "location": {
+        "title": "Location",
+        "coordinates": {
+          "title": "Coordinates",
+          "longitude": "Longitude",
+          "latitude": "Latitude"
+        }
+      },
+      "contacts": "Contacts",
+      "tags": "Tags",
+      "averageCheck": "Average check",
+      "features": "Features"
+    },
+    "show": {
+      "title": "Detailed information",
+      "ratings": {
+        "rateIt": "Rate it",
+        "alreadyRated": "You have already rated"
+      },
+      "comments": {
+        "title": "Comments",
+        "notHave": "There are no comments"
+      },
+      "reviews": {
+        "title": "Reviews",
+        "notHave": "There are no reviews",
+        "like": "Liked it",
+        "notLike": "Didn`t like it",
+        "leaveReview": "Leave a review",
+        "leaveFirstReview": "Leave a first review",
+        "isAllowedBlock": "You can only leave one review per week"
+      },
+      "news": {
+        "title": "News"
+      },
+      "postAssessment": "Post an assessment"
+    },
+    "createNews": {
+      "title": "Add news"
+    },
+    "edit": {
+      "title": "Edit institution"
+    }
+  },
+  "all_institutions": {
+    "all_institutions": "Institutions"
+  },
+  "news": {
+    "news": "News",
+    "title": "All news",
+    "notHave": "There are no news",
+    "button": "Add news",
+    "searchByTitle": "Search by title, description",
+    "sortByCategory": {
+      "general": "General",
+      "promotions": "Promotions",
+      "events": "Events"
+    },
+    "dateEvent": {
+      "title": "The date of the event"
+    },
+    "show": {
+      "otherPlaceNews": "Other news of the institution"
+    },
+    "create": {
+      "title": "Title",
+      "description": "Description",
+      "date": {
+        "title": "Date of holding",
+        "days": "Days"
+      },
+      "addDate": "Add publication date",
+      "publicDate": "Publication date"
+    }
+  },
+  "top-institutions": {
+    "top-institutions": "Top institutions",
+    "title": "Top institutions"
+  },
+  "capl": {
+    "capl": "Capl",
+    "reservation": "Reservation",
+    "title": "Reserve seats",
+    "main": {
+      "yourReserve": "Your reservations: {{length}}"
+    },
+    "create": {
+      "fullName": "Full name",
+      "date": "Date of reservation",
+      "comment": "Comment",
+      "eventType": "Event type",
+      "writeMe": "Write to me",
+      "desiredAmount": "The desired amount of expenses, grn",
+      "numberPeople": "Number of people",
+      "whoPay": "Who will pay"
+    },
+    "status": {
+      "userStatus": "Client status",
+      "institutionStatus": "Institution status",
+      "accepted": "Accepted",
+      "draft": "Is waiting",
+      "rejected": "Rejected"
+    },
+    "required": "Field: {{field}} - required",
+    "fullNameError": "The name must include 2 fields",
+    "list": {
+      "title": "List of reservations ",
+      "write": "Write"
+    }
+  },
+  "all-places": {
+    "all-places": "All institutions",
+    "title": "All institutions"
+  },
+  "my-institution": {
+    "my-institution": "My institutions",
+    "title": "My institutions",
+    "verify": {
+      "published": "Published",
+      "await": "Awaiting verification"
+    }
+  },
+  "my-review": {
+    "my-review": "My reviews",
+    "title": "My reviews"
+  },
+  "all-reviews": {
+    "all-reviews": "All reviews",
+    "title": "All reviews",
+    "reviews": "Reviews",
+    "notHave": "There are no reviews"
+  },
+  "all-users": {
+    "all-users": "All users",
+    "title": "All users"
+  },
+  "all-news": {
+    "all-news": "All news",
+    "title": "All news"
+  },
+  "favorite-places": {
+    "favorite-places": "Favorite places",
+    "title": "Favorite places"
+  },
+  "profile": {
+    "profile": "Profile",
+    "title": "Profile",
+    "my_comments": "My comments: {{length}}",
+    "my_places": "My institutions: {{length}}",
+    "my_fav_places": "Favorite institutions: {{length}}",
+    "my_reviews": "My reviews: {{length}}",
+    "email": "Email: ",
+    "edit": {
+      "dOB": "Date of birth: ",
+      "name": "Name: ",
+      "phone": "Phone number: ",
+      "avatar": "Profile photo: ",
+      "title": "Edit",
+      "change": "Change",
+      "save": "Save",
+      "delete": "Delete",
+      "cancel": "Cancel",
+      "alert": "You must be over 18!!!"
     }
   },
   "table": {
     "actions": "Actions"
+  },
+  "agreement": {
+    "title": "User agreement",
+    "accept": "I accept the user agreement",
+    "alert": "You need to accept the user agreement!",
+    "text1": "By running this application, you agree that you are 18 years old.",
+    "text2": "The site administration warns you to be careful and not to meet strangers in dangerous or unfamiliar places.",
+    "text3": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium animi blanditiis, commodi explicabo\n            itaque iure maiores molestiae necessitatibus neque nesciunt placeat rem repellat repellendus rerum sapiente\n            velit voluptas, voluptates voluptatibus! Accusamus, aperiam corporis delectus dolorum et explicabo facere\n            facilis in laboriosam maxime pariatur perspiciatis, praesentium quae, sed tenetur vero voluptatum."
+  },
+  "verify": {
+    "title": "Enter the verification code",
+    "code": "Verify code",
+    "submit": "Verify",
+    "activation": "Activation",
+    "verifyMes": "Go to gmail to activate the account",
+    "openGmail": "Open Gmail",
+    "submitting": "Verification...",
+    "again": "Get code",
+    "remained": "Seconds lef {{s}}",
+    "notCode": "Did`t get the code?"
+  },
+  "importantText": "After registration, you will need to confirm your email address and mobile number",
+  "welcomePage": {
+    "title": "Welcome to our website",
+    "text": "We will help you easily find the necessary recreation facility.",
+    "text2": "All you need to do is register on our platform and confirm your data",
+    "question": "Already registered?"
+  },
+  "logout": {
+    "title": "LogOut",
+    "message": "Are you sure you want to leave?",
+    "buttons": {
+      "cancel": "Cancel",
+      "ok": "Yes"
+    }
+  },
+  "cities": {
+    "title": "Cities",
+    "kyiv": "Kyiv",
+    "odesa": "Odesa",
+    "kharkiv": "Kharkiv",
+    "lviv": "Lviv",
+    "institutions": "Institutions: {{number}}"
+  },
+  "roles": {
+    "manager": "Manager",
+    "admin": "Administrator",
+    "user": "User"
+  },
+  "text": {
+    "yes": "Yes",
+    "no": "No"
+  },
+  "list": {
+    "institution": "List of institutions",
+    "capl": "List of reservations",
+    "news": "News list",
+    "users": "List of users"
+  },
+  "views": {
+    "title": "Views"
+  },
+  "chats": {
+    "chats": "All chats"
   }
 }

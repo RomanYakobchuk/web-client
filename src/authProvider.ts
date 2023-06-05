@@ -1,59 +1,171 @@
-import { AuthBindings } from "@refinedev/core";
+import axios, {AxiosRequestConfig} from "axios";
+import {parseJwt} from "utils/parse-jwt";
+import {IData, ProfileProps} from "./interfaces/common";
+import {AuthBindings} from "@refinedev/core";
 
-export const TOKEN_KEY = "refine-auth";
+
+export const ACCESS_TOKEN_KEY = "access-refine-auth";
+export const REFRESH_TOKEN_KEY = "refresh-refine-auth";
+
+export const baseURL = `${process.env.REACT_APP_API}/api/v1`;
+
+export const axiosInstance = axios.create({
+    baseURL, headers: {
+        'Access-Control-Allow-Origin': `${process.env.REACT_APP_API}`,
+    }
+});
+
+function isAccessTokenExpired(access_token: string) {
+    const token_a = parseJwt(access_token);
+    const dateNow = new Date();
+    if (token_a?.exp) {
+        return token_a?.exp * 1000 > dateNow.getTime();
+    } else {
+        return false
+    }
+}
+
+axiosInstance.interceptors.request.use(async (request: AxiosRequestConfig) => {
+        const access_token = await localStorage.getItem(ACCESS_TOKEN_KEY);
+        if (access_token && isAccessTokenExpired(access_token)) {
+            if (request.headers) {
+                request.headers["Authorization"] = access_token;
+            } else {
+                request.headers = {
+                    Authorization: access_token,
+                };
+            }
+        }
+        return request;
+    },
+    (error) => Promise.reject(error)
+);
+
+
+axiosInstance.interceptors.response.use(
+    (response) => {
+        return response
+    },
+    async (error) => {
+        if (error.response) {
+            const config = error?.config;
+            if (error?.response?.status === 401 && !config._retry) {
+                config._retry = true;
+                try {
+                    const refresh_token = localStorage.getItem(REFRESH_TOKEN_KEY);
+                    const response = await axios.post(`${baseURL}/auth/refreshToken`, {
+                        refresh_token
+                    })
+                    config.headers.authorization = response?.data?.access_token;
+
+                    localStorage.setItem(ACCESS_TOKEN_KEY, response?.data?.access_token)
+                    localStorage.setItem(REFRESH_TOKEN_KEY, response?.data?.refresh_token)
+                    localStorage.setItem("user", response?.data?.user)
+
+                    config._retry = true;
+
+                    return await axios.request(config);
+                } catch (error: any) {
+                    if (error?.response?.data?.code === 401 || error?.response?.data?.code === '401') {
+
+                        localStorage.removeItem(ACCESS_TOKEN_KEY);
+                        localStorage.removeItem(REFRESH_TOKEN_KEY);
+                        localStorage.removeItem("user");
+                        return {
+                            redirectTo: '/login'
+                        };
+                    }
+                    return Promise.reject(error)
+                }
+            }
+        }
+        return Promise.reject(error)
+    }
+)
 
 export const authProvider: AuthBindings = {
-  login: async ({ username, email, password }) => {
-    if ((username || email) && password) {
-      localStorage.setItem(TOKEN_KEY, username);
-      return {
-        success: true,
-        redirectTo: "/",
-      };
-    }
+        login: async ({user, access_token, refresh_token}: IData) => {
+            if (user) {
+                const profileObj = user ? parseJwt(user) : null;
 
-    return {
-      success: false,
-      error: {
-        name: "LoginError",
-        message: "Invalid username or password",
-      },
-    };
-  },
-  logout: async () => {
-    localStorage.removeItem(TOKEN_KEY);
-    return {
-      success: true,
-      redirectTo: "/login",
-    };
-  },
-  check: async () => {
-    const token = localStorage.getItem(TOKEN_KEY);
-    if (token) {
-      return {
-        authenticated: true,
-      };
-    }
+                if (profileObj) {
+                    localStorage.setItem(
+                        "user",
+                        JSON.stringify(user)
+                    );
+                    localStorage.setItem(ACCESS_TOKEN_KEY, access_token)
+                    localStorage.setItem(REFRESH_TOKEN_KEY, refresh_token)
 
-    return {
-      authenticated: false,
-      redirectTo: "/login",
-    };
-  },
-  getPermissions: async () => null,
-  getIdentity: async () => {
-    const token = localStorage.getItem(TOKEN_KEY);
-    if (token) {
-      return {
-        id: 1,
-        name: "John Doe",
-        avatar: "https://i.pravatar.cc/300",
-      };
+                    await window.location.reload();
+                    return {
+                        success: true,
+                    }
+                } else {
+                    return {
+                        success: false
+                    }
+                }
+            }
+            return {
+                success: false
+            };
+        },
+        logout: async () => {
+            await axiosInstance.get('/auth/logout')
+            localStorage.removeItem(ACCESS_TOKEN_KEY);
+            localStorage.removeItem(REFRESH_TOKEN_KEY);
+            localStorage.removeItem("user");
+            return {
+                success: true,
+                redirectTo: '/login'
+            };
+        },
+        onError: async (error) => {
+            console.error(error)
+            return {error}
+        },
+        check: async () => {
+            const access_token = localStorage.getItem(ACCESS_TOKEN_KEY);
+            const refresh_token = localStorage.getItem(REFRESH_TOKEN_KEY);
+            if (!access_token || !refresh_token) {
+                return {
+                    authenticated: false,
+                    error: new Error("Not authenticated"),
+                    logout: true,
+                    success: false,
+                    redirectTo: '/login'
+                }
+            } else if (access_token && refresh_token) {
+                return {
+                    authenticated: true
+                }
+            }
+            return {
+                authenticated: false,
+                redirectTo: '/login'
+            };
+
+        },
+        getPermissions: async () => {
+            return null;
+        },
+        getIdentity: async () => {
+            const token = localStorage.getItem(ACCESS_TOKEN_KEY);
+            const refresh = localStorage.getItem(REFRESH_TOKEN_KEY);
+            const user = localStorage.getItem("user");
+            if (!token || (refresh && !isAccessTokenExpired(refresh))) {
+                return {
+                    authenticated: false,
+                    error: new Error("Not authenticated"),
+                    logout: true,
+                    redirectTo: '/login'
+                };
+            }
+            const data = user ? parseJwt(user) : null;
+
+            if (!data) return null;
+
+            return Promise.resolve<ProfileProps>(data?._doc ?? data)
+        },
     }
-    return null;
-  },
-  onError: async (error) => {
-    console.error(error);
-    return { error };
-  },
-};
+;

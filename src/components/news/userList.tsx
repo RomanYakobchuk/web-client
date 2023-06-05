@@ -1,0 +1,144 @@
+import {useNavigate} from "react-router-dom";
+import {HttpError, useGetIdentity, useTable, useTranslate} from "@refinedev/core";
+import React, {useContext, useEffect, useState} from "react";
+import {useDebounce} from "use-debounce";
+import {Box, Grid, Stack, Typography} from "@mui/material";
+import {Add} from "@mui/icons-material";
+
+import {ColorModeContext} from "../../contexts";
+import {INews, NewsProps, ProfileProps} from "../../interfaces/common";
+import {CustomButton, FilterNews, Loading, NewsCard, Pagination} from "../index";
+
+const UserList = () => {
+    const navigate = useNavigate();
+    const {data: user} = useGetIdentity<ProfileProps>();
+    const [sortBy, setSortBy] = useState("");
+    const [isUserInstitution, setIsUserInstitution] = useState<boolean>(false);
+    const translate = useTranslate();
+    const [searchValue, setSearchValue] = useState<any>();
+    const [debouncedSearchText] = useDebounce(searchValue, 500)
+    const {mode} = useContext(ColorModeContext);
+
+
+    const {
+        tableQueryResult: {data, isLoading, isError,},
+        current,
+        setCurrent,
+        setPageSize,
+        pageCount,
+        sorters,
+        setSorters,
+        filters,
+        setFilters,
+    } = useTable<NewsProps[], HttpError>({
+        resource: "news/all"
+    });
+    useEffect(() => {
+        if (user) {
+            if (user?.status === 'admin' || user?.status === "manager") {
+                setIsUserInstitution(true);
+            }
+        }
+    }, [user]);
+
+    const allNews: NewsProps[] | any = data?.data ?? [];
+
+    useEffect(() => {
+        setFilters([
+            {
+                field: 'title',
+                value: debouncedSearchText,
+                operator: 'contains'
+            }
+        ])
+    }, [debouncedSearchText]);
+
+    if (isError) return <Typography>Error...</Typography>;
+
+    return (
+        <Box>
+            <Box sx={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: 3,
+                mt: {xs: "10px", sm: '20px'}
+            }}>
+                <Stack direction={"column"} width={"100%"}>
+                    <Box sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between'
+                    }}>
+                        <Typography sx={{
+                            fontSize: {xs: '16px', sm: '24px'}
+                        }} fontWeight={700} color={mode === "dark" ? "#fcfcfc" : "#11142D"}>
+                            {
+                                !allNews.length ? translate("news.notHave") : translate("news.title")
+                            }
+                        </Typography>
+                        {
+                            isUserInstitution &&
+                            <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+                                <CustomButton title={translate("news.button")} backgroundColor={"#475be8"}
+                                              color={"#fcfcfc"} icon={<Add/>}
+                                              handleClick={() => navigate('/news/create')}/>
+                            </Stack>
+                        }
+                    </Box>
+                    <Box mb={{xs: 1, sm: 2}} mt={3} width={"100%"}>
+                        <Box display={"flex"} width={"100%"} gap={2} flexDirection={"column"} mb={{xs: '20px', sm: 0}}>
+                            <FilterNews
+                                filters={filters}
+                                setFilters={setFilters}
+                                sortBy={sortBy}
+                                setSortBy={setSortBy}
+                                setSearchValue={setSearchValue}
+                                sorters={sorters}
+                                setSorters={setSorters}
+                                searchValue={searchValue}
+                            />
+                        </Box>
+                    </Box>
+                </Stack>
+            </Box>
+
+            <Grid
+                container
+                spacing={2}
+            >
+                {
+                    isLoading ? <Loading/> :
+                        allNews.map((news: INews, index: number) => (
+                            <Grid
+                                item
+                                key={index}
+                                xs={12}
+                                sm={6}
+                                lg={4}
+                                xl={3}
+                            >
+                                <NewsCard
+                                    index={index}
+                                    place={news?.place}
+                                    _id={news._id}
+                                    mainPhoto={news.mainPhoto}
+                                    title={news.title}
+                                    dateEvent={news?.dateEvent}
+                                    description={news.description}
+                                    createdAt={news.createdAt}
+                                    category={news.category}
+                                />
+                            </Grid>
+                        ))
+                }
+            </Grid>
+            {
+                allNews.length > 0 && (
+                    <Pagination current={current} setCurrent={setCurrent} pageCount={pageCount} setPageSize={setPageSize}/>
+                )
+            }
+        </Box>
+    );
+};
+export default UserList
