@@ -19,6 +19,7 @@ import {useTranslate} from "@refinedev/core";
 
 import {ColorModeContext} from "../../../contexts";
 import {IWorkDay} from "../../../interfaces/common";
+import {buttonStyle, selectStyle, textFieldStyle} from "../../../styles";
 
 
 type Props = {
@@ -32,7 +33,15 @@ type Props = {
 };
 
 
-const ScheduleList = ({onSubmit, elements, onDelete, onSubmitWeekend, label, dataLabel, workScheduleWeekend}: Props) => {
+const ScheduleList = ({
+                          onSubmit,
+                          elements,
+                          onDelete,
+                          onSubmitWeekend,
+                          label,
+                          dataLabel,
+                          workScheduleWeekend
+                      }: Props) => {
     const translate = useTranslate();
     const [workDay, setWorkDay] = useState<IWorkDay | any>({
         days: {from: 'monday', to: 'friday'},
@@ -115,6 +124,7 @@ const ScheduleList = ({onSubmit, elements, onDelete, onSubmitWeekend, label, dat
                                                 sx={{
                                                     width: "100%",
                                                     fontSize: {xs: 12, sm: 16},
+                                                    ...selectStyle
                                                 }}
                                                 value={workDay?.days?.from ? workDay?.days?.from : "monday"}
                                                 onChange={(event: any) => setWorkDay({
@@ -150,6 +160,7 @@ const ScheduleList = ({onSubmit, elements, onDelete, onSubmitWeekend, label, dat
                                                 sx={{
                                                     width: "100%",
                                                     fontSize: {xs: 12, sm: 16},
+                                                    ...selectStyle
                                                 }}
                                                 required
                                                 size={"small"}
@@ -210,9 +221,10 @@ const ScheduleList = ({onSubmit, elements, onDelete, onSubmitWeekend, label, dat
                                                         sx={{
                                                             width: "100%", color: "info",
                                                             p: 0,
-                                                            "input" : {
-                                                                p: '5px 14px'
-                                                            }
+                                                            "input": {
+                                                                p: '5px 14px',
+                                                            },
+                                                            ...textFieldStyle
                                                         }}
                                                         views={['hours', 'minutes']}
                                                         // defaultValue={dayjs('2022-04-17T15:30')}
@@ -250,12 +262,12 @@ const ScheduleList = ({onSubmit, elements, onDelete, onSubmitWeekend, label, dat
                                                         sx={{
                                                             width: "100%", color: "info",
                                                             p: 0,
-                                                            "input" : {
-                                                                p: '5px 14px'
-                                                            }
+                                                            "input": {
+                                                                p: '5px 14px',
+                                                            },
+                                                            ...textFieldStyle
                                                         }}
                                                         views={['hours', 'minutes']}
-                                                        // defaultValue={dayjs('2022-04-17T15:30')}
                                                         value={workDay?.time?.to ? workDay?.time?.to : ""}
                                                         onChange={(value: any) => setWorkDay({
                                                             days: {
@@ -273,7 +285,7 @@ const ScheduleList = ({onSubmit, elements, onDelete, onSubmitWeekend, label, dat
                                         </LocalizationProvider>
                                     </Box>
                                 </Box>
-                                <Button variant="contained" color={"info"} onClick={handleAddWorkDay}>
+                                <Button sx={buttonStyle} variant="contained" color={"info"} onClick={handleAddWorkDay}>
                                     <Add/>
                                 </Button>
                             </Box>
@@ -322,6 +334,7 @@ const ScheduleList = ({onSubmit, elements, onDelete, onSubmitWeekend, label, dat
                         color={"secondary"}
                         size={"small"}
                         variant="outlined"
+                        sx={textFieldStyle}
                         placeholder={`${translate("home.create.workSchedule.weekend.example")}: 01.01, 07.01, ...`}
                         value={weekend ? weekend : ''}
                         onChange={(e: any) => setWeekend(e.target.value)}

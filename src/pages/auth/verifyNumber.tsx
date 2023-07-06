@@ -15,21 +15,24 @@ import {useNotification, useTranslate} from "@refinedev/core";
 import {axiosInstance} from "@refinedev/simple-rest";
 import {FieldValues} from "react-hook-form";
 
-import {Header} from "../../components/layout";
+import {Header} from "../../layout";
 import {ColorModeContext} from "../../contexts";
-import {parseJwt} from "../../utils";
+import {parseJwt, useMobile} from "../../utils";
 import Copyright from "./utills/copyright";
+import {buttonStyle} from "../../styles";
 
 const VerifyNumber = () => {
 
     const translate = useTranslate();
     const navigate = useNavigate();
     const {mode} = useContext(ColorModeContext);
+    const {token}: any = useParams();
     const {open} = useNotification();
+    const {width} = useMobile();
+
     const [send, setSend] = useState(false);
     const [error, setError] = useState<any>([]);
     const [otp, setOtp] = useState<any>("54321");
-    const {token}: any = useParams();
 
     const valueLength = 5;
 
@@ -235,7 +238,9 @@ const VerifyNumber = () => {
                             display: 'flex',
                             width: '100%',
                             maxWidth: '360px',
-                            columnGap: '10px'
+                            columnGap: '10px',
+                            justifyContent: 'center',
+                            alignItems: 'center'
                         }}>
                         {
                             valueItems?.map((digit, idx) => (
@@ -245,20 +250,18 @@ const VerifyNumber = () => {
                                     color={"secondary"}
                                     style={{
                                         textDecoration: 'none',
-                                        width: '100%',
-                                        height: '60px',
+                                        width: width < 400 ? '40px' : '100%',
+                                        height: width < 400 ? '46px' : '60px',
                                         border: '1px solid #ccc',
                                         borderRadius: '5px',
                                         padding: 0,
                                         textAlign: 'center',
-                                        fontSize: '32px',
+                                        fontSize: width < 400 ? '24px' : '32px',
                                         fontWeight: "bold",
                                         color: mode === "dark" ? '#fcfcfc' : "#000",
                                         background: 'transparent',
                                         lineHeight: 1
                                     }}
-                                    // type={"number"}
-                                    // pattern={'\d{1}'}
                                     value={digit}
                                     onKeyDown={inputOnKeyDown}
                                     onChange={(e: ChangeEvent<HTMLInputElement>) => inputOnChange(e, idx)}
@@ -271,16 +274,17 @@ const VerifyNumber = () => {
                     <Button
                         fullWidth
                         disabled={!send}
-                        variant="outlined"
-                        sx={{mt: 3, mb: 2, bgcolor: 'green'}} onClick={sendCodeAgain}>
+                        variant="text"
+                        sx={{mt: 3, color: 'green'}} onClick={sendCodeAgain}>
                         {translate("verify.again")}
                     </Button>
                     <Button
                         type="submit"
                         fullWidth
-                        variant="contained"
+                        color={mode === "dark" ? "info" : "secondary"}
+                        variant={"contained"}
                         disabled={otp.length < 5}
-                        sx={{mt: 3, mb: 2, bgcolor: 'cornflowerblue'}}
+                        sx={{mt: 3, mb: 2, ...buttonStyle}}
                     >
                         {
                             formLoading ?

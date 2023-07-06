@@ -15,20 +15,23 @@ import {
     Toolbar,
     Typography, SelectChangeEvent,
 } from "@mui/material";
-import {DarkModeOutlined, LightModeOutlined, Notifications} from "@mui/icons-material";
+import {DarkModeOutlined, LightModeOutlined, Notifications, SettingsOutlined} from "@mui/icons-material";
 
-import {ColorModeContext} from "contexts";
+import {ColorModeContext} from "../../contexts";
 import {useTranslation} from "react-i18next";
-import {useNavigate} from "react-router-dom";
-import {ProfileProps} from "../../../interfaces/common";
+import {useLocation, useNavigate} from "react-router-dom";
+import {ProfileProps} from "../../interfaces/common";
+import {useSchema} from "../../settings";
 
 export const Header: React.FC = () => {
     const {mode, setMode} = useContext(ColorModeContext);
 
     const {i18n} = useTranslation();
+    const {pathname} = useLocation();
     const changeLanguage = useSetLocale();
     const navigate = useNavigate();
     const locale = useGetLocale();
+    const {borderRadiusS} = useSchema();
     const currentLocale = locale();
 
     const {data: user} = useGetIdentity<ProfileProps>();
@@ -45,7 +48,10 @@ export const Header: React.FC = () => {
     }, [lan, currentLocale])
 
     return (
-        <AppBar color="default" position="sticky" elevation={1}>
+        <AppBar position="sticky" elevation={1} sx={{
+            borderRadius: borderRadiusS,
+            bgcolor: (theme) => theme.palette.common.black
+        }}>
             <Toolbar>
                 <Stack
                     direction="row"
@@ -53,9 +59,12 @@ export const Header: React.FC = () => {
                     justifyContent="flex-end"
                     alignItems="center"
                 >
-                    <IconButton>
-                        <Notifications/>
-                    </IconButton>
+                    {
+                        showUserInfo &&
+                        <IconButton onClick={() => navigate('/notifications')}>
+                            <Notifications/>
+                        </IconButton>
+                    }
                     <IconButton
                         onClick={() => {
                             setMode();
@@ -63,13 +72,16 @@ export const Header: React.FC = () => {
                     >
                         {mode === "dark" ? <LightModeOutlined color={"warning"}/> : <DarkModeOutlined/>}
                     </IconButton>
-                    <FormControl sx={{m: 1, display: 'flex', minWidth: {xs: '50px', sm: 120}}}>
+                    <FormControl sx={{m: 1, display: 'flex'}}>
                         <Select
                             disableUnderline
                             inputProps={{"aria-label": "Without label"}}
                             variant="standard"
                             sx={{
-                                display: 'flex'
+                                "& div div": {
+                                    display: 'flex',
+                                    alignItems: 'center'
+                                }
                             }}
                             value={lan ?? currentLocale}
                             onChange={handleChange}
@@ -80,7 +92,7 @@ export const Header: React.FC = () => {
                                     key={lang}
                                     value={lang ?? ""}
                                     sx={{
-                                        display: 'flex'
+                                        display: 'flex',
                                     }}
                                 >
                                     <Stack
@@ -103,7 +115,7 @@ export const Header: React.FC = () => {
                                             justifyContent: 'space-between',
                                             alignItems: 'center'
                                         }}>
-                                            {lang === "ua" ? "Українська" : "English"}
+                                            {lang === "ua" ? "UA" : "EN"}
                                         </Typography>
                                     </Stack>
                                 </MenuItem>
@@ -112,23 +124,22 @@ export const Header: React.FC = () => {
                     </FormControl>
                     {showUserInfo && (
                         <Stack direction="row" sx={{
-                            cursor: 'pointer',
                             p: '5px',
-                            borderRadius: '5px',
-                            transition: '300ms linear',
-                            "&:hover": {
-                                boxShadow: mode === "dark" ? "0px 0px 10px 10px #16181b" : "0px 0px 10px 10px #e9ebec"
-                            }
-                        }} gap="16px" alignItems="center" onClick={() => navigate('/profile')}>
-                            {user.avatar
-                                && <Avatar src={user?.avatar} alt={user?.name}/>}
-                            {user.name && (
-                                <Typography
-                                    sx={{
-                                        display: {xs: 'none', sm: 'flex'}
-                                    }}
-                                    variant="subtitle2">{user?.name}</Typography>
-                            )}
+                        }} gap="16px" alignItems="center">
+                            <Stack sx={{
+                                cursor: 'pointer'
+                            }} onClick={() => navigate('/profile')}>
+                                {user.avatar
+                                    && <Avatar src={user?.avatar} alt={user?.name}/>
+                                }
+                            </Stack>
+                            <IconButton
+                                sx={{
+                                    bgcolor: pathname === '/settings' ? 'cornflowerblue' : 'transparent'
+                                }}
+                                onClick={() => navigate(`/settings`)}>
+                                <SettingsOutlined/>
+                            </IconButton>
                         </Stack>
                     )}
                 </Stack>

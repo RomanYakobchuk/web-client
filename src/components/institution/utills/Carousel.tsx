@@ -9,6 +9,7 @@ import {
 import {useTranslate} from "@refinedev/core";
 
 import {ImageList1, ImageList2, ImageList3} from "../../imageList";
+import {selectStyle} from "../../../styles";
 
 interface CarouselProps {
     onChange: any,
@@ -72,6 +73,9 @@ const Carousel = ({onChange, items, maxImages, rowHeight, setVariantForDisplay, 
                     <Select
                         size={"small"}
                         color={"secondary"}
+                        sx={{
+                            ...selectStyle
+                        }}
                         value={variantForDisplay ?? 1}
                         onChange={(e: SelectChangeEvent<any>) => setVariantForDisplay(e.target.value)}
                     >

@@ -13,18 +13,23 @@ import React, {useContext, useEffect, useState} from "react";
 import {useNotification, useTranslate} from "@refinedev/core";
 import {FieldValues} from "react-hook-form";
 import {useForm} from "@refinedev/react-hook-form";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 
-import {Header} from "../../components/layout";
+import {Header} from "../../layout";
 import Copyright from "./utills/copyright";
 import {ColorModeContext} from "../../contexts";
+import {useMobile} from "../../utils";
+import {buttonStyle, textFieldStyle} from "../../styles";
 
 const ForgotPassword = () => {
 
     const translate = useTranslate();
     const {mode} = useContext(ColorModeContext);
     const navigate = useNavigate();
+    const {width} = useMobile();
     const {open} = useNotification();
+
+    const [size, setSize] = useState<'small' | 'medium' | undefined>('medium');
     const [error, setError] = useState<any>([]);
 
     const {
@@ -55,7 +60,13 @@ const ForgotPassword = () => {
                 key: "unique-id",
             });
         }
-    }, [error])
+    }, [error]);
+
+    useEffect(() => {
+        if (width < 600) {
+            setSize('small');
+        }
+    }, [width])
     return (
         <Box sx={{
             width: '100%',
@@ -74,6 +85,7 @@ const ForgotPassword = () => {
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
+                        minWidth: '270px'
                     }}
                 >
                     <Avatar src={`/images/logo.png`} onClick={() => navigate('/welcome')}
@@ -89,6 +101,11 @@ const ForgotPassword = () => {
                             fullWidth
                             color={"secondary"}
                             id="email"
+                            size={size}
+                            sx={{
+                                ...textFieldStyle,
+                                minWidth: '300px'
+                            }}
                             label={translate("pages.forgotPassword.fields.email")}
                             {...register('email', {required: true})}
                             autoComplete="code"
@@ -96,18 +113,13 @@ const ForgotPassword = () => {
                         />
                         <Grid container mt={4} flexDirection={"column"} gap={2}>
                             <Button
+                                color={mode === "dark" ? "info" : "secondary"}
+                                variant={'contained'}
                                 type={"submit"}
                                 sx={{
-                                    color: '#fcfcfc',
-                                    fontSize: '18px',
+                                    ...buttonStyle,
                                     textTransform: 'none',
-                                    bgcolor: 'blue',
                                     width: '100%',
-                                    transition: '300ms linear',
-                                    p: '10px 20px',
-                                    "&:hover": {
-                                        bgcolor: '#1d3c6b'
-                                    }
                                 }}>
                                 {
                                     formLoading ?
@@ -115,21 +127,21 @@ const ForgotPassword = () => {
                                         translate("pages.forgotPassword.buttons.submit")
                                 }
                             </Button>
-                            <Button
-                                onClick={() => navigate('/login')}
-                                sx={{
-                                    color: '#fcfcfc',
-                                    fontSize: '16px',
-                                    textTransform: 'none',
-                                    bgcolor: mode === "dark" ? "#5689c0" : "#244d61",
-                                    width: '100%',
-                                    transition: '300ms linear',
-                                    "&:hover": {
-                                        bgcolor: '#1d3c6b'
-                                    }
-                                }}>
-                                {translate("pages.register.buttons.haveAccount") + translate("pages.login.signin")}
-                            </Button>
+                            <Box>
+                                {translate("pages.register.buttons.haveAccount") + ' '}
+                                <Link
+                                    to={'/login'}
+                                    style={{
+                                        color: mode === 'dark' ? '#8aa4d3' : '#275ab7',
+                                        fontSize: '16px',
+                                        textTransform: 'none',
+                                        width: '100%',
+                                        transition: '300ms linear',
+
+                                    }}>
+                                    {translate("pages.login.signin")}
+                                </Link>
+                            </Box>
                         </Grid>
                     </Box>
                 </Box>

@@ -7,7 +7,7 @@ import {Image} from "antd";
 
 
 import {ProfileProps, PropertyProps} from "interfaces/common";
-import PropertyCard from "./PropertyCard";
+import InstitutionCard from "../institution/utills/InstitutionCard";
 import {CustomButton, UserInstitutions, UserReviews, UserComments} from "../index";
 import {ColorModeContext} from "../../contexts";
 import CustomAccordion from "./customAccordion";
@@ -264,26 +264,11 @@ const CustomProfile = ({
                             }}
                         >
                             {favoritePlaces?.map((property: PropertyProps) => (
-                                <PropertyCard
+                                <InstitutionCard
                                     otherProps={setFavoritePlaces}
                                     key={property?._id}
-                                    _id={property?._id}
-                                    title={property?.title}
-                                    place={property?.place}
-                                    description={property?.description}
-                                    mainPhoto={property?.mainPhoto}
-                                    otherPhoto={property?.otherPhoto}
-                                    type={property?.type}
-                                    createdBy={property?.createdBy}
-                                    averageCheck={property?.averageCheck}
-                                    contacts={property?.contacts}
-                                    features={property?.features}
-                                    location={property?.location}
-                                    rating={property?.rating}
-                                    createdAt={property?.createdAt}
-                                    tags={property?.tags}
-                                    verify={property?.verify}
-                                    workSchedule={property?.workSchedule}/>
+                                    institution={property}
+                                />
                             ))}
                         </Box>
                     </CustomAccordion>

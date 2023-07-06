@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Sider as DefaultSider} from "@refinedev/mui";
 
 import {
@@ -37,6 +37,7 @@ import {
 } from "@refinedev/core";
 
 import {Title as DefaultTitle} from "../title";
+import {useSchema} from "../../settings";
 
 export const Sider: typeof DefaultSider = ({render}) => {
     const [collapsed, setCollapsed] = useState(false);
@@ -54,11 +55,18 @@ export const Sider: typeof DefaultSider = ({render}) => {
     const isExistAuthentication = useIsExistAuthentication();
     const {mutate: mutateLogout} = useLogout();
     const Title = useTitle();
+    const {borderRadiusS, heightSiderS, marginSiderS, buttonSiderS} = useSchema();
 
     const [open, setOpen] = useState<{ [k: string]: any }>({});
     const [isLogOut, setIsLogOut] = useState(false)
-
-    React.useEffect(() => {
+    const [path, setPath] = useState<any>();
+    useEffect(() => {
+        if (window.location.pathname) {
+            const myPath = window.location.pathname?.split('/')[1];
+            setPath(`/${myPath}`)
+        }
+    }, [window.location.pathname]);
+    useEffect(() => {
         setOpen((previousOpen) => {
             const previousOpenKeys: string[] = Object.keys(previousOpen);
             const uniqueKeys = new Set([
@@ -82,8 +90,7 @@ export const Sider: typeof DefaultSider = ({render}) => {
         return tree.map((item: ITreeMenu) => {
             const {name, children, meta: {icon, label, parent: parentName}, route}: any = item;
             const isOpen = open[name || ""] || false;
-
-            const isSelected = route === selectedKey;
+            const isSelected = route === path;
             const isNested = !(parentName === undefined);
 
             if (children.length > 0) {
@@ -396,8 +403,10 @@ export const Sider: typeof DefaultSider = ({render}) => {
                             display: {sm: "block", md: "none"},
                             "& .MuiDrawer-paper": {
                                 width: 256,
-                                height: '100%',
-                                bgcolor: (theme) => theme.palette.background.paper,
+                                bgcolor: (theme) => theme.palette.primary.main,
+                                margin: marginSiderS,
+                                borderRadius: borderRadiusS,
+                                height: heightSiderS
                             },
                         }}
                     >
@@ -421,10 +430,13 @@ export const Sider: typeof DefaultSider = ({render}) => {
                         display: {xs: "none", md: "block"},
                         "& .MuiDrawer-paper": {
                             width: drawerWidth,
-                            bgcolor: (theme) => theme.palette.background.paper,
+                            bgcolor: (theme) => theme.palette.primary.main,
                             overflow: "hidden",
                             transition:
                                 "width 200ms cubic-bezier(0.4, 0, 0.6, 1) 0ms",
+                            margin: marginSiderS,
+                            borderRadius: borderRadiusS,
+                            height: heightSiderS
                         },
                     }}
                     open
@@ -470,9 +482,9 @@ export const Sider: typeof DefaultSider = ({render}) => {
                     sx={{
                         display: {xs: "block", md: "none"},
                         position: "fixed",
-                        top: {xs: "10px", sm: '15px'},
-                        left: "0px",
-                        borderRadius: "0 6px 6px 0",
+                        top: buttonSiderS.top,
+                        left: buttonSiderS.left,
+                        borderRadius: buttonSiderS.borderRadius,
                         bgcolor: "#475be8",
                         zIndex: 1199,
                         width: "36px",

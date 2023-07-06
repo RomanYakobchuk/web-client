@@ -4,8 +4,11 @@ import {Box, Button, Tooltip} from "@mui/material";
 
 import {Sider as DefaultSider} from "../sider";
 import {Header as DefaultHeader} from "../header";
+import {Footer as DefaultFooter} from "../footer";
 import {KeyboardArrowUp, WineBar} from "@mui/icons-material";
 import {useLocation, useNavigate} from "react-router-dom";
+import {useMobile} from "../../utils";
+import {useSchema} from "../../settings";
 
 export const Layout: React.FC<LayoutProps> = ({
                                                   Sider,
@@ -16,8 +19,11 @@ export const Layout: React.FC<LayoutProps> = ({
                                               }) => {
     const SiderToRender = Sider ?? DefaultSider;
     const HeaderToRender = Header ?? DefaultHeader;
+    const FooterToRender = Footer ?? DefaultFooter;
     const navigate = useNavigate();
     const {pathname} = useLocation();
+    const {device, width} = useMobile();
+    const {heightLayoutS, gapS, borderRadiusS, marginS} = useSchema();
 
     const currentPath = pathname?.split('/')[1];
 
@@ -30,7 +36,7 @@ export const Layout: React.FC<LayoutProps> = ({
         }
 
         window.onscroll = () => {
-            if (window.scrollY > 200) {
+            if (window.scrollY > 500) {
                 scrollTop.style.visibility = 'visible';
                 scrollTop.style.opacity = '1';
             } else {
@@ -40,28 +46,52 @@ export const Layout: React.FC<LayoutProps> = ({
         }
     }, [window, scrollTop])
 
+    const someStyle = !device ? {
+        '&::-webkit-scrollbar': {
+            width: '10px',
+            bgcolor: 'silver',
+            borderRadius: '5px'
+        },
+        '&::-webkit-scrollbar-track': {
+            'webkitBoxShadow': 'inset 0 0 6px rgba(0,0,0,0.00)'
+        },
+        '&::-webkit-scrollbar-thumb': {
+            backgroundColor: 'rgba(0,0,0,.1)',
+            outline: '1px solid slategrey',
+            bgcolor: 'steelblue',
+            borderRadius: '5px',
+        }
+    } : {};
+
     return (
-        <Box display="flex" flexDirection="row">
+        <Box display="flex" flexDirection="row" sx={{
+            margin: marginS
+        }}>
             <SiderToRender/>
             <Box
                 sx={{
                     display: "flex",
                     flexDirection: "column",
                     flex: 1,
-                    minHeight: "100vh",
+                    gap: gapS,
                 }}
             >
                 <HeaderToRender/>
                 <Box
                     component="main"
                     sx={{
-                        p: {xs: 1, md: 2, lg: 3},
+                        height: heightLayoutS,
+                        overflow: 'auto',
+                        p: {xs: 1, md: 2},
                         flexGrow: 1,
+                        borderRadius: borderRadiusS,
                         position: 'relative',
-                        bgcolor: (theme) => theme.palette.background.default,
+                        bgcolor: (theme) => theme.palette.background.paper,
+                        ...someStyle
                     }}
                 >
                     {children}
+                    <FooterToRender/>
                     <Box id={'scrollTop'}
                          component={'a'}
                          href={'#top'}
@@ -69,9 +99,9 @@ export const Layout: React.FC<LayoutProps> = ({
                              visibility: "hidden",
                              opacity: 0,
                              position: 'fixed',
-                             right: '30px',
-                             bottom: '80px',
-                             minWidth: '50px',
+                             right: width < 600 ? '5px' :  '20px',
+                             bottom: '70px',
+                             minWidth: '40px',
                              zIndex: 10000,
                              borderRadius: '50%',
                              width: '62px',
@@ -93,8 +123,8 @@ export const Layout: React.FC<LayoutProps> = ({
                                     sx={{
                                         boxShadow: '0 0 10px #ccc',
                                         position: 'fixed',
-                                        right: '30px',
-                                        bottom: '30px',
+                                        right: width < 600 ? '5px' : '20px',
+                                        bottom: width < 600 ? '5px' : '20px',
                                         minWidth: '50px',
                                         zIndex: 1000,
                                         borderRadius: '50%',
@@ -111,7 +141,6 @@ export const Layout: React.FC<LayoutProps> = ({
                         )
                     }
                 </Box>
-                {Footer && <Footer/>}
             </Box>
             {OffLayoutArea && <OffLayoutArea/>}
         </Box>

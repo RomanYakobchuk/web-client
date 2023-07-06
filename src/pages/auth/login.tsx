@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import React, {useContext, useEffect, useState} from "react";
 import {useForm} from "@refinedev/react-hook-form";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useNavigation, Link} from "react-router-dom";
 import {FieldValues} from "react-hook-form";
 import {useNotification} from "@refinedev/core";
 import {useLogin, useTranslate} from "@refinedev/core";
@@ -19,22 +19,25 @@ import {VisibilityOffOutlined, VisibilityOutlined} from "@mui/icons-material";
 
 import Copyright from "./utills/copyright";
 import {IData} from "../../interfaces/common";
-import {Header} from "../../components/layout";
+import {Header} from "../../layout";
 import {ColorModeContext} from "../../contexts";
-import {parseJwt} from "../../utils";
+import {parseJwt, useMobile} from "../../utils";
 import {axiosInstance} from "../../authProvider";
+import {buttonStyle, textFieldStyle} from "../../styles";
+
 const Login = () => {
 
     const translate = useTranslate();
+    const {mode} = useContext(ColorModeContext);
+    const navigate = useNavigate();
+    const {mutate: login} = useLogin<IData>()
+    const {open} = useNotification();
+    const {width} = useMobile();
+
+    const [size, setSize] = useState<'small' | 'medium' | undefined>('medium');
     const [showPass, setShowPass] = useState(false);
     const [showActiveAcc, setShowActiveAcc] = useState(false);
-    const {mode} = useContext(ColorModeContext);
     const [error, setError] = useState<any>([])
-    const navigate = useNavigate();
-
-    const {open} = useNotification();
-
-    const {mutate: login} = useLogin<IData>()
 
     const {
         refineCore: {onFinish, formLoading},
@@ -91,7 +94,12 @@ const Login = () => {
         await axiosInstance.post("/auth/activate", {
             email: data?.email
         })
-    }
+    };
+    useEffect(() => {
+        if (width < 600) {
+            setSize('small')
+        }
+    }, [width]);
 
     return (
         <Box sx={{
@@ -125,6 +133,8 @@ const Login = () => {
                             required
                             fullWidth
                             id="email"
+                            size={size}
+                            sx={textFieldStyle}
                             color={"secondary"}
                             label={translate("pages.login.fields.email")}
                             {...register("email", {required: true})}
@@ -137,7 +147,9 @@ const Login = () => {
                             <TextField
                                 margin="normal"
                                 required
+                                size={size}
                                 fullWidth
+                                sx={textFieldStyle}
                                 color={"secondary"}
                                 {...register("password", {required: true})}
                                 label={translate("pages.login.fields.password")}
@@ -179,17 +191,15 @@ const Login = () => {
                             </div>
                         }
                         <Grid item mt={2} mb={2}>
-                            <Button type={"submit"} sx={{
-                                color: '#fcfcfc',
-                                fontSize: '20px',
-                                textTransform: 'uppercase',
-                                bgcolor: 'blue',
-                                width: '100%',
-                                transition: '300ms linear',
-                                "&:hover": {
-                                    bgcolor: '#1d3c6b'
-                                }
-                            }}>
+                            <Button type={"submit"}
+                                    color={mode === "dark" ? "info" : "secondary"}
+                                    variant={'contained'}
+                                    sx={{
+                                        ...buttonStyle,
+                                        fontSize: '20px',
+                                        textTransform: 'uppercase',
+                                        width: '100%',
+                                    }}>
                                 {
                                     formLoading ? <CircularProgress/> :
                                         translate("pages.login.buttons.submit")
@@ -202,36 +212,32 @@ const Login = () => {
                             flexDirection: 'column',
                             gap: 1
                         }}>
-                            <Button
-                                onClick={() => navigate('/forgot-password')}
-                                sx={{
-                                    color: '#fcfcfc',
+                            <Link
+                                to={'/forgot-password'}
+                                style={{
+                                    color: mode === 'dark' ? '#8aa4d3' : '#275ab7',
                                     fontSize: '16px',
                                     textTransform: 'none',
-                                    bgcolor: mode === "dark" ? "#5689c0" : "#244d61",
                                     width: '100%',
                                     transition: '300ms linear',
-                                    "&:hover": {
-                                        bgcolor: '#1d3c6b'
-                                    }
                                 }}>
                                 {translate("pages.login.buttons.forgotPassword")}
-                            </Button>
-                            <Button
-                                onClick={() => navigate('/register')}
-                                sx={{
-                                    color: '#fcfcfc',
-                                    fontSize: '16px',
-                                    bgcolor: mode === "dark" ? "#78a6c8" : "#326789",
-                                    textTransform: 'none',
-                                    width: '100%',
-                                    transition: '300ms linear',
-                                    "&:hover": {
-                                        bgcolor: '#1d3c6b'
-                                    }
-                                }}>
-                                {translate("pages.login.buttons.noAccount") + translate("pages.login.signup")}
-                            </Button>
+                            </Link>
+                            <Box>
+                                {translate("pages.login.buttons.noAccount") + ' '}
+                                <Link
+                                    to={'/register'}
+                                    style={{
+                                        color: mode === 'dark' ? '#8aa4d3' : '#275ab7',
+                                        fontSize: '16px',
+                                        textTransform: 'none',
+                                        width: '100%',
+                                        transition: '300ms linear',
+
+                                    }}>
+                                    {translate("pages.login.signup")}
+                                </Link>
+                            </Box>
                         </Grid>
                     </Box>
                 </Box>

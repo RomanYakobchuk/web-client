@@ -1,7 +1,7 @@
 import {Box, Button, CircularProgress, MenuItem, Select} from "@mui/material";
 import {HourglassBottom, Public, ThumbDownAltOutlined} from "@mui/icons-material";
 import {PropertyProps} from "../../interfaces/common";
-import PropertyCard from "../common/PropertyCard";
+import InstitutionCard from "../institution/utills/InstitutionCard";
 import React, {useState} from "react";
 import {useInfiniteList, useTranslate} from "@refinedev/core";
 import Loading from "../loading";
@@ -117,29 +117,12 @@ const UserInstitutions = ({id}: IProps) => {
                 data?.pages?.length > 0 ?
                     data?.pages?.map((page) =>
                         page?.data?.map((property) => (
-                                <PropertyCard
+                                <InstitutionCard
                                     otherProps={{
                                         setFavoritePlaces: setFavoritePlaces,
                                         favoritePlaces: favoritePlaces
                                     }}
-                                    _id={property._id}
-                                    key={property._id}
-                                    title={property.title}
-                                    place={property.place}
-                                    description={property.description}
-                                    mainPhoto={property.mainPhoto}
-                                    otherPhoto={property.otherPhoto}
-                                    type={property.type}
-                                    createdBy={property.createdBy}
-                                    averageCheck={property.averageCheck}
-                                    contacts={property.contacts}
-                                    features={property.features}
-                                    createdAt={property.createdAt}
-                                    location={property.location}
-                                    rating={property?.rating}
-                                    tags={property.tags}
-                                    verify={property.verify}
-                                    workSchedule={property.workSchedule}
+                                    institution={property}
                                 />
                             )
                         )

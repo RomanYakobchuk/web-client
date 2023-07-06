@@ -1,27 +1,23 @@
 import {
-    Autocomplete,
     Box,
-    Button,
-    CircularProgress,
-    debounce, FormControl, FormHelperText,
+    Button, FormControl, FormHelperText,
     MenuItem,
     Select,
-    Slider,
     TextField
 } from "@mui/material";
-import {CancelOutlined, ReplayOutlined, SearchOutlined, TuneOutlined} from "@mui/icons-material";
+import {CancelOutlined, TuneOutlined} from "@mui/icons-material";
 import {AutoComplete, Input, Typography as TypographyAntd} from "antd";
-import React, {ChangeEvent, useContext, useEffect, useMemo, useState} from "react";
+import React, {useContext, useEffect, useMemo, useState} from "react";
 import {CrudFilter, CrudSorting, useList, useTranslate} from "@refinedev/core";
 import {useLocation} from "react-router-dom";
 
-import {useMobile} from "../../../utils";
 import {IOptions} from "../../../interfaces/common";
 import {ColorModeContext} from "../../../contexts";
 import {DatePicker, LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import {useDebounce} from "use-debounce";
+import {buttonStyle, selectStyle, textFieldStyle} from "../../../styles";
 
 const {Text} = TypographyAntd;
 const renderTitle = (title: string) => {
@@ -68,7 +64,6 @@ const FilterNews = ({
                     }: IProps) => {
 
     const translate = useTranslate();
-    const {width} = useMobile();
     const {state: locationState, search} = useLocation();
     const {mode} = useContext(ColorModeContext);
 
@@ -85,9 +80,7 @@ const FilterNews = ({
 
     const {refetch: refetchCities, isLoading: citiesIsLoading} = useList<any>({
         resource: 'city/all',
-        config: {
-            filters: [{field: 'city', operator: 'contains', value: debounceValue}]
-        },
+        filters: [{field: 'city', operator: 'contains', value: debounceValue}],
         queryOptions: {
             enabled: false,
             onSuccess: (data) => {
@@ -201,7 +194,6 @@ const FilterNews = ({
                 if (filter?.field === "date_event" && filter?.operator === 'lte') {
                     setDateEventLte(dayjs(filter?.value?.$d))
                 } else if (filter?.field === "date_event" && filter?.operator === 'gte') {
-                    console.log(dayjs(filter?.value?.$d))
                     setDateEventGte(dayjs(filter?.value?.$d))
                 } else if (filter?.field === "category") {
                     setCategory(filter?.value)
@@ -337,7 +329,8 @@ const FilterNews = ({
                                         required
                                         inputProps={{'aria-label': 'Without label'}}
                                         sx={{
-                                            fontSize: {xs: '12px', sm: '16px'}
+                                            fontSize: {xs: '12px', sm: '16px'},
+                                            ...selectStyle
                                         }}
                                         value={category ?? currentFilterValues.category}
                                         onChange={(e) => {
@@ -371,7 +364,7 @@ const FilterNews = ({
                                     <AutoComplete
                                         style={{
                                             width: '100%',
-                                            color: mode === "dark" ? "#fcfcfc" : "#000"
+                                            color: mode === "dark" ? "#fcfcfc" : "#000",
                                         }}
                                         options={options}
                                         value={searchCityInput}
@@ -388,7 +381,8 @@ const FilterNews = ({
                                             size={"large"}
                                             style={{
                                                 background: "transparent",
-                                                color: mode === "dark" ? "#fcfcfc" : "#000"
+                                                color: mode === "dark" ? "#fcfcfc" : "#000",
+                                                ...selectStyle
                                             }}
                                         />
                                     </AutoComplete>
@@ -414,7 +408,8 @@ const FilterNews = ({
                                         inputProps={{'aria-label': 'Without label'}}
                                         value={newSorters[0]?.field ? newSorters[0]?.field : sortBy ? sortBy : ""}
                                         sx={{
-                                            fontSize: {xs: '12px', sm: '16px'}
+                                            fontSize: {xs: '12px', sm: '16px'},
+                                            ...selectStyle
                                         }}
                                         onChange={
                                             (e: any) => {
@@ -481,6 +476,7 @@ const FilterNews = ({
                                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                                 <DatePicker
                                                     sx={{
+                                                        ...textFieldStyle,
                                                         "> div": {
                                                             fontSize: '14px'
                                                         },
@@ -499,6 +495,7 @@ const FilterNews = ({
                                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                                 <DatePicker
                                                     sx={{
+                                                        ...textFieldStyle,
                                                         "> div": {
                                                             fontSize: '14px'
                                                         },
@@ -534,7 +531,8 @@ const FilterNews = ({
                                 }}>
                                     <Button
                                         sx={{
-                                            width: '35%'
+                                            width: '35%',
+                                            ...buttonStyle
                                         }}
                                         color={"error"}
                                         variant={"contained"}
@@ -546,10 +544,8 @@ const FilterNews = ({
                                         variant={"contained"}
                                         color={"info"}
                                         sx={{
-                                            bgcolor: 'blue',
-                                            color: '#fcfcfc',
                                             width: '60%',
-
+                                            ...buttonStyle
                                         }}
                                         onClick={handleSearch}>
                                         {translate("buttons.search")}

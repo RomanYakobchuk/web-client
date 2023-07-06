@@ -23,13 +23,13 @@ const TitleTextItem = ({value, title, bgColor, onClick}: IProps) => {
                 width: '100%',
                 height: '100%',
                 borderRadius: '15px',
-                p: "10px",
+                p: "5px",
                 cursor: onClick ? 'pointer' : 'normal',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: 1,
+                gap: 0.7,
                 bgcolor: bgColor ? bgColor : mode === 'dark' ? "#252525" : '#016AB9'
             }}
         >
@@ -37,9 +37,9 @@ const TitleTextItem = ({value, title, bgColor, onClick}: IProps) => {
                 value && <Title
                     style={{
                         color: textColor,
-                        marginTop: '5px'
+                        margin: '0px'
                     }}
-                    level={4}>{value}</Title>
+                    level={5}>{value}</Title>
             }
             {
                 title && <Text

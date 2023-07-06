@@ -11,7 +11,7 @@ const Capl = () => {
 
     return (
         <Box mt={{xs: '10px', sm: '20px'}} borderRadius="15px" padding="10px"
-             bgcolor={mode === "dark" ? "#2e424d" : "#fcfcfc"}
+             // bgcolor={mode === "dark" ? "#2e424d" : "#fcfcfc"}
         >
             <CanAccess resource={'capl'} action={'userListReserve'}>
                 <CaplUserList/>

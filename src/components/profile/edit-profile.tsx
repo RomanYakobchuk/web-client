@@ -17,6 +17,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import {CustomButton} from "../index";
 import {ColorModeContext} from "../../contexts";
 import {ProfileProps} from "../../interfaces/common";
+import {buttonStyle, textFieldStyle} from "../../styles";
 
 const EditProfile = () => {
     const {id: _id} = useParams();
@@ -52,10 +53,6 @@ const EditProfile = () => {
         },
     },);
 
-    // const {data, isLoading, isError}: any = useOne({
-    //     resource: 'users/userInfo',
-    //     id: _id as string
-    // });
     const {isLoading, isError} = queryResult!;
     const [user, setUser] = useState<ProfileProps>({} as ProfileProps);
 
@@ -139,7 +136,16 @@ const EditProfile = () => {
                 </Typography>
             </Box>
 
-            <Box mt={2.5} borderRadius="15px" padding="20px" bgcolor={mode === "dark" ? "#2e424d" : "#fcfcfc"}>
+            <Box
+                sx={{
+                    maxWidth: '550px',
+                    bgcolor: mode === "dark" ? "#2e424d" : "#fcfcfc",
+                    p: '20px',
+                    mt: 2.5,
+                    margin: 'auto',
+                    borderRadius: '15px'
+                }}
+            >
                 <form
                     style={{
                         marginTop: "20px",
@@ -207,21 +213,17 @@ const EditProfile = () => {
 
                             <Button
                                 component="label"
+                                variant={'contained'}
+                                color={'info'}
                                 sx={{
-                                    color: "#fcfcfc",
-                                    fontSize: {xs: 12, sm: 14},
-                                    bgcolor: 'blue',
                                     width: '130px',
                                     textTransform: 'capitalize',
-                                    gap: 1,
-                                    padding: '10px 15px',
-                                    borderRadius: '5px',
-                                    "&:hover": {
-                                        bgcolor: '#0d2986',
-                                    }
+                                    ...buttonStyle
                                 }}
+                                startIcon={
+                                    <Edit/>
+                                }
                             >
-                                <Edit sx={{fontSize: {xs: 16, sm: 18}}}/>
                                 {translate("profile.edit.change")}
                                 <input
                                     hidden
@@ -262,6 +264,9 @@ const EditProfile = () => {
                             size={"small"}
                             id="outlined-basic"
                             color="info"
+                            sx={{
+                                ...textFieldStyle
+                            }}
                             defaultValue={user?.name}
                             variant="outlined"
                             {...register('name', {required: true})}
@@ -283,11 +288,12 @@ const EditProfile = () => {
                                    color="info"
                                    size={"small"}
                                    type={"date"}
+                                   sx={{
+                                       ...textFieldStyle
+                                   }}
                                    value={userNewDOB ? userNewDOB : userDOB}
-                            // defaultValue={userDOB ?? userNewDOB}
                                    variant="outlined"
                                    onChange={(e: ChangeEvent<HTMLInputElement>) => setUserNewDOB(e.target.value)}
-                            //{...register('dOB', {required: true})}
                         />
                     </FormControl>
                     <FormControl>
@@ -308,6 +314,9 @@ const EditProfile = () => {
                             color="info"
                             defaultValue={user?.phone}
                             type={"text"}
+                            sx={{
+                                ...textFieldStyle
+                            }}
                             size={"small"}
                             variant="outlined"
                             {...register('phone', {required: true})}
@@ -319,20 +328,28 @@ const EditProfile = () => {
                         justifyContent: "space-between",
                         alignItems: 'center'
                     }}>
-                        <CustomButton
-                            width={"38%"}
-                            title={translate("profile.edit.cancel")}
-                            backgroundColor="red"
-                            color="#fcfcfc"
-                            handleClick={() => navigate("/profile")}
-                        />
-                        <CustomButton
+                        <Button
+                            color="error"
+                            variant={'contained'}
+                            sx={{
+                                ...buttonStyle,
+                                width: '38%'
+                            }}
+                            onClick={() => navigate("/profile")}
+                        >
+                            {translate("profile.edit.cancel")}
+                        </Button>
+                        <Button
                             type="submit"
-                            width={"60%"}
-                            title={formLoading ? <CircularProgress/> : translate("profile.edit.save")}
-                            backgroundColor="#475be8"
-                            color="#fcfcfc"
-                        />
+                            variant={'contained'}
+                            sx={{
+                                ...buttonStyle,
+                                width: '60%'
+                            }}
+                            color="info"
+                        >
+                            {formLoading ? <CircularProgress size={20}/> : translate("profile.edit.save")}
+                        </Button>
                     </FormControl>
                 </form>
             </Box>

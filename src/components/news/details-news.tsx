@@ -111,9 +111,13 @@ const DetailsNews = () => {
                                     fontSize: {xs: '18px', sm: '24px'},
                                 }}/>}
                                 sx={{
-                                    color: '#fcfcfc',
                                     bgcolor: 'blue',
-                                    p: "10px 15px"
+                                    transition: '300ms linear',
+                                    borderRadius: '25px',
+                                    minWidth: '100px',
+                                    "&:hover": {
+                                        bgcolor: 'info.main',
+                                    }
                                 }}
                                 onClick={() => navigate(`/capl/create?institution=${news?.institutionId}`)}
                             >
@@ -132,8 +136,14 @@ const DetailsNews = () => {
                                 onClick={() => navigate(`/all_institutions/show/${news?.institutionId}`)}
                                 startIcon={<LocationCity/>}
                                 sx={{
-                                    bgcolor: '#cfcfcf',
-                                    color: '#242539'
+                                    bgcolor: 'blue',
+                                    transition: '300ms linear',
+                                    borderRadius: '25px',
+                                    p: '5px 15px',
+                                    minWidth: '100px',
+                                    "&:hover": {
+                                        bgcolor: 'info.main',
+                                    }
                                 }}
                             >
                                 {translate("home.one")}

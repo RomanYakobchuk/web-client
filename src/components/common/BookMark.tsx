@@ -1,23 +1,28 @@
-import {CircularProgress} from "@mui/material";
+import {Button, CircularProgress} from "@mui/material";
 import {BookmarkBorderOutlined, BookmarkOutlined} from "@mui/icons-material";
-import React, {useEffect, useLayoutEffect, useState} from "react";
+import React, {useContext, useEffect, useLayoutEffect, useState} from "react";
 import {useGetIdentity, useNotification, useOne, useTranslate} from "@refinedev/core";
 
 import {axiosInstance} from "../../authProvider";
 import {ProfileProps} from "../../interfaces/common";
+import {buttonStyle} from "../../styles";
+import {ColorModeContext} from "../../contexts";
 
 interface IProps {
     id: string,
     otherProps?: any,
     color?: string | any,
-    type: string
+    type: string,
+    showText: boolean
 }
 
-const BookMark = ({id, otherProps: setFavoritePlaces, color, type}: IProps) => {
+const BookMark = ({id, otherProps: setFavoritePlaces, color, type, showText}: IProps) => {
 
     const {data: myProfile} = useGetIdentity<ProfileProps | any>();
     const {open} = useNotification();
     const translate = useTranslate();
+    const {mode} = useContext(ColorModeContext);
+
     const [book, setBook] = useState<any>();
     const [addDelFav, setAddDelFav] = useState(false);
 
@@ -52,25 +57,46 @@ const BookMark = ({id, otherProps: setFavoritePlaces, color, type}: IProps) => {
         setBook(!book)
     }
     return (
-        <>
+        <Button
+            variant={'contained'}
+            sx={{
+                display: 'flex',
+                bgcolor: mode === "dark" ? "#605454" : "#ffffff",
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: showText ? 'start' : 'center',
+                gap: 1,
+                textTransform: 'inherit',
+                boxShadow: 'none',
+                borderRadius: showText ? '20px' : '0 0 0 15px',
+            }}
+            onClick={toFromBook}
+        >
             {
                 addDelFav
-                    ? <CircularProgress color={"secondary"}/>
+                    ? <CircularProgress color={"secondary"} size={26}/>
                     : book
-                        ? <BookmarkOutlined onClick={toFromBook} sx={{
-                            fontSize: 40,
-                            cursor: 'pointer',
-                            transition: '300ms linear',
-                            color: color ? color : '#fcfcfc'
-                        }}/>
-                        : <BookmarkBorderOutlined onClick={toFromBook} sx={{
-                            fontSize: 40,
-                            cursor: 'pointer',
-                            transition: '300ms linear',
-                            color: color ? color : '#fcfcfc'
-                        }}/>
+                        ?
+                        <>
+                            <BookmarkOutlined sx={{
+                                fontSize: 26,
+                                cursor: 'pointer',
+                                transition: '300ms linear',
+                                color: color ? color : '#fcfcfc'
+                            }}/>
+                            {showText && translate('home.show.delFromFav')}
+                        </> :
+                        <>
+                            <BookmarkBorderOutlined sx={{
+                                fontSize: 26,
+                                cursor: 'pointer',
+                                transition: '300ms linear',
+                                color: color ? color : '#fcfcfc'
+                            }}/>
+                            {showText && translate('home.show.addToFav')}
+                        </>
             }
-        </>
+        </Button>
     );
 };
 export default BookMark;

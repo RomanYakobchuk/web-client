@@ -18,8 +18,8 @@ const renderTitle = (title: string) => {
 
 const renderItem = (title: string, street: string, photo: string, _id: string) => {
     return {
-        value: _id,
-        title: title,
+        value: title,
+        id: _id,
         label: (
             <Box sx={{
                 display: 'flex',
@@ -133,10 +133,10 @@ const SearchInstitutions = ({setSearchPlace, searchPlace, typeSearch}: IProps) =
                     filterOption={false}
                     onSearch={onSearch}
                     onSelect={(value, option) => {
-                        const {title} = option;
+                        // const {id} = option;
                         setSearchPlace(value)
-                        setSearchPlaceInput(title);
-                        setSearchInputValue(title)
+                        setSearchPlaceInput(value);
+                        setSearchInputValue(value)
                     }}
                 >
                     <Input

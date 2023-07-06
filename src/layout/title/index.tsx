@@ -27,6 +27,7 @@ export const Title: React.FC<TitleProps> = ({collapsed}) => {
                             fontSize: '40px',
                             fontWeight: 700,
                             textTransform: "none",
+                            color: (theme) => theme.palette.common.white
                         }}>
                             Capl
                         </Typography>

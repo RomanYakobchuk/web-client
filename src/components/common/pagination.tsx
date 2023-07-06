@@ -3,6 +3,7 @@ import {ArrowBackIosNew, ArrowForwardIos} from "@mui/icons-material";
 import React from "react";
 import {useTranslate} from "@refinedev/core";
 import {useMobile} from "../../utils";
+import {selectStyle} from "../../styles";
 
 
 interface IProps {
@@ -22,6 +23,7 @@ const Pagination = ({current, setCurrent, pageCount, setPageSize}: IProps) => {
                 disabled={!(current > 1)}
                 color={"info"}
                 variant={"contained"}
+                size={'small'}
                 onClick={() => setCurrent((prev: any) => prev - 1)}
             >
                 <ArrowBackIosNew sx={{color: '#fcfcfc'}}/>
@@ -34,6 +36,7 @@ const Pagination = ({current, setCurrent, pageCount, setPageSize}: IProps) => {
                 disabled={current === pageCount || pageCount === 0}
                 color={"info"}
                 variant={"contained"}
+                size={'small'}
                 onClick={() => setCurrent((prev: any) => prev + 1)}
             >
                 <ArrowForwardIos sx={{color: '#fcfcfc'}}/>
@@ -41,8 +44,13 @@ const Pagination = ({current, setCurrent, pageCount, setPageSize}: IProps) => {
             <Select variant={"outlined"}
                     disabled={pageCount === 0}
                     sx={{
-                fontSize: {xs: '14px', sm: '16px'}
-            }} color={"info"} displayEmpty required
+                        fontSize: {xs: '14px', sm: '16px'},
+                        ...selectStyle
+                    }}
+                    size={'small'}
+                    color={"info"}
+                    displayEmpty required
+
                     inputProps={{'aria-label': 'Without label'}} defaultValue={10}
                     onChange={(e) => setPageSize(e.target.value ? Number(e.target.value) : 10)}>
                 {

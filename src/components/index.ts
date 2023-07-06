@@ -2,7 +2,7 @@
 import BookMark from "./common/BookMark";
 import CustomButton from "./common/CustomButton";
 import CustomProfile from "./common/CustomProfile";
-import PropertyCard from "./common/PropertyCard";
+import InstitutionCard from "./institution/utills/InstitutionCard";
 import CustomAccordion from "./common/customAccordion";
 import CustomDrawer from "./common/customDrawer";
 import ScrollContent from "./common/scrollContent";
@@ -38,6 +38,7 @@ import CreateMenu from "./institution/utills/menu/create-menu";
 import InstitutionsUserList from "./institution/userList";
 import InstitutionsAdminList from "./institution/adminList";
 import EditUpdateStatus from "./institution/editUpdateStatus";
+import ImageGallery from "./institution/imageGallery";
 
 // capl
 import CreateReservation from "./capl/create-reservation";
@@ -70,6 +71,8 @@ import CurrentChatContainer from "./chats/current-chat-container";
 import ListChats from "./chats/list-chats";
 
 
+// settings
+import SchemaSelector from "./settings/SchemaSelector";
 
 // home
 import UpdateCity from "./home/utils/update-city";
@@ -80,7 +83,7 @@ export {
     CreateMenu,
     EditInstitution,
     UserInstitutions,
-    PropertyCard,
+    InstitutionCard,
     CustomProfile,
     UserReviews,
     FavoritePlaces,
@@ -125,4 +128,6 @@ export {
     EditUpdateStatus,
     ShowChats,
     UpdateCity,
+    ImageGallery,
+    SchemaSelector
 }

@@ -19,6 +19,10 @@ import Profile from "./profile";
 
 import Chat from "./chat";
 
+import Notifications from './notifications';
+
+import Settings from "./settings";
+
 export {
     AllInstitutions,
     Profile,
@@ -28,6 +32,7 @@ export {
     Capl,
     News,
     Register,
+    Settings,
     EditProfile,
     TopInstitutions,
     VerifyNumber,
@@ -36,5 +41,6 @@ export {
     UpdatePassword,
     AllUsers,
     AllComments,
-    AllReviews
+    AllReviews,
+    Notifications
 }

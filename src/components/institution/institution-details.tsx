@@ -75,80 +75,87 @@ const InstitutionDetails = () => {
         <Box sx={{
             mb: "30px"
         }}>
-            <Box sx={{
-                display: 'flex',
-                width: '100%',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-            }}>
-                <Typography sx={{
-                    fontSize: {xs: '16px', sm: '24px'}
-                }} fontWeight={700} color={mode === "dark" ? "#fcfcfc" : "#11142D"}>
-                    {translate('home.show.title')}
-                </Typography>
-                {
-                    (institution?.createdBy === user?._id) || user?.status === 'admin'
-                        ? <Box sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 1
-                        }}>
-                            {
-                                device || width < 600
-                                    ? <IconButton
-                                        size={"large"}
-                                        onClick={() => navigate(`/all_institutions/edit/${institution?._id}`)}
-                                    >
-                                        <Edit fontSize="inherit"/>
-                                    </IconButton>
-                                    : <Button
-                                        variant={"contained"}
-                                        startIcon={<Edit sx={{
-                                            fontSize: {xs: '18px', sm: '24px'},
-                                        }}/>}
-                                        onClick={() => navigate(`/all_institutions/edit/${institution?._id}`)}
-                                        sx={{
-                                            bgcolor: 'blue',
-                                        }}
-                                    >
-                                        {translate('profile.edit.title')}
-                                    </Button>
-                            }
-                            {
-                                device || width < 600
-                                    ? <IconButton
-                                        size={"large"}
-                                        onClick={() => navigate(`/news/create?institution_id=${institution._id}`)}
-                                    >
-                                        <Add fontSize="inherit"/>
-                                    </IconButton>
-                                    : <Button
-                                        onClick={() => navigate(`/news/create?institution_id=${institution._id}`)}
-                                        startIcon={<Add/>}
-                                        sx={{
-                                            bgcolor: '#cfcfcf',
-                                            color: '#242539'
-                                        }}
-                                    >
-                                        {translate("home.createNews.title")}
-                                    </Button>
-                            }
-                        </Box>
-                        : <Button
-                            startIcon={<WineBarOutlined sx={{
-                                fontSize: {xs: '18px', sm: '24px'},
-                            }}/>}
-                            sx={{
-                                color: '#fcfcfc',
-                                bgcolor: 'blue',
-                                p: "10px 15px"
-                            }}
-                            onClick={() => navigate(`/capl/create?institution=${institution?._id}`)}
-                        >
-                            Capl
-                        </Button>
-                }
-            </Box>
+            {/*<Box sx={{*/}
+            {/*    display: 'flex',*/}
+            {/*    width: '100%',*/}
+            {/*    justifyContent: 'space-between',*/}
+            {/*    alignItems: 'center',*/}
+            {/*}}>*/}
+            {/*    <Typography sx={{*/}
+            {/*        fontSize: {xs: '16px', sm: '24px'}*/}
+            {/*    }} fontWeight={700} color={mode === "dark" ? "#fcfcfc" : "#11142D"}>*/}
+            {/*        {translate('home.show.title')}*/}
+            {/*    </Typography>*/}
+            {/*    {*/}
+            {/*        (institution?.createdBy === user?._id) || user?.status === 'admin'*/}
+            {/*            ? <Box sx={{*/}
+            {/*                display: 'flex',*/}
+            {/*                alignItems: 'center',*/}
+            {/*                gap: 1*/}
+            {/*            }}>*/}
+            {/*                {*/}
+            {/*                    device || width < 600*/}
+            {/*                        ? <IconButton*/}
+            {/*                            size={"large"}*/}
+            {/*                            onClick={() => navigate(`/all_institutions/edit/${institution?._id}`)}*/}
+            {/*                        >*/}
+            {/*                            <Edit fontSize="inherit"/>*/}
+            {/*                        </IconButton>*/}
+            {/*                        : <Button*/}
+            {/*                            variant={"contained"}*/}
+            {/*                            startIcon={<Edit sx={{*/}
+            {/*                                fontSize: {xs: '18px', sm: '24px'},*/}
+            {/*                            }}/>}*/}
+            {/*                            onClick={() => navigate(`/all_institutions/edit/${institution?._id}`)}*/}
+            {/*                            sx={{*/}
+            {/*                                bgcolor: 'blue',*/}
+            {/*                                borderRadius: '25px',*/}
+            {/*                            }}*/}
+            {/*                        >*/}
+            {/*                            {translate('profile.edit.title')}*/}
+            {/*                        </Button>*/}
+            {/*                }*/}
+            {/*                {*/}
+            {/*                    device || width < 600*/}
+            {/*                        ? <IconButton*/}
+            {/*                            size={"large"}*/}
+            {/*                            onClick={() => navigate(`/news/create?institution_id=${institution._id}`)}*/}
+            {/*                        >*/}
+            {/*                            <Add fontSize="inherit"/>*/}
+            {/*                        </IconButton>*/}
+            {/*                        : <Button*/}
+            {/*                            onClick={() => navigate(`/news/create?institution_id=${institution._id}`)}*/}
+            {/*                            startIcon={<Add/>}*/}
+            {/*                            sx={{*/}
+            {/*                                bgcolor: '#cfcfcf',*/}
+            {/*                                color: '#242539',*/}
+            {/*                                borderRadius: '25px',*/}
+            {/*                            }}*/}
+            {/*                        >*/}
+            {/*                            {translate("home.createNews.title")}*/}
+            {/*                        </Button>*/}
+            {/*                }*/}
+            {/*            </Box>*/}
+            {/*            : <Button*/}
+            {/*                startIcon={<WineBarOutlined sx={{*/}
+            {/*                    fontSize: {xs: '18px', sm: '24px'},*/}
+            {/*                }}/>}*/}
+            {/*                sx={{*/}
+            {/*                    bgcolor: 'blue',*/}
+            {/*                    p: "10px 15px",*/}
+            {/*                    transition: '300ms linear',*/}
+            {/*                    borderRadius: '25px',*/}
+            {/*                    minWidth: '100px',*/}
+            {/*                    "&:hover": {*/}
+            {/*                        bgcolor: 'info.main',*/}
+            {/*                    }*/}
+            {/*                }}*/}
+            {/*                onClick={() => navigate(`/capl/create?institution=${institution?._id}`)}*/}
+            {/*            >*/}
+            {/*                Capl*/}
+            {/*            </Button>*/}
+            {/*    }*/}
+            {/*</Box>*/}
             <Box sx={{
                 display: 'flex',
                 width: '100%',

@@ -25,6 +25,17 @@ function isAccessTokenExpired(access_token: string) {
     }
 }
 
+let _isRefreshing = false;
+let _refreshSubscribers: any[] = [];
+
+const subscribeTokenRefresh = (cb: any) => {
+    _refreshSubscribers.push(cb);
+};
+
+const onTokenRefreshed = () => {
+    _refreshSubscribers.map((cb) => cb());
+};
+
 axiosInstance.interceptors.request.use(async (request: AxiosRequestConfig) => {
         const access_token = await localStorage.getItem(ACCESS_TOKEN_KEY);
         if (access_token && isAccessTokenExpired(access_token)) {
@@ -42,46 +53,100 @@ axiosInstance.interceptors.request.use(async (request: AxiosRequestConfig) => {
 );
 
 
+// axiosInstance.interceptors.response.use(
+//     (response) => {
+//         return response
+//     },
+//     async (error) => {
+//         if (error.response) {
+//             const config = error?.config;
+//             if (error?.response?.status === 401 && !config._retry) {
+//                 config._retry = true;
+//                 try {
+//                     const refresh_token = localStorage.getItem(REFRESH_TOKEN_KEY);
+//                     const response = await axios.post(`${baseURL}/auth/refreshToken`, {
+//                         refresh_token
+//                     })
+//                     config.headers.authorization = response?.data?.access_token;
+//
+//                     localStorage.setItem(ACCESS_TOKEN_KEY, response?.data?.access_token)
+//                     localStorage.setItem(REFRESH_TOKEN_KEY, response?.data?.refresh_token)
+//                     localStorage.setItem("user", response?.data?.user)
+//
+//                     config._retry = true;
+//
+//                     return await axios.request(config);
+//                 } catch (error: any) {
+//                     if (error?.response?.data?.code === 401 || error?.response?.data?.code === '401') {
+//
+//                         localStorage.removeItem(ACCESS_TOKEN_KEY);
+//                         localStorage.removeItem(REFRESH_TOKEN_KEY);
+//                         localStorage.removeItem("user");
+//                         return window.location.reload();
+//                     }
+//                     return Promise.reject(error)
+//                 }
+//             }
+//         }
+//         return Promise.reject(error)
+//     }
+// )
+
 axiosInstance.interceptors.response.use(
     (response) => {
-        return response
+        return response;
     },
     async (error) => {
         if (error.response) {
             const config = error?.config;
             if (error?.response?.status === 401 && !config._retry) {
-                config._retry = true;
-                try {
-                    const refresh_token = localStorage.getItem(REFRESH_TOKEN_KEY);
-                    const response = await axios.post(`${baseURL}/auth/refreshToken`, {
-                        refresh_token
-                    })
-                    config.headers.authorization = response?.data?.access_token;
-
-                    localStorage.setItem(ACCESS_TOKEN_KEY, response?.data?.access_token)
-                    localStorage.setItem(REFRESH_TOKEN_KEY, response?.data?.refresh_token)
-                    localStorage.setItem("user", response?.data?.user)
-
+                if (!_isRefreshing) {
                     config._retry = true;
+                    _isRefreshing = true;
 
-                    return await axios.request(config);
-                } catch (error: any) {
-                    if (error?.response?.data?.code === 401 || error?.response?.data?.code === '401') {
+                    try {
+                        const refresh_token = localStorage.getItem(REFRESH_TOKEN_KEY);
+                        const response = await axios.post(`${baseURL}/auth/refreshToken`, {
+                            refresh_token,
+                        });
 
-                        localStorage.removeItem(ACCESS_TOKEN_KEY);
-                        localStorage.removeItem(REFRESH_TOKEN_KEY);
-                        localStorage.removeItem("user");
-                        return {
-                            redirectTo: '/login'
-                        };
+                        config.headers.authorization = response?.data?.access_token;
+
+                        localStorage.setItem(ACCESS_TOKEN_KEY, response?.data?.access_token);
+                        localStorage.setItem(REFRESH_TOKEN_KEY, response?.data?.refresh_token);
+                        localStorage.setItem("user", response?.data?.user);
+
+                        onTokenRefreshed();
+                        config._retry = true;
+
+                        return await axios.request(config);
+                    } catch (error: any) {
+                        if (
+                            error?.response?.data?.code === 401 ||
+                            error?.response?.data?.code === "401"
+                        ) {
+                            localStorage.removeItem(ACCESS_TOKEN_KEY);
+                            localStorage.removeItem(REFRESH_TOKEN_KEY);
+                            localStorage.removeItem("user");
+                            return window.location.reload();
+                        }
+                        return {};
+                    } finally {
+                        _isRefreshing = false;
                     }
-                    return Promise.reject(error)
+                } else {
+                    const retryOriginalRequest = new Promise((resolve) => {
+                        subscribeTokenRefresh(() => {
+                            resolve(axios.request(config));
+                        });
+                    });
+                    return retryOriginalRequest;
                 }
             }
         }
-        return Promise.reject(error)
+        return Promise.reject(error);
     }
-)
+);
 
 export const authProvider: AuthBindings = {
         login: async ({user, access_token, refresh_token}: IData) => {
@@ -121,7 +186,7 @@ export const authProvider: AuthBindings = {
             };
         },
         onError: async (error) => {
-            console.error(error)
+            console.error(error?.response)
             return {error}
         },
         check: async () => {

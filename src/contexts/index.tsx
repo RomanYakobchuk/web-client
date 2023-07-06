@@ -4,7 +4,7 @@ import React, {
     useEffect,
     useState,
 } from "react";
-import { ThemeProvider } from "@mui/material/styles";
+import {ThemeProvider} from "@mui/material/styles";
 import {createTheme} from "@mui/material";
 
 type ColorModeContextType = {
@@ -44,6 +44,10 @@ export const ColorModeContextProvider: React.FC<PropsWithChildren> = ({
     let customLightTheme = createTheme({
         palette: {
             mode: 'light',
+            common: {
+                white: '#2A132E',
+                black: '#fff'
+            },
             primary: {
                 main: "#fff",
                 contrastText: "#0F2C25",
@@ -107,7 +111,11 @@ export const ColorModeContextProvider: React.FC<PropsWithChildren> = ({
     });
     let customDarkTheme = createTheme({
         palette: {
-            mode:'dark',
+            mode: 'dark',
+            common: {
+                white: '#fff',
+                black: '#2A132E'
+            },
             primary: {
                 main: "#244d61",
                 contrastText: "#fff",
@@ -118,7 +126,7 @@ export const ColorModeContextProvider: React.FC<PropsWithChildren> = ({
             },
             background: {
                 default: "#948888",
-                paper: "#58626c",
+                paper: "#333450",
             },
             success: {
                 main: "#67be23",

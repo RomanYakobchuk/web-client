@@ -9,15 +9,15 @@ import {ColorModeContext} from "../../../contexts";
 import {useMobile} from "../../../utils";
 import {useNavigate} from "react-router-dom";
 
+interface IProps {
+    news: INews,
+    index: number
+}
 const NewsCard = ({
-                      title,
-                      dateEvent,
-                      description,
-                      mainPhoto,
-                      _id,
-                      place,
+                      news,
                       index
-                  }: INews) => {
+                  }: IProps) => {
+    const {title, _id, place, dateEvent, description, mainPhoto} = news;
 
     const {data: user} = useGetIdentity<ProfileProps>();
     const translate = useTranslate();
@@ -33,10 +33,9 @@ const NewsCard = ({
                 display: 'flex',
                 flexDirection: width > 600 ? 'column' : 'row',
                 position: 'relative',
-                height: width > 600 ? '100%' : {xs: '200px', md: '250px'},
+                height: width > 600 ? 'auto' : {xs: '200px', md: '250px'},
                 justifyContent: width > 600 ? 'normal' : index! % 2 === 0 ? 'end' : 'start',
                 alignItems: 'center',
-                border: width > 600 ? '1px solid black' : ""
             }}
         >
             <Box sx={{
@@ -47,8 +46,8 @@ const NewsCard = ({
                 right: width > 600 ? 'none' : index! % 2 === 0 ? 'none' : 0,
                 bottom: width > 600 ? 0 : 'none',
                 width: width > 600 ? '100%' : '60%',
-                borderRadius: width > 600 ? '0 0 10px 10px' : '10px',
-                bgcolor: mode === 'light' ? '#fcfcfc' : '#3c3a3a',
+                borderRadius: width > 600 ? '0 0 20px 20px' : '10px',
+                bgcolor: mode === 'light' ? '#ffffff' : '#3c3a3a',
                 height: '100%',
                 display: 'flex',
                 flexDirection: 'column',
@@ -100,17 +99,24 @@ const NewsCard = ({
                     display: 'flex',
                     flexDirection: "column",
                     justifyContent: width < 400 ? 'start' : 'space-between',
-                    alignItems: width < 400 ? "start" : 'center',
+                    alignItems: "start",
                     gap: width < 400 ? 1 : 0,
+
                 }}>
                     <Box sx={{
-                        width: '100%',
-                        my: 1.5
+                        // width: '100%',
+                        my: 1.5,
                     }}>
                         {
                             dateEvent?.length > 0 && dateEvent?.map((date, index: number) => (
                                 <Box key={index} sx={{
-                                    // display: 'flex'
+                                    bgcolor: 'black',
+                                    borderRadius: '20px',
+                                    display: 'flex',
+                                    color: '#fff',
+                                    p: '10px 15px',
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
                                 }}>
                                     <Box sx={{
                                         display: 'flex'
@@ -130,7 +136,7 @@ const NewsCard = ({
                                         </Box>
                                     </Box>
                                     <Box sx={{
-                                        display: 'flex'
+                                        display: 'flex',
                                     }}>
                                         <Box sx={{
                                             fontSize: '14px'
@@ -154,6 +160,7 @@ const NewsCard = ({
                         sx={{
                             fontSize: {xs: '12px', sm: '14px'},
                             width: '100%',
+                            borderRadius: '20px',
                             minWidth: '100px',
                             mt: 1
                         }}
@@ -171,7 +178,7 @@ const NewsCard = ({
                 height: '180px',
             }}>
                 <img style={{
-                    borderRadius: width > 600 ? '10px 10px 0 0' : '10px',
+                    borderRadius: width > 600 ? '20px 20px 0 0' : '10px',
                     width: '100%',
                     height: '100%',
                     objectFit: 'cover'

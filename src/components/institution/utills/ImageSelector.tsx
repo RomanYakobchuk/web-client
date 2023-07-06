@@ -6,6 +6,7 @@ import {useTranslate} from "@refinedev/core";
 import Carousel from "./Carousel";
 import {ColorModeContext} from "../../../contexts";
 import {useMobile} from "../../../utils";
+import {buttonStyle} from "../../../styles";
 
 interface Props {
     images: string[] | any;
@@ -17,7 +18,14 @@ interface Props {
 }
 
 
-const ImageSelector = ({images: items, handleChange, setOtherPhoto, maxImages, setVariantForDisplay, variantForDisplay}: Props) => {
+const ImageSelector = ({
+                           images: items,
+                           handleChange,
+                           setOtherPhoto,
+                           maxImages,
+                           setVariantForDisplay,
+                           variantForDisplay
+                       }: Props) => {
 
     const translate = useTranslate();
     const {mode} = useContext(ColorModeContext);
@@ -56,21 +64,17 @@ const ImageSelector = ({images: items, handleChange, setOtherPhoto, maxImages, s
                                 }}>
                                     <Button
                                         component="label"
+                                        color={'info'}
+                                        variant={'contained'}
                                         sx={{
-                                            color: "#fcfcfc",
-                                            fontSize: {xs: 12, sm: 16},
-                                            bgcolor: 'blue',
                                             width: '130px',
                                             textTransform: 'capitalize',
-                                            gap: 1,
-                                            padding: '10px 15px',
-                                            borderRadius: '5px',
-                                            "&:hover": {
-                                                bgcolor: '#0d2986',
-                                            }
+                                            ...buttonStyle
                                         }}
+                                        startIcon={
+                                            <Edit/>
+                                        }
                                     >
-                                        <Edit/>
                                         {translate("profile.edit.change")}
                                         <input
                                             hidden
@@ -80,21 +84,19 @@ const ImageSelector = ({images: items, handleChange, setOtherPhoto, maxImages, s
                                             onChange={handleChange}
                                         />
                                     </Button>
-                                    <Button onClick={() => setOtherPhoto([])} sx={{
-                                        color: "#fcfcfc",
-                                        fontSize: {xs: 12, sm: 16},
-                                        bgcolor: 'red',
-                                        width: '170px',
-                                        textTransform: 'capitalize',
-                                        gap: 1,
-                                        padding: '10px 15px',
-                                        borderRadius: '5px',
-                                        "&:hover": {
-                                            bgcolor: '#0d2986',
+                                    <Button
+                                        variant={'contained'}
+                                        color={'error'}
+                                        onClick={() => setOtherPhoto([])}
+                                        sx={{
+                                            ...buttonStyle,
+                                            width: '170px',
+                                            textTransform: 'capitalize',
+                                        }}
+                                        startIcon={
+                                            <DeleteForeverOutlined/>
                                         }
-                                    }}
                                     >
-                                        <DeleteForeverOutlined style={{color: '#fcfcfc'}}/>
                                         {translate("home.create.otherPhoto.deleteAll")}
                                     </Button>
                                 </Box>
@@ -116,7 +118,10 @@ const ImageSelector = ({images: items, handleChange, setOtherPhoto, maxImages, s
                         </Typography>
                     }
                     {
-                        items?.length > 0 ? <Carousel variantForDisplay={variantForDisplay} setVariantForDisplay={setVariantForDisplay} rowHeight={device && width < 600 ? 120 : 200} maxImages={maxImages} items={items} onChange={setOtherPhoto}/>
+                        items?.length > 0 ?
+                            <Carousel variantForDisplay={variantForDisplay} setVariantForDisplay={setVariantForDisplay}
+                                      rowHeight={device && width < 600 ? 120 : 200} maxImages={maxImages} items={items}
+                                      onChange={setOtherPhoto}/>
 
                             : <Button component={"label"} sx={
                                 {

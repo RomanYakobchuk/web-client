@@ -14,6 +14,8 @@ import {useLocation} from "react-router-dom";
 
 import {ColorModeContext} from "../../../contexts";
 import {SearchCity} from "../../index";
+import {buttonStyle, selectStyle, textFieldStyle} from "../../../styles";
+import {useMobile} from "../../../utils";
 
 
 interface IProps {
@@ -45,6 +47,7 @@ const FilterInstitutions = ({
     const translate = useTranslate();
     const {state: locationState, search} = useLocation();
     const {mode} = useContext(ColorModeContext);
+    const {width} = useMobile();
 
     const [openFilter, setOpenFilter] = useState(false);
     const [newFilters, setFilters] = useState<any>();
@@ -251,12 +254,24 @@ const FilterInstitutions = ({
                 justifyContent: 'center',
                 alignItems: 'center'
             }}>
-                <TuneOutlined
-                    sx={{
-                        cursor: 'pointer'
-                    }}
+                <Button
+                    variant={'contained'}
+                    color={'primary'}
                     onClick={() => setOpenFilter(true)}
-                />
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        gap: 1,
+                        alignItems: 'center'
+                    }}
+                >
+                    <TuneOutlined
+                        sx={{
+                            cursor: 'pointer'
+                        }}
+                    />
+                    {width > 600 && translate('buttons.filter')}
+                </Button>
                 {
                     openFilter &&
                     (<Box
@@ -307,7 +322,8 @@ const FilterInstitutions = ({
                                         required
                                         inputProps={{'aria-label': 'Without label'}}
                                         sx={{
-                                            fontSize: {xs: '12px', sm: '16px'}
+                                            fontSize: {xs: '12px', sm: '16px'},
+                                            ...selectStyle
                                         }}
                                         value={type ?? currentFilterValues.propertyType}
                                         onChange={(e) => {
@@ -370,7 +386,8 @@ const FilterInstitutions = ({
                                         inputProps={{'aria-label': 'Without label'}}
                                         value={newSorters[0]?.field ? newSorters[0]?.field : sortBy ? sortBy : ""}
                                         sx={{
-                                            fontSize: {xs: '12px', sm: '16px'}
+                                            fontSize: {xs: '12px', sm: '16px'},
+                                            ...selectStyle
                                         }}
                                         onChange={
                                             (e: any) => {
@@ -439,13 +456,16 @@ const FilterInstitutions = ({
                                             display: 'flex',
                                             flexDirection: 'row',
                                             alignItems: 'center',
+                                            width: '100%',
                                             justifyContent: 'space-between',
                                         }}>
                                             <TextField
                                                 color={"secondary"}
                                                 sx={{
                                                     width: '100px',
-                                                    borderColor: 'silver'
+                                                    borderColor: 'silver',
+                                                    minWidth: '140px',
+                                                    ...textFieldStyle
                                                 }}
                                                 id="outlined-number-1"
                                                 size={"small"}
@@ -472,7 +492,9 @@ const FilterInstitutions = ({
                                                 color={"secondary"}
                                                 sx={{
                                                     width: '100px',
-                                                    borderColor: 'silver'
+                                                    borderColor: 'silver',
+                                                    minWidth: '140px',
+                                                    ...textFieldStyle
                                                 }}
                                                 InputProps={{
                                                     inputProps: {
@@ -517,6 +539,9 @@ const FilterInstitutions = ({
                                     onClick={handleReplace}
                                     color={"inherit"}
                                     variant={"outlined"}
+                                    sx={{
+                                        ...buttonStyle
+                                    }}
                                 >
                                     {
                                         translate("home.reset")
@@ -531,7 +556,8 @@ const FilterInstitutions = ({
                                 }}>
                                     <Button
                                         sx={{
-                                            width: '35%'
+                                            width: '35%',
+                                            ...buttonStyle
                                         }}
                                         color={"error"}
                                         variant={"contained"}
@@ -543,10 +569,8 @@ const FilterInstitutions = ({
                                         variant={"contained"}
                                         color={"info"}
                                         sx={{
-                                            bgcolor: 'blue',
-                                            color: '#fcfcfc',
                                             width: '60%',
-
+                                            ...buttonStyle
                                         }}
                                         onClick={handleSearch}>
                                         {translate("buttons.search")}

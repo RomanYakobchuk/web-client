@@ -2,6 +2,7 @@ import React, {useContext, useState} from "react";
 import {Button, Chip, Grid, TextField} from "@mui/material";
 import {Add} from "@mui/icons-material";
 import {ColorModeContext} from "../../../contexts";
+import {buttonStyle, textFieldStyle} from "../../../styles";
 
 
 type Props = {
@@ -46,10 +47,13 @@ const InputList = ({elements, setData, label}: Props) => {
                     value={item ? item : ''}
                     color={"secondary"}
                     size={"small"}
+                    sx={textFieldStyle}
                     type={"text"}
                     onChange={handleInputChange}
                 />
-                <Button variant="contained" color={"info"} onClick={handleAddNumber}>
+                <Button
+                    sx={buttonStyle}
+                    variant="contained" color={"info"} onClick={handleAddNumber}>
                     <Add />
                 </Button>
             </Grid>

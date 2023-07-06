@@ -1,9 +1,10 @@
-import {Header} from "../../components/layout";
+import {Header} from "../../layout";
 import {Avatar, Box, Button, Container, CssBaseline, Typography} from "@mui/material";
 import React, {FC, useContext} from "react";
 import {useTranslate} from "@refinedev/core";
 import {ColorModeContext} from "../../contexts";
 import {useNavigate} from "react-router-dom";
+import {buttonStyle} from "../../styles";
 
 
 const Welcome: FC = () => {
@@ -85,12 +86,14 @@ const Welcome: FC = () => {
                         }}>
                             {translate("welcomePage.text2")}
                         </Typography>
-                        <Button onClick={()=>navigate('/register')}
-                            color={mode === "dark" ? "info" : "secondary"} variant={"contained"} sx={{
-                            padding: '5px 10px',
-                            height: {xs: '40px', md: '60px'},
-                            width: '200px'
-                        }}>
+                        <Button onClick={() => navigate('/register')}
+                                color={mode === "dark" ? "info" : "secondary"} variant={"contained"}
+                                sx={{
+                                    padding: '5px 10px',
+                                    height: {xs: '40px', md: '60px'},
+                                    width: '300px',
+                                    ...buttonStyle
+                                }}>
                             {translate("pages.login.signup")}
                         </Button>
                     </Box>
@@ -107,10 +110,13 @@ const Welcome: FC = () => {
                         }}>
                             {translate("welcomePage.question")}
                         </Typography>
-                        <Button onClick={()=>navigate('/login')} variant={"contained"} color={mode === "dark" ? "info" : "secondary"} sx={{
+                        <Button
+                            onClick={() => navigate('/login')} variant={"contained"}
+                            color={mode === "dark" ? "info" : "secondary"} sx={{
                             padding: '5px 10px',
                             height: {xs: '40px', md: '60px'},
-                            width: '150px'
+                            width: '150px',
+                            ...buttonStyle
                         }}>
                             {translate("pages.login.signin")}
                         </Button>

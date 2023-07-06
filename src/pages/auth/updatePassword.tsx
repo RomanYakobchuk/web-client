@@ -1,6 +1,6 @@
 import {
     Avatar,
-    Box,
+    Box, Button,
     CircularProgress,
     Container,
     CssBaseline, FormControl, Grid,
@@ -15,24 +15,26 @@ import {useNavigate, useParams} from "react-router-dom";
 import {VisibilityOffOutlined, VisibilityOutlined} from "@mui/icons-material";
 
 import {parseJwt} from "../../utils";
-import {Header} from "../../components/layout";
+import {Header} from "../../layout";
 import {ColorModeContext} from "../../contexts";
 import Copyright from "./utills/copyright";
 import {CustomButton} from "../../components";
+import {buttonStyle, textFieldStyle} from "../../styles";
+
 const UpdatePassword = () => {
 
     const translate = useTranslate();
     const {mode} = useContext(ColorModeContext);
     const navigate = useNavigate();
     const {open} = useNotification();
-    const {token}:any = useParams();
+    const {token}: any = useParams();
     const [showPass, setShowPass] = useState(false);
     const [showConfirmPass, setShowConfirmPass] = useState(false);
 
     const dateNow = new Date();
     const data_token = parseJwt(token);
     useEffect(() => {
-        if(data_token?.exp * 1000 < dateNow.getTime()){
+        if (data_token?.exp * 1000 < dateNow.getTime()) {
             open?.({
                 type: "error",
                 message: translate("pages.updatePassword.errors.timeIsUp"),
@@ -53,7 +55,7 @@ const UpdatePassword = () => {
     },);
 
     useEffect(() => {
-        if(!token) {
+        if (!token) {
             navigate("/")
         }
     }, [token])
@@ -94,7 +96,8 @@ const UpdatePassword = () => {
                         alignItems: 'center',
                     }}
                 >
-                    <Avatar src={`/images/logo.png`} onClick={()=>navigate('/welcome')} sx={{m: 1, cursor: 'pointer'}}/>
+                    <Avatar src={`/images/logo.png`} onClick={() => navigate('/welcome')}
+                            sx={{m: 1, cursor: 'pointer'}}/>
                     <Typography component="h1" variant="h5">
                         {translate("pages.updatePassword.title")}
                     </Typography>
@@ -112,6 +115,7 @@ const UpdatePassword = () => {
                                 label={translate("pages.login.fields.password")}
                                 type={showPass ? 'text' : 'password'}
                                 id="password"
+                                sx={textFieldStyle}
                                 placeholder={"Example: Thsd_e28gv"}
                                 autoComplete="current-password"
                             />
@@ -144,6 +148,7 @@ const UpdatePassword = () => {
                                 margin="normal"
                                 required
                                 fullWidth
+                                sx={textFieldStyle}
                                 inputProps={{pattern: "/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?\\d)(?=.*?[#?!@$%^&*-]).{8,}$/"}}
                                 {...register("confirmPassword", {required: true})}
                                 label={translate("pages.updatePassword.fields.confirmPassword")}
@@ -176,17 +181,18 @@ const UpdatePassword = () => {
                             </Box>
                         </FormControl>
                         <Grid item mt={2} mb={2}>
-                            <CustomButton
+                            <Button
                                 type={"submit"}
-                                color={"#fcfcfc"}
-                                title={
+                                color={mode === "dark" ? "info" : "secondary"} variant={"contained"}
+                                fullWidth
+                                sx={buttonStyle}
+                            >
+                                {
                                     formLoading ?
                                         <CircularProgress/> :
                                         translate("pages.updatePassword.buttons.submit")
                                 }
-                                backgroundColor={"cornflowerblue"}
-                                fullWidth
-                            />
+                            </Button>
                         </Grid>
                     </Box>
                 </Box>

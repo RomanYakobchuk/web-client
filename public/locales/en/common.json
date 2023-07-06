@@ -19,7 +19,7 @@
       },
       "buttons": {
         "submit": "Login",
-        "forgotPassword": "Forgot password?",
+        "forgotPassword": "Forgot password",
         "noAccount": "Don’t have an account?",
         "rememberMe": "Remember me"
       }
@@ -83,6 +83,7 @@
     "confirmDelete": "Are you sure you want to delete {{value}}?"
   },
   "buttons": {
+    "copy": "Copy",
     "create": "Create",
     "details": "Details",
     "save": "Save",
@@ -280,6 +281,8 @@
         "title": "Comments",
         "notHave": "There are no comments"
       },
+      "addToFav": "Add to favorites",
+      "delFromFav": "Remove from favorites",
       "reviews": {
         "title": "Reviews",
         "notHave": "There are no reviews",
@@ -390,7 +393,7 @@
     "notHave": "There are no reviews"
   },
   "all-users": {
-    "all-users": "All users",
+    "all-users": "Users",
     "title": "All users"
   },
   "all-news": {
@@ -488,5 +491,26 @@
   },
   "chats": {
     "chats": "All chats"
+  },
+  "dates": {
+    "months": {
+      "1": "January",
+      "2": "February",
+      "3": "March",
+      "4": "April",
+      "5": "May",
+      "6": "June",
+      "7": "July",
+      "8": "August",
+      "9": "September",
+      "10": "October",
+      "11": "November",
+      "12": "December"
+    }
+  },
+  "schema": {
+    "title": "Select schema",
+    "schema_1": "Schema 1",
+    "schema_2": "Schema 2"
   }
 }

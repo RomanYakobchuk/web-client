@@ -1,6 +1,6 @@
 import {Box, Button, Typography} from "@mui/material";
 import {useGetIdentity, useTranslate} from "@refinedev/core";
-import {DateRange, Money, People, Person, EditNote, EastOutlined, Place} from "@mui/icons-material";
+import {DateRange, Person, EastOutlined, Place} from "@mui/icons-material";
 import React, {useContext} from "react";
 import dayjs from "dayjs";
 import {useNavigate} from "react-router-dom";
@@ -8,21 +8,23 @@ import {useNavigate} from "react-router-dom";
 import {IReserve, ProfileProps} from "../../interfaces/common";
 import {ColorModeContext} from "../../contexts";
 import {TagField} from "@refinedev/mui";
+import {buttonStyle} from "../../styles";
 
-const ReservedCard = ({
-                          comment,
-                          institution,
-                          date,
-                          _id,
-                          eventType,
-                          fullName,
-                          whoPay,
-                          numberPeople,
-                          writeMe,
-                          institutionStatus,
-                          userStatus,
-                          desiredAmount
-                      }: IReserve) => {
+interface IProps {
+    reserve: IReserve
+}
+
+const ReservedCard = ({reserve}: IProps) => {
+
+    const {
+        institution,
+        date,
+        _id,
+        fullName,
+        institutionStatus,
+        userStatus,
+    } = reserve;
+
     const {data: user} = useGetIdentity<ProfileProps>();
     const translate = useTranslate();
     const navigate = useNavigate();
@@ -195,7 +197,8 @@ const ReservedCard = ({
                 sx={{
                     fontSize: {xs: '12px', sm: '14px'},
                     width: '100%',
-                    my: 1
+                    my: 1,
+                    ...buttonStyle
                 }}
                 onClick={() => navigate(`/capl/show/${_id}`)}
                 color={"secondary"}

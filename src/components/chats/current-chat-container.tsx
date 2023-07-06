@@ -27,7 +27,7 @@ const CurrentChatContainer = ({conversation, setCurrentChat, setOpenDrawer}: IPr
     const [receiver, setReceiver] = useState<ProfileProps>({} as ProfileProps);
     const [replyTo, setReplyTo] = useState<IMessage>({} as IMessage);
     const [messageText, setMessageText] = useState<string>('');
-    const [messages, setMessages] = useState<IMessage[]>([] as IMessage[]);
+    const [messages, setMessages] = useState<Array<[string, IMessage[]]>>([] as Array<[string, IMessage[]]>);
     const [arivialMessages, setArivialMessages] = useState<IMessage>({} as IMessage);
 
     const {
@@ -94,24 +94,53 @@ const CurrentChatContainer = ({conversation, setCurrentChat, setOpenDrawer}: IPr
         return () => {
             socket.off('getMessage');
         };
-    }, [data?.pages[0]?.data]);
+    }, []);
     useEffect(() => {
         if (data?.pages) {
-            const list: IMessage[] = [].concat(...(data?.pages as any ?? [])?.map((page: GetListResponse<IMessage>) => page?.data));
-            setMessages(list);
+            const list: Array<[string, IMessage[]]> = [].concat(...(data?.pages as any ?? [])?.map((page: GetListResponse<IMessage>) => Object.entries(page?.data))).sort(([dateA]: [string], [dateB]: [string]) => {
+                const [dayA, monthA, yearA] = dateA?.split('-');
+                const [dayB, monthB, yearB] = dateB?.split('-');
+
+                const dateObjA = new Date(Number(yearA), Number(monthA) - 1, Number(dayA));
+                const dateObjB = new Date(Number(yearB), Number(monthB) - 1, Number(dayB));
+
+                return dateObjA.getTime() - dateObjB.getTime();
+            });
+            if (list) {
+                const mergedObjects = list.reduce((acc: Record<string, IMessage[]>, [key, arr]) => {
+                    if (acc[key]) {
+                        acc[key] = acc[key].concat(arr);
+                    } else {
+                        acc[key] = arr;
+                    }
+                    return acc;
+                }, {} as Record<string, IMessage[]>);
+                const mergedArray: [string, IMessage[]][] = Object.entries(mergedObjects);
+                setMessages(mergedArray);
+            }
         }
     }, [data?.pages]);
     useEffect(() => {
-        if (arivialMessages) {
-            setMessages(prevState => [...prevState, arivialMessages])
-        }
-    }, [arivialMessages]);
+        if (arivialMessages?._id) {
+            setMessages(prevState => {
+                const messagesCopy = [...prevState];
+                const lastObject = messagesCopy[messagesCopy.length - 1];
+                if (lastObject && Array.isArray(lastObject[1]) && lastObject[1].includes(arivialMessages)) {
+                    return prevState;
+                }
+                if (lastObject && Array.isArray(lastObject[1])) {
+                    const updatedLastObject = [...lastObject[1], arivialMessages];
+                    lastObject[1] = updatedLastObject;
+                } else {
+                    messagesCopy.push(['', [arivialMessages]]);
+                }
 
-    // useEffect(() => {
-    //     if (params.get('messageId')) {
-    //
-    //     }
-    // }, [params])
+                return messagesCopy;
+            });
+
+            setArivialMessages(prevState => ({} as IMessage));
+        }
+    }, [arivialMessages?._id]);
 
     return (
         <Box sx={{
@@ -149,15 +178,16 @@ const CurrentChatContainer = ({conversation, setCurrentChat, setOpenDrawer}: IPr
                 {
                     !isError ?
                         isLoading ? <Loading/> :
-                            <ChatBox
-                                hasNextPage={hasNextPage}
-                                fetchNextPage={fetchNextPage}
-                                isFetchingNextPage={isFetchingNextPage}
-                                messages={messages}
-                                receiver={receiver}
-                                setReplyTo={setReplyTo}
-                                conversation={conversation}
-                            /> : <div>Error</div>
+                            messages[0]?.length > 0 ?
+                                <ChatBox
+                                    hasNextPage={hasNextPage}
+                                    fetchNextPage={fetchNextPage}
+                                    isFetchingNextPage={isFetchingNextPage}
+                                    messages={messages}
+                                    receiver={receiver}
+                                    setReplyTo={setReplyTo}
+                                    conversation={conversation}
+                                /> : <div>Error</div> : ''
                 }
             </Box>
             {

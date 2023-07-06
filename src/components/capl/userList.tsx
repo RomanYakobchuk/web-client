@@ -66,19 +66,7 @@ const UserList = () => {
                         >
                             <ReservedCard
                                 key={index}
-                                userStatus={item?.userStatus}
-                                institutionStatus={item?.institutionStatus}
-                                institution={item.institution}
-                                _id={item?._id}
-                                writeMe={item?.writeMe}
-                                isActive={item?.isActive}
-                                fullName={item?.fullName}
-                                whoPay={item?.whoPay}
-                                eventType={item?.eventType}
-                                date={item?.date}
-                                comment={item?.comment}
-                                desiredAmount={item?.desiredAmount}
-                                numberPeople={item?.numberPeople}
+                                reserve={item}
                             />
                         </Grid>
                     )}

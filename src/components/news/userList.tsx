@@ -2,12 +2,13 @@ import {useNavigate} from "react-router-dom";
 import {HttpError, useGetIdentity, useTable, useTranslate} from "@refinedev/core";
 import React, {useContext, useEffect, useState} from "react";
 import {useDebounce} from "use-debounce";
-import {Box, Grid, Stack, Typography} from "@mui/material";
+import {Box, Button, Grid, Stack, Typography} from "@mui/material";
 import {Add} from "@mui/icons-material";
 
 import {ColorModeContext} from "../../contexts";
 import {INews, NewsProps, ProfileProps} from "../../interfaces/common";
 import {CustomButton, FilterNews, Loading, NewsCard, Pagination} from "../index";
+import {buttonStyle} from "../../styles";
 
 const UserList = () => {
     const navigate = useNavigate();
@@ -80,9 +81,17 @@ const UserList = () => {
                         {
                             isUserInstitution &&
                             <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
-                                <CustomButton title={translate("news.button")} backgroundColor={"#475be8"}
-                                              color={"#fcfcfc"} icon={<Add/>}
-                                              handleClick={() => navigate('/news/create')}/>
+                                <Button
+                                    color={'info'}
+                                    startIcon={<Add/>}
+                                    variant={'contained'}
+                                    sx={{
+                                        ...buttonStyle,
+                                        textTransform: 'none'
+                                    }}
+                                    onClick={() => navigate('/news/create')}>
+                                    {translate("news.button")}
+                                </Button>
                             </Stack>
                         }
                     </Box>
@@ -120,14 +129,7 @@ const UserList = () => {
                             >
                                 <NewsCard
                                     index={index}
-                                    place={news?.place}
-                                    _id={news._id}
-                                    mainPhoto={news.mainPhoto}
-                                    title={news.title}
-                                    dateEvent={news?.dateEvent}
-                                    description={news.description}
-                                    createdAt={news.createdAt}
-                                    category={news.category}
+                                    news={news}
                                 />
                             </Grid>
                         ))

@@ -85,6 +85,12 @@ const InstitutionComments = ({institutionId}: IProps) => {
                             display: 'flex',
                             gap: 1,
                         }}>
+                            <Box sx={{
+                                height: '50px',
+                                bgcolor: 'silver',
+                                borderRadius: '10px',
+                                width: '2px'
+                            }}/>
                             <img style={{
                                 width: '50px',
                                 height: '50px',

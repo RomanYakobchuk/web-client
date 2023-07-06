@@ -31,6 +31,7 @@ const ScrollContent = ({children, id}: IProps) => {
                 display: 'flex',
                 flexWrap: 'nowrap',
                 overflowX: 'auto',
+                scrollSnapType: 'x mandatory',
                 gap: '20px',
                 pb: '20px',
                 "&::-webkit-scrollbar": {
@@ -39,7 +40,7 @@ const ScrollContent = ({children, id}: IProps) => {
                     bgcolor: '#dfcdcd'
                 },
                 "&::-webkit-scrollbar-thumb": {
-                    bgcolor: 'silver',
+                    bgcolor: '#a98282',
                     borderRadius: '5px'
                 }
             }}>

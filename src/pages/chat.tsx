@@ -36,7 +36,7 @@ const Chat = () => {
 
     useEffect(() => {
         if (userId && institutionId && !conversationId) {
-            const x = async () => {
+            (async () => {
                 const data: any = await axiosInstance.post(`/conversation/findChatByTwoId`, {
                     userId: userId,
                     institutionId: institutionId
@@ -50,8 +50,7 @@ const Chat = () => {
                     });
                     setCurrentChat(data?.data)
                 }
-            }
-            x();
+            })();
         } else if (conversationId) {
             (async () => {
                 const data = await axiosInstance.get(`/conversation/findById/${conversationId}`);
@@ -132,39 +131,39 @@ const Chat = () => {
                                 m: '-10px'
                             }}>
                                 {
-                                openDrawer && currentChat?._id ?
-                                    <>
-                                        <img
-                                            src={role === 'user' ? currentChat?.institutionId?.mainPhoto : role === 'manager' ? currentChat?.userId?.avatar : currentChat?.institutionId?.mainPhoto}
-                                            alt={role === 'user' ? currentChat?.institutionId?.title : role === 'manager' ? currentChat?.userId?.name : ''}
-                                            style={{
-                                                width: '46px',
-                                                height: '46px',
-                                                borderRadius: '50%',
-                                                objectFit: 'cover'
-                                            }}
-                                        />
-                                        {
-                                            role === 'user' ? currentChat?.institutionId?.title : role === 'manager' ? currentChat?.userId?.name : `${currentChat?.institutionId?.title} - ${currentChat?.userId?.name}`
-                                        }
-                                        {
-                                            role === 'admin'
-                                                ? <img
-                                                    src={currentChat?.userId?.avatar}
-                                                    alt={currentChat?.userId?.name}
-                                                    style={{
-                                                        width: '46px',
-                                                        height: '46px',
-                                                        borderRadius: '50%',
-                                                        objectFit: 'cover'
-                                                    }}
-                                                /> : ''
-                                        }
-                                    </> : <Box sx={{
-                                        fontSize: '23px'
-                                    }}>
-                                        Change chat
-                                    </Box>
+                                    openDrawer && currentChat?._id ?
+                                        <>
+                                            <img
+                                                src={role === 'user' ? currentChat?.institutionId?.mainPhoto : role === 'manager' ? currentChat?.userId?.avatar : currentChat?.institutionId?.mainPhoto}
+                                                alt={role === 'user' ? currentChat?.institutionId?.title : role === 'manager' ? currentChat?.userId?.name : ''}
+                                                style={{
+                                                    width: '46px',
+                                                    height: '46px',
+                                                    borderRadius: '50%',
+                                                    objectFit: 'cover'
+                                                }}
+                                            />
+                                            {
+                                                role === 'user' ? currentChat?.institutionId?.title : role === 'manager' ? currentChat?.userId?.name : `${currentChat?.institutionId?.title} - ${currentChat?.userId?.name}`
+                                            }
+                                            {
+                                                role === 'admin'
+                                                    ? <img
+                                                        src={currentChat?.userId?.avatar}
+                                                        alt={currentChat?.userId?.name}
+                                                        style={{
+                                                            width: '46px',
+                                                            height: '46px',
+                                                            borderRadius: '50%',
+                                                            objectFit: 'cover'
+                                                        }}
+                                                    /> : ''
+                                            }
+                                        </> : <Box sx={{
+                                            fontSize: '23px'
+                                        }}>
+                                            Change chat
+                                        </Box>
                                 }
                             </Box>
                             }
@@ -206,44 +205,44 @@ const Chat = () => {
                 }
                 {
                     width > 1200 ? currentChat?._id ?
-                        <Box sx={{
-                            flex: 1,
-                            width: '100%',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            gap: 1
-                        }}>
-                            <img
-                                src={currentChat?.institutionId?.mainPhoto}
-                                alt={currentChat?.institutionId?.title}
-                                style={{
-                                    width: '100px',
-                                    height: '100px',
-                                    borderRadius: '50%',
-                                    objectFit: 'cover'
-                                }}
-                            />
-                            {currentChat?.institutionId?.title}
-                            <Button
-                                sx={{
-                                    fontSize: {xs: '12px', sm: '14px'},
-                                    width: '100%',
-                                    minWidth: '100px',
-                                    mt: 1
-                                }}
-                                onClick={() => navigate(`/all_institutions/show/${currentChat?.institutionId?._id}`)}
-                                color={"secondary"}
-                                endIcon={<EastOutlined/>}
-                                variant={"outlined"}>
-                                {translate("buttons.details")}
-                            </Button>
-                        </Box>
-                        : <Box sx={{
-                            p: '20px'
-                        }}>
-                            Institution details
-                        </Box>
+                            <Box sx={{
+                                flex: 1,
+                                width: '100%',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                gap: 1
+                            }}>
+                                <img
+                                    src={currentChat?.institutionId?.mainPhoto}
+                                    alt={currentChat?.institutionId?.title}
+                                    style={{
+                                        width: '100px',
+                                        height: '100px',
+                                        borderRadius: '50%',
+                                        objectFit: 'cover'
+                                    }}
+                                />
+                                {currentChat?.institutionId?.title}
+                                <Button
+                                    sx={{
+                                        fontSize: {xs: '12px', sm: '14px'},
+                                        width: '100%',
+                                        minWidth: '100px',
+                                        mt: 1
+                                    }}
+                                    onClick={() => navigate(`/all_institutions/show/${currentChat?.institutionId?._id}`)}
+                                    color={"secondary"}
+                                    endIcon={<EastOutlined/>}
+                                    variant={"outlined"}>
+                                    {translate("buttons.details")}
+                                </Button>
+                            </Box>
+                            : <Box sx={{
+                                p: '20px'
+                            }}>
+                                Institution details
+                            </Box>
                         : ''
                 }
             </Box>

@@ -45,7 +45,8 @@ const OtherNews = ({institutionId, newsId}: IProps) => {
     return (
         <Box sx={{
             display: 'flex',
-            flexDirection: 'column',
+            flexDirection: 'row',
+            flexWrap: 'wrap',
             gap: 2,
             height: '100%',
             maxHeight: {xs: '100%', lg: '900px'},
@@ -55,18 +56,18 @@ const OtherNews = ({institutionId, newsId}: IProps) => {
                 data?.pages?.map((page) =>
                     page?.data?.length > 0 ?
                         page?.data?.map((itemNews, index) => (
-                            <NewsCard
+                            <Box
                                 key={itemNews?._id}
-                                index={index}
-                                _id={itemNews?._id}
-                                title={itemNews?.title}
-                                place={itemNews?.place}
-                                dateEvent={itemNews?.dateEvent}
-                                mainPhoto={itemNews?.mainPhoto}
-                                category={itemNews?.category}
-                                description={itemNews?.description}
-                                createdAt={itemNews?.createdAt}
-                            />
+                                sx={{
+                                    width: '100%',
+                                    maxWidth: '350px'
+                                }}
+                            >
+                                <NewsCard
+                                    index={index}
+                                    news={itemNews}
+                                />
+                            </Box>
                         ))
                         : translate('news.notHave')
                 )

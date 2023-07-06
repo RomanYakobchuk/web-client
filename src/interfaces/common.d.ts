@@ -102,7 +102,7 @@ export interface PropertyProps {
     ratings?: Array<string> | Array<object> | any,
     reviews?: Array<String> | any,
     averageCheck: string,
-    features: Array<string>,
+    features: [{value: string}],
     createdBy?: string | any,
     variantForDisplay?: string | any,
     news?: any,
@@ -282,14 +282,14 @@ export interface IOptionGroup {
     value: string;
     label: string | ReactNode;
     userId?: string,
-    title?: string
+    id?: string
 }
 
 export interface IOptions {
     label: string | ReactNode;
     options: IOptionGroup[];
     userId?: string,
-    title?: string
+    id?: string
 }
 
 

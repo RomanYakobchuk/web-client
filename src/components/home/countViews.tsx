@@ -53,6 +53,7 @@ const CountViews = () => {
                                 item
                                 sx={{
                                     cursor: 'pointer',
+                                    scrollSnapAlign: 'center',
                                     width: {xs: '300px', sm: '400px'},
                                     height: {xs: '150px', sm: "200px"},
                                     borderRadius: '10px',

@@ -21,6 +21,7 @@ import {ColorModeContext} from "../../../contexts";
 import ImageSelector from "./ImageSelector";
 import ScheduleList from "./scheduleList";
 import ItemsList from "./ItemsList";
+import {buttonStyle, selectStyle, textFieldStyle} from "../../../styles";
 
 
 const DataForm = ({
@@ -161,8 +162,11 @@ const DataForm = ({
                     {translate(`home.${titleAction}.title`)}
                 </Typography>
             </Box>
-            <Box mt={2.5} borderRadius="15px" padding="15px" paddingBottom={"30px"}
-                 bgcolor={(theme) => theme.palette.background.paper}>
+            <Box mt={2.5}
+                 mb={10}
+                 borderRadius="15px" padding="15px" paddingBottom={"30px"}
+                 bgcolor={(theme) => theme.palette.primary.main}
+            >
                 <Box
                     component={"form"}
                     sx={{
@@ -201,7 +205,10 @@ const DataForm = ({
                             <Box sx={{
                                 display: 'flex',
                                 flexDirection: 'row',
-                                gap: {xs: 1, sm: 2},
+                                gap: mainPhoto && (mainPhoto?.name || (typeof mainPhoto === "string" && mainPhoto?.length > 0)) ? {
+                                    xs: 1,
+                                    sm: 2
+                                } : 0,
                                 width: '100%'
                             }}>
                                 <Box sx={{
@@ -268,24 +275,23 @@ const DataForm = ({
                                 }}>
                                     {
                                         mainPhoto && (mainPhoto?.name || (typeof mainPhoto === "string" && mainPhoto?.length > 0))
-                                            ? <>
+                                            ? <Box sx={{
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                gap: 1
+                                            }}>
                                                 <Button
                                                     component="label"
+                                                    color={'info'}
+                                                    variant={'contained'}
                                                     sx={{
-                                                        color: "#fcfcfc",
+                                                        ...buttonStyle,
                                                         fontSize: {xs: 12, sm: 14},
-                                                        bgcolor: 'blue',
                                                         width: '130px',
                                                         textTransform: 'capitalize',
-                                                        gap: 1,
-                                                        padding: '10px 15px',
-                                                        borderRadius: '5px',
-                                                        "&:hover": {
-                                                            bgcolor: '#0d2986',
-                                                        }
                                                     }}
+                                                    startIcon={<Edit sx={{fontSize: {xs: 16, sm: 18}}}/>}
                                                 >
-                                                    <Edit sx={{fontSize: {xs: 16, sm: 18}}}/>
                                                     {translate("profile.edit.change")}
                                                     <input
                                                         hidden
@@ -298,11 +304,19 @@ const DataForm = ({
                                                         }}
                                                     />
                                                 </Button>
-                                                <CustomButton handleClick={deleteImage} color={"#fcfcfc"}
-                                                              title={translate("profile.edit.delete")}
-                                                              backgroundColor={"red"}
-                                                              icon={<DeleteForeverOutlined style={{color: '#fcfcfc'}}/>}/>
-                                            </>
+                                                <Button
+                                                    onClick={deleteImage}
+                                                    color={"error"}
+                                                    variant={'contained'}
+                                                    sx={{
+                                                        ...buttonStyle,
+                                                        textTransform: 'capitalize'
+                                                    }}
+                                                    startIcon={<DeleteForeverOutlined style={{color: '#fcfcfc'}}/>}
+                                                >
+                                                    {translate("profile.edit.delete")}
+                                                </Button>
+                                            </Box>
                                             : <div></div>
                                     }
                                 </Box>
@@ -330,6 +344,7 @@ const DataForm = ({
                                 <TextField
                                     fullWidth
                                     required
+                                    sx={textFieldStyle}
                                     size={"small"}
                                     id="outlined-basic"
                                     color="secondary"
@@ -366,6 +381,7 @@ const DataForm = ({
                                         fontWeight: 500,
                                         margin: "10px 0",
                                         fontSize: {xs: 12, sm: 16},
+                                        height: '19px',
                                         color: mode === "dark" ? "#fcfcfc" : "#11142D",
                                     }}
                                 >
@@ -378,6 +394,7 @@ const DataForm = ({
                                     value={type ? type : ''}
                                     size={"small"}
                                     sx={{
+                                        ...selectStyle,
                                         fontSize: {xs: 12, sm: 16},
                                     }}
                                     color={"secondary"}
@@ -436,7 +453,7 @@ const DataForm = ({
                             {translate("home.create.location.title")}
                         </FormHelperText>
                         {
-                            isLoaded  ?
+                            isLoaded ?
                                 <Box sx={{
                                     width: "100%",
                                     height: {xs: "350px", md: "400px"},
@@ -474,7 +491,8 @@ const DataForm = ({
                                         fullWidth
                                         required
                                         sx={{
-                                            mt: 2
+                                            mt: 2,
+                                            ...textFieldStyle
                                         }}
                                         id="outlined-basic"
                                         color={"secondary"}
@@ -490,7 +508,8 @@ const DataForm = ({
                                         fullWidth
                                         required
                                         sx={{
-                                            mt: 2
+                                            mt: 2,
+                                            ...textFieldStyle
                                         }}
                                         id="outlined-basic3"
                                         color={"secondary"}
@@ -509,7 +528,8 @@ const DataForm = ({
                                         id="outlined-basic3"
                                         color={"secondary"}
                                         sx={{
-                                            mt: 2
+                                            mt: 2,
+                                            ...textFieldStyle
                                         }}
                                         label={translate("home.create.address")}
                                         size={"small"}
@@ -534,9 +554,7 @@ const DataForm = ({
                         width: '100%',
                         gap: {xs: 2, sm: 4}
                     }}>
-
                         <FormControl fullWidth>
-
                             <ItemsList elements={contacts} label={translate('home.create.contacts')}
                                        setData={setContacts}/>
                         </FormControl>
@@ -562,6 +580,7 @@ const DataForm = ({
                                 id="outlined-basic"
                                 color={"secondary"}
                                 size={"small"}
+                                sx={textFieldStyle}
                                 variant="outlined"
                                 value={averageCheck ? averageCheck : ''}
                                 onChange={(event) => setAverageCheck(event.target.value)}
@@ -579,7 +598,8 @@ const DataForm = ({
                         >
                             {translate("home.create.otherPhoto.title")}
                         </FormHelperText>
-                        <ImageSelector variantForDisplay={variantForDisplay} setVariantForDisplay={setVariantForDisplay} maxImages={12} images={otherPhoto}
+                        <ImageSelector variantForDisplay={variantForDisplay} setVariantForDisplay={setVariantForDisplay}
+                                       maxImages={12} images={otherPhoto}
                                        setOtherPhoto={setOtherPhoto}
                                        handleChange={handleOtherPhotoChange}/>
 
@@ -590,20 +610,29 @@ const DataForm = ({
                         justifyContent: "space-between",
                         alignItems: 'center'
                     }}>
-                        <CustomButton
-                            width={"38%"}
-                            title={translate("profile.edit.cancel")}
-                            backgroundColor="red"
-                            color="#fcfcfc"
-                            handleClick={() => navigate("/home")}
-                        />
-                        <CustomButton
-                            width={"60%"}
-                            title={formLoading ? <CircularProgress/> : translate("profile.edit.save")}
-                            backgroundColor="#475be8"
-                            color="#fcfcfc"
-                            handleClick={handleOpen}
-                        />
+                        <Button
+                            color="error"
+                            variant={'contained'}
+                            sx={{
+                                ...buttonStyle,
+                                width: '32%',
+                                textTransform: 'capitalize'
+                            }}
+                            onClick={() => navigate("/home")}
+                        >
+                            {translate("profile.edit.cancel")}
+                        </Button>
+                        <Button
+                            color="info"
+                            variant={'contained'}
+                            sx={{
+                                ...buttonStyle,
+                                width: '60%'
+                            }}
+                            onClick={handleOpen}
+                        >
+                            {translate("profile.edit.save")}
+                        </Button>
                         <ModalWindow
                             close={setOpen}
                             open={open}

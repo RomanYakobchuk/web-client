@@ -39,10 +39,7 @@ const InstitutionNews = ({institution}: IProps) => {
                                      sx={{
                                          width: width < 600 ? "100%" : width < 1260 ? '48%' : '100%'
                                      }}>
-                                    <NewsCard index={index} _id={newsItem._id} title={newsItem.title} place={newsItem.place}
-                                              dateEvent={newsItem.dateEvent} mainPhoto={newsItem.mainPhoto}
-                                              category={newsItem.category} description={newsItem.description}
-                                              createdAt={newsItem.createdAt}/>
+                                    <NewsCard index={index} news={newsItem}/>
                                 </Box>
                             ))
                         }

@@ -19,20 +19,24 @@ import {
     VisibilityOutlined
 } from "@mui/icons-material";
 import {useForm} from "@refinedev/react-hook-form";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 
-import {Header} from "../../components/layout";
+import {Header} from "../../layout";
 import Copyright from "./utills/copyright";
 import UserAgreement from "../../components/userAgreement";
 import {ColorModeContext} from "../../contexts";
 import {ModalWindow} from "../../components";
+import {buttonStyle, selectStyle, textFieldStyle} from "../../styles";
+import {useMobile} from "../../utils";
 
 const Register = () => {
     const translate = useTranslate();
     const navigate = useNavigate();
     const {mode} = useContext(ColorModeContext);
     const {open} = useNotification();
+    const {width} = useMobile();
 
+    const [size, setSize] = useState<'small' | 'medium' | undefined>('medium');
     const [show, setShow] = useState(false);
     const [error, setError] = useState<any>([]);
     const [accept, setAccept] = useState(false);
@@ -83,6 +87,11 @@ const Register = () => {
         showPass ? setShowPass(false) : setShowPass(true)
     }
 
+    useEffect(() => {
+        if (width < 600) {
+            setSize('small')
+        }
+    }, [width]);
 
     return (
         <Box sx={{
@@ -110,7 +119,7 @@ const Register = () => {
                     <Typography component="h1" variant="h5" fontSize={{xs: 18, md: 22}}>
                         {translate("pages.register.title")}
                     </Typography>
-                    <Typography component={"h3"}>
+                    <Typography component={"h3"} color={'red'}>
                         {translate("importantText")}
                     </Typography>
                     <Box component="form" onSubmit={handleSubmit(onFinishHandler)} noValidate sx={{mt: 3}}>
@@ -121,6 +130,8 @@ const Register = () => {
                                     required
                                     color={"secondary"}
                                     fullWidth
+                                    size={size}
+                                    sx={textFieldStyle}
                                     id="name"
                                     label={translate("pages.register.fields.name")}
                                     autoFocus
@@ -130,8 +141,10 @@ const Register = () => {
                             <Grid item xs={12}>
                                 <TextField
                                     required
+                                    size={size}
                                     fullWidth
                                     id="phone"
+                                    sx={textFieldStyle}
                                     color={"secondary"}
                                     label={translate("pages.register.fields.phone")}
                                     defaultValue={'+380'}
@@ -144,7 +157,9 @@ const Register = () => {
                                 <TextField
                                     required
                                     fullWidth
+                                    sx={textFieldStyle}
                                     id="email"
+                                    size={size}
                                     color={"secondary"}
                                     inputProps={{pattern: "/^([^.@]+)(\\.[^.@]+)*@([^.@]+\\.)+([^.@]+)$/"}}
                                     label={translate("pages.register.fields.email")}
@@ -154,27 +169,33 @@ const Register = () => {
                                 />
                             </Grid>
                             <Grid item xs={12}>
-                                <TextField fullWidth
-                                           required
-                                           id="outlined-basic"
-                                           color={"secondary"}
-                                           type={"date"}
-                                           inputProps={{}}
-                                           defaultValue={"2000-01-01"}
-                                           label={translate("pages.register.fields.dOB")}
-                                           variant="outlined"
-                                           {...register('dOB', {required: true})}
+                                <TextField
+                                    fullWidth
+                                    required
+                                    size={size}
+                                    id="outlined-basic"
+                                    color={"secondary"}
+                                    type={"date"}
+                                    sx={textFieldStyle}
+                                    inputProps={{}}
+                                    defaultValue={"2000-01-01"}
+                                    label={translate("pages.register.fields.dOB")}
+                                    variant="outlined"
+                                    {...register('dOB', {required: true})}
                                 />
                             </Grid>
                             <Grid item xs={12}>
                                 <FormControl fullWidth>
-                                    <InputLabel color={"secondary"} id="demo-simple-select-label">{translate('pages.login.fields.role')}</InputLabel>
+                                    <InputLabel color={"secondary"}
+                                                id="demo-simple-select-label">{translate('pages.login.fields.role')}</InputLabel>
                                     <Select
                                         required
                                         fullWidth
+                                        size={size}
                                         color={"secondary"}
                                         labelId="demo-simple-select-label"
                                         defaultValue={'user'}
+                                        sx={selectStyle}
                                         label={translate('pages.login.fields.role')}
                                         {...register('status', {required: true})}
                                     >
@@ -194,11 +215,10 @@ const Register = () => {
                                         fullWidth
                                         label={translate("pages.login.fields.password")}
                                         type={showPass ? 'text' : 'password'}
-                                        sx={{
-                                            borderColor: "cornflowerblue"
-                                        }}
+                                        sx={textFieldStyle}
                                         color={"secondary"}
                                         id="password"
+                                        size={size}
                                         placeholder={"Example: Thsd_e28gv"}
                                         inputProps={{pattern: "/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?\\d)(?=.*?[#?!@$%^&*-]).{8,}$/"}}
                                         {...register('password', {required: true})}
@@ -257,38 +277,36 @@ const Register = () => {
                             <UserAgreement show={show} setShow={setShow}/>
                         </Grid>
                         <Grid item mt={2} mb={2}>
-                            <Button type={"submit"} sx={{
-                                color: '#fcfcfc',
-                                fontSize: '20px',
-                                textTransform: 'uppercase',
-                                bgcolor: 'blue',
-                                width: '100%',
-                                transition: '300ms linear',
-                                "&:hover": {
-                                    bgcolor: '#1d3c6b'
-                                }
-                            }}>
+                            <Button
+                                type={"submit"}
+                                variant={'contained'}
+                                color={mode === "dark" ? "info" : "secondary"}
+                                sx={{
+                                    ...buttonStyle,
+                                    fontSize: '18px',
+                                    width: '100%',
+                                }}>
                                 {
                                     formLoading ? <CircularProgress/> :
                                         translate("pages.register.buttons.submit")}
                             </Button>
                         </Grid>
-                        <Grid container justifyContent="flex-end">
-                            <Button
-                                onClick={() => navigate('/login')}
-                                sx={{
-                                    color: '#fcfcfc',
-                                    fontSize: '16px',
-                                    textTransform: 'none',
-                                    bgcolor: mode === "dark" ? "#5689c0" : "#244d61",
-                                    width: '100%',
-                                    transition: '300ms linear',
-                                    "&:hover": {
-                                        bgcolor: '#1d3c6b'
-                                    }
-                                }}>
-                                {translate("pages.register.buttons.haveAccount") + translate("pages.login.signin")}
-                            </Button>
+                        <Grid container justifyContent="start">
+                            <Box>
+                                {translate("pages.register.buttons.haveAccount") + ' '}
+                                <Link
+                                    to={'/login'}
+                                    style={{
+                                        color: mode === 'dark' ? '#8aa4d3' : '#275ab7',
+                                        fontSize: '16px',
+                                        textTransform: 'none',
+                                        width: '100%',
+                                        transition: '300ms linear',
+
+                                    }}>
+                                    {translate("pages.login.signin")}
+                                </Link>
+                            </Box>
                         </Grid>
                     </Box>
                 </Box>

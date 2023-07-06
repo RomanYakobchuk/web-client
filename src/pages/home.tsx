@@ -1,13 +1,15 @@
 import {useList, useTranslate} from "@refinedev/core";
-import {Box, debounce} from "@mui/material";
-import {AutoComplete, Input, Typography as TypographyAntd} from "antd";
-import {SearchOutlined} from "@mui/icons-material";
+import {Box, debounce, Autocomplete} from "@mui/material";
+import {AutoComplete, Typography as TypographyAntd, Input} from "antd";
+import {OpenInNew, OpenInNewOutlined, SearchOutlined} from "@mui/icons-material";
 import {FC, useEffect, useState} from "react";
-import routerProvider from "@refinedev/react-router-v6/legacy"
+import {Link, useNavigate} from 'react-router-dom';
+import ScrollLock from 'react-scrolllock';
+
+
 import {IOptions} from "../interfaces/common";
 import {CountCities, CountType, CountViews} from "components/home";
 
-const {Link} = routerProvider;
 const {Text} = TypographyAntd;
 const renderTitle = (title: string) => {
     return (
@@ -19,15 +21,22 @@ const renderTitle = (title: string) => {
 
 const renderItem = (title: string, resource: string, id: string) => {
     return {
-        value: id,
-        title: title,
+        value: title,
+        id: id,
         label: (
-            <Link to={`/${resource}/show/${id}`}>
+            <Link to={`/${resource}/show/${id}`} style={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                paddingRight: '10px'
+            }}>
                 <Text style={{
                     textTransform: 'capitalize'
                 }}>
                     {title}
                 </Text>
+                <OpenInNewOutlined onClick={() => window.location.replace(`/${resource}/show/${id}`)}/>
             </Link>
         ),
     };
@@ -84,8 +93,8 @@ const Home: FC = () => {
 
     useEffect(() => {
         setOptions([]);
-         refetchNews();
-         refetchPlaces();
+        refetchNews();
+        refetchPlaces();
     }, [value]);
 
     return (
@@ -99,21 +108,23 @@ const Home: FC = () => {
             width: "90%",
             mb: 2
         }}>
-            <Box sx={{width: '100%'}}>
-                <AutoComplete
-                    style={{
-                        width: '100%',
-                    }}
-                    options={options}
-                    filterOption={false}
-
-                    onSearch={debounce((value: string) => setValue(value), 500)}
-                >
-                    <Input
-                        suffix={<SearchOutlined/>}
-                        size={"large"}/>
-                </AutoComplete>
-            </Box>
+            <ScrollLock>
+                <Box sx={{width: '100%'}}>
+                    <AutoComplete
+                        style={{
+                            width: '100%',
+                        }}
+                        options={options}
+                        filterOption={false}
+                        onSearch={debounce((value: string) => setValue(value), 500)}
+                    >
+                        <Input
+                            suffix={<SearchOutlined/>}
+                            size={"large"}
+                        />
+                    </AutoComplete>
+                </Box>
+            </ScrollLock>
             <CountCities/>
             <CountType/>
             <CountViews/>

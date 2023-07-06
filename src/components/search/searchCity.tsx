@@ -5,6 +5,7 @@ import {AutoComplete, Input, Typography as TypographyAntd} from "antd";
 
 import {IOptions} from "../../interfaces/common";
 import {ColorModeContext} from "../../contexts";
+import {selectStyle} from "../../styles";
 
 
 const {Text} = TypographyAntd;
@@ -45,6 +46,11 @@ const SearchCity = ({setSearchCity, searchCity}: IProps) => {
     const [currentCity, setCurrentCity] = useState('');
     const [value] = useDebounce(searchCityInput, 500);
 
+    useEffect(() => {
+        if (searchCity) {
+            setCurrentCity(searchCity)
+        }
+    }, [searchCity])
     const {refetch: refetchCities, isLoading: citiesIsLoading} = useList<any>({
         resource: 'city/all',
         filters: [{field: 'city', operator: 'contains', value: value}],
@@ -53,6 +59,7 @@ const SearchCity = ({setSearchCity, searchCity}: IProps) => {
             onSuccess: (data) => {
                 const citiesOptionGroup = data.data.map((item) => {
                         if (searchCity === item.name) {
+                            console.log(item.name)
                             setCurrentCity(item.name)
                         }
                         return (
@@ -114,7 +121,8 @@ const SearchCity = ({setSearchCity, searchCity}: IProps) => {
                 size={"large"}
                 style={{
                     background: "transparent",
-                    color: mode === "dark" ? "#fcfcfc" : "#000"
+                    color: mode === "dark" ? "#fcfcfc" : "#000",
+                    ...selectStyle
                 }}
             />
         </AutoComplete>
