@@ -48,22 +48,22 @@ export interface ProfileProps {
     status: string,
     avatar: string,
     email: string,
-    allInstitutions: Array | undefined,
+    allInstitutions?: Array | undefined,
     isActivated: boolean,
     dOB: Date | any,
     phone: number,
     phoneVerify: boolean,
     isAdmin?: boolean,
-    favoritePlaces: Array | undefined,
+    favoritePlaces?: Array | undefined,
     favoriteNews?: Array | undefined,
-    myReviews: Array | undefined,
+    myReviews?: Array | undefined,
     createdAt?: Date | any,
     otherProps?: any
-    user_comments: IComment[] | [],
+    user_comments?: IComment[] | [],
     blocked?: {
         isBlocked?: boolean,
         whyBlock?: string
-    } ,
+    },
 }
 
 export interface IProfilePropsFilterVariables {
@@ -102,7 +102,7 @@ export interface PropertyProps {
     ratings?: Array<string> | Array<object> | any,
     reviews?: Array<String> | any,
     averageCheck: string,
-    features: [{value: string}],
+    features: [{ value: string }],
     createdBy?: string | any,
     variantForDisplay?: string | any,
     news?: any,
@@ -424,8 +424,12 @@ export interface IMessage {
     text: string,
     pictures?: [],
     replyTo?: IMessage | any,
-    memberType?: 'user'| 'institution',
-    createdAt?: Date | any
+    memberType?: 'user' | 'institution',
+    createdAt?: Date | any,
+    isSent: boolean,
+    isDelivered: boolean,
+    isRead: boolean,
+    isError: boolean
 }
 
 export interface IConversation {
@@ -438,8 +442,10 @@ export interface IConversation {
     createdAt?: Date | any,
     lastMessage: {
         sender: string,
-        text: string
-    }
+        text: string,
+        updatedAt: Date
+    },
+    updatedAt: Date
 }
 
 
@@ -448,6 +454,7 @@ export interface IReserve {
     _id: string,
     fullName: string,
     user?: string,
+    manager?: string,
     writeMe: boolean,
     whoPay: string,
     eventType: string,

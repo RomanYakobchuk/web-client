@@ -8,7 +8,13 @@ import {axiosInstance} from "../authProvider";
 import {useMobile, useRole} from "../utils";
 import {CurrentChatContainer, CustomDrawer, ListChats, SearchInstitutions} from "../components";
 import {IConversation} from "../interfaces/common";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
 
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 const Chat = () => {
     const {device, width} = useMobile();
     const [params, setParams] = useSearchParams();

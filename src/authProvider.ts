@@ -8,6 +8,7 @@ export const ACCESS_TOKEN_KEY = "access-refine-auth";
 export const REFRESH_TOKEN_KEY = "refresh-refine-auth";
 
 export const baseURL = `${process.env.REACT_APP_API}/api/v1`;
+// export const baseURL = ``;
 
 export const axiosInstance = axios.create({
     baseURL, headers: {
@@ -186,7 +187,6 @@ export const authProvider: AuthBindings = {
             };
         },
         onError: async (error) => {
-            console.error(error?.response)
             return {error}
         },
         check: async () => {

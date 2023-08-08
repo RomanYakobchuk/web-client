@@ -184,7 +184,8 @@
       "bar": "Bar",
       "cafe": "Cafe",
       "restaurant": "Restaurant",
-      "browse": "Browse by type",
+      "browseByType": "Browse by type",
+      "browseByCity": "Browse by city",
       "popularPlace": "Popular place"
     },
     "pages": {
@@ -493,6 +494,7 @@
     "chats": "All chats"
   },
   "dates": {
+    "today": "Today",
     "months": {
       "1": "January",
       "2": "February",
@@ -512,5 +514,8 @@
     "title": "Select schema",
     "schema_1": "Schema 1",
     "schema_2": "Schema 2"
+  },
+  "pictures": {
+    "pictures": "Pictures"
   }
 }

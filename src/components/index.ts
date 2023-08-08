@@ -11,6 +11,11 @@ import TitleTextItem from "./common/TitleTextItem";
 import ReviewsList from "./common/reviews-list";
 import CommentsList from "./common/comments-list";
 
+// custom
+import CustomShow from "./common/custom/customShow";
+import CustomEdit from "./common/custom/customEdit";
+import CustomCreate from "./common/custom/customCreate";
+
 // google
 import GoogleButton from "./google/googleAuth";
 
@@ -21,10 +26,10 @@ import Loading from "./loading";
 import ModalWindow from "./window/modalWindow";
 
 // profile
-import UserReviews from "./profile/userReviews"
-import UserInstitutions from "./profile/userInstitutions"
+import UserReviews from "./profile/utills/userReviews"
+import UserInstitutions from "./profile/utills/userInstitutions"
 import FavoritePlaces from "./profile/favoritePlaces"
-import UserComments from "./profile/userComments";
+import UserComments from "./profile/utills/userComments";
 import ShowUserInfo from "./profile/show-user-info";
 
 // institution
@@ -129,5 +134,8 @@ export {
     ShowChats,
     UpdateCity,
     ImageGallery,
-    SchemaSelector
+    SchemaSelector,
+    CustomShow,
+    CustomEdit,
+    CustomCreate
 }

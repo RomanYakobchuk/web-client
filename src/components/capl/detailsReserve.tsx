@@ -1,31 +1,39 @@
 import {useNavigate, useParams} from "react-router-dom";
-import {useDelete, useShow, useTranslate} from "@refinedev/core";
-import {Breadcrumb, Show} from "@refinedev/antd";
+import {useDelete, useGetIdentity, useShow, useTranslate} from "@refinedev/core";
 import {
     Box,
     Button,
     CardContent,
     CardHeader,
-    Typography as MuiTypography,
     Grid, Tooltip, IconButton,
 } from "@mui/material";
-import {EditButton, TagField} from "@refinedev/mui";
+import {TagField} from "@refinedev/mui";
 import dayjs from "dayjs";
 import {Check, Close, Delete, EastOutlined, RateReview} from "@mui/icons-material";
 import {Typography} from "antd";
 import React, {useContext, useState} from "react";
 
-import {IReserve} from "../../interfaces/common";
+import {IReserve, ProfileProps} from "../../interfaces/common";
 import {ColorModeContext} from "../../contexts";
-import {TitleTextItem as Item} from "../index"
+import {CustomShow, TitleTextItem as Item} from "../index";
+import "./reserve_style.css";
 
 const {Title, Text} = Typography;
 
+interface GridItem {
+    value: string | any,
+    title: string
+}
+
+
 const DetailsReserve = () => {
     const {id} = useParams();
+    const {data: user} = useGetIdentity<ProfileProps>();
     const navigate = useNavigate();
     const {mode} = useContext(ColorModeContext);
     const translate = useTranslate();
+
+    const [selectedItem, setSelectedItem] = useState<number | null>(null);
 
     const {queryResult} = useShow<IReserve>({
         resource: 'capl/findOne',
@@ -43,177 +51,169 @@ const DetailsReserve = () => {
 
     const textColor = mode === 'dark' ? '#fff' : '#000';
 
+    const handleClick = (index: number) => {
+        setSelectedItem((prevSelectedItem) =>
+            prevSelectedItem === index ? null : index
+        );
+    };
+    const items: GridItem[] = [
+        {
+            value: reserve?.fullName,
+            title: translate('capl.create.fullName')
+        },
+        {
+            value: dayjs(reserve?.date).format('DD/MM/YYYY HH:mm'),
+            title: translate('capl.create.date')
+        },
+        {
+            value: reserve?.desiredAmount,
+            title: translate('capl.create.desiredAmount')
+        },
+        {
+            value: reserve?.numberPeople,
+            title: translate('capl.create.numberPeople')
+        },
+        {
+            value: reserve?.whoPay,
+            title: translate('capl.create.whoPay')
+        },
+        {
+            value: <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: 2
+                }}
+            >
+                {
+                    translate(`${reserve?.writeMe ? 'text.yes' : 'text.no'}`)
+                }
+                <IconButton
+                    disabled={!reserve?.writeMe}
+                    sx={{
+                        m: 'auto'
+                    }}
+                    color={'inherit'}
+                    onClick={() => navigate(`/chats/show/${reserve?.user}/${reserve?.institution?._id}`)}
+                >
+                    <RateReview/>
+                </IconButton>
+            </Box>,
+            title: translate('capl.create.writeMe')
+        },
+        {
+            value: reserve?.userStatus?.value === 'accepted'
+                ?
+                <TagField
+                    style={{
+                        fontSize: '16px',
+                        padding: '7px'
+                    }}
+                    value={translate(`capl.status.${reserve?.userStatus?.value}`)}
+                    color={"success"}/>
+                : reserve?.userStatus?.value === 'draft'
+                    ?
+                    <TagField
+                        style={{
+                            fontSize: '16px',
+                            padding: '7px'
+                        }}
+                        value={translate(`capl.status.${reserve?.userStatus?.value}`)}
+                        color={"info"}/>
+                    : reserve?.userStatus?.value === 'rejected'
+                        ? <TagField
+                            style={{
+                                fontSize: '16px',
+                                padding: '7px'
+                            }}
+
+                            value={translate(`capl.status.${reserve?.userStatus?.value}`)}
+                            color={"error"}/>
+                        : <TagField value={""}
+                                    color={"default"}/>,
+            title: translate('capl.status.userStatus')
+        },
+        {
+            value: reserve?.institutionStatus?.value === 'accepted'
+                ?
+                <TagField
+                    style={{
+                        fontSize: '16px',
+                        padding: '7px'
+                    }}
+                    value={translate(`capl.status.${reserve?.institutionStatus?.value}`)}
+                    color={"success"}/>
+                : reserve?.institutionStatus?.value === 'draft'
+                    ?
+                    <TagField
+                        style={{
+                            fontSize: '16px',
+                            padding: '7px'
+                        }}
+                        value={translate(`capl.status.${reserve?.institutionStatus?.value}`)}
+                        color={"info"}/>
+                    : reserve?.institutionStatus?.value === 'rejected'
+                        ? <TagField
+                            style={{
+                                fontSize: '16px',
+                                padding: '7px'
+                            }}
+
+                            value={translate(`capl.status.${reserve?.institutionStatus?.value}`)}
+                            color={"error"}/>
+                        : <TagField value={""}
+                                    color={"default"}/>,
+            title: translate('capl.status.institutionStatus')
+        },
+        {
+            value: reserve?.eventType,
+            title: translate('capl.create.eventType')
+        },
+        {
+            value: reserve?.comment,
+            title: translate('capl.create.comment')
+        },
+    ];
+
     if (isError) return <div>Error</div>
     return (
-        <Show isLoading={isLoading}
-              contentProps={{
-                  style: {
-                      background: mode === 'dark' ? "#3e3e36" : '#fff',
-                  },
-              }}
-              headerButtons={
-                  [
-                      <EditButton color={'secondary'} variant={'outlined'} key={'edit'}/>
-                  ]
-              }
-              headerProps={{
-                  title: <MuiTypography fontSize={'18px'}>{translate('buttons.details')}</MuiTypography>
-              }}
-              breadcrumb={
-                  <Box sx={{
-                      "& nav ol > li > span": {
-                          display: 'flex',
-                          flexDirection: 'row',
-                          alignItems: 'center'
-                      }
-                  }}>
-                      <Breadcrumb/>
-                  </Box>
-              }
+        <CustomShow
+            isLoading={isLoading}
+            showButtons={(user?._id === reserve?.user || user?._id === reserve?.manager || user?.status === 'admin')}
         >
+            <Box
+                sx={{
+                    display: 'grid',
+                    gridTemplateColumns: {
+                        xs: 'repeat(auto-fit, minmax(calc(100% / 3), 1fr))',
+                        sm: 'repeat(auto-fit, minmax(calc(100% / 4), 1fr))',
+                        md: 'repeat(auto-fit, minmax(calc(100% / 5), 1fr))',
+                        lg: 'repeat(auto-fit, minmax(calc(100% / 6), 1fr))',
+                        xl: 'repeat(auto-fit, minmax(calc(100% / 8), 1fr))',
+                    },
+                    gap: '8px',
+                    gridAutoRows: 'minmax(0, 1fr)',
+                }}
+            >
+                {
+                    items.map((item, index) => (
+                            <Box
+                                key={index + 1}
+                                onClick={() => handleClick(index)}
+                                sx={{
+                                    transition: 'width 1s ease-in-out, height 1s ease-in-out',
+                                }}
+                                className={`grid-item ${selectedItem === index ? 'selected' : 'shrink'}`}
+                            >
+                                <Item
+                                    title={item.title} value={item.value}/>
+                            </Box>
+                        )
+                    )
+                }
+            </Box>
             <Grid container spacing={2}>
-                <Grid item xs={12}>
-                    <CardHeader style={{
-                        color: textColor
-                    }} title={translate('capl.reservation')}/>
-                    <Grid container spacing={2}>
-                        {
-                            [
-                                {
-                                    value: reserve?.fullName,
-                                    title: translate('capl.create.fullName')
-                                },
-                                {
-                                    value: dayjs(reserve?.date).format('DD/MM/YYYY HH:mm'),
-                                    title: translate('capl.create.date')
-                                },
-                                {
-                                    value: reserve?.desiredAmount,
-                                    title: translate('capl.create.desiredAmount')
-                                },
-                                {
-                                    value: reserve?.numberPeople,
-                                    title: translate('capl.create.numberPeople')
-                                },
-                                {
-                                    value: reserve?.whoPay,
-                                    title: translate('capl.create.whoPay')
-                                },
-                                {
-                                    value: <Box
-                                        sx={{
-                                            display: 'flex',
-                                            flexDirection: 'row',
-                                            alignItems: 'center',
-                                            gap: 2
-                                        }}
-                                    >
-                                        {
-                                            translate(`${reserve?.writeMe ? 'text.yes' : 'text.no'}`)
-                                        }
-                                        <IconButton
-                                            disabled={!reserve?.writeMe}
-                                            sx={{
-                                                m: 'auto'
-                                            }}
-                                            color={'inherit'}
-                                            onClick={() => navigate(`/chats/show/${reserve?.user}/${reserve?.institution?._id}`)}
-                                        >
-                                            <RateReview/>
-                                        </IconButton>
-                                    </Box>,
-                                    title: translate('capl.create.writeMe')
-                                },
-                                {
-                                    value: reserve?.userStatus?.value === 'accepted'
-                                        ?
-                                        <TagField
-                                            style={{
-                                                fontSize: '20px',
-                                                padding: '7px'
-                                            }}
-                                            value={translate(`capl.status.${reserve?.userStatus?.value}`)}
-                                            color={"success"}/>
-                                        : reserve?.userStatus?.value === 'draft'
-                                            ?
-                                            <TagField
-                                                style={{
-                                                    fontSize: '20px',
-                                                    padding: '7px'
-                                                }}
-                                                value={translate(`capl.status.${reserve?.userStatus?.value}`)}
-                                                color={"info"}/>
-                                            : reserve?.userStatus?.value === 'rejected'
-                                                ? <TagField
-                                                    style={{
-                                                        fontSize: '20px',
-                                                        padding: '7px'
-                                                    }}
-
-                                                    value={translate(`capl.status.${reserve?.userStatus?.value}`)}
-                                                    color={"error"}/>
-                                                : <TagField value={""}
-                                                            color={"default"}/>,
-                                    title: translate('capl.status.userStatus')
-                                },
-                                {
-                                    value: reserve?.institutionStatus?.value === 'accepted'
-                                        ?
-                                        <TagField
-                                            style={{
-                                                fontSize: '20px',
-                                                padding: '7px'
-                                            }}
-                                            value={translate(`capl.status.${reserve?.institutionStatus?.value}`)}
-                                            color={"success"}/>
-                                        : reserve?.institutionStatus?.value === 'draft'
-                                            ?
-                                            <TagField
-                                                style={{
-                                                    fontSize: '20px',
-                                                    padding: '7px'
-                                                }}
-                                                value={translate(`capl.status.${reserve?.institutionStatus?.value}`)}
-                                                color={"info"}/>
-                                            : reserve?.institutionStatus?.value === 'rejected'
-                                                ? <TagField
-                                                    style={{
-                                                        fontSize: '20px',
-                                                        padding: '7px'
-                                                    }}
-
-                                                    value={translate(`capl.status.${reserve?.institutionStatus?.value}`)}
-                                                    color={"error"}/>
-                                                : <TagField value={""}
-                                                            color={"default"}/>,
-                                    title: translate('capl.status.institutionStatus')
-                                },
-                                {
-                                    value: reserve?.eventType,
-                                    title: translate('capl.create.eventType')
-                                },
-                                {
-                                    value: reserve?.comment,
-                                    title: translate('capl.create.comment')
-                                },
-                            ].map((item, index) => (
-                                <Grid
-                                    key={index}
-                                    item
-                                    xs={6}
-                                    md={4}
-                                    lg={3}
-                                    xl={2}
-                                >
-                                    <Item
-                                        title={item.title}
-                                        value={item.value}
-                                    />
-                                </Grid>
-                            ))
-                        }
-                    </Grid>
-                </Grid>
                 <Grid item xs={12} p={4}>
                     <CardHeader
                         style={{
@@ -262,7 +262,7 @@ const DetailsReserve = () => {
                     </CardContent>
                 </Grid>
             </Grid>
-        </Show>
+        </CustomShow>
     );
 };
 

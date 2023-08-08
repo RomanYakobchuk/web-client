@@ -7,6 +7,7 @@ import {ProfileProps, PropertyProps} from "../../interfaces/common";
 import DataForm from "./utills/dataForm";
 import Loading from "../loading";
 import {ErrorComponent} from "@refinedev/mui";
+import {CustomEdit} from "../index";
 
 const EditInstitution = () => {
     const {data: currentUser} = useGetIdentity<ProfileProps>();
@@ -148,48 +149,49 @@ const EditInstitution = () => {
         navigate(`/all_institutions/show/${id}`)
     }
 
-    if (isLoadingData) return <Loading/>
     if (isErrorData) return <ErrorComponent/>
 
     return (
-        <DataForm
-            setMainPhoto={setMainPhoto}
-            mainPhoto={mainPhoto}
-            titleAction={'edit'}
-            setOtherPhoto={setOtherPhoto}
-            otherPhoto={otherPhoto}
-            onFinishHandler={onFinishHandler}
-            formLoading={formLoading}
-            handleSubmit={handleSubmit}
-            open={open}
-            setOpen={setOpen}
-            tags={tags}
-            setAverageCheck={setAverageCheck}
-            averageCheck={averageCheck}
-            setTitle={setTitle}
-            title={title}
-            setTags={setTags}
-            setCreatedBy={setCreatedBy}
-            createdBy={createdBy}
-            setWorkScheduleWeekend={setWorkScheduleWeekend}
-            setWorkDays={setWorkDays}
-            setVariantForDisplay={setVariantForDisplay}
-            contacts={contacts}
-            setContacts={setContacts}
-            description={description}
-            features={features}
-            setFeatures={setFeatures}
-            location={location}
-            setDescription={setDescription}
-            place={place}
-            setPlace={setPlace}
-            setLocation={setLocation}
-            setType={setType}
-            type={type}
-            variantForDisplay={variantForDisplay}
-            workDays={workDays}
-            workScheduleWeekend={workScheduleWeekend}
-        />
+        <CustomEdit bgColor={'transparent'} isLoading={isLoadingData}>
+            <DataForm
+                setMainPhoto={setMainPhoto}
+                mainPhoto={mainPhoto}
+                titleAction={'edit'}
+                setOtherPhoto={setOtherPhoto}
+                otherPhoto={otherPhoto}
+                onFinishHandler={onFinishHandler}
+                formLoading={formLoading}
+                handleSubmit={handleSubmit}
+                open={open}
+                setOpen={setOpen}
+                tags={tags}
+                setAverageCheck={setAverageCheck}
+                averageCheck={averageCheck}
+                setTitle={setTitle}
+                title={title}
+                setTags={setTags}
+                setCreatedBy={setCreatedBy}
+                createdBy={createdBy}
+                setWorkScheduleWeekend={setWorkScheduleWeekend}
+                setWorkDays={setWorkDays}
+                setVariantForDisplay={setVariantForDisplay}
+                contacts={contacts}
+                setContacts={setContacts}
+                description={description}
+                features={features}
+                setFeatures={setFeatures}
+                location={location}
+                setDescription={setDescription}
+                place={place}
+                setPlace={setPlace}
+                setLocation={setLocation}
+                setType={setType}
+                type={type}
+                variantForDisplay={variantForDisplay}
+                workDays={workDays}
+                workScheduleWeekend={workScheduleWeekend}
+            />
+        </CustomEdit>
     )
 };
 export default EditInstitution

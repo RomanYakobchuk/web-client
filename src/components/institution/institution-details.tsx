@@ -1,4 +1,4 @@
-import React, {useContext, useState} from "react";
+import React, {FC, useContext, useState} from "react";
 import {
     Box,
     Button,
@@ -22,7 +22,7 @@ import {ColorModeContext} from "../../contexts";
 import DetailsInfo from "./utills/details-info";
 import InstitutionNews from "./utills/institution-news";
 import Loading from "../loading";
-import {CustomDrawer} from "../index";
+import {CustomDrawer, CustomShow} from "../index";
 import InstitutionReviews from "./utills/institution-reviews";
 import {useMobile} from "../../utils";
 import InstitutionComments from "./utills/institution-comments";
@@ -43,7 +43,7 @@ const buttons = [
     },
 ]
 
-const InstitutionDetails = () => {
+const InstitutionDetails: FC = () => {
     const {id} = useParams();
     const navigate = useNavigate();
     const {data: user} = useGetIdentity<ProfileProps>();
@@ -51,7 +51,7 @@ const InstitutionDetails = () => {
     const translate = useTranslate();
     const {device, width} = useMobile();
 
-    const {data, isLoading, isError} = useOne<PropertyProps | any>({
+    const {data, isLoading, isError} = useOne<PropertyProps>({
         resource: 'institution/allInfoById',
         id: id as string,
         errorNotification: (data: any) => {
@@ -62,19 +62,20 @@ const InstitutionDetails = () => {
         }
     });
 
-    const institution: PropertyProps = data?.data ?? [];
+    const institution: PropertyProps = data?.data ?? {} as PropertyProps;
 
     const [openDrawer, setOpenDrawer] = useState(false);
     const [dataForDrawer, setDataForDrawer] = useState("reviews");
     const [dataForBody, setDataForBody] = useState("news");
 
-    if (isLoading) return <Loading/>
+    // if (isLoading) return <Loading/>
     if (isError) return <ErrorComponent/>
 
     return (
-        <Box sx={{
-            mb: "30px"
-        }}>
+        <CustomShow isLoading={isLoading}
+                    bgColor={'transparent'}
+                    showButtons={user?._id === institution?.createdBy || user?.status === 'admin'}
+        >
             {/*<Box sx={{*/}
             {/*    display: 'flex',*/}
             {/*    width: '100%',*/}
@@ -159,12 +160,8 @@ const InstitutionDetails = () => {
             <Box sx={{
                 display: 'flex',
                 width: '100%',
-                flexDirection: {xs: "column"},
-                justifyContent: {xs: 'center'},
-                '@media (min-width: 1260px)': {
-                    flexDirection: 'row',
-                    justifyContent: 'start'
-                },
+                flexDirection: "column",
+                justifyContent: 'center',
                 gap: 2,
                 alignItems: 'start',
                 mt: '10px'
@@ -172,132 +169,89 @@ const InstitutionDetails = () => {
                 <DetailsInfo otherProps={{setDataForDrawer, setOpenDrawer}}
                              rowHeight={device && width < 600 ? 120 : 200}
                              institution={institution}/>
-                {
-                    device && width < 900
-                        ? <CustomDrawer
-                            anchor={"bottom"}
-                            open={openDrawer}
-                            toggleDrawer={setOpenDrawer}
-                            title={translate(`home.show.${dataForDrawer}.title`)}
-                            button={
-                                <Box sx={{
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    gap: '10px',
-                                }}>
-                                    {
-                                        buttons.map(({label, icon}) => (
-                                            <IconButton
-                                                key={label}
-                                                sx={{
-                                                    fontSize: '30px',
-                                                    transition: '300ms linear',
-                                                    p: '5px',
-                                                    borderRadius: '5px',
-                                                    boxSizing: 'content-box',
-                                                    color:
-                                                        dataForDrawer === label
-                                                            ? 'blue'
-                                                            : mode === 'dark'
-                                                                ? '#fcfcfc'
-                                                                : '#314d63',
-                                                    bgcolor: dataForDrawer === label ? 'silver' : 'transparent',
-                                                }}
-                                                onClick={() => setDataForDrawer(label)}
-                                            >
-                                                {icon}
-                                            </IconButton>
-                                        ))
-                                    }
-                                </Box>
-                            }>
-                            {openDrawer ?
-                                dataForDrawer === "reviews" ?
-                                    <InstitutionReviews id={institution?._id}/>
-                                    : dataForDrawer === 'news' ?
-                                        <InstitutionNews institution={institution}/> :
-                                        <InstitutionComments institutionId={institution?._id}/>
-                                : ''
-                            }
-                        </CustomDrawer>
-                        : <Box sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: 1,
-                            alignItems: 'start',
-                            justifyContent: 'start',
+                <Box sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 1,
+                    alignItems: 'start',
+                    justifyContent: 'start',
+                    width: '100%',
+                    flex: {xs: 1, lg: 3},
+                    mb: {xs: '85px', md: 0},
+                    bgcolor: mode === "dark" ? "#2e424d" : "#fcfcfc",
+                    borderRadius: '15px',
+                    p: '10px',
+                }}>
+                    <Box sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        width: '100%'
+                    }}>
+                        {/*<Typography sx={{*/}
+                        {/*    color: 'common.white'*/}
+                        {/*}}>*/}
+                        {/*    {translate(`home.show.${dataForBody}.title`)}*/}
+                        {/*</Typography>*/}
+                        <Box sx={{
+                            display: 'grid',
+                            gridTemplateColumns: '1fr 1fr 1fr',
+                            alignItems: 'center',
+                            gap: 2.5,
                             width: '100%',
-                            flex: {xs: 1, lg: 3},
-                            mb: {xs: '85px', md: 0},
-                            bgcolor: mode === "dark" ? "#2e424d" : "#fcfcfc",
-                            borderRadius: '15px',
-                            p: '10px',
+                            maxWidth: '550px',
                         }}>
-                            <Box sx={{
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                                alignItems: 'center',
-                                width: '100%'
-                            }}>
-                                <Typography>
-                                    {translate(`home.show.${dataForBody}.title`)}
-                                </Typography>
-                                <Box sx={{
-                                    display: 'grid',
-                                    gridTemplateColumns: '1fr 1fr 1fr',
-                                    alignItems: 'center',
-                                    gap: '20px'
-                                }}>
-                                    {
-                                        buttons.map(({label, icon}) => (
-                                            <IconButton
-                                                key={label}
-                                                sx={{
-                                                    fontSize: '30px',
-                                                    cursor: 'pointer',
-                                                    transition: '300ms linear',
-                                                    '&:hover': {
-                                                        color: 'blue',
-                                                        bgcolor: 'silver',
-                                                    },
-                                                    bgcolor: dataForBody === label ? 'silver' : 'transparent',
-                                                    p: '5px',
-                                                    borderRadius: '5px',
-                                                    boxSizing: 'content-box',
-                                                    color:
-                                                        dataForBody === label
-                                                            ? 'blue'
-                                                            : mode === 'dark'
-                                                                ? '#fcfcfc'
-                                                                : '#314d63',
-                                                }}
-                                                onClick={() => setDataForBody(label)}
-                                            >
-                                                {icon}
-                                            </IconButton>
-                                        ))
-                                    }
-                                </Box>
-                            </Box>
-                            <Box sx={{
-                                position: 'relative',
-                                width: '100%',
-
-                            }}>
-                                {
-                                    dataForBody === "reviews" ?
-                                        <InstitutionReviews id={institution?._id}/>
-                                        : dataForBody === 'news' ?
-                                            <InstitutionNews institution={institution}/> :
-                                            <InstitutionComments institutionId={institution?._id}/>
-                                }
-                            </Box>
+                            {
+                                buttons.map(({label, icon}) => (
+                                    <Button
+                                        key={label}
+                                        sx={{
+                                            display: 'flex',
+                                            flexDirection: 'row',
+                                            alignItems: 'center',
+                                            cursor: 'pointer',
+                                            transition: '300ms linear',
+                                            '&:hover': {
+                                                color: 'white',
+                                                bgcolor: '#c01624',
+                                            },
+                                            bgcolor: dataForBody === label ? '#c01624' : '#b2adad',
+                                            p: '5px',
+                                            borderRadius: '20px',
+                                            textTransform: 'capitalize',
+                                            boxSizing: 'content-box',
+                                            color:
+                                                dataForBody === label
+                                                    ? 'white'
+                                                        : '#000',
+                                        }}
+                                        onClick={() => setDataForBody(label)}
+                                        // endIcon={icon}
+                                    >
+                                        {translate(`home.show.${label}.title`)}
+                                    </Button>
+                                ))
+                            }
                         </Box>
-                }
+                    </Box>
+                    <Box sx={{
+                        position: 'relative',
+                        width: '100%',
+                        height: 'fit-content'
+                    }}>
+                        {
+                            dataForBody === "reviews" ?
+                                <InstitutionReviews id={institution?._id}/>
+                                : dataForBody === 'news' ?
+                                    <InstitutionNews institution={institution}/> :
+                                    <InstitutionComments institutionId={institution?._id}/>
+                        }
+                    </Box>
+                </Box>
+                {/*}*/}
             </Box>
-        </Box>
+        </CustomShow>
     );
 };
 
-export default InstitutionDetails
+export default InstitutionDetails;

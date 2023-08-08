@@ -50,7 +50,8 @@ const OtherNews = ({institutionId, newsId}: IProps) => {
             gap: 2,
             height: '100%',
             maxHeight: {xs: '100%', lg: '900px'},
-            overflowY: 'auto'
+            overflow: 'auto',
+            WebkitOverflowScrolling: 'touch',
         }}>
             {
                 data?.pages?.map((page) =>

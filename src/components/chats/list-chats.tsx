@@ -70,8 +70,10 @@ const ListChats = ({setCurrentChat, setOpenDrawer}: IProps) => {
                     _id: data?.chatId,
                     lastMessage: {
                         sender: data?.sender,
-                        text: data?.text
+                        text: data?.text,
+                        updatedAt: data?.updatedAt
                     },
+                    updatedAt: data?.updatedAt
                 }
             })
         })
@@ -99,7 +101,8 @@ const ListChats = ({setCurrentChat, setOpenDrawer}: IProps) => {
                 setChats({pages: newChats})
             }
         }
-    }, [updatedChat])
+    }, [updatedChat]);
+
 
     if (isLoading) return <Loading/>
     if (isError) return <div>Error</div>
@@ -143,6 +146,7 @@ const ListChats = ({setCurrentChat, setOpenDrawer}: IProps) => {
                     :
                     <Box sx={{
                         overflow: 'auto',
+                        WebkitOverflowScrolling: 'touch',
                         height: '75vh'
                     }}>
                         <Box sx={{
@@ -152,7 +156,9 @@ const ListChats = ({setCurrentChat, setOpenDrawer}: IProps) => {
                         }}>
                             {
                                 chats?.pages?.map((page: GetListResponse<IConversation>) =>
-                                    page?.data?.map((item: IConversation) => (
+                                    page?.data?.sort((a: IConversation, b: IConversation) => {
+                                        return a?.lastMessage?.updatedAt < b?.lastMessage?.updatedAt ? -1 : 1
+                                    })?.map((item: IConversation) => (
                                         <ListCardChat
                                             key={item?._id}
                                             conversation={item}

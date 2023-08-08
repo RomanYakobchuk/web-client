@@ -23,15 +23,16 @@ const ScrollContent = ({children, id}: IProps) => {
             display: 'flex',
             flexDirection: 'column',
             gap: 6,
-            overflowX: 'auto',
+            overflow: 'auto',
+            WebkitOverflowScrolling: 'touch',
         }}>
             <Box sx={{
                 width: parentWidth,
                 maxWidth: '100%',
                 display: 'flex',
                 flexWrap: 'nowrap',
-                overflowX: 'auto',
-                scrollSnapType: 'x mandatory',
+                overflow: 'auto',
+                WebkitOverflowScrolling: 'touch',
                 gap: '20px',
                 pb: '20px',
                 "&::-webkit-scrollbar": {

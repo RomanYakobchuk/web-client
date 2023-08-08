@@ -1,0 +1,53 @@
+@keyframes enlarge {
+    0% {
+        grid-column: span 1;
+        grid-row: span 1;
+        width: 100%; /* Зміна розміру на 100% на 25% анімації */
+        height: 100%;
+    }
+    1% {
+        grid-column: span 2;
+        grid-row: span 2;
+        width: 50%; /* Зміна розміру на 100% на 25% анімації */
+        height: 50%; /* Зміна розміру на 100% на 25% анімації */
+    }
+    100% {
+        grid-column: span 2;
+        grid-row: span 2;
+        width: 100%;
+        height: 100%;
+    }
+}
+@keyframes shrink {
+    0% {
+        grid-column: span 2;
+        grid-row: span 2;
+        width: 100%;
+        height: 100%;
+    }
+    99% {
+        grid-column: span 2;
+        grid-row: span 2;
+        width: 50%;
+        height: 50%;
+    }
+    100% {
+        width: 100%;
+        height: 100%;
+        grid-column: span 1;
+        grid-row: span 1;
+    }
+}
+
+.grid-item {
+    width: 100%;
+    height: 100%;
+    transition: width 1s ease-in-out, height 1s ease-in-out;
+}
+
+.grid-item.selected {
+    animation: enlarge 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+.grid-item.shrink {
+    animation: shrink 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}

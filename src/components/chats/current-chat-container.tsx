@@ -3,7 +3,7 @@ import React, {useEffect, useState} from "react";
 import {useSearchParams} from "react-router-dom";
 import {Clear} from "@mui/icons-material";
 import {Box, IconButton} from "@mui/material";
-import {useForm} from "@refinedev/antd";
+import dayjs from "dayjs";
 
 import ReviewInput from "../institution/utills/review-input";
 import Loading from "../loading";
@@ -18,12 +18,16 @@ interface IProps {
     setOpenDrawer?: any,
 }
 
+
 const CurrentChatContainer = ({conversation, setCurrentChat, setOpenDrawer}: IProps) => {
 
     const {data: user} = useGetIdentity<ProfileProps>();
     const {device} = useMobile();
     const [params, setParams] = useSearchParams();
 
+    const [updatedMessageStatus, setUpdatedMessageStatus] = useState<IMessage>({} as IMessage);
+    const [isSending, setIsSending] = useState(false);
+    const [error, setError] = useState('');
     const [receiver, setReceiver] = useState<ProfileProps>({} as ProfileProps);
     const [replyTo, setReplyTo] = useState<IMessage>({} as IMessage);
     const [messageText, setMessageText] = useState<string>('');
@@ -44,32 +48,35 @@ const CurrentChatContainer = ({conversation, setCurrentChat, setOpenDrawer}: IPr
         },
         liveMode: 'auto',
     });
-    const {onFinish, formLoading} = useForm({
-        resource: 'message/create',
-        action: 'create',
-        successNotification: false
-    })
     const sendMessage = async () => {
-        if (!messageText) return;
-        socket?.emit('sendMessage', {
-            sender: user?._id,
-            receiver: receiver?._id,
-            text: messageText,
-            chatId: conversation?._id
-        })
+        try {
+            if (!messageText) return;
+            setIsSending(true)
+            const currentDate = dayjs.utc().format('');
+            console.log(currentDate)
+            socket?.emit('sendMessage', {
+                sender: user?._id,
+                receiver: receiver?._id,
+                text: messageText,
+                chatId: conversation?._id,
+                createdAt: currentDate,
+                replyTo: replyTo?._id && replyTo?._id
+            })
 
-        await onFinish({
-            conversationId: conversation?._id,
-            sender: user?._id,
-            text: messageText,
-            replyTo: replyTo?._id
-        });
-
-        setMessageText('')
-        return () => {
-            socket.off('sendMessage');
-        };
+            setIsSending(false)
+            setMessageText('')
+            return () => {
+                socket.off('sendMessage');
+            };
+        } catch (error) {
+            setIsSending(false)
+            setError('Error')
+        }
     }
+    useEffect(() => {
+        socket?.emit('joinChat', conversation?._id);
+    }, []);
+
     useEffect(() => {
         if (user && conversation) {
             setReceiver(
@@ -79,60 +86,81 @@ const CurrentChatContainer = ({conversation, setCurrentChat, setOpenDrawer}: IPr
     }, [user, conversation]);
 
     useEffect(() => {
-        socket?.on('getMessage', (data: any) => {
-            setArivialMessages((prevState) => {
+        socket?.on('isSent', (data: any) => {
+            setUpdatedMessageStatus(prevState => {
                 return {
                     ...prevState,
-                    _id: Date.now().toString(),
+                    ...data,
+                    conversationId: data?.chatId
+                }
+            })
+        });
+        socket?.on('getMessage', (data: any) => {
+            setArivialMessages((prevState) => {
+                console.log('message was get')
+                return {
+                    ...prevState,
+                    ...data,
+                    _id: data?._id,
                     sender: data?.sender,
                     text: data?.text,
                     replyTo: data?.replyTo,
-                    createdAt: Date.now()
+                    createdAt: data?.createdAt
                 }
             });
         })
+
         return () => {
-            socket.off('getMessage');
-        };
+            socket.off('getMessage')
+            socket.off('isSent')
+        }
     }, []);
     useEffect(() => {
-        if (data?.pages) {
-            const list: Array<[string, IMessage[]]> = [].concat(...(data?.pages as any ?? [])?.map((page: GetListResponse<IMessage>) => Object.entries(page?.data))).sort(([dateA]: [string], [dateB]: [string]) => {
-                const [dayA, monthA, yearA] = dateA?.split('-');
-                const [dayB, monthB, yearB] = dateB?.split('-');
+        const updateMessages = async () => {
+            try {
+                if (data?.pages) {
+                    const list: Array<[string, IMessage[]]> = [].concat(...(data?.pages as any ?? [])?.map((page: GetListResponse<IMessage>) => Object.entries(page?.data))).sort(([dateA]: [string], [dateB]: [string]) => {
+                        const [dayA, monthA, yearA] = dateA?.split('-');
+                        const [dayB, monthB, yearB] = dateB?.split('-');
 
-                const dateObjA = new Date(Number(yearA), Number(monthA) - 1, Number(dayA));
-                const dateObjB = new Date(Number(yearB), Number(monthB) - 1, Number(dayB));
+                        const dateObjA = new Date(Number(yearA), Number(monthA) - 1, Number(dayA));
+                        const dateObjB = new Date(Number(yearB), Number(monthB) - 1, Number(dayB));
 
-                return dateObjA.getTime() - dateObjB.getTime();
-            });
-            if (list) {
-                const mergedObjects = list.reduce((acc: Record<string, IMessage[]>, [key, arr]) => {
-                    if (acc[key]) {
-                        acc[key] = acc[key].concat(arr);
-                    } else {
-                        acc[key] = arr;
+                        return dateObjA.getTime() - dateObjB.getTime();
+                    });
+                    if (list) {
+                        const mergedObjects = list.reduce((acc: Record<string, IMessage[]>, [key, arr]) => {
+                            if (acc[key]) {
+                                acc[key] = acc[key].concat(arr);
+                            } else {
+                                acc[key] = arr;
+                            }
+                            return acc;
+                        }, {} as Record<string, IMessage[]>);
+                        const mergedArray: [string, IMessage[]][] = Object.entries(mergedObjects);
+                        setMessages(mergedArray);
                     }
-                    return acc;
-                }, {} as Record<string, IMessage[]>);
-                const mergedArray: [string, IMessage[]][] = Object.entries(mergedObjects);
-                setMessages(mergedArray);
+                }
+            } catch (e) {
+                setError('Error')
             }
         }
+        updateMessages();
     }, [data?.pages]);
     useEffect(() => {
         if (arivialMessages?._id) {
             setMessages(prevState => {
                 const messagesCopy = [...prevState];
                 const lastObject = messagesCopy[messagesCopy.length - 1];
+                const currentDate = dayjs(arivialMessages.createdAt).format('DD-M-YYYY');
+
                 if (lastObject && Array.isArray(lastObject[1]) && lastObject[1].includes(arivialMessages)) {
                     return prevState;
                 }
-                if (lastObject && Array.isArray(lastObject[1])) {
-                    const updatedLastObject = [...lastObject[1], arivialMessages];
-                    lastObject[1] = updatedLastObject;
+                if (lastObject && Array.isArray(lastObject[1]) && currentDate === lastObject[0]) {
+                    lastObject[1] = [...lastObject[1], arivialMessages];
                 } else {
-                    messagesCopy.push(['', [arivialMessages]]);
+                    messagesCopy.push([dayjs(new Date()).format('DD-M-YYYY'), [arivialMessages]]);
                 }
 
                 return messagesCopy;
@@ -141,6 +169,7 @@ const CurrentChatContainer = ({conversation, setCurrentChat, setOpenDrawer}: IPr
             setArivialMessages(prevState => ({} as IMessage));
         }
     }, [arivialMessages?._id]);
+    console.log(data)
 
     return (
         <Box sx={{
@@ -173,22 +202,28 @@ const CurrentChatContainer = ({conversation, setCurrentChat, setOpenDrawer}: IPr
                 borderRadius: '15px',
                 p: '5px',
                 bgcolor: 'background.default',
-                overflowY: 'auto'
-            }}>
-                {
-                    !isError ?
-                        isLoading ? <Loading/> :
-                            messages[0]?.length > 0 ?
-                                <ChatBox
-                                    hasNextPage={hasNextPage}
-                                    fetchNextPage={fetchNextPage}
-                                    isFetchingNextPage={isFetchingNextPage}
-                                    messages={messages}
-                                    receiver={receiver}
-                                    setReplyTo={setReplyTo}
-                                    conversation={conversation}
-                                /> : <div>Error</div> : ''
-                }
+                overflow: 'auto',
+                WebkitOverflowScrolling: 'touch',
+                touchAction: 'manipulation',
+                WebkitTransform: 'translate3d(0, 0, 0)',
+                transform: 'translate3d(0, 0, 0)'
+            }}
+            >
+                {/*{*/}
+                {/*    !isError ?*/}
+                {/*        isLoading ? <Loading/> :*/}
+                {/*            <ChatBox*/}
+                {/*                error={error}*/}
+                {/*                isSending={isSending}*/}
+                {/*                hasNextPage={hasNextPage}*/}
+                {/*                fetchNextPage={fetchNextPage}*/}
+                {/*                isFetchingNextPage={isFetchingNextPage}*/}
+                {/*                messages={messages ?? []}*/}
+                {/*                receiver={receiver}*/}
+                {/*                setReplyTo={setReplyTo}*/}
+                {/*                conversation={conversation}*/}
+                {/*            /> : <div>Error</div>*/}
+                {/*}*/}
             </Box>
             {
                 replyTo?._id && (

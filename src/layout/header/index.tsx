@@ -48,7 +48,8 @@ export const Header: React.FC = () => {
     }, [lan, currentLocale])
 
     return (
-        <AppBar position="sticky" elevation={1} sx={{
+        <AppBar position="sticky" elevation={0} sx={{
+            zIndex: {xs: '10 !important'},
             borderRadius: borderRadiusS,
             bgcolor: (theme) => theme.palette.common.black
         }}>

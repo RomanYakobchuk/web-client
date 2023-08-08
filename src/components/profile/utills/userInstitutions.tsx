@@ -1,11 +1,11 @@
 import {Box, Button, CircularProgress, MenuItem, Select} from "@mui/material";
 import {HourglassBottom, Public, ThumbDownAltOutlined} from "@mui/icons-material";
-import {PropertyProps} from "../../interfaces/common";
-import InstitutionCard from "../institution/utills/InstitutionCard";
+import {PropertyProps} from "../../../interfaces/common";
+import InstitutionCard from "../../institution/utills/InstitutionCard";
 import React, {useState} from "react";
 import {useInfiniteList, useTranslate} from "@refinedev/core";
-import Loading from "../loading";
-import {useMobile} from "../../utils";
+import Loading from "../../loading";
+import {useMobile} from "../../../utils";
 
 interface IProps {
     id: string
@@ -41,6 +41,7 @@ const UserInstitutions = ({id}: IProps) => {
         ]
     });
     // const lengthPublic = institutions?.filter((item: PropertyProps) => item?.verify === "published")?.length;
+    console.log(data)
     // const lengthDraft = institutions?.filter((item: PropertyProps) => item?.verify === "draft")?.length;
     if (isLoading) return device ? <Loading/> : <CircularProgress color={'secondary'}/>;
     if (isError) return <div>Error</div>;
@@ -116,8 +117,9 @@ const UserInstitutions = ({id}: IProps) => {
             {
                 data?.pages?.length > 0 ?
                     data?.pages?.map((page) =>
-                        page?.data?.map((property) => (
+                        page?.data?.map((property, index) => (
                                 <InstitutionCard
+                                    key={index}
                                     otherProps={{
                                         setFavoritePlaces: setFavoritePlaces,
                                         favoritePlaces: favoritePlaces

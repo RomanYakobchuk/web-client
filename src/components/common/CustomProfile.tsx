@@ -26,21 +26,33 @@ const CustomProfile = ({
                            dOB,
                            phoneVerify,
                            status,
-                           allInstitutions,
                            isActivated,
                            favoritePlaces: places,
-                           myReviews,
                        }: ProfileProps) => {
 
     const navigate = useNavigate();
     const {mode} = useContext(ColorModeContext);
     const translate = useTranslate();
     const [favoritePlaces, setFavoritePlaces] = useState([]);
+    const [selectedItem, setSelectedItem] = useState<number | null>(null);
 
     useEffect(() => {
         setFavoritePlaces(places)
-    }, [places])
+    }, [places]);
 
+    const handleClick = (index: number) => {
+        setSelectedItem((prevSelectedItem) =>
+            prevSelectedItem === index ? null : index
+        );
+    };
+
+    const calculateGridSize = (index: number): string => {
+        if (selectedItem === index) {
+            return "span 2";
+        } else {
+            return "span 1";
+        }
+    };
     return (
         <Box>
             <Typography fontSize={{xs: '18px', sm: '22px'}} fontWeight={700}
@@ -57,15 +69,15 @@ const CustomProfile = ({
                     }}
                 >
                     <Box
-                         sx={{
-                             display: 'flex',
-                             width: {xs: '100%', sm: 'auto'},
-                             gap: 2,
-                             flexDirection:{xs: 'row', sm: 'column'},
-                             justifyContent: {xs: 'center', sm: 'auto'},
-                             alignItems: {xs: "center", sm: "start"},
+                        sx={{
+                            display: 'flex',
+                            width: {xs: '100%', sm: 'auto'},
+                            gap: 2,
+                            flexDirection: {xs: 'row', sm: 'column'},
+                            justifyContent: {xs: 'center', sm: 'auto'},
+                            alignItems: {xs: "center", sm: "start"},
 
-                         }}
+                        }}
                     >
                         <Box sx={{
                             display: 'flex',
@@ -77,7 +89,7 @@ const CustomProfile = ({
                             {
                                 avatar ?
                                     <Image alt={"image"}
-                                           preview={{zIndex: 10000, height: '70%'}}
+                                           preview={{zIndex: 1000, height: '70%'}}
                                            src={avatar}
                                            width={"100%"}
                                            height={"100%"}
@@ -129,6 +141,16 @@ const CustomProfile = ({
                                     <Grid
                                         container
                                         spacing={2}
+                                        sx={{
+                                            display: 'grid',
+                                            gridTemplateColumns: {
+                                                xs: 'repeat(1, 1fr)',
+                                                sm: 'repeat(2, 1fr)',
+                                                md: 'repeat(3, 1fr)',
+                                                xl: 'repeat(4, 1fr)'
+                                            },
+                                            gridAutoRows: "minmax(0, 1fr)"
+                                        }}
                                     >
                                         {
                                             [
@@ -193,9 +215,11 @@ const CustomProfile = ({
                                                 <Grid
                                                     key={index}
                                                     item
-                                                    xs={12}
-                                                    sm={6}
-                                                    lg={4}
+                                                    sx={{
+                                                        gridRow: calculateGridSize(index),
+                                                        transition: "all 0.3s ease",
+                                                    }}
+                                                    onClick={() => handleClick(index)}
                                                 >
                                                     <TitleTextItem
                                                         title={item.title}
@@ -243,14 +267,16 @@ const CustomProfile = ({
                     </Box>
                 </Box>
             </Box>
-            {
-                allInstitutions?.length > 0 && (
-                    <CustomAccordion title={translate("profile.my_places")}
-                                     id={allInstitutions[0]}>
-                        <UserInstitutions id={_id}/>
-                    </CustomAccordion>
-                )
-            }
+
+            <UserInstitutions id={_id}/>
+            <UserReviews id={_id}/>
+            <CommentsList
+                id={_id} type={"allByUserId"}
+                setParent={() => {
+                }}
+                setIsAnswer={() => {
+                }}
+            />
             {
                 favoritePlaces?.length > 0 && (
                     <CustomAccordion title={translate("profile.my_fav_places", {"length": favoritePlaces?.length})}
@@ -274,24 +300,6 @@ const CustomProfile = ({
                     </CustomAccordion>
                 )
             }
-            {
-                myReviews?.length > 0 && (
-                    <CustomAccordion title={translate("profile.my_reviews", {"length": myReviews?.length})}
-                                     id={"my_reviews"}>
-                        <Box>
-
-                        </Box>
-                    </CustomAccordion>
-                )
-            }
-            <CustomAccordion title={translate("profile.my_comments")}
-                             id={"my_comments"}>
-                <CommentsList
-                    id={_id} type={"allByUserId"}
-                    setParent={() => {}}
-                    setIsAnswer={() => {}}
-                />
-            </CustomAccordion>
         </Box>
     )
         ;

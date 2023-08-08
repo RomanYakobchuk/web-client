@@ -46,7 +46,7 @@ const CustomDrawer = ({children, anchor, toggleDrawer, title, button, open, clos
     const {device} = useMobile();
 
     const iOS = typeof navigator !== 'undefined' && /iPad|iPhone|iPod/i.test(navigator.userAgent) && true;
-    const height = device ? `calc(95% - ${drawerBleeding}px)` : "100%";
+    const height = device ? `calc(100% - ${drawerBleeding}px)` : "100%";
     return (
         <StyledEngineProvider injectFirst>
             <Root>

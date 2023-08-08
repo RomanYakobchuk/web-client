@@ -138,48 +138,52 @@ const InstitutionReviews = ({id}: IProps) => {
                 bottom: 0
             }}>
                 <Box component={'form'} onSubmit={handleSubmit(handleSend)}>
-                    <Box sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        gap: 3
-                    }}>
-                        <Rating precision={0.5} size={"large"}
-                                value={grade}
-                                disabled={!isAllowedNewReview}
-                                onChange={(event, value) => {
-                                    setGrade(value)
+                    {
+                        isAllowedNewReview ? <>
+                            <Box sx={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                gap: 3
+                            }}>
+                                <Rating precision={0.5} size={"large"}
+                                        value={grade}
+                                        disabled={!isAllowedNewReview}
+                                        onChange={(event, value) => {
+                                            setGrade(value)
+                                        }}
+                                />
+                            </Box>
+                            <TextareaAutosize
+                                value={like}
+                                style={{
+                                    resize: 'vertical',
+                                    minHeight: '100px',
+                                    width: '100%',
+                                    maxHeight: '200px',
+                                    padding: '10px',
+                                    borderRadius: '10px'
                                 }}
-                        />
-                    </Box>
-                    <TextareaAutosize
-                        value={like}
-                        style={{
-                            resize: 'vertical',
-                            minHeight: '100px',
-                            width: '100%',
-                            maxHeight: '200px',
-                            padding: '10px',
-                            borderRadius: '10px'
-                        }}
-                        disabled={!isAllowedNewReview}
-                        placeholder={translate("home.show.reviews.like")}
-                        onChange={(event) => setLike(event.target.value)}
-                    />
-                    <TextareaAutosize
-                        value={notLike}
-                        style={{
-                            resize: 'vertical',
-                            minHeight: '100px',
-                            width: '100%',
-                            maxHeight: '200px',
-                            padding: '10px',
-                            borderRadius: '10px'
-                        }}
-                        disabled={!isAllowedNewReview}
-                        placeholder={translate("home.show.reviews.notLike")}
-                        onChange={(event) => setNotLike(event.target.value)}
-                    />
+                                disabled={!isAllowedNewReview}
+                                placeholder={translate("home.show.reviews.like")}
+                                onChange={(event) => setLike(event.target.value)}
+                            />
+                            <TextareaAutosize
+                                value={notLike}
+                                style={{
+                                    resize: 'vertical',
+                                    minHeight: '100px',
+                                    width: '100%',
+                                    maxHeight: '200px',
+                                    padding: '10px',
+                                    borderRadius: '10px'
+                                }}
+                                disabled={!isAllowedNewReview}
+                                placeholder={translate("home.show.reviews.notLike")}
+                                onChange={(event) => setNotLike(event.target.value)}
+                            />
+                        </> : <></>
+                    }
                     <Button
                         variant={"outlined"}
                         color={"secondary"}
@@ -194,7 +198,7 @@ const InstitutionReviews = ({id}: IProps) => {
                             !isAllowedNewReview
                                 ? translate('home.show.reviews.isAllowedBlock')
                                 : formLoading ? <CircularProgress id={'loadReview'} color={"secondary"} size={'25px'}/>
-                                : translate(dataReviews?.pages?.length > 0 ? 'home.show.reviews.leaveReview' : 'home.show.reviews.leaveFirstReview')
+                                    : translate(dataReviews?.pages?.length > 0 ? 'home.show.reviews.leaveReview' : 'home.show.reviews.leaveFirstReview')
                         }
                     </Button>
                 </Box>
@@ -203,13 +207,11 @@ const InstitutionReviews = ({id}: IProps) => {
                 flex: 8,
                 height: '100%',
                 borderRadius: '10px',
-                overflowY: 'auto',
                 bgcolor: mode === 'light' ? '#e6e3e3' : "#1a4679",
                 display: 'flex',
                 flexDirection: 'column',
                 gap: 2,
                 p: '20px',
-                maxHeight: {xs: '500px', sm: '700px', lg: '1129px', xl: '854px'}
             }}>
                 {
                     dataReviews?.pages?.length > 0 ?

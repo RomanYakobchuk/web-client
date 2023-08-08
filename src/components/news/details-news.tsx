@@ -26,6 +26,7 @@ import {ImageList1, ImageList2, ImageList3} from "../imageList";
 import {useMobile} from "../../utils";
 import {ColorModeContext} from "contexts";
 import OtherNews from "./utills/otherNews";
+import {CustomShow} from "../index";
 
 const DetailsNews = () => {
 
@@ -56,12 +57,9 @@ const DetailsNews = () => {
 
     const news: INews = data?.data ?? [];
 
-    if (isLoading) return <Loading/>
     if (isError) return <ErrorComponent/>
     return (
-        <Box sx={{
-            mb: "30px"
-        }}>
+        <CustomShow isLoading={isLoading} bgColor={'transparent'}>
             <Box sx={{
                 display: 'flex',
                 width: '100%',
@@ -209,7 +207,7 @@ const DetailsNews = () => {
                                         }}>
                                             <ImageField
                                                 preview={{
-                                                    zIndex: 10000,
+                                                    zIndex: 1000,
                                                     width: (device || width < 600) ? '90%' : 'auto'
                                                 }}
                                                 value={news.mainPhoto}
@@ -431,14 +429,17 @@ const DetailsNews = () => {
                         {translate('news.show.otherPlaceNews')}
                     </Typography>
                     <Box>
-                        <OtherNews
-                            newsId={news?._id}
-                            institutionId={news?.institutionId}
-                        />
+                        {
+                            news?.institutionId &&
+                            <OtherNews
+                                newsId={news?._id}
+                                institutionId={news?.institutionId}
+                            />
+                        }
                     </Box>
                 </Box>
             </Box>
-        </Box>
+        </CustomShow>
     );
 };
 export default DetailsNews

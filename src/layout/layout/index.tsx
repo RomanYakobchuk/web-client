@@ -6,7 +6,7 @@ import {Sider as DefaultSider} from "../sider";
 import {Header as DefaultHeader} from "../header";
 import {Footer as DefaultFooter} from "../footer";
 import {KeyboardArrowUp, WineBar} from "@mui/icons-material";
-import {useLocation, useNavigate} from "react-router-dom";
+import {Outlet, useLocation, useNavigate} from "react-router-dom";
 import {useMobile} from "../../utils";
 import {useSchema} from "../../settings";
 
@@ -64,9 +64,12 @@ export const Layout: React.FC<LayoutProps> = ({
     } : {};
 
     return (
-        <Box display="flex" flexDirection="row" sx={{
-            margin: marginS
-        }}>
+        <Box
+            display="flex" flexDirection="row"
+            sx={{
+                margin: marginS,
+                height: '100%'
+            }}>
             <SiderToRender/>
             <Box
                 sx={{
@@ -74,6 +77,7 @@ export const Layout: React.FC<LayoutProps> = ({
                     flexDirection: "column",
                     flex: 1,
                     gap: gapS,
+                    height: '100%'
                 }}
             >
                 <HeaderToRender/>
@@ -82,15 +86,17 @@ export const Layout: React.FC<LayoutProps> = ({
                     sx={{
                         height: heightLayoutS,
                         overflow: 'auto',
-                        p: {xs: 1, md: 2},
-                        flexGrow: 1,
+                        // transform: 'translateZ(1)',
+                        // WebkitOverflowScrolling: 'touch',
                         borderRadius: borderRadiusS,
-                        position: 'relative',
+                        // position: 'relative',
+                        flexGrow: 1,
                         bgcolor: (theme) => theme.palette.background.paper,
-                        ...someStyle
+                        ...someStyle,
+                        // zIndex: 5
                     }}
                 >
-                    {children}
+                    <Outlet/>
                     <FooterToRender/>
                     <Box id={'scrollTop'}
                          component={'a'}
@@ -99,10 +105,10 @@ export const Layout: React.FC<LayoutProps> = ({
                              visibility: "hidden",
                              opacity: 0,
                              position: 'fixed',
-                             right: width < 600 ? '5px' :  '20px',
+                             right: width < 600 ? '5px' : '20px',
                              bottom: '70px',
                              minWidth: '40px',
-                             zIndex: 10000,
+                             zIndex: 10,
                              borderRadius: '50%',
                              width: '62px',
                              height: '60px',
@@ -126,7 +132,7 @@ export const Layout: React.FC<LayoutProps> = ({
                                         right: width < 600 ? '5px' : '20px',
                                         bottom: width < 600 ? '5px' : '20px',
                                         minWidth: '50px',
-                                        zIndex: 1000,
+                                        zIndex: 10,
                                         borderRadius: '50%',
                                         width: '60px',
                                         height: '60px',

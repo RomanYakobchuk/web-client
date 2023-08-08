@@ -38,6 +38,7 @@ p, user, home/*, (show)
 p, user, news/*, (show)
 
 p, admin, institutions, adminListInstitutions
+p, admin, institutions, userListInstitutions
 p, admin, news, adminListNews
 
 p, admin, capl, (list)|(create)

@@ -148,10 +148,10 @@ const UserList = () => {
                                      onClick={searchByValue}
                                      sx={{
                                          textDecoration: 'none',
-                                         color: byTags ? 'white' : 'black',
+                                         color: !byTags ? 'white' : 'black',
                                          padding: '5px',
                                          borderRadius: '5px 0 0 5px',
-                                         bgcolor: !byTags ? 'silver' : '#2e36ca',
+                                         bgcolor: byTags ? 'silver' : '#2e36ca',
                                          transition: '300ms linear',
                                          // borderBottom: !byTags ? '3px solid #212042' : '3px solid transparent',
                                          fontSize: {xs: '16px', md: '20px'},
@@ -168,8 +168,8 @@ const UserList = () => {
                                          textDecoration: 'none',
                                          padding: '5px',
                                          borderRadius: '0 5px 5px 0',
-                                         bgcolor: !byTags ? '#2e36ca' : 'silver',
-                                         color: !byTags ? 'white' : 'black',
+                                         bgcolor: byTags ? '#2e36ca' : 'silver',
+                                         color: byTags ? 'white' : 'black',
                                          transition: '300ms linear',
                                          // borderBottom: byTags ? '3px solid #212042' : '3px solid transparent',
                                          fontSize: {xs: '16px', md: '20px'},

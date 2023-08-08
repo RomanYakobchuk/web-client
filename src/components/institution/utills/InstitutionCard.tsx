@@ -189,12 +189,12 @@ const InstitutionCard = ({
                         }} color="main">
                             <div>
                                 {
-                                    place.city
+                                    place?.city
                                 }
                             </div>
                             <div>
                                 {
-                                    place.address
+                                    place?.address
                                 }
                             </div>
                         </Box>

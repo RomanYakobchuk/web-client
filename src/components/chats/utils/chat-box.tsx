@@ -1,9 +1,11 @@
 import {Box, Button} from "@mui/material";
 import React, {useEffect, useRef, useState} from "react";
-import {GetListResponse, useTranslate} from "@refinedev/core";
+import {GetListResponse, useGetIdentity, useTranslate} from "@refinedev/core";
 
 import {IConversation, IMessage, ProfileProps} from "../../../interfaces/common";
 import MessageCard from "./message-card";
+import dayjs from "dayjs";
+import ChatBoxItems from "./chat-box-items";
 
 interface IProps {
     messages: Array<[string, IMessage[]]>,
@@ -12,11 +14,15 @@ interface IProps {
     hasNextPage: boolean | undefined,
     fetchNextPage: any,
     isFetchingNextPage: boolean,
-    setReplyTo: (item: IMessage) => void
+    setReplyTo: (item: IMessage) => void,
+    isSending: boolean,
+    error: string
 }
 
 const ChatBox = ({
                      conversation,
+                     isSending,
+                     error,
                      messages,
                      receiver,
                      isFetchingNextPage,
@@ -31,7 +37,7 @@ const ChatBox = ({
 
     useEffect(() => {
         if (messages.length > 0 && messages[messages.length - 1][1]?.length > 0) {
-            scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
+            scrollRef.current?.scrollIntoView({behavior: 'smooth'});
         }
     }, [messages]);
     useEffect(() => {
@@ -40,6 +46,7 @@ const ChatBox = ({
     }, [messages]);
     // доробити скрол
 
+    const currentDate = dayjs(new Date()).format("DD-M-YYYY");
 
     return (
         <Box
@@ -61,54 +68,55 @@ const ChatBox = ({
                     </Button>
                 )
             }
-            {
-                messages[messages?.length - 1][1]?.length > 0 &&
-                messages
-                    ?.map(([day, items]: any) => (
-                            <Box key={day} sx={{
-                                display: 'flex',
-                                width: '100%',
-                                margin: 'auto',
-                                flexDirection: 'column',
-                                justifyContent: 'center',
-                                gap: 2
-                            }}>
-                                <h3 style={{
-                                    textTransform: 'capitalize',
-                                    width: '100%',
-                                    textAlign: 'center'
-                                }}>
-                                    {
-                                        day.split('-')[0] + ' ' +  translate(`dates.months.${day.split('-')[1]}`) + ' ' + day.split('-')[2]
-                                    }
-                                </h3>
-                                {
-                                    items?.sort((a: IMessage, b: IMessage) => a?.createdAt > b?.createdAt ? 1 : -1)
-                                        ?.map((item: IMessage) => (
-                                            <Box key={item._id}
-                                                 ref={scrollRef}
-                                            >
-                                                {
-                                                    item?.replyTo?._id && (
-                                                        <Box>
 
-                                                        </Box>
-                                                    )
-                                                }
-                                                <MessageCard
-                                                    setReplyTo={setReplyTo}
-                                                    receiver={receiver}
-                                                    message={item}
-                                                    conversation={conversation}
-                                                />
-                                            </Box>
-                                        ))
-                                }
-                            </Box>
+            {
+                messages[0]?.length > 0 && messages[messages?.length - 1][1]?.length > 0 ?
+                    messages
+                        ?.map(([day, items]: any) => (
+                                <Box key={day} sx={{
+                                    display: 'flex',
+                                    width: '100%',
+                                    margin: 'auto',
+                                    flexDirection: 'column',
+                                    justifyContent: 'center',
+                                    gap: 2
+                                }}>
+                                    <Box sx={{
+                                        width: '100%',
+                                        display: 'flex',
+                                        flexDirection: 'row',
+                                        justifyContent: 'center',
+                                        alignItems: 'center'
+                                    }}>
+                                        <h4 style={{
+                                            textTransform: 'capitalize',
+                                            width: 'fit-content',
+                                            textAlign: 'center',
+                                            padding: '3px 7px',
+                                            borderRadius: '20px',
+                                            color: '#fcfcfc',
+                                            background: 'rgba(155,136,136,0.5)'
+                                        }}>
+                                            {
+                                                day === currentDate ? translate('dates.today') :
+                                                day.split('-')[0] + ' ' + translate(`dates.months.${day.split('-')[1]}`) + ' ' + day.split('-')[2]
+                                            }
+                                        </h4>
+                                    </Box>
+                                    <ChatBoxItems
+                                        receiver={receiver}
+                                        conversation={conversation}
+                                        scrollRef={scrollRef}
+                                        setReplyTo={setReplyTo}
+                                        items={items}/>
+                                </Box>
+                            )
                         )
-                    )
+                    : <div>
+                        Send message for start communication
+                    </div>
             }
         </Box>
     );
 };
-export default ChatBox
+export default ChatBox;

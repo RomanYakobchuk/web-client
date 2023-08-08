@@ -9,6 +9,7 @@ import ScrollLock from 'react-scrolllock';
 
 import {IOptions} from "../interfaces/common";
 import {CountCities, CountType, CountViews} from "components/home";
+import {useDebounce} from "use-debounce";
 
 const {Text} = TypographyAntd;
 const renderTitle = (title: string) => {
@@ -45,11 +46,13 @@ const Home: FC = () => {
     const translate = useTranslate();
 
     const [value, setValue] = useState<string>("");
+    const [isActive, setIsActive] = useState<boolean>(false);
     const [options, setOptions] = useState<IOptions[]>([]);
+    const [debounceValue] = useDebounce(value, 500);
 
     const {refetch: refetchPlaces} = useList<any>({
         resource: "institution/all",
-        filters: [{field: "title", operator: "contains", value}],
+        filters: [{field: "title", operator: "contains", value: debounceValue}],
         queryOptions: {
             enabled: false,
             onSuccess: (data) => {
@@ -71,7 +74,7 @@ const Home: FC = () => {
 
     const {refetch: refetchNews} = useList<any>({
         resource: "news/all",
-        filters: [{field: "title", operator: "contains", value}],
+        filters: [{field: "title", operator: "contains", value: debounceValue}],
         queryOptions: {
             enabled: false,
             onSuccess: (data) => {
@@ -99,35 +102,42 @@ const Home: FC = () => {
 
     return (
         <Box sx={{
-            display: 'flex',
-            gap: "20px",
-            flexDirection: "column",
-            alignItems: "center",
-            margin: "auto",
-            justifyContent: "center",
-            width: "90%",
-            mb: 2
+            p: {xs: 1, md: 2}
         }}>
-            <ScrollLock>
-                <Box sx={{width: '100%'}}>
-                    <AutoComplete
-                        style={{
-                            width: '100%',
-                        }}
-                        options={options}
-                        filterOption={false}
-                        onSearch={debounce((value: string) => setValue(value), 500)}
-                    >
-                        <Input
-                            suffix={<SearchOutlined/>}
-                            size={"large"}
-                        />
-                    </AutoComplete>
-                </Box>
-            </ScrollLock>
-            <CountCities/>
-            <CountType/>
-            <CountViews/>
+            <Box sx={{
+                display: 'flex',
+                gap: "20px",
+                flexDirection: "column",
+                alignItems: "center",
+                margin: "auto",
+                justifyContent: "center",
+                width: "90%",
+                mb: 2
+            }}>
+                <ScrollLock isActive={isActive}>
+                    <Box sx={{width: '100%'}}>
+                        <AutoComplete
+                            style={{
+                                width: '100%',
+                            }}
+                            options={options}
+                            filterOption={false}
+                            onSearch={(value: string) => setValue(value)}
+                            onDropdownVisibleChange={(open) => {
+                                setIsActive(open)
+                            }}
+                        >
+                            <Input
+                                suffix={<SearchOutlined/>}
+                                size={"large"}
+                            />
+                        </AutoComplete>
+                    </Box>
+                </ScrollLock>
+                <CountCities/>
+                <CountType/>
+                <CountViews/>
+            </Box>
         </Box>
     );
 };

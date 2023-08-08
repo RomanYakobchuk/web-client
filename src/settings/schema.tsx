@@ -1,7 +1,7 @@
 import {createContext, FC, ReactNode, useContext, useEffect, useState} from "react";
 import {useMobile} from "../utils";
 
-interface ISchema {
+type ISchema = {
     marginS: string,
     borderRadiusS: string,
     heightLayoutS: string,
@@ -11,9 +11,15 @@ interface ISchema {
     gapS: number,
     buttonSiderS: {
         left: string,
-        top: {xs: string, sm: string},
-        borderRadius: string
+        top: { xs: string, sm: string },
+        borderRadius: string,
+        transform: string
     },
+    setSchema: (value: Schema['type']) => void
+}
+
+type StyleSchemaType = {
+    schema: Schema['type'],
     setSchema: (value: Schema['type']) => void
 }
 
@@ -25,7 +31,7 @@ interface Props {
     children: ReactNode;
 }
 
-const SchemaContext = createContext<ISchema | undefined>(undefined);
+const SchemaContext = createContext<ISchema>({} as ISchema);
 
 export const useSchema = (): ISchema => {
     const context = useContext(SchemaContext);
@@ -43,7 +49,7 @@ export const SchemaProvider: FC<Props> = ({children}) => {
     const [schema, setSchema] = useState<Schema["type"]>(
         (selectedSchema as Schema["type"]) || "schema_1"
     );
-    const [buttonSiderS, setButtonSiderS] = useState<ISchema['buttonSiderS']>({left: '0', top: {xs: "10px", sm: '15px'}, borderRadius: '0px 6px 0px 6px'});
+    const [buttonSiderS, setButtonSiderS] = useState<ISchema['buttonSiderS']>({left: '0', top: {xs: "10px", sm: '15px'}, transform: 'translate(25%, 35%)', borderRadius: '0px 6px 0px 6px'});
     const [marginS, setMarginS] = useState<string>("0");
     const [gapS, setGapS] = useState<number>(0);
     const [marginSiderS, setMarginSiderS] = useState<string>("0");
@@ -69,8 +75,9 @@ export const SchemaProvider: FC<Props> = ({children}) => {
             setHeightLayoutS("100vh");
             setHeightSiderS("100%")
             setButtonSiderS({
-                top: {xs: "10px", sm: '15px'},
+                top: {xs: "8px", sm: '15px'},
                 left: '0px',
+                transform: 'translate(0, 35%)',
                 borderRadius: '0px 6px 6px 0px'
             })
         } else if (selectedSchema === "schema_2") {
@@ -81,8 +88,9 @@ export const SchemaProvider: FC<Props> = ({children}) => {
             setHeightLayoutS("calc(98vh - 64px)");
             setHeightSiderS("calc(100% - 10px)");
             setButtonSiderS({
-                top: {xs: "12px", sm: '17px'},
-                left: '20px',
+                top: {xs: "14px", sm: '17px'},
+                left: '14px',
+                transform: 'translate(25%, 35%)',
                 borderRadius: '6px'
             })
         } else if (selectedSchema === "schema_3") {

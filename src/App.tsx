@@ -57,6 +57,7 @@ import {socket} from './socketClient'
 import {SchemaProvider} from "./settings/schema";
 
 const API_URL = process.env.REACT_APP_API;
+const STATISTIC_API_URL = process.env.REACT_APP_STATISTIC_API;
 
 function App() {
     const {t, i18n} = useTranslation();
@@ -86,7 +87,10 @@ function App() {
                         <GlobalStyles styles={{html: {WebkitFontSmoothing: "auto"}}}/>
                         <RefineSnackbarProvider>
                             <Refine
-                                dataProvider={dataProvider(`${API_URL}/api/v1`, axiosInstance)}
+                                dataProvider={{
+                                    default: dataProvider(`${API_URL}/api/v1`, axiosInstance),
+                                    statistics: dataProvider(`${STATISTIC_API_URL}/statistics_api/v1`)
+                                }}
                                 notificationProvider={notificationProvider}
                                 resources={[
                                     {

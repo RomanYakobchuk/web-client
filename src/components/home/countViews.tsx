@@ -4,12 +4,14 @@ import {useNavigate} from "react-router-dom";
 import {Typography as TypographyAntd} from "antd";
 import {PlaceOutlined} from "@mui/icons-material";
 import ScrollContent from "../common/scrollContent";
+import {useMobile} from "../../utils";
 
 const {Text} = TypographyAntd;
 const CountViews = () => {
 
     const translate = useTranslate();
     const navigate = useNavigate();
+    const {width} = useMobile();
 
     const {data: dataViews, isLoading: isLoadingViews} = useList<any>({
         resource: "institution/countMoreViews",
@@ -24,7 +26,7 @@ const CountViews = () => {
             {
                 (dataViews?.total! > 0 || isLoadingViews) &&
                 <Typography sx={{
-                    fontSize: '22px',
+                    fontSize: {xs: '18px', sm: '22px'},
                     fontWeight: 900,
                     color: (theme: any) => theme.palette.secondary.main
                 }}>
@@ -53,7 +55,6 @@ const CountViews = () => {
                                 item
                                 sx={{
                                     cursor: 'pointer',
-                                    scrollSnapAlign: 'center',
                                     width: {xs: '300px', sm: '400px'},
                                     height: {xs: '150px', sm: "200px"},
                                     borderRadius: '10px',
@@ -68,7 +69,7 @@ const CountViews = () => {
                                 }}>
                                 <Text style={{
                                     color: '#fff',
-                                    fontSize: '22px',
+                                    fontSize: width < 600 ? '18px' : '22px',
                                     fontWeight: 900,
                                     textTransform: 'capitalize'
                                 }}>
@@ -76,7 +77,7 @@ const CountViews = () => {
                                 </Text>
                                 <Text style={{
                                     color: '#fff',
-                                    fontSize: '16px',
+                                    fontSize: width < 600 ? '14px' : '16px',
                                     fontWeight: 600
                                 }}>
                                     {translate(`home.sortByType.${item?.viewsWith?.type}`)}

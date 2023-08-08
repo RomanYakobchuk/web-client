@@ -1,15 +1,17 @@
-import {Box, Button, Grid, Skeleton} from "@mui/material";
+import {Box, Button, Grid, Skeleton, Typography} from "@mui/material";
 import {CanAccess, useList, useTranslate} from "@refinedev/core";
 import {Typography as TypographyAntd} from "antd";
 import ScrollContent from "../common/scrollContent";
 import {useNavigate} from "react-router-dom";
 import {EditLocationOutlined} from "@mui/icons-material";
+import {useMobile} from "../../utils";
 
 const {Text} = TypographyAntd;
 
 const CountCities = () => {
     const translate = useTranslate();
     const navigate = useNavigate();
+    const {width} = useMobile();
 
     const {data: dataCities, isLoading: isLoadingCities} = useList<any>({
         resource: "institution/countByCity?cities=київ,харків,львів,одеса",
@@ -22,6 +24,13 @@ const CountCities = () => {
             gap: 2,
             width: '100%'
         }}>
+            <Typography sx={{
+                fontSize: {xs: '18px', sm: '22px'},
+                fontWeight: 900,
+                color: (theme: any) => theme.palette.secondary.main
+            }}>
+                {translate("home.sortByType.browseByCity")}
+            </Typography>
             <ScrollContent id={'countCities'}>
                 <CanAccess action={'cityWithData'} resource={'cities'}>
                     <Button
@@ -71,7 +80,6 @@ const CountCities = () => {
                                   item
                                   sx={{
                                       cursor: 'pointer',
-                                      scrollSnapAlign: 'center',
                                       width: {xs: '300px', sm: '400px'},
                                       height: {xs: '150px', sm: "200px"},
                                       borderRadius: '10px',
@@ -86,14 +94,14 @@ const CountCities = () => {
                                   }}>
                                 <Text style={{
                                     color: '#fff',
-                                    fontSize: '22px',
+                                    fontSize: width < 600 ? '18px' : '22px',
                                     fontWeight: 900
                                 }}>
                                     {translate(`cities.${city.name}`)}
                                 </Text>
                                 <Text style={{
                                     color: '#fff',
-                                    fontSize: '18px',
+                                    fontSize: width < 600 ? '16px' : '18px',
                                     fontWeight: 600
                                 }}>
                                     {translate("cities.institutions", {"number": city.value})}

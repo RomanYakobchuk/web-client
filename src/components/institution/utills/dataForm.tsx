@@ -143,29 +143,31 @@ const DataForm = ({
     }
 
     return (
-        <>
-            <Box sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: "start",
-                gap: {xs: '10%', sm: '30%', md: '40%'}
-            }}>
-                <Button
-                    variant={"outlined"}
-                    onClick={() => navigate(-1)}
-                    color={'secondary'}>
-                    <ArrowBackIosNew/>
-                </Button>
-
-                <Typography fontSize={{xs: 18, md: 22}} fontWeight={700} textAlign={"start"}>
-                    {translate(`home.${titleAction}.title`)}
-                </Typography>
-            </Box>
-            <Box mt={2.5}
-                 mb={10}
-                 borderRadius="15px" padding="15px" paddingBottom={"30px"}
-                 bgcolor={(theme) => theme.palette.primary.main}
+            // <Box sx={{
+            //     display: 'flex',
+            //     flexDirection: 'row',
+            //     alignItems: 'center',
+            //     justifyContent: "start",
+            //     gap: {xs: '10%', sm: '30%', md: '40%'}
+            // }}>
+            //     <Button
+            //         variant={"outlined"}
+            //         onClick={() => navigate(-1)}
+            //         color={'secondary'}>
+            //         <ArrowBackIosNew/>
+            //     </Button>
+            //
+            //     <Typography fontSize={{xs: 18, md: 22}} fontWeight={700} textAlign={"start"}>
+            //         {translate(`home.${titleAction}.title`)}
+            //     </Typography>
+            // </Box>
+            <Box
+                 sx={{
+                     borderRadius: '15px',
+                     p: '15px',
+                     paddingBottom: '30px',
+                     bgcolor: (theme) => theme.palette.primary.main,
+                 }}
             >
                 <Box
                     component={"form"}
@@ -543,11 +545,11 @@ const DataForm = ({
                                 </> : ''
                         }
                     </FormControl>
-                    <ScheduleList dataLabel={translate("home.create.workSchedule.workDays.title")}
-                                  label={translate("home.create.workSchedule.weekend.title")}
-                                  onSubmit={handleAddWorkDays} onDelete={handleDeleteWorkDays}
-                                  onSubmitWeekend={setWorkScheduleWeekend} workScheduleWeekend={workScheduleWeekend}
-                                  elements={workDays ? workDays : []}/>
+                    {/*<ScheduleList dataLabel={translate("home.create.workSchedule.workDays.title")}*/}
+                    {/*              label={translate("home.create.workSchedule.weekend.title")}*/}
+                    {/*              onSubmit={handleAddWorkDays} onDelete={handleDeleteWorkDays}*/}
+                    {/*              onSubmitWeekend={setWorkScheduleWeekend} workScheduleWeekend={workScheduleWeekend}*/}
+                    {/*              elements={workDays ? workDays : []}/>*/}
                     <Box sx={{
                         display: 'flex',
                         flexDirection: {xs: 'column', lg: 'row'},
@@ -646,7 +648,6 @@ const DataForm = ({
                     </FormControl>
                 </Box>
             </Box>
-        </>
     );
 };
 export default DataForm

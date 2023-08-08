@@ -10,6 +10,7 @@ import dayjs from "dayjs";
 
 import {IReserve, ProfileProps} from "../../interfaces/common";
 import {ColorModeContext} from "../../contexts";
+import {CustomEdit} from "../index";
 
 
 const EditReserve = () => {
@@ -39,6 +40,7 @@ const EditReserve = () => {
         },
     });
     const reserveData = queryResult?.data?.data;
+    const {isLoading} = queryResult!;
 
     useEffect(() => {
         if (reserveData) {
@@ -49,31 +51,7 @@ const EditReserve = () => {
     const bgColor = 'transparent';
 
     return (
-        <Edit
-            saveButtonProps={saveButtonProps}
-            contentProps={{
-                style: {
-                    background: mode === 'dark' ? "#4d4d44" : '#fff',
-                },
-            }}
-            headerProps={{
-                title: <Typography fontSize={'18px'}>{translate('actions.edit')}</Typography>
-            }}
-            headerButtons={[
-                <ListButton title={translate('actions.list')} key={'list_capl_button'} variant={'contained'} color={'info'}/>
-            ]}
-            breadcrumb={
-                <Box sx={{
-                    "& nav ol > li > span": {
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center'
-                    }
-                }}>
-                    <Breadcrumb/>
-                </Box>
-            }
-        >
+        <CustomEdit isLoading={isLoading} saveButtonProps={saveButtonProps}>
             <Form
                 {...formProps}
                 initialValues={{
@@ -327,7 +305,7 @@ const EditReserve = () => {
                     </Grid>
                 </Grid>
             </Form>
-        </Edit>
+        </CustomEdit>
     );
 };
-export default EditReserve
+export default EditReserve;

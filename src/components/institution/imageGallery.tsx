@@ -1,7 +1,9 @@
 import {useState} from "react";
-import {Box, Button, Typography} from "@mui/material";
+import {Box, Button, StyledEngineProvider, Typography} from "@mui/material";
 import {useMobile} from "../../utils";
 import {Close, PermMediaOutlined} from "@mui/icons-material";
+import {useTranslate} from "@refinedev/core";
+import ScrollLock from 'react-scrolllock';
 
 interface PlaceGalleryProps {
     photos: any
@@ -11,71 +13,16 @@ interface PlaceGalleryProps {
 // }
 }
 
-export default function PlaceGallery({photos}: PlaceGalleryProps) {
-    const {width} = useMobile();
+const PlaceGallery = ({photos}: PlaceGalleryProps) => {
+    const {width, device} = useMobile();
+    const translate = useTranslate();
 
     const [showAllPhotos, setShowAllPhotos] = useState(false);
-
-
-    if (showAllPhotos) {
-        return (
-            <Box
-                sx={{
-                    position: "fixed",
-                    inset: 0,
-                    bgcolor: "black",
-                    color: "white",
-                    minHeight: "100vh",
-                    p: 8,
-                    gap: 4,
-                    overflow: 'auto',
-                    zIndex: 100000,
-                    display: "grid",
-                    '&::-webkit-scrollbar': {
-                        display: 'none'
-                    }
-                }}
-            >
-                <Box>
-                    <Typography variant="h5" sx={{mb: 2}}>
-                        All photos
-                    </Typography>
-                    <Button
-                        onClick={() => setShowAllPhotos(false)}
-                        variant="contained"
-                        sx={{
-                            position: "fixed",
-                            right: 12,
-                            top: 8,
-                            borderRadius: "10px",
-                            boxShadow: "0 0 2px black",
-                            bgcolor: "white",
-                            color: "black",
-                        }}
-                    >
-                        <Close/>
-                    </Button>
-                </Box>
-                {
-                    photos?.length > 0 &&
-                    photos.map((photo: any, index: number) => (
-                        <Box key={index}>
-                            <img
-                                style={{
-                                    width: '100%',
-                                }}
-                                src={photo?.url ? photo?.url : photo} alt=""/>
-                        </Box>
-                    ))}
-            </Box>
-        );
-    }
 
     const height = width < 600 ? '208px' : width < 900 ? '308px' : width < 1200 ? '408px' : '458px';
     const height1 = '100%';
     const height2 = width < 600 ? '100px' : width < 900 ? '150px' : width < 1200 ? '200px' : '225px';
-// const height1 = '100%'
-// const height2  = '100%'
+
 
     return (
         <Box sx={{position: "relative", width: '100%', height}}>
@@ -166,6 +113,68 @@ export default function PlaceGallery({photos}: PlaceGalleryProps) {
                     color: 'black'
                 }}/>
             </Button>
+            {
+                showAllPhotos &&
+                <Box
+                    sx={{
+                        WebkitBackfaceVisibility: 'hidden',
+                        position: "fixed",
+                        backfaceVisibility: 'hidden',
+                        inset: 0,
+                        bgcolor: "rgba(0,0,0,0.75)",
+                        color: "white",
+                        height: "100%",
+                        minHeight: '100vh',
+                        p: 8,
+                        gap: 4,
+                        overflow: 'auto',
+                        width: '100%',
+                        zIndex: {xs: 200},
+                        display: "flex",
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        '&::-webkit-scrollbar': {
+                            display: 'none'
+                        }
+                    }}
+                >
+                    <Box>
+                        <Typography variant="h5" sx={{mb: 2}}>
+                            {translate('pictures.pictures')}
+                        </Typography>
+                        <Button
+                            onClick={() => setShowAllPhotos(false)}
+                            variant="contained"
+                            sx={{
+                                position: "fixed",
+                                right: "15px",
+                                zIndex: 201,
+                                top: '15px',
+                                borderRadius: "10px",
+                                boxShadow: "0 0 2px black",
+                                bgcolor: "white",
+                                color: "black",
+                            }}
+                        >
+                            <Close/>
+                        </Button>
+                    </Box>
+                    {
+                        photos?.length > 0 &&
+                        photos?.map((photo: any, index: number) => (
+                            <Box key={index} sx={{
+                                maxWidth: '700px'
+                            }}>
+                                <img
+                                    style={{
+                                        width: '100%',
+                                    }}
+                                    src={photo?.url ? photo?.url : photo} alt=""/>
+                            </Box>
+                        ))}
+                </Box>
+            }
         </Box>
     );
 }
+export default PlaceGallery;

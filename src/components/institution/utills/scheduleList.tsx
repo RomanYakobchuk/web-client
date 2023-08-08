@@ -228,14 +228,14 @@ const ScheduleList = ({
                                                         }}
                                                         views={['hours', 'minutes']}
                                                         // defaultValue={dayjs('2022-04-17T15:30')}
-                                                        value={workDay?.time?.from ? workDay?.time?.from : ""}
+                                                        value={workDay?.time?.from ? workDay?.time?.from?.toDate() : ""}
                                                         onChange={(value: any) => setWorkDay({
                                                             days: {
                                                                 from: workDay?.days?.from,
                                                                 to: workDay?.days?.to
                                                             },
                                                             time: {
-                                                                from: value,
+                                                                from: value ? dayjs(value) : null,
                                                                 to: workDay?.time?.to,
                                                             }
                                                         })}
@@ -268,7 +268,7 @@ const ScheduleList = ({
                                                             ...textFieldStyle
                                                         }}
                                                         views={['hours', 'minutes']}
-                                                        value={workDay?.time?.to ? workDay?.time?.to : ""}
+                                                        value={workDay?.time?.to ? workDay?.time?.to?.toDate() : ""}
                                                         onChange={(value: any) => setWorkDay({
                                                             days: {
                                                                 from: workDay?.days?.from,
@@ -276,7 +276,7 @@ const ScheduleList = ({
                                                             },
                                                             time: {
                                                                 from: workDay?.time?.from,
-                                                                to: value,
+                                                                to: value ? dayjs(value) : null,
                                                             }
                                                         })}
                                                     />

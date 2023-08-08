@@ -3,12 +3,14 @@ import {useList, useTranslate} from "@refinedev/core";
 import {useNavigate} from "react-router-dom";
 import {Typography as TypographyAntd} from "antd";
 import ScrollContent from "../common/scrollContent";
+import {useMobile} from "../../utils";
 
 const {Text} = TypographyAntd;
 const CountType = () => {
 
     const translate = useTranslate();
     const navigate = useNavigate();
+    const {width} = useMobile();
 
     const {data: dataTypes, isLoading: isLoadingTypes} = useList<any>({
         resource: "institution/countByType",
@@ -21,11 +23,11 @@ const CountType = () => {
             width: '100%'
         }}>
             <Typography sx={{
-                fontSize: '22px',
+                fontSize: {xs: '18px', sm: '22px'},
                 fontWeight: 900,
                 color: (theme: any) => theme.palette.secondary.main
             }}>
-                {translate("home.sortByType.browse")}
+                {translate("home.sortByType.browseByType")}
             </Typography>
             <ScrollContent id={'countTypes'}>
                 {
@@ -49,7 +51,6 @@ const CountType = () => {
                                 item
                                 sx={{
                                     cursor: 'pointer',
-                                    scrollSnapAlign: 'center',
                                     width: {xs: '300px', sm: '400px'},
                                     height: {xs: '150px', sm: "200px"},
                                     borderRadius: '10px',
@@ -64,14 +65,14 @@ const CountType = () => {
                                 }}>
                                 <Text style={{
                                     color: '#fff',
-                                    fontSize: '22px',
+                                    fontSize: width < 600 ? '18px' : '22px',
                                     fontWeight: 900
                                 }}>
                                     {translate(`home.sortByType.${type}`)}
                                 </Text>
                                 <Text style={{
                                     color: '#fff',
-                                    fontSize: '18px',
+                                    fontSize: width < 600 ? '16px' : '18px',
                                     fontWeight: 600
                                 }}>
                                     {translate("cities.institutions", {"number": dataTypes?.data[index]?.count})}

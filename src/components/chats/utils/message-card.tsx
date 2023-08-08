@@ -1,119 +1,70 @@
-import {Box, Button, IconButton, Menu, MenuItem} from "@mui/material";
+import {Box, Menu, MenuItem} from "@mui/material";
 import dayjs from "dayjs";
-import {ContentCopy, ReplyOutlined} from "@mui/icons-material";
-import {useEffect, useState, MouseEvent, useRef} from "react";
-import {useGetIdentity, useTranslate} from "@refinedev/core";
+import {MouseEvent, useEffect} from "react";
 import {useTranslation} from "react-i18next";
-import {useNavigate} from "react-router-dom";
 
 import {IConversation, IMessage, ProfileProps} from "../../../interfaces/common";
-import {useMobile} from "../../../utils";
-import useLongPress from "../../../utils/useLongPress";
+
 
 import relativeTime from "dayjs/plugin/relativeTime"
 import 'dayjs/locale/uk';
 import 'dayjs/locale/en';
+import MessagesCardGroup from "./messages-card-group";
+import {ContentCopy, DoneAllOutlined, DoneOutlined, ErrorOutlined, ReplyOutlined} from "@mui/icons-material";
 
 dayjs.extend(relativeTime);
 
 interface IProps {
-    message: IMessage,
+    message?: IMessage,
     conversation?: IConversation,
     receiver: ProfileProps,
-    setReplyTo: (item: IMessage) => void
+    setReplyTo: (item: IMessage) => void,
+    group: IMessage[]
 }
 
-const MessageCard = ({message, conversation, receiver, setReplyTo}: IProps) => {
-    const {data: user} = useGetIdentity<ProfileProps>();
+const MessageCard = ({conversation, receiver, setReplyTo, group, message}: IProps) => {
     const {i18n} = useTranslation();
-    const {device, width} = useMobile();
-    const navigate = useNavigate();
-    const translate = useTranslate();
 
     useEffect(() => {
         i18n.language === "ua" ? dayjs.locale('uk') : dayjs.locale('en')
     }, [i18n.language]);
 
-    const [showReply, setShowReply] = useState(false);
-    const currentDate = dayjs();
-    const createdAtDate = dayjs(message?.createdAt);
-
-    const diffInHour = currentDate.diff(createdAtDate, 'hour');
-
-    const onClick = () => {
-        // navigate((message?.sender === conversation?.managerId?._id)
-        //     ? `/all_institutions/show/${conversation?.institutionId?._id}`
-        //     : `/capl`
-        // )
-        console.log('press')
-    }
-    const onLongPress = () => {
-        setAnchorEl(document.getElementById(`demo-positioned-button${message?._id}`));
-    }
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const open = Boolean(anchorEl);
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
-
-    const defaultOptions = {
-        shouldPreventDefault: true,
-        delay: 300,
-    };
-    const longPressEvent = useLongPress(onLongPress, onClick, defaultOptions)
     const onContextMenu = (event: MouseEvent) => {
         event.preventDefault();
     };
-    const textRef = useRef<HTMLDivElement>(null);
 
-    const copyText = async () => {
-        if (textRef.current) {
-            const textToCopy = textRef.current.innerText;
-            await navigator.clipboard.writeText(textToCopy);
-        }
-    };
+    const data = group[0];
+
     return (
         <Box sx={{
             display: 'flex',
             width: '100%',
             gap: 1,
-            touchAction: 'none',
             alignItems: 'end',
-            justifyContent: message?.sender === receiver?._id ? 'start' : 'end',
+            justifyContent: data?.sender === receiver?._id ? 'start' : 'end',
         }}
-             onContextMenu={onContextMenu}
         >
-            {
-                showReply &&
-                <IconButton
-                    sx={{
-                        order: message?.sender === receiver?._id ? 2 : 1
-                    }}
-                    onClick={() => setReplyTo(message)}
-                >
-                    <ReplyOutlined sx={{
-                        transform: `scaleX(${message?.sender === receiver?._id ? -1 : 1})`
-                    }}/>
-                </IconButton>
-            }
             <Box sx={{
                 display: 'flex',
-                justifyContent: message?.sender === receiver?._id ? 'start' : 'end',
-                flexDirection: message?.sender === receiver?._id ? 'row' : 'row-reverse',
-                order: message?.sender === receiver?._id ? 1 : 2,
+                justifyContent: data?.sender === receiver?._id ? 'start' : 'end',
+                flexDirection: data?.sender === receiver?._id ? 'row' : 'row-reverse',
+                order: data?.sender === receiver?._id ? 1 : 2,
                 gap: 1,
                 width: '100%'
-            }}>
+            }}
+                 onContextMenu={onContextMenu}
+            >
                 <img
                     src={
-                        (message?.sender === conversation?.managerId?._id)
+                        (data?.sender === conversation?.managerId?._id)
                             ? conversation?.institutionId?.mainPhoto
                             : conversation?.userId?.avatar
                     }
-                    alt={message?._id}
+                    alt={data?._id}
                     style={{
-                        width: '46px',
-                        height: '46px',
+                        width: '38px',
+                        height: '38px',
+                        minWidth: '38px',
                         borderRadius: '50%',
                         objectFit: 'cover'
                     }}
@@ -122,123 +73,36 @@ const MessageCard = ({message, conversation, receiver, setReplyTo}: IProps) => {
                     display: 'flex',
                     flexDirection: 'column',
                     gap: 1,
-                    width: 'calc(100% - 46px)',
-                    position: 'relative',
-                    alignItems: message?.sender === receiver?._id ? 'start' : 'end',
+                    width: '100%',
+                    alignItems: data?.sender === receiver?._id ? 'start' : 'end',
                 }}>
-                    <Box>
+                    <Box sx={{
+                        fontSize: '15px'
+                    }}>
                         {
-                            message?.sender === conversation?.managerId?._id
+                            data?.sender === conversation?.managerId?._id
                                 ? conversation?.institutionId?.title
                                 : conversation?.userId?.name
                         }
                     </Box>
-                    <Button
-                        id={`demo-positioned-button${message?._id}`}
-                        aria-controls={open ? `demo-positioned-menu${message?._id}` : undefined}
-                        aria-haspopup="true"
-                        aria-expanded={open ? 'true' : undefined}
-                        {...longPressEvent}
-                        sx={{
-                            bgcolor: 'info.main',
-                            padding: '10px',
-                            borderRadius: message?.sender === receiver?._id ? '0px 15px 15px 15px' : '15px 0px 15px 15px',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: 1,
-                            maxWidth: '80%',
-                            textTransform: 'none',
-                            "&:hover": {
-                                bgcolor: 'info.main',
-                                color: "inherit",
-                            },
-                        }}
-                        disableRipple
-                    >
-                        <Box
-                            ref={textRef}
-                            sx={{
-                                whiteSpace: 'break-spaces',
-                                fontSize: '14px',
-                                color: 'info.contrastText',
-                                textAlign: 'start',
-                                width: '100%'
-                            }}
-                        >
-                            {message?.text}
-                        </Box>
-                        <Box sx={{
-                            fontSize: '12px',
-                            color: 'info.contrastText',
-                            display: 'flex',
-                            width: '100%',
-                            justifyContent: message?.sender === receiver?._id ? 'end' : 'start'
-                        }}>
-                            {
-                                diffInHour < 1 ?
-                                    dayjs(message?.createdAt).fromNow()
-                                    : dayjs(message?.createdAt).format('HH:mm')
-                            }
-                        </Box>
-                    </Button>
-                    <Menu
-                        id={`demo-positioned-menu${message?._id}`}
-                        aria-labelledby={`demo-positioned-button${message?._id}`}
-                        anchorEl={anchorEl}
-                        open={open}
-                        onClose={handleClose}
-                        anchorOrigin={{
-                            vertical: 'center',
-                            horizontal: message?.sender === receiver?._id  ? 'left' : 'right'
-                        }}
-                        transformOrigin={{
-                            vertical: 'center',
-                            horizontal: message?.sender === receiver?._id  ? 'left' : 'right',
-                        }}
-                        sx={{
-                            width: '180px',
-                            "& div ul li": {
-                                borderBottom: '1px solid silver'
-                            },
-                            "& div ul li:last-child": {
-                                borderBottom: 'none'
-                            }
-                        }}
-                    >
+                    <Box sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 0.5,
+                        maxWidth: '80%',
+                        posititon: 'relative'
+                    }}>
                         {
-                            [
-                                {
-                                    icon: <ReplyOutlined sx={{transform: 'rotateY(180deg)'}}/>,
-                                    text: translate('buttons.reply'),
-                                    onClick: () => setReplyTo(message)
-                                },
-                                {
-                                    icon: <ContentCopy/>,
-                                    text: translate('buttons.copy'),
-                                    onClick: copyText
-                                }
-                            ].map((item, index) => (
-                                <MenuItem
-                                    key={index}
-                                    sx={{
-                                        display: 'flex',
-                                        flexDirection: 'row',
-                                        alignItems: 'center',
-                                        justifyContent: 'space-between',
-                                        width: '100%',
-                                        height: '30px',
-                                    }}
-                                    onClick={() => {
-                                        item?.onClick()
-                                        handleClose()
-                                    }}
-                                >
-                                    {item?.text}
-                                    {item?.icon}
-                                </MenuItem>
+                            group?.map((item: IMessage, index: number) => (
+                                <MessagesCardGroup
+                                    index={index}
+                                    lengthGroup={group?.length}
+                                    setReplyTo={setReplyTo}
+                                    receiver={receiver}
+                                    item={item} key={index}/>
                             ))
                         }
-                    </Menu>
+                    </Box>
                 </Box>
             </Box>
         </Box>

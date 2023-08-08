@@ -1,7 +1,7 @@
 import {Box, Typography} from "@mui/material";
-import CommentCard from "../institution/utills/commentCard";
+import CommentCard from "../../institution/utills/commentCard";
 import React from "react";
-import {IComment} from "../../interfaces/common";
+import {IComment} from "../../../interfaces/common";
 import {useNavigate} from "react-router-dom";
 import {useTranslate} from "@refinedev/core";
 

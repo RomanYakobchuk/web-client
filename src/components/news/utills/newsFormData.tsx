@@ -319,8 +319,8 @@ const NewsFormData = ({
                         gap: 2,
                         justifyContent: {sm: 'space-between'}
                     }}>
-                        <DateTimeList dataLabel={translate("news.create.date.title")} onSubmit={handleAddWorkDays}
-                                      elements={workDays} onDelete={handleDeleteWorkDays}/>
+                        {/*<DateTimeList dataLabel={translate("news.create.date.title")} onSubmit={handleAddWorkDays}*/}
+                        {/*              elements={workDays} onDelete={handleDeleteWorkDays}/>*/}
                         <FormControl sx={{
                             width: {xs: '100%', sm: '50%'}
                         }}>

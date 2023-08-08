@@ -5,6 +5,7 @@ import {useNavigate} from "react-router-dom";
 
 import {ProfileProps, PropertyProps} from "../../interfaces/common";
 import DataForm from "./utills/dataForm";
+import {CustomCreate} from "../index";
 
 
 const CreateInstitution: FC = () => {
@@ -107,48 +108,50 @@ const CreateInstitution: FC = () => {
 
 
     return (
-        <DataForm
-            setMainPhoto={setMainPhoto}
-            mainPhoto={mainPhoto}
-            setOtherPhoto={setOtherPhoto}
-            otherPhoto={otherPhoto}
-            onFinishHandler={onFinishHandler}
-            formLoading={formLoading}
-            titleAction={'create'}
-            handleSubmit={handleSubmit}
-            open={open}
-            setOpen={setOpen}
-            tags={tags}
-            setAverageCheck={setAverageCheck}
-            averageCheck={averageCheck}
-            setTitle={setTitle}
-            title={title}
-            setTags={setTags}
-            setCreatedBy={setCreatedBy}
-            createdBy={createdBy}
-            searchInputValue={searchInputValue}
-            setSearchInputValue={setSearchInputValue}
-            setWorkScheduleWeekend={setWorkScheduleWeekend}
-            setWorkDays={setWorkDays}
-            searchManagerInput={searchManagerInput}
-            setVariantForDisplay={setVariantForDisplay}
-            contacts={contacts}
-            setContacts={setContacts}
-            description={description}
-            features={features}
-            setFeatures={setFeatures}
-            location={location}
-            setDescription={setDescription}
-            place={place}
-            setPlace={setPlace}
-            setLocation={setLocation}
-            setSearchManagerInput={setSearchManagerInput}
-            setType={setType}
-            type={type}
-            variantForDisplay={variantForDisplay}
-            workDays={workDays}
-            workScheduleWeekend={workScheduleWeekend}
-        />
+        <CustomCreate isLoading={false} bgColor={'transparent'}>
+            <DataForm
+                setMainPhoto={setMainPhoto}
+                mainPhoto={mainPhoto}
+                setOtherPhoto={setOtherPhoto}
+                otherPhoto={otherPhoto}
+                onFinishHandler={onFinishHandler}
+                formLoading={formLoading}
+                titleAction={'create'}
+                handleSubmit={handleSubmit}
+                open={open}
+                setOpen={setOpen}
+                tags={tags}
+                setAverageCheck={setAverageCheck}
+                averageCheck={averageCheck}
+                setTitle={setTitle}
+                title={title}
+                setTags={setTags}
+                setCreatedBy={setCreatedBy}
+                createdBy={createdBy}
+                searchInputValue={searchInputValue}
+                setSearchInputValue={setSearchInputValue}
+                setWorkScheduleWeekend={setWorkScheduleWeekend}
+                setWorkDays={setWorkDays}
+                searchManagerInput={searchManagerInput}
+                setVariantForDisplay={setVariantForDisplay}
+                contacts={contacts}
+                setContacts={setContacts}
+                description={description}
+                features={features}
+                setFeatures={setFeatures}
+                location={location}
+                setDescription={setDescription}
+                place={place}
+                setPlace={setPlace}
+                setLocation={setLocation}
+                setSearchManagerInput={setSearchManagerInput}
+                setType={setType}
+                type={type}
+                variantForDisplay={variantForDisplay}
+                workDays={workDays}
+                workScheduleWeekend={workScheduleWeekend}
+            />
+        </CustomCreate>
     )
 }
 export default CreateInstitution;

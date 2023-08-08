@@ -64,7 +64,7 @@ const BookMark = ({id, otherProps: setFavoritePlaces, color, type, showText}: IP
                 bgcolor: mode === "dark" ? "#605454" : "#ffffff",
                 flexDirection: 'row',
                 alignItems: 'center',
-                justifyContent: showText ? 'start' : 'center',
+                justifyContent: showText ? 'space-evenly' : 'center',
                 gap: 1,
                 textTransform: 'inherit',
                 boxShadow: 'none',
@@ -78,22 +78,22 @@ const BookMark = ({id, otherProps: setFavoritePlaces, color, type, showText}: IP
                     : book
                         ?
                         <>
+                            {showText && translate('home.show.delFromFav')}
                             <BookmarkOutlined sx={{
                                 fontSize: 26,
                                 cursor: 'pointer',
                                 transition: '300ms linear',
                                 color: color ? color : '#fcfcfc'
                             }}/>
-                            {showText && translate('home.show.delFromFav')}
                         </> :
                         <>
+                            {showText && translate('home.show.addToFav')}
                             <BookmarkBorderOutlined sx={{
                                 fontSize: 26,
                                 cursor: 'pointer',
                                 transition: '300ms linear',
                                 color: color ? color : '#fcfcfc'
                             }}/>
-                            {showText && translate('home.show.addToFav')}
                         </>
             }
         </Button>

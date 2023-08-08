@@ -16,6 +16,7 @@ import {ColorModeContext} from "../../../contexts";
 import {SearchCity} from "../../index";
 import {buttonStyle, selectStyle, textFieldStyle} from "../../../styles";
 import {useMobile} from "../../../utils";
+import ScrollLock from "react-scrolllock";
 
 
 interface IProps {
@@ -274,311 +275,315 @@ const FilterInstitutions = ({
                 </Button>
                 {
                     openFilter &&
-                    (<Box
-                        sx={{
-                            position: 'fixed',
-                            minHeight: '100vh',
-                            top: 0,
-                            right: 0,
-                            left: {xs: 0, md: 'auto'},
-                            width: '100%',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            zIndex: 100,
-                            bgcolor: 'rgba(47,37,37,0.5)'
-                        }}>
-                        <Box
-                            sx={{
-                                width: {xs: '320px', sm: '450px'},
-                                bgcolor: (theme) => theme.palette.primary.main,
-                                p: '20px',
-                                borderRadius: '10px'
-                            }}>
-                            <Box sx={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                width: '100%',
-                                justifyContent: {xs: 'space-between', sm: 'start', md: 'end'},
-                                gap: 2
-                            }}>
-                                <FormControl sx={{width: '100%',}}>
-                                    <FormHelperText
-                                        sx={{
-                                            fontSize: '14px',
-                                            mb: 0.5,
-                                            color: (theme) => theme.palette.text.primary
-                                        }}
-                                    >
-                                        {translate('home.create.type.title')}
-                                    </FormHelperText>
-                                    <Select
-                                        variant={"outlined"}
-                                        size="small"
-                                        color={"info"}
-                                        displayEmpty
-                                        fullWidth
-                                        required
-                                        inputProps={{'aria-label': 'Without label'}}
-                                        sx={{
-                                            fontSize: {xs: '12px', sm: '16px'},
-                                            ...selectStyle
-                                        }}
-                                        value={type ?? currentFilterValues.propertyType}
-                                        onChange={(e) => {
-                                            setType(e.target.value)
-                                            setFilters([{
-                                                field: 'propertyType',
-                                                operator: 'eq',
-                                                value: e.target.value ? e.target.value : undefined
-                                            }])
-                                        }}>
-                                        <MenuItem value={""}>{translate("home.sortByType.all")}</MenuItem>
-                                        {
-                                            [{
-                                                title: translate("home.sortByType.bar"),
-                                                value: "bar"
-                                            }, {
-                                                title: translate("home.sortByType.cafe"),
-                                                value: "cafe"
-                                            }, {
-                                                title: translate("home.sortByType.restaurant"),
-                                                value: "restaurant"
-                                            }].map((type) => (
-                                                <MenuItem key={type.value}
-                                                          value={type.value.toLowerCase()}>{type.title}</MenuItem>
-                                            ))
-                                        }
-                                    </Select>
-                                </FormControl>
-                                <FormControl
-                                    sx={{width: '100%',}}>
-                                    <FormHelperText
-                                        sx={{
-                                            fontSize: '14px',
-                                            mb: 0.5,
-                                            color: (theme) => theme.palette.text.primary
-                                        }}
-                                    >
-                                        {translate('home.create.location.title')}
-                                    </FormHelperText>
-                                    <SearchCity searchCity={searchCity} setSearchCity={setSearchCity}/>
-                                </FormControl>
-                                <FormControl
-                                    sx={{width: '100%',}}>
-                                    <FormHelperText
-                                        sx={{
-                                            fontSize: '14px',
-                                            mb: 0.5,
-                                            color: (theme) => theme.palette.text.primary
-                                        }}
-                                    >
-                                        {translate('home.sort')}
-                                    </FormHelperText>
-                                    <Select
-                                        variant={"outlined"}
-                                        size="small"
-                                        color={"info"}
-                                        fullWidth
-                                        displayEmpty
-                                        required
-                                        inputProps={{'aria-label': 'Without label'}}
-                                        value={newSorters[0]?.field ? newSorters[0]?.field : sortBy ? sortBy : ""}
-                                        sx={{
-                                            fontSize: {xs: '12px', sm: '16px'},
-                                            ...selectStyle
-                                        }}
-                                        onChange={
-                                            (e: any) => {
-                                                setSortBy(e.target.value)
-                                                toggleSort(e.target.value)
-                                            }
-                                        }
-                                    >
-                                        <MenuItem value={""}>{translate("home.default")}</MenuItem>
-                                        {
-                                            [
-                                                {
-                                                    title: translate("home.sortRating") + '  ' + '↑',
-                                                    value: "rating_asc",
-                                                },
-                                                {
-                                                    title: translate("home.sortRating") + '  ' + '↓',
-                                                    value: "rating_desc",
-                                                },
-                                                {
-                                                    title: 'Найстаріші',
-                                                    value: 'createdAt_asc',
-                                                },
-                                                {
-                                                    title: 'Найновіші',
-                                                    value: 'createdAt_desc',
-                                                },
-                                                {
-                                                    title: translate("home.sortByABC.title") + ' ' + translate("home.sortByABC.a-z"),
-                                                    value: 'title_asc'
-                                                },
-                                                {
-                                                    title: translate("home.sortByABC.title") + ' ' + translate("home.sortByABC.z-a"),
-                                                    value: 'title_desc'
-                                                },
-                                                {
-                                                    title: translate("home.create.averageCheck") + '  ' + '↑',
-                                                    value: 'averageCheck_asc'
-                                                },
-                                                {
-                                                    title: translate("home.create.averageCheck") + '  ' + '↓',
-                                                    value: 'averageCheck_desc'
-                                                },
-                                            ].map((type) => (
-                                                <MenuItem key={type.value}
-                                                          value={type.value}>{type.title}</MenuItem>
-                                            ))
-                                        }
-                                    </Select>
-                                </FormControl>
-                                <FormControl
-                                    sx={{width: '100%',}}>
-                                    <FormHelperText
-                                        sx={{
-                                            fontSize: '14px',
-                                            mb: 0.5,
-                                            color: (theme) => theme.palette.text.primary
-                                        }}
-                                    >
-                                        {translate('home.create.averageCheck')}
-                                    </FormHelperText>
-                                    <Box sx={{
-                                        width: '100%'
+                    (
+                        <ScrollLock>
+                            <Box
+                                sx={{
+                                    position: 'fixed',
+                                    minHeight: '100vh',
+                                    top: 0,
+                                    right: 0,
+                                    left: {xs: 0, md: 'auto'},
+                                    width: '100%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    zIndex: 1000,
+                                    bgcolor: 'rgba(47,37,37,0.5)'
+                                }}>
+                                <Box
+                                    sx={{
+                                        width: {xs: '320px', sm: '450px'},
+                                        bgcolor: (theme) => theme.palette.primary.main,
+                                        p: '20px',
+                                        borderRadius: '10px'
                                     }}>
+                                    <Box sx={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        alignItems: 'center',
+                                        width: '100%',
+                                        justifyContent: {xs: 'space-between', sm: 'start', md: 'end'},
+                                        gap: 2
+                                    }}>
+                                        <FormControl sx={{width: '100%',}}>
+                                            <FormHelperText
+                                                sx={{
+                                                    fontSize: '14px',
+                                                    mb: 0.5,
+                                                    color: (theme) => theme.palette.text.primary
+                                                }}
+                                            >
+                                                {translate('home.create.type.title')}
+                                            </FormHelperText>
+                                            <Select
+                                                variant={"outlined"}
+                                                size="small"
+                                                color={"info"}
+                                                displayEmpty
+                                                fullWidth
+                                                required
+                                                inputProps={{'aria-label': 'Without label'}}
+                                                sx={{
+                                                    fontSize: {xs: '12px', sm: '16px'},
+                                                    ...selectStyle
+                                                }}
+                                                value={type ?? currentFilterValues.propertyType}
+                                                onChange={(e) => {
+                                                    setType(e.target.value)
+                                                    setFilters([{
+                                                        field: 'propertyType',
+                                                        operator: 'eq',
+                                                        value: e.target.value ? e.target.value : undefined
+                                                    }])
+                                                }}>
+                                                <MenuItem value={""}>{translate("home.sortByType.all")}</MenuItem>
+                                                {
+                                                    [{
+                                                        title: translate("home.sortByType.bar"),
+                                                        value: "bar"
+                                                    }, {
+                                                        title: translate("home.sortByType.cafe"),
+                                                        value: "cafe"
+                                                    }, {
+                                                        title: translate("home.sortByType.restaurant"),
+                                                        value: "restaurant"
+                                                    }].map((type) => (
+                                                        <MenuItem key={type.value}
+                                                                  value={type.value.toLowerCase()}>{type.title}</MenuItem>
+                                                    ))
+                                                }
+                                            </Select>
+                                        </FormControl>
+                                        <FormControl
+                                            sx={{width: '100%',}}>
+                                            <FormHelperText
+                                                sx={{
+                                                    fontSize: '14px',
+                                                    mb: 0.5,
+                                                    color: (theme) => theme.palette.text.primary
+                                                }}
+                                            >
+                                                {translate('home.create.location.title')}
+                                            </FormHelperText>
+                                            <SearchCity searchCity={searchCity} setSearchCity={setSearchCity}/>
+                                        </FormControl>
+                                        <FormControl
+                                            sx={{width: '100%',}}>
+                                            <FormHelperText
+                                                sx={{
+                                                    fontSize: '14px',
+                                                    mb: 0.5,
+                                                    color: (theme) => theme.palette.text.primary
+                                                }}
+                                            >
+                                                {translate('home.sort')}
+                                            </FormHelperText>
+                                            <Select
+                                                variant={"outlined"}
+                                                size="small"
+                                                color={"info"}
+                                                fullWidth
+                                                displayEmpty
+                                                required
+                                                inputProps={{'aria-label': 'Without label'}}
+                                                value={newSorters[0]?.field ? newSorters[0]?.field : sortBy ? sortBy : ""}
+                                                sx={{
+                                                    fontSize: {xs: '12px', sm: '16px'},
+                                                    ...selectStyle
+                                                }}
+                                                onChange={
+                                                    (e: any) => {
+                                                        setSortBy(e.target.value)
+                                                        toggleSort(e.target.value)
+                                                    }
+                                                }
+                                            >
+                                                <MenuItem value={""}>{translate("home.default")}</MenuItem>
+                                                {
+                                                    [
+                                                        {
+                                                            title: translate("home.sortRating") + '  ' + '↑',
+                                                            value: "rating_asc",
+                                                        },
+                                                        {
+                                                            title: translate("home.sortRating") + '  ' + '↓',
+                                                            value: "rating_desc",
+                                                        },
+                                                        {
+                                                            title: 'Найстаріші',
+                                                            value: 'createdAt_asc',
+                                                        },
+                                                        {
+                                                            title: 'Найновіші',
+                                                            value: 'createdAt_desc',
+                                                        },
+                                                        {
+                                                            title: translate("home.sortByABC.title") + ' ' + translate("home.sortByABC.a-z"),
+                                                            value: 'title_asc'
+                                                        },
+                                                        {
+                                                            title: translate("home.sortByABC.title") + ' ' + translate("home.sortByABC.z-a"),
+                                                            value: 'title_desc'
+                                                        },
+                                                        {
+                                                            title: translate("home.create.averageCheck") + '  ' + '↑',
+                                                            value: 'averageCheck_asc'
+                                                        },
+                                                        {
+                                                            title: translate("home.create.averageCheck") + '  ' + '↓',
+                                                            value: 'averageCheck_desc'
+                                                        },
+                                                    ].map((type) => (
+                                                        <MenuItem key={type.value}
+                                                                  value={type.value}>{type.title}</MenuItem>
+                                                    ))
+                                                }
+                                            </Select>
+                                        </FormControl>
+                                        <FormControl
+                                            sx={{width: '100%',}}>
+                                            <FormHelperText
+                                                sx={{
+                                                    fontSize: '14px',
+                                                    mb: 0.5,
+                                                    color: (theme) => theme.palette.text.primary
+                                                }}
+                                            >
+                                                {translate('home.create.averageCheck')}
+                                            </FormHelperText>
+                                            <Box sx={{
+                                                width: '100%'
+                                            }}>
+                                                <Box sx={{
+                                                    display: 'flex',
+                                                    flexDirection: 'row',
+                                                    alignItems: 'center',
+                                                    width: '100%',
+                                                    justifyContent: 'space-between',
+                                                }}>
+                                                    <TextField
+                                                        color={"secondary"}
+                                                        sx={{
+                                                            width: '100px',
+                                                            borderColor: 'silver',
+                                                            minWidth: '140px',
+                                                            ...textFieldStyle
+                                                        }}
+                                                        id="outlined-number-1"
+                                                        size={"small"}
+                                                        type="number"
+                                                        InputLabelProps={{
+                                                            shrink: true,
+                                                        }}
+                                                        InputProps={{
+                                                            inputProps: {
+                                                                min: 0
+                                                            }
+                                                        }}
+                                                        value={valueGte}
+                                                        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                            setValueGte(Number(e.target.value))
+                                                            setFilters([{
+                                                                field: 'averageCheck',
+                                                                operator: 'gte',
+                                                                value: e.target.value ? e.target.value : undefined
+                                                            }])
+                                                        }}
+                                                    />
+                                                    <TextField
+                                                        color={"secondary"}
+                                                        sx={{
+                                                            width: '100px',
+                                                            borderColor: 'silver',
+                                                            minWidth: '140px',
+                                                            ...textFieldStyle
+                                                        }}
+                                                        InputProps={{
+                                                            inputProps: {
+                                                                min: 0
+                                                            }
+                                                        }}
+                                                        id="outlined-number-2"
+                                                        size={"small"}
+                                                        type="number"
+                                                        InputLabelProps={{
+                                                            shrink: true,
+                                                        }}
+                                                        value={valueLte}
+                                                        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                            setValueLte(Number(e.target.value))
+                                                            setFilters([{
+                                                                field: 'averageCheck',
+                                                                operator: 'lte',
+                                                                value: e.target.value ? e.target.value : undefined
+                                                            }])
+                                                        }}
+                                                    />
+                                                </Box>
+                                                <Box sx={{
+                                                    width: '90%',
+                                                    margin: 'auto'
+                                                }}>
+                                                    <Slider
+                                                        color={"secondary"}
+                                                        value={[Number(valueGte), Number(valueLte)]}
+                                                        min={0}
+                                                        max={100000}
+                                                        onChange={(event: any, value: any) => {
+                                                            handleChange(event, value);
+                                                        }}
+                                                        valueLabelDisplay="auto"
+                                                    />
+                                                </Box>
+                                            </Box>
+                                        </FormControl>
+                                        <Button
+                                            onClick={handleReplace}
+                                            color={"inherit"}
+                                            variant={"outlined"}
+                                            sx={{
+                                                ...buttonStyle
+                                            }}
+                                        >
+                                            {
+                                                translate("home.reset")
+                                            }
+                                        </Button>
                                         <Box sx={{
+                                            width: '100%',
                                             display: 'flex',
                                             flexDirection: 'row',
                                             alignItems: 'center',
-                                            width: '100%',
-                                            justifyContent: 'space-between',
+                                            justifyContent: 'space-between'
                                         }}>
-                                            <TextField
-                                                color={"secondary"}
+                                            <Button
                                                 sx={{
-                                                    width: '100px',
-                                                    borderColor: 'silver',
-                                                    minWidth: '140px',
-                                                    ...textFieldStyle
+                                                    width: '35%',
+                                                    ...buttonStyle
                                                 }}
-                                                id="outlined-number-1"
-                                                size={"small"}
-                                                type="number"
-                                                InputLabelProps={{
-                                                    shrink: true,
-                                                }}
-                                                InputProps={{
-                                                    inputProps: {
-                                                        min: 0
-                                                    }
-                                                }}
-                                                value={valueGte}
-                                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                    setValueGte(Number(e.target.value))
-                                                    setFilters([{
-                                                        field: 'averageCheck',
-                                                        operator: 'gte',
-                                                        value: e.target.value ? e.target.value : undefined
-                                                    }])
-                                                }}
-                                            />
-                                            <TextField
-                                                color={"secondary"}
+                                                color={"error"}
+                                                variant={"contained"}
+                                                onClick={() => setOpenFilter(false)}
+                                            >
+                                                {translate("buttons.cancel")}
+                                            </Button>
+                                            <Button
+                                                variant={"contained"}
+                                                color={"info"}
                                                 sx={{
-                                                    width: '100px',
-                                                    borderColor: 'silver',
-                                                    minWidth: '140px',
-                                                    ...textFieldStyle
+                                                    width: '60%',
+                                                    ...buttonStyle
                                                 }}
-                                                InputProps={{
-                                                    inputProps: {
-                                                        min: 0
-                                                    }
-                                                }}
-                                                id="outlined-number-2"
-                                                size={"small"}
-                                                type="number"
-                                                InputLabelProps={{
-                                                    shrink: true,
-                                                }}
-                                                value={valueLte}
-                                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                    setValueLte(Number(e.target.value))
-                                                    setFilters([{
-                                                        field: 'averageCheck',
-                                                        operator: 'lte',
-                                                        value: e.target.value ? e.target.value : undefined
-                                                    }])
-                                                }}
-                                            />
-                                        </Box>
-                                        <Box sx={{
-                                            width: '90%',
-                                            margin: 'auto'
-                                        }}>
-                                            <Slider
-                                                color={"secondary"}
-                                                value={[Number(valueGte), Number(valueLte)]}
-                                                min={0}
-                                                max={100000}
-                                                onChange={(event: any, value: any) => {
-                                                    handleChange(event, value);
-                                                }}
-                                                valueLabelDisplay="auto"
-                                            />
+                                                onClick={handleSearch}>
+                                                {translate("buttons.search")}
+                                            </Button>
                                         </Box>
                                     </Box>
-                                </FormControl>
-                                <Button
-                                    onClick={handleReplace}
-                                    color={"inherit"}
-                                    variant={"outlined"}
-                                    sx={{
-                                        ...buttonStyle
-                                    }}
-                                >
-                                    {
-                                        translate("home.reset")
-                                    }
-                                </Button>
-                                <Box sx={{
-                                    width: '100%',
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                    justifyContent: 'space-between'
-                                }}>
-                                    <Button
-                                        sx={{
-                                            width: '35%',
-                                            ...buttonStyle
-                                        }}
-                                        color={"error"}
-                                        variant={"contained"}
-                                        onClick={() => setOpenFilter(false)}
-                                    >
-                                        {translate("buttons.cancel")}
-                                    </Button>
-                                    <Button
-                                        variant={"contained"}
-                                        color={"info"}
-                                        sx={{
-                                            width: '60%',
-                                            ...buttonStyle
-                                        }}
-                                        onClick={handleSearch}>
-                                        {translate("buttons.search")}
-                                    </Button>
                                 </Box>
                             </Box>
-                        </Box>
-                    </Box>)
+                        </ScrollLock>
+                    )
                 }
             </Box>
         </Box>

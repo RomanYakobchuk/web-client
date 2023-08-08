@@ -386,7 +386,7 @@ export const Sider: typeof DefaultSider = ({render}) => {
                 component="nav"
                 sx={{
                     position: "fixed",
-                    zIndex: 1101,
+                    zIndex: 110,
                     width: {sm: drawerWidth()},
                     display: "flex",
                 }}
@@ -486,7 +486,7 @@ export const Sider: typeof DefaultSider = ({render}) => {
                         left: buttonSiderS.left,
                         borderRadius: buttonSiderS.borderRadius,
                         bgcolor: "#475be8",
-                        zIndex: 1199,
+                        zIndex: 119,
                         width: "36px",
                     }}
                 >
