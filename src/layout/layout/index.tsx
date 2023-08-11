@@ -15,7 +15,6 @@ export const Layout: React.FC<LayoutProps> = ({
                                                   Header,
                                                   Footer,
                                                   OffLayoutArea,
-                                                  children,
                                               }) => {
     const SiderToRender = Sider ?? DefaultSider;
     const HeaderToRender = Header ?? DefaultHeader;
@@ -23,7 +22,7 @@ export const Layout: React.FC<LayoutProps> = ({
     const navigate = useNavigate();
     const {pathname} = useLocation();
     const {device, width} = useMobile();
-    const {heightLayoutS, gapS, borderRadiusS, marginS} = useSchema();
+    const {styles} = useSchema();
 
     const currentPath = pathname?.split('/')[1];
 
@@ -49,7 +48,7 @@ export const Layout: React.FC<LayoutProps> = ({
     const someStyle = !device ? {
         '&::-webkit-scrollbar': {
             width: '10px',
-            bgcolor: 'silver',
+            bgcolor: 'transparent',
             borderRadius: '5px'
         },
         '&::-webkit-scrollbar-track': {
@@ -67,7 +66,7 @@ export const Layout: React.FC<LayoutProps> = ({
         <Box
             display="flex" flexDirection="row"
             sx={{
-                margin: marginS,
+                margin: styles.marginS,
                 height: '100%'
             }}>
             <SiderToRender/>
@@ -76,24 +75,19 @@ export const Layout: React.FC<LayoutProps> = ({
                     display: "flex",
                     flexDirection: "column",
                     flex: 1,
-                    gap: gapS,
-                    height: '100%'
+                    gap: styles.gapS,
+                    height: '100%',
                 }}
             >
                 <HeaderToRender/>
                 <Box
                     component="main"
                     sx={{
-                        height: heightLayoutS,
+                        height: styles.heightLayoutS,
                         overflow: 'auto',
-                        // transform: 'translateZ(1)',
-                        // WebkitOverflowScrolling: 'touch',
-                        borderRadius: borderRadiusS,
-                        // position: 'relative',
-                        flexGrow: 1,
+                        borderRadius: styles.borderRadiusS,
                         bgcolor: (theme) => theme.palette.background.paper,
                         ...someStyle,
-                        // zIndex: 5
                     }}
                 >
                     <Outlet/>

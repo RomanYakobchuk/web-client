@@ -5,10 +5,10 @@ import {Clear} from "@mui/icons-material";
 import {Box, IconButton} from "@mui/material";
 import dayjs from "dayjs";
 
-import ReviewInput from "../institution/utills/review-input";
-import Loading from "../loading";
+import ReviewInput from "../establishment/utills/review-input";
+import Loading from "../loading/loading";
 import {useMobile} from "../../utils";
-import {IConversation, IMessage, ProfileProps,} from "../../interfaces/common";
+import {IConversation, IGetIdentity, IMessage, ProfileProps,} from "../../interfaces/common";
 import {socket} from "../../socketClient";
 import ChatBox from "./utils/chat-box";
 
@@ -21,7 +21,8 @@ interface IProps {
 
 const CurrentChatContainer = ({conversation, setCurrentChat, setOpenDrawer}: IProps) => {
 
-    const {data: user} = useGetIdentity<ProfileProps>();
+    const {data: identity} = useGetIdentity<IGetIdentity>();
+    const user: ProfileProps = identity?.user as ProfileProps;
     const {device} = useMobile();
     const [params, setParams] = useSearchParams();
 

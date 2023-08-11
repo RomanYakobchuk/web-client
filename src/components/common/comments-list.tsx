@@ -4,10 +4,10 @@ import React, {useContext, useEffect, useState} from "react";
 import dayjs from "dayjs";
 import {useTranslation} from "react-i18next";
 
-import CommentCard from "../institution/utills/commentCard";
+import CommentCard from "../establishment/utills/commentCard";
 import {IComment} from "../../interfaces/common";
 import {useMobile} from "../../utils";
-import Loading from "../loading";
+import Loading from "../loading/loading";
 import {ColorModeContext} from "../../contexts";
 
 interface IProps {

@@ -1,12 +1,12 @@
 // common
 import BookMark from "./common/BookMark";
-import CustomButton from "./common/CustomButton";
-import CustomProfile from "./common/CustomProfile";
-import InstitutionCard from "./institution/utills/InstitutionCard";
-import CustomAccordion from "./common/customAccordion";
-import CustomDrawer from "./common/customDrawer";
+import CustomButton from "./common/custom/CustomButton";
+import CustomProfile from "./common/custom/CustomProfile";
+import InstitutionCard from "./establishment/utills/InstitutionCard";
+import CustomAccordion from "./common/custom/customAccordion";
+import CustomDrawer from "./common/custom/customDrawer";
 import ScrollContent from "./common/scrollContent";
-import Pagination from "./common/pagination";
+import PaginationComponent from "./common/paginationComponent";
 import TitleTextItem from "./common/TitleTextItem";
 import ReviewsList from "./common/reviews-list";
 import CommentsList from "./common/comments-list";
@@ -20,7 +20,7 @@ import CustomCreate from "./common/custom/customCreate";
 import GoogleButton from "./google/googleAuth";
 
 // loading
-import Loading from "./loading";
+import Loading from "./loading/loading";
 
 // modal
 import ModalWindow from "./window/modalWindow";
@@ -30,34 +30,24 @@ import UserReviews from "./profile/utills/userReviews"
 import UserInstitutions from "./profile/utills/userInstitutions"
 import FavoritePlaces from "./profile/favoritePlaces"
 import UserComments from "./profile/utills/userComments";
-import ShowUserInfo from "./profile/show-user-info";
 
 // institution
-import InstitutionDetails from "./institution/institution-details";
-import EditInstitution from "./institution/edit-institution";
-import CreateInstitution from "./institution/create-institution";
-import FilterInstitutions from "./institution/utills/filter";
-import Menu from "./institution/utills/menu/menu";
-import EditMenu from "./institution/utills/menu/edit-menu";
-import CreateMenu from "./institution/utills/menu/create-menu";
-import InstitutionsUserList from "./institution/userList";
-import InstitutionsAdminList from "./institution/adminList";
-import EditUpdateStatus from "./institution/editUpdateStatus";
-import ImageGallery from "./institution/imageGallery";
+import FilterInstitutions from "./establishment/filter";
+import Menu from "./establishment/utills/menu/menu";
+import EditMenu from "./establishment/utills/menu/edit-menu";
+import CreateMenu from "./establishment/utills/menu/create-menu";
+import InstitutionsUserList from "./establishment/userList";
+import InstitutionsAdminList from "./establishment/adminList";
+import EditUpdateStatus from "./establishment/editUpdateStatus";
+import ImageGallery from "./establishment/utills/imageGallery";
 
 // capl
-import CreateReservation from "./capl/create-reservation";
-import DetailsReserve from "./capl/detailsReserve";
 import Messenger from "./capl/messenger";
-import EditReserve from "./capl/editReserve";
 import ReservedCard from "./capl/reservedCard";
 import CaplUserList from "./capl/userList";
 import CaplManagerList from "./capl/managerList";
 
 // news
-import CreateNews from "./news/create-news";
-import DetailsNews from "./news/details-news";
-import EditNews from "./news/edit-news";
 import NewsCard from "./news/utills/NewsCard";
 import FilterNews from "./news/utills/filter";
 import NewsUserList from './news/userList';
@@ -86,7 +76,6 @@ export {
     BookMark,
     Loading,
     CreateMenu,
-    EditInstitution,
     UserInstitutions,
     InstitutionCard,
     CustomProfile,
@@ -95,19 +84,13 @@ export {
     CustomButton,
     OtherNews,
     ModalWindow,
-    CreateInstitution,
-    InstitutionDetails,
     CurrentChatContainer,
     CustomDrawer,
     ScrollContent,
     ReviewsList,
     CommentsList,
     CustomAccordion,
-    CreateReservation,
     ListChats,
-    DetailsNews,
-    CreateNews,
-    EditNews,
     TitleTextItem,
     NewsCard,
     FilterInstitutions,
@@ -116,20 +99,17 @@ export {
     EditMenu,
     SearchManager,
     UserComments,
-    DetailsReserve,
     Messenger,
-    Pagination,
+    PaginationComponent,
     SearchInstitutions,
     ReservedCard,
     CaplUserList,
     CaplManagerList,
-    EditReserve,
     InstitutionsUserList,
     InstitutionsAdminList,
     SearchCity,
     NewsUserList,
     NewsAdminList,
-    ShowUserInfo,
     EditUpdateStatus,
     ShowChats,
     UpdateCity,

@@ -109,7 +109,8 @@
     "isPublished": "Published",
     "isDraft": "Expect",
     "isRejected": "Rejected",
-    "reply": "Reply"
+    "reply": "Reply",
+    "nearby": "Establishments nearby"
   },
   "warnWhenUnsavedChanges": "Are you sure you want to leave? You have unsaved changes.",
   "notifications": {
@@ -479,7 +480,8 @@
   },
   "text": {
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "notResult": "Nothing found"
   },
   "list": {
     "institution": "List of institutions",

@@ -31,7 +31,7 @@ const CountCities = () => {
             }}>
                 {translate("home.sortByType.browseByCity")}
             </Typography>
-            <ScrollContent id={'countCities'}>
+            <ScrollContent>
                 <CanAccess action={'cityWithData'} resource={'cities'}>
                     <Button
                         variant={'outlined'}

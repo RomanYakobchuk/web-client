@@ -1,7 +1,7 @@
 import axios, {AxiosRequestConfig} from "axios";
 import {parseJwt} from "utils/parse-jwt";
-import {IData, ProfileProps} from "./interfaces/common";
-import {AuthBindings} from "@refinedev/core";
+import {IData, IGetIdentity, ProfileProps} from "./interfaces/common";
+import type {AuthBindings} from "@refinedev/core";
 
 
 export const ACCESS_TOKEN_KEY = "access-refine-auth";
@@ -107,6 +107,9 @@ axiosInstance.interceptors.response.use(
 
                     try {
                         const refresh_token = localStorage.getItem(REFRESH_TOKEN_KEY);
+                        if (!refresh_token) {
+                            return Promise.reject(error)
+                        }
                         const response = await axios.post(`${baseURL}/auth/refreshToken`, {
                             refresh_token,
                         });
@@ -150,7 +153,7 @@ axiosInstance.interceptors.response.use(
 );
 
 export const authProvider: AuthBindings = {
-        login: async ({user, access_token, refresh_token}: IData) => {
+        login: async ({user, access_token, refresh_token, favoritePlaces}: IData) => {
             if (user) {
                 const profileObj = user ? parseJwt(user) : null;
 
@@ -159,10 +162,11 @@ export const authProvider: AuthBindings = {
                         "user",
                         JSON.stringify(user)
                     );
+                    localStorage.setItem('favoritePlaces', JSON.stringify(favoritePlaces));
                     localStorage.setItem(ACCESS_TOKEN_KEY, access_token)
                     localStorage.setItem(REFRESH_TOKEN_KEY, refresh_token)
 
-                    await window.location.reload();
+                    window.location.reload();
                     return {
                         success: true,
                     }
@@ -214,10 +218,11 @@ export const authProvider: AuthBindings = {
         getPermissions: async () => {
             return null;
         },
-        getIdentity: async () => {
-            const token = localStorage.getItem(ACCESS_TOKEN_KEY);
-            const refresh = localStorage.getItem(REFRESH_TOKEN_KEY);
-            const user = localStorage.getItem("user");
+        getIdentity: async (): Promise<IGetIdentity | any> => {
+            const token = localStorage.getItem(ACCESS_TOKEN_KEY) as string;
+            const refresh = localStorage.getItem(REFRESH_TOKEN_KEY) as string;
+            const favoritePlaces = JSON.parse(localStorage.getItem('favoritePlaces') as string);
+            const user = localStorage.getItem("user") as string;
             if (!token || (refresh && !isAccessTokenExpired(refresh))) {
                 return {
                     authenticated: false,
@@ -230,7 +235,10 @@ export const authProvider: AuthBindings = {
 
             if (!data) return null;
 
-            return Promise.resolve<ProfileProps>(data?._doc ?? data)
+            return {
+                user: data?._doc ?? data as ProfileProps,
+                favoritePlaces: favoritePlaces as string[]
+            }
         },
     }
 ;

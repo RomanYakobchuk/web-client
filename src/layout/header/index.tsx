@@ -1,8 +1,8 @@
 import React, {useContext, useEffect, useState} from "react";
 import {
     useGetIdentity,
-    useGetLocale,
-    useSetLocale,
+    useGetLocale, useList,
+    useSetLocale, useTranslate,
 } from "@refinedev/core";
 import {
     AppBar,
@@ -13,31 +13,49 @@ import {
     MenuItem,
     Select,
     Toolbar,
-    Typography, SelectChangeEvent,
+    Typography, SelectChangeEvent, Button, Box,
 } from "@mui/material";
-import {DarkModeOutlined, LightModeOutlined, Notifications, SettingsOutlined} from "@mui/icons-material";
-
-import {ColorModeContext} from "../../contexts";
+import {
+    ClearOutlined,
+    DarkModeOutlined,
+    LightModeOutlined, MenuRounded,
+    Notifications,
+    SearchOutlined,
+    SettingsOutlined
+} from "@mui/icons-material";
+import {useDebounce} from "use-debounce";
+import {AutoComplete, Input} from "antd";
 import {useTranslation} from "react-i18next";
 import {useLocation, useNavigate} from "react-router-dom";
-import {ProfileProps} from "../../interfaces/common";
+
+import {ColorModeContext} from "../../contexts";
+import {IGetIdentity, INews, IOptions, ProfileProps, PropertyProps} from "../../interfaces/common";
 import {useSchema} from "../../settings";
+import {useMobile} from "../../utils";
+import {Loading, ModalWindow} from "../../components";
+import {searchRender} from "../../components/render"
+import {antdInputStyle} from "../../styles";
+
 
 export const Header: React.FC = () => {
-    const {mode, setMode} = useContext(ColorModeContext);
+    const {mode, setMode, open, setOpen} = useContext(ColorModeContext);
 
+    const {data} = useGetIdentity<IGetIdentity>();
+    const user: ProfileProps = data?.user as ProfileProps;
     const {i18n} = useTranslation();
     const {pathname} = useLocation();
     const changeLanguage = useSetLocale();
+    const translate = useTranslate();
     const navigate = useNavigate();
     const locale = useGetLocale();
-    const {borderRadiusS} = useSchema();
+    const {styles} = useSchema();
+    const {width} = useMobile();
     const currentLocale = locale();
 
-    const {data: user} = useGetIdentity<ProfileProps>();
 
     const showUserInfo = user && (user.name || user.avatar);
     const [lan, setLan] = useState<any>(currentLocale);
+    const [openModal, setOpenModal] = useState<boolean>(false);
     const handleChange = (event: SelectChangeEvent) => {
         setLan(event.target.value as string);
     };
@@ -45,44 +63,268 @@ export const Header: React.FC = () => {
         if (lan) {
             changeLanguage(lan ?? currentLocale)
         }
-    }, [lan, currentLocale])
+    }, [lan, currentLocale]);
+
+    const buttonStyle = {
+        border: '1px solid silver',
+        borderRadius: '10px',
+        width: width < 500 ? '32px' : '40px',
+        minWidth: width < 500 ? '32px' : '40px',
+        height: width < 500 ? '32px' : '40px',
+    };
+    const [value, setValue] = useState<string>("");
+    const [options, setOptions] = useState<IOptions[]>([]);
+    const [debounceValue, setDebounce] = useDebounce(value, 500);
+
+    const {refetch: refetchPlaces, isRefetching: isRefetchPlace, isLoading: isLoadPlace} = useList<PropertyProps>({
+        resource: "institution/all",
+        filters: [{field: "title", operator: "contains", value: value}],
+        queryOptions: {
+            enabled: false,
+            onSuccess: (data) => {
+                const postOptionGroup = data.data.map((item, index) =>
+                    searchRender.renderItem(item, "all_institutions", index, mode, setOpenModal, data.data.length, translate),
+                );
+                if (postOptionGroup.length > 0) {
+                    setOptions((prevOptions) => [
+                        ...prevOptions,
+                        {
+                            label: searchRender.renderTitle(translate("all_institutions.all_institutions"), mode),
+                            options: postOptionGroup,
+                        },
+                    ]);
+                }
+            },
+        },
+    });
+
+    const {refetch: refetchNews, isRefetching: isRefetchNews, isLoading: isLoadNews} = useList<INews>({
+        resource: "news/all",
+        filters: [{field: "title", operator: "contains", value: value}],
+        queryOptions: {
+            enabled: false,
+            onSuccess: (data) => {
+                const categoryOptionGroup = data.data.map((item, index) =>
+                    searchRender.renderItem(item, "news", index, mode, setOpenModal, data.data.length),
+                );
+                if (categoryOptionGroup.length > 0) {
+                    setOptions((prevOptions) => [
+                        ...prevOptions,
+                        {
+                            label: searchRender.renderTitle(translate("news.news"), mode),
+                            options: categoryOptionGroup,
+                        },
+                    ]);
+                }
+            },
+        },
+    });
+
+    useEffect(() => {
+        if (openModal && user?._id) {
+            (async () => {
+                setOptions([]);
+                await Promise.all([refetchNews(), refetchPlaces()])
+            })()
+        }
+    }, [debounceValue, openModal, user]);
+
+    const isLoading = isLoadNews || isLoadPlace || isRefetchNews || isRefetchPlace;
 
     return (
         <AppBar position="sticky" elevation={0} sx={{
-            zIndex: {xs: '10 !important'},
-            borderRadius: borderRadiusS,
+            zIndex: {xs: '8'},
+            borderRadius: styles.borderRadiusS,
             bgcolor: (theme) => theme.palette.common.black
         }}>
             <Toolbar>
+                <Box
+                    sx={{
+                        display: {xs: "block", md: "none"},
+                        position: "fixed",
+                        top: styles.buttonSiderS.top,
+                        left: styles.buttonSiderS.left,
+                        borderRadius: styles.buttonSiderS.borderRadius,
+                        bgcolor: "#475be8",
+                        zIndex: 9,
+                        width: "36px",
+                    }}
+                >
+                    <IconButton
+                        sx={{color: "#fff", width: "36px"}}
+                        onClick={setOpen}
+                    >
+                        <MenuRounded/>
+                    </IconButton>
+                </Box>
                 <Stack
                     direction="row"
                     width="100%"
                     justifyContent="flex-end"
                     alignItems="center"
+                    gap={1}
                 >
                     {
+                        showUserInfo && (
+                            <Button
+                                variant={"outlined"}
+                                sx={{
+                                    ...buttonStyle,
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    width: width < 500 ? '32px' : width < 600 ? '40px' : '120px',
+                                    gap: width < 600 ? 0 : 1,
+                                    p: '5px',
+                                    transition: 'width 1s linear'
+                                }}
+                                onClick={() => setOpenModal(true)}
+                                color={'secondary'}
+                            >
+                                <SearchOutlined color={'action'}/>
+                                {
+                                    width > 600 && (
+                                        <Typography sx={{
+                                            textTransform: 'capitalize'
+                                        }}>
+                                            {translate('buttons.search')}...
+                                        </Typography>
+                                    )
+                                }
+                            </Button>
+                        )
+                    }
+                    <ModalWindow
+                        open={openModal}
+                        setOpen={setOpenModal}
+                        title={
+                            <Box sx={{
+                                width: '80%',
+                                ml: '20px',
+                                ...antdInputStyle
+                            }}>
+                                <AutoComplete
+                                    style={{
+                                        width: '100%',
+                                    }}
+                                    filterOption={false}
+                                    popupMatchSelectWidth={500}
+                                    value={value ?? ''}
+                                    onSearch={(value: string) => setValue(value)}
+                                >
+                                    <Input
+                                        style={{
+                                            width: '100%',
+                                            fontSize: '20px',
+                                            gap: 2,
+                                            color: mode === 'dark' ? 'white' : 'black',
+                                            background: 'transparent',
+                                        }}
+                                        suffix={
+                                            <Box sx={{
+                                                display: 'flex',
+                                                flexDirection: 'row',
+                                                justifyContent: 'center',
+                                                alignItems: 'center',
+                                                gap: value?.length > 0 ? 1 : 0
+                                            }}>
+                                                <SearchOutlined/>
+                                                {
+                                                    value?.length > 0 && (
+                                                        <IconButton size={"small"} onClick={() => setValue('')}>
+                                                            <ClearOutlined/>
+                                                        </IconButton>
+                                                    )
+                                                }
+                                            </Box>
+                                        }
+                                        size={'middle'}
+                                        placeholder={`${translate('buttons.search')}...`}
+                                    />
+                                </AutoComplete>
+                            </Box>
+                        }
+                    >
+                        <Box sx={{
+                            p: '10px'
+                        }}>
+                            {
+                                isLoading ?
+                                    <Box sx={{
+                                        width: '100%',
+                                        height: '200px'
+                                    }}>
+                                        <Loading/>
+                                    </Box>
+                                    :
+                                    options?.length > 0 ? (
+                                        options?.map((option, index) => (
+                                            <Box key={index} sx={{
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                gap: 1
+                                            }}>
+                                                {option.label}
+                                                {
+                                                    option?.options?.map((item) => (
+                                                        <Box key={item.key} sx={{
+                                                            pl: '10px',
+                                                            height: '70px'
+                                                        }}>
+                                                            {item.label}
+                                                        </Box>
+                                                    ))
+                                                }
+                                            </Box>
+                                        ))
+                                    ) : <Box sx={{
+                                        height: '150px',
+                                        width: '100%',
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        fontSize: '22px',
+                                        color: (theme) => theme.palette.common.white
+                                    }}>
+                                        {translate('text.notResult')}
+                                    </Box>
+                            }
+                        </Box>
+                    </ModalWindow>
+                    {
                         showUserInfo &&
-                        <IconButton onClick={() => navigate('/notifications')}>
+                        <IconButton
+                            sx={{
+                                ...buttonStyle
+                            }}
+                            onClick={() => navigate('/notifications')}>
                             <Notifications/>
                         </IconButton>
                     }
                     <IconButton
+                        sx={{
+                            ...buttonStyle
+                        }}
                         onClick={() => {
                             setMode();
                         }}
                     >
                         {mode === "dark" ? <LightModeOutlined color={"warning"}/> : <DarkModeOutlined/>}
                     </IconButton>
-                    <FormControl sx={{m: 1, display: 'flex'}}>
+                    <FormControl sx={{display: 'flex'}}>
                         <Select
                             disableUnderline
                             inputProps={{"aria-label": "Without label"}}
                             variant="standard"
                             sx={{
-                                "& div div": {
+                                ...buttonStyle,
+                                "& div": {
                                     display: 'flex',
-                                    alignItems: 'center'
-                                }
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    margin: '0 3px'
+                                },
+                                width: 'fit-content',
                             }}
                             value={lan ?? currentLocale}
                             onChange={handleChange}
@@ -124,25 +366,35 @@ export const Header: React.FC = () => {
                         </Select>
                     </FormControl>
                     {showUserInfo && (
-                        <Stack direction="row" sx={{
-                            p: '5px',
-                        }} gap="16px" alignItems="center">
+                        <Stack direction="row" gap="16px" alignItems="center">
                             <Stack sx={{
-                                cursor: 'pointer'
+                                cursor: 'pointer',
+                                ...buttonStyle,
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center'
                             }} onClick={() => navigate('/profile')}>
                                 {user.avatar
-                                    && <Avatar src={user?.avatar} alt={user?.name}/>
+                                    && <Avatar sx={{
+                                        width: '80%',
+                                        height: '80%'
+                                    }} src={user?.avatar} alt={user?.name}/>
                                 }
                             </Stack>
+                        </Stack>
+                    )}
+                    {
+                        showUserInfo && (
                             <IconButton
                                 sx={{
+                                    ...buttonStyle,
                                     bgcolor: pathname === '/settings' ? 'cornflowerblue' : 'transparent'
                                 }}
                                 onClick={() => navigate(`/settings`)}>
                                 <SettingsOutlined/>
                             </IconButton>
-                        </Stack>
-                    )}
+                        )
+                    }
                 </Stack>
             </Toolbar>
         </AppBar>

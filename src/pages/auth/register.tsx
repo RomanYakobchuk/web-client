@@ -310,11 +310,11 @@ const Register = () => {
                         </Grid>
                     </Box>
                 </Box>
-                <ModalWindow textButtonCancel={translate("buttons.close")}
-                             textButtonConfirm={translate("verify.openGmail")}
-                             textTitle={translate("verify.activation")} message={translate("verify.verifyMes")}
-                             handleSubmit={() => window.location.replace('https://mail.google.com/')} open={openModal}
-                             close={setOpenModal}/>
+                {/*<ModalWindow textButtonCancel={translate("buttons.close")}*/}
+                {/*             textButtonConfirm={translate("verify.openGmail")}*/}
+                {/*             textTitle={translate("verify.activation")} message={translate("verify.verifyMes")}*/}
+                {/*             handleSubmit={() => window.location.replace('https://mail.google.com/')} open={openModal}*/}
+                {/*             close={setOpenModal}/>*/}
                 <Copyright sx={{mt: 5}}/>
             </Container>
         </Box>

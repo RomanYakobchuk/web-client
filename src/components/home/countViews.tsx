@@ -33,7 +33,7 @@ const CountViews = () => {
                     {translate("home.sortByType.popularPlace")}
                 </Typography>
             }
-            <ScrollContent id={'countViews'}>
+            <ScrollContent>
                 {
                     isLoadingViews
                         ? [1, 2, 3]?.map((item: number) => (

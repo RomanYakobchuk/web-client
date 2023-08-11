@@ -30,6 +30,7 @@ import {useForm} from "@refinedev/react-hook-form";
 import {Controller} from "react-hook-form";
 
 import {
+    IGetIdentity,
     INews,
     INewsFilterVariables,
     IPropertyPropsFilterVariables,
@@ -46,7 +47,8 @@ const AdminList = () => {
     const navigate = useNavigate();
     const Link = useLink();
     const {width} = useMobile();
-    const {data: user} = useGetIdentity<ProfileProps>();
+    const {data: identity} = useGetIdentity<IGetIdentity>();
+    const user: ProfileProps = identity?.user as ProfileProps;
 
     const [value, setValue] = useState('');
     const [debouncedSearchText] = useDebounce(value, 500);

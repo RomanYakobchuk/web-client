@@ -1,6 +1,6 @@
 import {Box, Button, Grid, Typography} from "@mui/material";
-import {IReserve, ProfileProps} from "../../interfaces/common";
-import {Loading, Pagination, ReservedCard} from "../index";
+import {IGetIdentity, IReserve, ProfileProps} from "../../interfaces/common";
+import {Loading, PaginationComponent, ReservedCard} from "../index";
 import React, {useContext} from "react";
 import {CanAccess, useGetIdentity, useTable, useTranslate} from "@refinedev/core";
 import {useNavigate} from "react-router-dom";
@@ -8,7 +8,8 @@ import {ColorModeContext} from "../../contexts";
 import {Edit} from "@mui/icons-material";
 
 const UserList = () => {
-    const {data: user} = useGetIdentity<ProfileProps>();
+    const {data: identity} = useGetIdentity<IGetIdentity>();
+    const user: ProfileProps = identity?.user as ProfileProps;
     const translate = useTranslate();
     const navigate = useNavigate();
 
@@ -18,7 +19,7 @@ const UserList = () => {
         setSorters,
         filters,
         setFilters,
-        pageCount,
+        pageSize,
         setPageSize,
         current,
         setCurrent
@@ -71,7 +72,7 @@ const UserList = () => {
                         </Grid>
                     )}
             </Grid>
-            <Pagination current={current} setCurrent={setCurrent} pageCount={pageCount} setPageSize={setPageSize}/>
+            <PaginationComponent count={data?.total as number} current={current} setCurrent={setCurrent} pageCount={pageSize} setPageSize={setPageSize}/>
         </Box>
     )
         ;

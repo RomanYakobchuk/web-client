@@ -19,7 +19,7 @@ import {useNavigate} from "react-router-dom";
 
 import {CustomButton} from "../../index";
 import DateTimeList from "./dateTimeList";
-import ImageSelector from "../../institution/utills/ImageSelector";
+import ImageSelector from "../../establishment/utills/ImageSelector";
 import {ColorModeContext} from "../../../contexts";
 import {useMobile} from "../../../utils";
 import {INewsDataProps} from "interfaces/common";

@@ -1,30 +1,48 @@
-import AllInstitutions from "./allInstitutions";
-import TopInstitutions from "./topInstitutions";
+import AllEstablishments from "./establishment/all_establishments";
+import CreateEstablishment from "./establishment/create-establishment";
+import EditEstablishment from "./establishment/edit-establishment";
+import EstablishmentDetails from "./establishment/establishment-details";
+
+import TopInstitutions from "./other/topInstitutions";
+
 import Login from "./auth/login";
 import Register from "./auth/register";
 import VerifyNumber from "./auth/verifyNumber";
 import Welcome from "./auth/welcome";
-import Capl from "./capl";
-import EditProfile from "../components/profile/edit-profile";
 import ForgotPassword from "./auth/forgotPassword";
 import UpdatePassword from "./auth/updatePassword";
-import News from "./news";
-import Home from "./home";
 
-import AllUsers from "./all-users";
-import AllReviews from "./all-reviews";
-import AllComments from "./all-comments";
+import Capl from "./capl/capl";
+import CreateReservation from "./capl/create-reservation";
+import EditReserve from "./capl/editReserve";
+import DetailsReserve from "./capl/detailsReserve";
 
-import Profile from "./profile";
+import News from "./news/news";
+import CreateNews from './news/create-news';
+import DetailsNews from './news/details-news';
+import EditNews from './news/edit-news';
 
-import Chat from "./chat";
+import Home from "./home/home";
 
-import Notifications from './notifications';
+import AllUsers from "./user/all-users";
+import AllReviews from "./review/all-reviews";
+import AllComments from "./comment/all-comments";
 
-import Settings from "./settings";
+import Profile from "./profile/profile";
+import ShowUserInfo from './profile/show-user-info';
+import EditProfile from './profile/edit-profile';
+
+import Chat from "./chat/chat";
+
+import Notifications from './notification/notifications';
+
+import Settings from "./other/settings";
 
 export {
-    AllInstitutions,
+    AllEstablishments,
+    CreateEstablishment,
+    EditEstablishment,
+    EstablishmentDetails,
     Profile,
     Chat,
     Login,
@@ -34,6 +52,7 @@ export {
     Register,
     Settings,
     EditProfile,
+    ShowUserInfo,
     TopInstitutions,
     VerifyNumber,
     Welcome,
@@ -42,5 +61,11 @@ export {
     AllUsers,
     AllComments,
     AllReviews,
-    Notifications
+    Notifications,
+    CreateNews,
+    EditNews,
+    DetailsNews,
+    EditReserve,
+    DetailsReserve,
+    CreateReservation
 }

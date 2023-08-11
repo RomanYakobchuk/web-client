@@ -10,30 +10,54 @@ import {createTheme} from "@mui/material";
 type ColorModeContextType = {
     mode: string;
     setMode: () => void;
+    open: string;
+    setOpen: () => void;
+    setCollapsed: () => void,
+    collapsed: boolean
 };
+
 
 export const ColorModeContext = createContext<ColorModeContextType>(
     {} as ColorModeContextType
 );
 
-
 export const ColorModeContextProvider: React.FC<PropsWithChildren> = ({
                                                                           children,
                                                                       }) => {
+    const siderCollapsedStorage = JSON.parse(localStorage.getItem('collapsed') as string);
+    const siderOpenModeFromLocalStorage = localStorage.getItem('openSider');
     const colorModeFromLocalStorage = localStorage.getItem("colorMode");
     const isSystemPreferenceDark = window?.matchMedia(
         "(prefers-color-scheme: dark)"
     ).matches;
-
     const systemPreference = isSystemPreferenceDark ? "dark" : "light";
+
+    const [collapsed, setCollapsed] = useState(siderCollapsedStorage || false);
+    const [open, setOpen] = useState<"open" | "closed" | string>(siderOpenModeFromLocalStorage || 'closed');
     const [mode, setMode] = useState(
         colorModeFromLocalStorage || systemPreference
     );
 
+
     useEffect(() => {
         window.localStorage.setItem("colorMode", mode);
     }, [mode]);
-
+    useEffect(() => {
+        window.localStorage.setItem('openSider', open)
+    }, [open]);
+    useEffect(() => {
+        window.localStorage.setItem('collapsed', JSON.stringify(collapsed))
+    }, [collapsed])
+    const setOpenedMode = () => {
+        if (open === 'open') {
+            setOpen('closed')
+        } else {
+            setOpen('open')
+        }
+    }
+    const setCollapsedMode = () => {
+        setCollapsed(!collapsed)
+    }
     const setColorMode = () => {
         if (mode === "light") {
             setMode("dark");
@@ -181,6 +205,10 @@ export const ColorModeContextProvider: React.FC<PropsWithChildren> = ({
             value={{
                 setMode: setColorMode,
                 mode,
+                open,
+                setOpen: setOpenedMode,
+                collapsed,
+                setCollapsed: setCollapsedMode
             }}
         >
             <ThemeProvider theme={mode === "light" ? customLightTheme : customDarkTheme}>

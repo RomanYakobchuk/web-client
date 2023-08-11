@@ -4,7 +4,7 @@ import React, {useContext, useEffect, useLayoutEffect, useState} from "react";
 import {useGetIdentity, useNotification, useOne, useTranslate} from "@refinedev/core";
 
 import {axiosInstance} from "../../authProvider";
-import {ProfileProps} from "../../interfaces/common";
+import {IGetIdentity, ProfileProps} from "../../interfaces/common";
 import {buttonStyle} from "../../styles";
 import {ColorModeContext} from "../../contexts";
 
@@ -18,7 +18,8 @@ interface IProps {
 
 const BookMark = ({id, otherProps: setFavoritePlaces, color, type, showText}: IProps) => {
 
-    const {data: myProfile} = useGetIdentity<ProfileProps | any>();
+    const {data: identity} = useGetIdentity<IGetIdentity>();
+    const myProfile: ProfileProps = identity?.user as ProfileProps;
     const {open} = useNotification();
     const translate = useTranslate();
     const {mode} = useContext(ColorModeContext);

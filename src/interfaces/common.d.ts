@@ -7,6 +7,11 @@ export interface IUserLoginProps {
     password: string
 }
 
+export interface IGetIdentity {
+    user: ProfileProps,
+    favoritePlaces: string[]
+}
+
 export interface IUser {
     _id: string,
     name: string,
@@ -19,7 +24,8 @@ export interface IData {
     user: IUser | any,
     access_token: string,
     refresh_token: string,
-    error?: any
+    error?: any,
+    favoritePlaces: string[]
 }
 
 export interface IUserRegisterProps {
@@ -64,6 +70,7 @@ export interface ProfileProps {
         isBlocked?: boolean,
         whyBlock?: string
     },
+    [key: string]: any
 }
 
 export interface IProfilePropsFilterVariables {
@@ -282,14 +289,17 @@ export interface IOptionGroup {
     value: string;
     label: string | ReactNode;
     userId?: string,
-    id?: string
+    id?: string,
+    key?: string
 }
 
 export interface IOptions {
     label: string | ReactNode;
     options: IOptionGroup[];
     userId?: string,
-    id?: string
+    id?: string,
+    value?: string,
+    key?: string
 }
 
 

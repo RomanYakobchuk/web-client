@@ -1,25 +1,21 @@
 import {Box} from "@mui/material";
-import {useEffect, useState} from "react";
+import {useContext} from "react";
+
+import {ColorModeContext} from "../../contexts";
+import {useMobile} from "../../utils";
 
 interface IProps {
     children: any,
-    id: string
 }
-const ScrollContent = ({children, id}: IProps) => {
 
-    const [parentWidth, setParentWidth] = useState(0);
+const ScrollContent = ({children}: IProps) => {
 
-    useEffect(() => {
-        const parentEl = document.getElementById(id)!;
-        setParentWidth(parentEl.clientWidth);
-        const handleResize = () => setParentWidth(parentEl.clientWidth);
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, [id, document.getElementById(id)?.clientWidth]);
+    const {collapsed} = useContext(ColorModeContext);
+    const {layoutWidth} = useMobile();
 
     return (
-        <Box id={id} sx={{
-            width: '100%',
+        <Box sx={{
+            width: {xs: '90vw', md: `calc(${layoutWidth}px - 10vw)`},
             display: 'flex',
             flexDirection: 'column',
             gap: 6,
@@ -27,7 +23,7 @@ const ScrollContent = ({children, id}: IProps) => {
             WebkitOverflowScrolling: 'touch',
         }}>
             <Box sx={{
-                width: parentWidth,
+                width: '100%',
                 maxWidth: '100%',
                 display: 'flex',
                 flexWrap: 'nowrap',
@@ -38,7 +34,7 @@ const ScrollContent = ({children, id}: IProps) => {
                 "&::-webkit-scrollbar": {
                     height: '10px',
                     borderRadius: '5px',
-                    bgcolor: '#dfcdcd'
+                    bgcolor: 'transparent'
                 },
                 "&::-webkit-scrollbar-thumb": {
                     bgcolor: '#a98282',

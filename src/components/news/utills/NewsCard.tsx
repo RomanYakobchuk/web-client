@@ -1,6 +1,6 @@
 import {Box, Button, Stack, Typography} from "@mui/material";
 
-import {INews, ProfileProps} from "../../../interfaces/common";
+import {IGetIdentity, INews, ProfileProps} from "../../../interfaces/common";
 import {useGetIdentity, useTranslate} from "@refinedev/core";
 import {EastOutlined, Place} from "@mui/icons-material";
 import dayjs from "dayjs";
@@ -19,7 +19,8 @@ const NewsCard = ({
                   }: IProps) => {
     const {title, _id, place, dateEvent, description, mainPhoto} = news;
 
-    const {data: user} = useGetIdentity<ProfileProps>();
+    const {data: identity} = useGetIdentity<IGetIdentity>();
+    const user: ProfileProps = identity?.user as ProfileProps;
     const translate = useTranslate();
     const {mode} = useContext(ColorModeContext);
     const navigate = useNavigate();
@@ -40,14 +41,14 @@ const NewsCard = ({
         >
             <Box sx={{
                 position: width < 600 ? 'absolute' : 'normal',
-                zIndex: 10,
+                zIndex: 5,
                 order: width < 600 ? 2 : 1,
                 left: width > 600 ? 'none' : index! % 2 === 0 ? 0 : 'none',
                 right: width > 600 ? 'none' : index! % 2 === 0 ? 'none' : 0,
                 bottom: width > 600 ? 0 : 'none',
                 width: width > 600 ? '100%' : '60%',
                 borderRadius: width > 600 ? '0 0 20px 20px' : '10px',
-                bgcolor: mode === 'light' ? '#ffffff' : '#3c3a3a',
+                bgcolor: mode === 'light' ? '#ffffff' : '#241d30',
                 height: '100%',
                 display: 'flex',
                 flexDirection: 'column',
@@ -176,6 +177,8 @@ const NewsCard = ({
                 display: 'flex',
                 width: width > 600 ? '100%' : '50%',
                 height: '180px',
+                // zIndex: 5,
+                // position: 'relative',
             }}>
                 <img style={{
                     borderRadius: width > 600 ? '20px 20px 0 0' : '10px',

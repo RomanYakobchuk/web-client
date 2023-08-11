@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {Sider as DefaultSider} from "@refinedev/mui";
 
 import {
@@ -38,10 +38,12 @@ import {
 
 import {Title as DefaultTitle} from "../title";
 import {useSchema} from "../../settings";
+import {ColorModeContext} from "../../contexts";
+import {ModalWindow} from "../../components";
 
 export const Sider: typeof DefaultSider = ({render}) => {
-    const [collapsed, setCollapsed] = useState(false);
-    const [opened, setOpened] = useState(false);
+
+    const {open: openSider, setOpen: setOpenSider, collapsed, setCollapsed} = useContext(ColorModeContext);
 
     const drawerWidth = () => {
         if (collapsed) return 64;
@@ -55,11 +57,12 @@ export const Sider: typeof DefaultSider = ({render}) => {
     const isExistAuthentication = useIsExistAuthentication();
     const {mutate: mutateLogout} = useLogout();
     const Title = useTitle();
-    const {borderRadiusS, heightSiderS, marginSiderS, buttonSiderS} = useSchema();
+    const {styles} = useSchema();
 
     const [open, setOpen] = useState<{ [k: string]: any }>({});
     const [isLogOut, setIsLogOut] = useState(false)
     const [path, setPath] = useState<any>();
+
     useEffect(() => {
         if (window.location.pathname) {
             const myPath = window.location.pathname?.split('/')[1];
@@ -113,7 +116,7 @@ export const Sider: typeof DefaultSider = ({render}) => {
                                 <ListItemButton
                                     onClick={() => {
                                         if (collapsed) {
-                                            setCollapsed(false);
+                                            setCollapsed();
                                             if (!isOpen) {
                                                 handleClick(name || "");
                                             }
@@ -192,9 +195,7 @@ export const Sider: typeof DefaultSider = ({render}) => {
                             component={Link}
                             to={name}
                             selected={isSelected}
-                            onClick={() => {
-                                setOpened(false);
-                            }}
+                            onClick={setOpenSider}
                             sx={{
                                 pl: isNested ? 4 : 2,
                                 py: isNested ? 1.25 : 1,
@@ -255,9 +256,12 @@ export const Sider: typeof DefaultSider = ({render}) => {
             disableHoverListener={!collapsed}
             arrow
         >
-            {
-                isLogOut
-                    ? <Box sx={{
+            <>
+                <ModalWindow
+                    open={isLogOut}
+                    setOpen={setIsLogOut}
+                    title={''}>
+                    <Box sx={{
                         display: 'flex',
                         justifyContent: "space-between",
                         alignItems: 'center',
@@ -302,46 +306,51 @@ export const Sider: typeof DefaultSider = ({render}) => {
                                 color: 'white'
                             }}/>
                         </Button>
-                    </Box> :
-                    <ListItemButton
-                        key="logout"
-                        onClick={() => setIsLogOut(true)}
+                    </Box>
+                </ModalWindow>
+                {/*{*/}
+                {/*    isLogOut*/}
+                {/*        ?  :*/}
+                <ListItemButton
+                    key="logout"
+                    onClick={() => setIsLogOut(true)}
+                    sx={{
+                        justifyContent: "center",
+                        margin: "10px auto",
+                        borderRadius: "12px",
+                        minHeight: "56px",
+                        width: "90%",
+                        transition: '300ms linear',
+                        color: (theme) => theme.palette.secondary.main,
+                        "&:hover": {
+                            bgcolor: 'red',
+                            color: (theme) => theme.palette.secondary.main,
+                            transition: '300ms linear',
+                            "> div": {
+                                color: (theme) => theme.palette.secondary.main
+                            }
+                        }
+                    }}
+                >
+                    <ListItemIcon
                         sx={{
                             justifyContent: "center",
-                            margin: "10px auto",
-                            borderRadius: "12px",
-                            minHeight: "56px",
-                            width: "90%",
-                            transition: '300ms linear',
+                            minWidth: 36,
                             color: (theme) => theme.palette.secondary.main,
-                            "&:hover": {
-                                bgcolor: 'red',
-                                color: (theme) => theme.palette.secondary.main,
-                                transition: '300ms linear',
-                                "> div": {
-                                    color: (theme) => theme.palette.secondary.main
-                                }
-                            }
                         }}
                     >
-                        <ListItemIcon
-                            sx={{
-                                justifyContent: "center",
-                                minWidth: 36,
-                                color: (theme) => theme.palette.secondary.main,
-                            }}
-                        >
-                            <Logout/>
-                        </ListItemIcon>
-                        <ListItemText
-                            primary={t("buttons.logout", "Logout")}
-                            primaryTypographyProps={{
-                                noWrap: true,
-                                fontSize: "16px",
-                            }}
-                        />
-                    </ListItemButton>
-            }
+                        <Logout/>
+                    </ListItemIcon>
+                    <ListItemText
+                        primary={t("buttons.logout", "Logout")}
+                        primaryTypographyProps={{
+                            noWrap: true,
+                            fontSize: "16px",
+                        }}
+                    />
+                </ListItemButton>
+            </>
+            {/*}*/}
         </Tooltip>
     );
 
@@ -371,7 +380,7 @@ export const Sider: typeof DefaultSider = ({render}) => {
     );
 
     return (
-        <>
+        <Box>
             <Box
                 sx={{
                     width: {xs: drawerWidth()},
@@ -383,60 +392,81 @@ export const Sider: typeof DefaultSider = ({render}) => {
                 }}
             />
             <Box
-                component="nav"
+                // component="nav"
                 sx={{
-                    position: "fixed",
-                    zIndex: 110,
-                    width: {sm: drawerWidth()},
+                    // position: "fixed",
+                    // zIndex: 110,
+                    // width: {sm: drawerWidth()},
                     display: "flex",
                 }}
             >
-                <StyledEngineProvider injectFirst>
-                    <Drawer
-                        variant="temporary"
-                        open={opened}
-                        onClose={() => setOpened(false)}
-                        ModalProps={{
-                            keepMounted: true, // Better open performance on mobile.
-                        }}
+                {/*<StyledEngineProvider injectFirst>*/}
+                <Drawer
+                    variant="temporary"
+                    open={openSider === 'open'}
+                    onClose={setOpenSider}
+                    ModalProps={{
+                        keepMounted: true, // Better open performance on mobile.
+                    }}
+                    sx={{
+                        // zIndex: 10,
+                        display: {sm: "block", md: "none"},
+                        "& .MuiDrawer-paper": {
+                            width: 256,
+                            bgcolor: (theme) => theme.palette.primary.main,
+                            margin: styles.marginSiderS,
+                            borderRadius: styles.borderRadiusS,
+                            height: styles.heightSiderS
+                        },
+                    }}
+                >
+                    <Box
                         sx={{
-                            display: {sm: "block", md: "none"},
-                            "& .MuiDrawer-paper": {
-                                width: 256,
-                                bgcolor: (theme) => theme.palette.primary.main,
-                                margin: marginSiderS,
-                                borderRadius: borderRadiusS,
-                                height: heightSiderS
-                            },
+                            height: 64,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
                         }}
                     >
-                        <Box
-                            sx={{
-                                height: 64,
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                            }}
-                        >
-                            <RenderToTitle collapsed={false}/>
-                        </Box>
-                        {drawer}
-                    </Drawer>
-                </StyledEngineProvider>
+                        <RenderToTitle collapsed={false}/>
+                    </Box>
+                    {drawer}
+                </Drawer>
+                {/*</StyledEngineProvider>*/}
+                {/*<Box*/}
+                {/*    sx={{*/}
+                {/*        display: {xs: "block", md: "none"},*/}
+                {/*        position: "fixed",*/}
+                {/*        top: buttonSiderS.top,*/}
+                {/*        left: buttonSiderS.left,*/}
+                {/*        borderRadius: buttonSiderS.borderRadius,*/}
+                {/*        bgcolor: "#475be8",*/}
+                {/*        zIndex: 9,*/}
+                {/*        width: "36px",*/}
+                {/*    }}*/}
+                {/*>*/}
+                {/*    <IconButton*/}
+                {/*        sx={{color: "#fff", width: "36px"}}*/}
+                {/*        onClick={() => setOpened((prev) => !prev)}*/}
+                {/*    >*/}
+                {/*        <MenuRounded/>*/}
+                {/*    </IconButton>*/}
+                {/*</Box>*/}
                 <Drawer
                     variant="permanent"
                     PaperProps={{elevation: 0}}
                     sx={{
                         display: {xs: "none", md: "block"},
+                        zIndex: 8,
                         "& .MuiDrawer-paper": {
                             width: drawerWidth,
                             bgcolor: (theme) => theme.palette.primary.main,
                             overflow: "hidden",
                             transition:
                                 "width 200ms cubic-bezier(0.4, 0, 0.6, 1) 0ms",
-                            margin: marginSiderS,
-                            borderRadius: borderRadiusS,
-                            height: heightSiderS
+                            margin: styles.marginSiderS,
+                            borderRadius: styles.borderRadiusS,
+                            height: styles.heightSiderS
                         },
                     }}
                     open
@@ -473,32 +503,13 @@ export const Sider: typeof DefaultSider = ({render}) => {
                         }}
                         fullWidth
                         size="large"
-                        onClick={() => setCollapsed((prev) => !prev)}
+                        onClick={setCollapsed}
                     >
                         {collapsed ? <ChevronRight/> : <ChevronLeft/>}
                     </Button>
                 </Drawer>
-                <Box
-                    sx={{
-                        display: {xs: "block", md: "none"},
-                        position: "fixed",
-                        top: buttonSiderS.top,
-                        left: buttonSiderS.left,
-                        borderRadius: buttonSiderS.borderRadius,
-                        bgcolor: "#475be8",
-                        zIndex: 119,
-                        width: "36px",
-                    }}
-                >
-                    <IconButton
-                        sx={{color: "#fff", width: "36px"}}
-                        onClick={() => setOpened((prev) => !prev)}
-                    >
-                        <MenuRounded/>
-                    </IconButton>
-                </Box>
             </Box>
-        </>
+        </Box>
     );
 };
 

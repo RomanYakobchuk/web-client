@@ -6,13 +6,15 @@ import {Box, Button, Grid, Stack, Typography} from "@mui/material";
 import {Add} from "@mui/icons-material";
 
 import {ColorModeContext} from "../../contexts";
-import {INews, NewsProps, ProfileProps} from "../../interfaces/common";
-import {CustomButton, FilterNews, Loading, NewsCard, Pagination} from "../index";
+import {IGetIdentity, INews, NewsProps, ProfileProps} from "../../interfaces/common";
+import {CustomButton, FilterNews, Loading, NewsCard, PaginationComponent} from "../index";
 import {buttonStyle} from "../../styles";
 
 const UserList = () => {
     const navigate = useNavigate();
-    const {data: user} = useGetIdentity<ProfileProps>();
+    const {data: identity} = useGetIdentity<IGetIdentity>();
+    const user: ProfileProps = identity?.user as ProfileProps;
+
     const [sortBy, setSortBy] = useState("");
     const [isUserInstitution, setIsUserInstitution] = useState<boolean>(false);
     const translate = useTranslate();
@@ -26,7 +28,7 @@ const UserList = () => {
         current,
         setCurrent,
         setPageSize,
-        pageCount,
+        pageSize,
         sorters,
         setSorters,
         filters,
@@ -137,7 +139,7 @@ const UserList = () => {
             </Grid>
             {
                 allNews.length > 0 && (
-                    <Pagination current={current} setCurrent={setCurrent} pageCount={pageCount} setPageSize={setPageSize}/>
+                    <PaginationComponent count={data?.total as number} current={current} setCurrent={setCurrent} pageCount={pageSize} setPageSize={setPageSize}/>
                 )
             }
         </Box>

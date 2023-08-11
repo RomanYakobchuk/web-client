@@ -10,11 +10,11 @@ const container = document.getElementById("root") as HTMLElement;
 const root = createRoot(container);
 
 root.render(
-  // <React.StrictMode>
+  <React.StrictMode>
     <React.Suspense fallback={<Loading/>}>
       <App />
     </React.Suspense>
-  // </React.StrictMode>
+  </React.StrictMode>
 );
 
 reportWebVitals();

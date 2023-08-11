@@ -5,7 +5,7 @@ import React, {useContext} from "react";
 import dayjs from "dayjs";
 import {useNavigate} from "react-router-dom";
 
-import {IReserve, ProfileProps} from "../../interfaces/common";
+import {IGetIdentity, IReserve, ProfileProps} from "../../interfaces/common";
 import {ColorModeContext} from "../../contexts";
 import {TagField} from "@refinedev/mui";
 import {buttonStyle} from "../../styles";
@@ -25,7 +25,9 @@ const ReservedCard = ({reserve}: IProps) => {
         userStatus,
     } = reserve;
 
-    const {data: user} = useGetIdentity<ProfileProps>();
+    const {data} = useGetIdentity<IGetIdentity>();
+    const user: ProfileProps = data?.user as ProfileProps;
+
     const translate = useTranslate();
     const navigate = useNavigate();
     const {mode} = useContext(ColorModeContext);

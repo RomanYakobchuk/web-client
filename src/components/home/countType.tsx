@@ -29,7 +29,7 @@ const CountType = () => {
             }}>
                 {translate("home.sortByType.browseByType")}
             </Typography>
-            <ScrollContent id={'countTypes'}>
+            <ScrollContent>
                 {
                     isLoadingTypes
                         ? [1, 2, 3]?.map((item: number) => (

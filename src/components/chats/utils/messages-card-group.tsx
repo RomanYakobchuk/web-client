@@ -4,7 +4,7 @@ import {MouseEvent, useEffect, useRef, useState} from "react";
 import {useGetIdentity, useTranslate} from "@refinedev/core";
 
 
-import {IMessage, ProfileProps} from "../../../interfaces/common";
+import {IGetIdentity, IMessage, ProfileProps} from "../../../interfaces/common";
 import dayjs from "dayjs";
 import useLongPress from "../../../utils/useLongPress";
 import {socket} from "../../../socketClient";
@@ -20,7 +20,8 @@ interface IProps {
 const MessagesCardGroup = ({item: message, receiver, setReplyTo, lengthGroup, index}: IProps) => {
 
         const translate = useTranslate();
-        const {data: user} = useGetIdentity<ProfileProps>();
+        const {data: identity} = useGetIdentity<IGetIdentity>();
+        const user: ProfileProps = identity?.user as ProfileProps;
 
         const [currentMessage, setCurrentMessage] = useState<IMessage>(message);
         const [item, setItem] = useState<IMessage>(currentMessage);

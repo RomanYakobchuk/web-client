@@ -1,10 +1,10 @@
 import {Box, Button, CircularProgress, MenuItem, Select} from "@mui/material";
 import {HourglassBottom, Public, ThumbDownAltOutlined} from "@mui/icons-material";
 import {PropertyProps} from "../../../interfaces/common";
-import InstitutionCard from "../../institution/utills/InstitutionCard";
+import InstitutionCard from "../../establishment/utills/InstitutionCard";
 import React, {useState} from "react";
 import {useInfiniteList, useTranslate} from "@refinedev/core";
-import Loading from "../../loading";
+import Loading from "../../loading/loading";
 import {useMobile} from "../../../utils";
 
 interface IProps {

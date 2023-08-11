@@ -1,24 +1,21 @@
-import {createContext, FC, ReactNode, useContext, useEffect, useState} from "react";
+import {createContext, FC, PropsWithChildren, ReactNode, useContext, useEffect, useState} from "react";
 import {useMobile} from "../utils";
 
-type ISchema = {
-    marginS: string,
-    borderRadiusS: string,
-    heightLayoutS: string,
-    heightSiderS: string,
-    schema: Schema['type'],
-    marginSiderS: string,
-    gapS: number,
-    buttonSiderS: {
-        left: string,
-        top: { xs: string, sm: string },
-        borderRadius: string,
-        transform: string
+type ISchemaType = {
+    styles: {
+        marginS: string,
+        borderRadiusS: string,
+        heightLayoutS: string,
+        heightSiderS: string,
+        marginSiderS: string,
+        gapS: number,
+        buttonSiderS: {
+            left: string,
+            top: { xs: string, sm: string },
+            borderRadius: string,
+            transform: string
+        },
     },
-    setSchema: (value: Schema['type']) => void
-}
-
-type StyleSchemaType = {
     schema: Schema['type'],
     setSchema: (value: Schema['type']) => void
 }
@@ -31,9 +28,9 @@ interface Props {
     children: ReactNode;
 }
 
-const SchemaContext = createContext<ISchema>({} as ISchema);
+export const SchemaContext = createContext<ISchemaType>({} as ISchemaType);
 
-export const useSchema = (): ISchema => {
+export const useSchema = (): ISchemaType => {
     const context = useContext(SchemaContext);
     if (!context) {
         throw new Error("useSchema must be used within a SchemaProvider");
@@ -41,15 +38,15 @@ export const useSchema = (): ISchema => {
     return context;
 };
 
-export const SchemaProvider: FC<Props> = ({children}) => {
-    const selectedSchema = window.localStorage.getItem("schema");
+export const SchemaProvider: FC<PropsWithChildren> = ({children}) => {
+    const selectedSchema = window.localStorage.getItem("schema") as string;
 
     const {width} = useMobile();
 
     const [schema, setSchema] = useState<Schema["type"]>(
         (selectedSchema as Schema["type"]) || "schema_1"
     );
-    const [buttonSiderS, setButtonSiderS] = useState<ISchema['buttonSiderS']>({left: '0', top: {xs: "10px", sm: '15px'}, transform: 'translate(25%, 35%)', borderRadius: '0px 6px 0px 6px'});
+    const [buttonSiderS, setButtonSiderS] = useState<ISchemaType['styles']['buttonSiderS']>({left: '0', top: {xs: "10px", sm: '15px'}, transform: 'translate(25%, 35%)', borderRadius: '0px 6px 0px 6px'});
     const [marginS, setMarginS] = useState<string>("0");
     const [gapS, setGapS] = useState<number>(0);
     const [marginSiderS, setMarginSiderS] = useState<string>("0");
@@ -61,10 +58,6 @@ export const SchemaProvider: FC<Props> = ({children}) => {
         window.localStorage.setItem("schema", schema);
         applyStyles(schema);
     }, [schema, width]);
-
-    useEffect(() => {
-        applyStyles(schema);
-    }, []);
 
     const applyStyles = (selectedSchema: Schema["type"]) => {
         if (selectedSchema === "schema_1") {
@@ -98,16 +91,18 @@ export const SchemaProvider: FC<Props> = ({children}) => {
         }
     };
 
-    const schemaContextValue: ISchema = {
-        borderRadiusS,
-        heightLayoutS,
-        marginS,
-        setSchema,
-        heightSiderS,
-        marginSiderS,
+    const schemaContextValue: ISchemaType = {
+        styles: {
+            borderRadiusS,
+            heightLayoutS,
+            marginS,
+            heightSiderS,
+            marginSiderS,
+            gapS,
+            buttonSiderS
+        },
         schema,
-        gapS,
-        buttonSiderS
+        setSchema,
     };
 
     return (

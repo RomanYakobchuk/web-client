@@ -2,8 +2,8 @@ import {GetListResponse, useGetIdentity, useInfiniteList, useTranslate} from "@r
 import {Box, Button, CircularProgress, FormControl, TextField} from "@mui/material";
 import React, {useEffect, useState} from "react";
 
-import {IConversation, ProfileProps} from "../../interfaces/common";
-import Loading from "../loading";
+import {IConversation, IGetIdentity, ProfileProps} from "../../interfaces/common";
+import Loading from "../loading/loading";
 import ListCardChat from "./utils/list-card-chat";
 import {useDebounce} from "use-debounce";
 import {socket} from "../../socketClient";
@@ -15,7 +15,8 @@ interface IProps {
 
 
 const ListChats = ({setCurrentChat, setOpenDrawer}: IProps) => {
-    const {data: user} = useGetIdentity<ProfileProps>();
+    const {data: identity} = useGetIdentity<IGetIdentity>();
+    const user: ProfileProps = identity?.user as ProfileProps;
     const translate = useTranslate();
 
     const [chats, setChats] = useState<any>();

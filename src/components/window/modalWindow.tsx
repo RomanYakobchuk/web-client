@@ -1,73 +1,149 @@
-import {Box, Card, CardContent, Stack, Typography} from "@mui/material";
-import CustomButton from "../common/CustomButton";
-import {useContext} from "react";
+import {Box, IconButton, StyledEngineProvider, SxProps} from "@mui/material";
+import {ReactNode, useContext, MouseEvent, useState, useEffect} from "react";
+import {CloseOutlined} from "@mui/icons-material";
+
 import {ColorModeContext} from "../../contexts";
+import {useMobile} from "../../utils";
+
+import './modalWindow.css';
 
 interface IProps {
-    textButtonConfirm?: string,
-    textButtonCancel: string,
-    textTitle: string,
-    message: string,
-    handleSubmit: any,
+    children: ReactNode,
     open: boolean,
-    close: any,
-    icon?: any
+    setOpen: (value: boolean) => void,
+    title: ReactNode,
+    titleStyle?: SxProps
 }
 
-const ModalWindow = ({handleSubmit, textButtonCancel, message, textButtonConfirm, textTitle, open, close, icon}: IProps) => {
+const ModalWindow = ({children, open, setOpen, title, titleStyle}: IProps) => {
 
-    const {mode} = useContext(ColorModeContext);
+    const [isVisible, setIsVisible] = useState(open);
+
+    useEffect(() => {
+        if (open) {
+            setIsVisible(true);
+        } else {
+            setTimeout(() => setIsVisible(false), 1000); // Додайте тут необхідний час анімації
+        }
+    }, [open]);
+    const {width, device} = useMobile();
+
+    const someStyle = !device ? {
+        '&::-webkit-scrollbar': {
+            width: '10px',
+            bgcolor: 'transparent',
+            borderRadius: '5px'
+        },
+        '&::-webkit-scrollbar-track': {
+            'webkitBoxShadow': 'inset 0 0 6px rgba(0,0,0,0.00)'
+        },
+        '&::-webkit-scrollbar-thumb': {
+            backgroundColor: 'rgba(0,0,0,.1)',
+            outline: '1px solid slategrey',
+            bgcolor: 'steelblue',
+            borderRadius: '5px',
+        }
+    } : {};
+
+    const handleModalClick = (event: MouseEvent<HTMLDivElement>) => {
+        event.stopPropagation();
+    }
 
     return (
         <>
             {
-                open && <Box position={"fixed"} top={0} left={0} zIndex={20000} width={"100%"} minHeight={'100vh'}
-                             bgcolor={"rgba(60, 60, 60, 0.5)"} display={"flex"} justifyContent={"center"}
-                             alignItems={"center"}>
-                    <Card
+                isVisible &&
+                <StyledEngineProvider injectFirst>
+                    <Box
                         sx={{
-                            width: "330px",
-                            height: "400px",
-                            padding: "10px",
-                            "&:hover": {
-                                boxShadow: "0 22px 45px 2px rgba(176, 176, 176, 0.1)",
+                            position: 'fixed',
+                            inset: 0,
+                            zIndex: 3000,
+                            width: '100%',
+                            top: open ? 0 : '100%',
+                            height: '100vh',
+                            transition: 'top 1s linear',
+                            animation: `${open ? 'OpenModalWindow' : 'CloseModalWindow'} 1s linear forwards`,
+                            bgcolor: 'rgba(107, 122, 144, 0.2)',
+                            backdropFilter: 'blur(4px)',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            "& .ReactModal__Overlay": {
+                                opacity: 0,
+                                transform: " translateX(-100px)",
+                                transition: " all 500ms ease-in-out"
                             },
-                            display: "flex",
-                            justifyContent: "space-evenly",
-                            alignItems: "center"
+
+                            "& .ReactModal__Overlay--after-open": {
+                                opacity: 1,
+                                transform: 'translateX(0px)'
+                            },
+                            ".ReactModal__Overlay--before-close ": {
+                                opacity: 0,
+                                transform: 'translateX(-100px)'
+                            }
                         }}
-                        elevation={0}
-
+                        onClick={() => {
+                            setTimeout(() => {
+                                setOpen(false)
+                            }, 1000)
+                        }}
                     >
-                        <CardContent
+                        <Box
+                            onClick={handleModalClick}
                             sx={{
-                                display: "flex",
-                                flexDirection: "row",
-                                justifyContent: "space-between",
-                                gap: "10px",
-                                padding: "15px 20px",
-                                height: "100%",
-                                width: '90%'
-                            }}
-                        >
-                            <Stack direction="column" gap={3} sx={{width: '100%'}} height={"100%"} justifyContent={"space-evenly"}>
-                                <Typography fontSize={24} fontWeight={700} color={mode === "dark" ? "#fcfcfc" : "#11142d"}>
-                                    {textTitle}
-                                </Typography>
-                                <Typography fontSize={18} whiteSpace={'pre-wrap'} fontWeight={400} color={mode === "dark" ? "#fcfcfc" : "#11142d"}>
-                                    {message}
-                                </Typography>
+                                width: '100%',
+                                maxWidth: '700px',
+                                transform: width < 700 ? 'translateY(0)' : 'translateY(-5%)',
+                                boxShadow: 'rgba(67, 77, 91, 0.2) 0px 4px 20px',
+                                borderRadius: 'clamp(0px, (100vw - 750px) * 9999, 12px)',
+                                height: width < 700 ? '100vh' : '70vh',
+                                bgcolor: (theme) => theme.palette.common.black,
+                                // bgcolor: mode === 'dark' ? "#203e2d" : '#fcfcfc'
+                            }}>
+                            <header style={{
+                                borderBottom: title ? '1px solid rgb(218, 226, 237)' : '1px solid transparent',
+                                borderTopColor: 'rgb(218, 226, 237)',
+                                borderRightColor: 'rgb(218, 226, 237)',
+                                borderLeftColor: 'rgb(218, 226, 237)',
+                                padding: width > 600 ? '14px' : '8px',
+                                display: 'flex',
+                                justifyContent: 'center',
 
-                                <Stack display={"flex"} direction={"row"} justifyContent={"space-between"}>
-                                    <CustomButton title={textButtonCancel} width={"90px"} backgroundColor={"red"}
-                                                  color={"#fcfcfc"} handleClick={()=> close(false)}/>
-                                    <CustomButton icon={icon ? icon : ''} title={textButtonConfirm ? textButtonConfirm : ''} width={"90px"} backgroundColor={"blue"}
-                                                  color={"#fcfcfc"} handleClick={handleSubmit}/>
-                                </Stack>
-                            </Stack>
-                        </CardContent>
-                    </Card>
-                </Box>
+                                position: 'relative'
+                            }}>
+                                <Box sx={{
+                                    width: '100%',
+                                    ...titleStyle
+                                }}>
+                                    {title}
+                                </Box>
+                                <IconButton
+                                    sx={{
+                                        position: 'absolute',
+                                        top: '50%',
+                                        transform: 'translateY(-50%)',
+                                        right: '10px'
+                                    }}
+                                    onClick={() => setOpen(false)}
+                                >
+                                    <CloseOutlined/>
+                                </IconButton>
+                            </header>
+                            <Box
+                                sx={{
+                                    minHeight: '384px',
+                                    maxHeight: {xs: '100%', sm: '80%'},
+                                    overflow: 'auto',
+                                    ...someStyle
+                                }}
+                            >
+                                {children}
+                            </Box>
+                        </Box>
+                    </Box>
+                </StyledEngineProvider>
             }
         </>
     );

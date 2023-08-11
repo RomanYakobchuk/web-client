@@ -15,22 +15,41 @@ import React, {useEffect} from "react";
 import {newEnforcer} from "casbin.js";
 
 import {
-    AllInstitutions, Capl, EditProfile, ForgotPassword, Login, News, Profile, Register, TopInstitutions,
-    UpdatePassword, Settings, VerifyNumber, Welcome, Home, AllReviews, AllUsers, Chat, Notifications,
-} from "pages";
-import {
-    CreateInstitution,
-    InstitutionDetails,
-    EditInstitution,
-    CreateReservation,
+    AllEstablishments,
+    Capl,
+    EstablishmentDetails,
+    CreateEstablishment,
+    EditEstablishment,
+    AllComments,
+    EditProfile,
+    ForgotPassword,
+    Login,
+    News,
+    Profile,
+    Register,
+    TopInstitutions,
+    UpdatePassword,
+    Settings,
+    VerifyNumber,
+    Welcome,
+    Home,
+    AllReviews,
+    AllUsers,
+    Chat,
+    Notifications,
     CreateNews,
     DetailsNews,
     EditNews,
+    ShowUserInfo,
+    CreateReservation,
+    DetailsReserve,
+    EditReserve,
+} from "pages";
+import {
     Loading,
     Menu,
     EditMenu,
-    CreateMenu,
-    DetailsReserve, EditReserve, ShowUserInfo, EditUpdateStatus, ShowChats, UpdateCity
+    CreateMenu, EditUpdateStatus, ShowChats, UpdateCity
 } from "components";
 import {model, adapter} from "./accessControl";
 import {Header, Title, Layout, Sider} from "./layout";
@@ -255,7 +274,7 @@ function App() {
                                             <Route index element={<Notifications/>}/>
                                         </Route>
                                         <Route path={'/all_institutions'}>
-                                            <Route index element={<AllInstitutions/>}/>
+                                            <Route index element={<AllEstablishments/>}/>
                                             <Route
                                                 path="create"
                                                 element={
@@ -264,12 +283,12 @@ function App() {
                                                         resource={"all_institutions"}
                                                         fallback={<ErrorComponent/>}
                                                     >
-                                                        <CreateInstitution/>
+                                                        <CreateEstablishment/>
                                                     </CanAccess>
                                                 }
                                             />
                                             <Route
-                                                path="show/:id" element={<InstitutionDetails/>}/>
+                                                path="show/:id" element={<EstablishmentDetails/>}/>
                                             <Route
                                                 path={'edit/:id'}
                                                 element={
@@ -278,7 +297,7 @@ function App() {
                                                         resource={"all_institutions"}
                                                         fallback={<ErrorComponent/>}
                                                     >
-                                                        <EditInstitution/>
+                                                        <EditEstablishment/>
                                                     </CanAccess>
                                                 }/>
                                             <Route
@@ -407,7 +426,8 @@ function App() {
                                     </Route>
                                     <Route
                                         element={
-                                            <Authenticated v3LegacyAuthProviderCompatible={true} fallback={<Outlet/>}>
+                                            <Authenticated v3LegacyAuthProviderCompatible={true}
+                                                           fallback={<Outlet/>}>
                                                 <NavigateToResource resource={'home'}/>
                                             </Authenticated>
                                         }
