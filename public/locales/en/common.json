@@ -481,7 +481,14 @@
   "text": {
     "yes": "Yes",
     "no": "No",
-    "notResult": "Nothing found"
+    "notResult": "Nothing found",
+    "home": {
+      "searchPlace1": "Looking for a place to ",
+      "searchPlace2": "relax?",
+      "byPlace": "Welcome to our platform, where your time will always have a special place. We understand the importance of finding the perfect spot for relaxation and a casual atmosphere.",
+      "findYourSelf": "Or you can choose a venue that suits you best and discover the perfect spot on your own.",
+      "byType": "We offer a variety of atmospheres and types of entertainment. Do you enjoy upscale restaurants with gastronomic masterpieces, or are you looking to treat yourself and friends in cozy cafes? Perhaps you're seeking nightlife at vibrant bars, where the rhythm of the night comes alive."
+    }
   },
   "list": {
     "institution": "List of institutions",

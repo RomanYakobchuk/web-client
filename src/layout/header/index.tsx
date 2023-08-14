@@ -35,10 +35,13 @@ import {useMobile} from "../../utils";
 import {Loading, ModalWindow} from "../../components";
 import {searchRender} from "../../components/render"
 import {antdInputStyle} from "../../styles";
+import {SchemaContext} from "../../settings/schema";
 
 
 export const Header: React.FC = () => {
-    const {mode, setMode, open, setOpen} = useContext(ColorModeContext);
+    const {mode, setMode, setOpen, collapsed} = useContext(ColorModeContext);
+
+    const {schema} = useContext(SchemaContext)
 
     const {data} = useGetIdentity<IGetIdentity>();
     const user: ProfileProps = data?.user as ProfileProps;
@@ -129,13 +132,27 @@ export const Header: React.FC = () => {
         }
     }, [debounceValue, openModal, user]);
 
+    const bgColor = schema === 'schema_2' ? 'common.black' : mode === 'dark' ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.2)'
+
     const isLoading = isLoadNews || isLoadPlace || isRefetchNews || isRefetchPlace;
 
+    const widthAppBar = width < 900 ? '100%' : schema === 'schema_1' ? collapsed ? 'calc(100% - 64px)' : 'calc(100% - 200px)' : '100%';
+    const HandleOpenModal = () => {
+        setOpenModal(true)
+    }
+
     return (
-        <AppBar position="sticky" elevation={0} sx={{
-            zIndex: {xs: '8'},
+        <AppBar elevation={0} sx={{
+            position: 'sticky',
+            zIndex: '8',
+            top: 0,
             borderRadius: styles.borderRadiusS,
-            bgcolor: (theme) => theme.palette.common.black
+            bgcolor: bgColor,
+            // width: widthAppBar,
+            backdropFilter: schema === 'schema_1' ? 'blur(4px)' : 'unset',
+            ransition:
+                "width 200ms cubic-bezier(0.4, 0, 0.6, 1) 0ms",
+            borderBottom: schema === 'schema_1' ? '1px dashed silver' : ''
         }}>
             <Toolbar>
                 <Box
@@ -178,7 +195,9 @@ export const Header: React.FC = () => {
                                     p: '5px',
                                     transition: 'width 1s linear'
                                 }}
-                                onClick={() => setOpenModal(true)}
+                                onClick={() => {
+                                    HandleOpenModal()
+                                }}
                                 color={'secondary'}
                             >
                                 <SearchOutlined color={'action'}/>

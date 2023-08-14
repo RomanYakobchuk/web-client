@@ -5,7 +5,14 @@ export const textFieldStyle = {
 }
 
 export const buttonStyle = {
-    borderRadius: '5px'
+    borderRadius: '20px'
+}
+
+export const hoverButtonStyle = {
+    "&:hover": {
+        color: 'common.white',
+        bgcolor: 'common.black'
+    }
 }
 
 export const tagStyle = {

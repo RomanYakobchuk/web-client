@@ -1,6 +1,6 @@
 import {
     Box,
-    Button,
+    Button, ButtonGroup,
     FormControl, FormHelperText, IconButton,
     MenuItem,
     Select,
@@ -15,8 +15,9 @@ import {Input} from "antd";
 
 import {ColorModeContext} from "../../contexts";
 import {ModalWindow, SearchCity} from "../index";
-import {antdInputStyle, buttonStyle, selectStyle, textFieldStyle} from "../../styles";
+import {antdInputStyle, buttonStyle, hoverButtonStyle, selectStyle, textFieldStyle} from "../../styles";
 import {useMobile} from "../../utils";
+import {useDebounce} from "use-debounce";
 
 
 interface IProps {
@@ -42,10 +43,11 @@ const FilterInstitutions = ({
                             }: IProps) => {
 
     const translate = useTranslate();
-    const {state: locationState, search} = useLocation();
+    const {state: locationState} = useLocation();
     const {mode} = useContext(ColorModeContext);
     const {width} = useMobile();
 
+    const [openAllFilters, setOpenAllFilters] = useState<boolean>(false);
     const [openFilter, setOpenFilter] = useState(false);
     const [newFilters, setFilters] = useState<any>([{}]);
     const [searchCity, setSearchCity] = useState<string>('');
@@ -54,6 +56,9 @@ const FilterInstitutions = ({
     const [valueGte, setValueGte] = useState<number>(0);
     const [valueLte, setValueLte] = useState<number>(2000);
     const [state, setState] = useState<any>(locationState ?? "");
+    const [debouncedSearchText] = useDebounce(searchValue, 500);
+
+    const isShowAllFilters = width > 600;
 
     const handleChange = (event: ChangeEvent<{}>, newValue: number | number[]) => {
         if (Array.isArray(newValue)) {
@@ -110,6 +115,24 @@ const FilterInstitutions = ({
 
         };
     }, [newFilters]);
+
+    // useEffect(() => {
+    //     if (!isShowAllFilters) {
+    //         defaultSetFilters([
+    //             {
+    //                 field: 'title',
+    //                 value: debouncedSearchText ?? '',
+    //                 operator: 'contains'
+    //             }
+    //         ])
+    //     }
+    // }, [debouncedSearchText, isShowAllFilters])
+
+    // useEffect(() => {
+    //     if (isShowAllFilters && newFilters?.length > 0) {
+    //         defaultSetFilters(newFilters)
+    //     }
+    // }, [isShowAllFilters, newFilters]);
     useEffect(() => {
         setFilters([
             {
@@ -149,7 +172,12 @@ const FilterInstitutions = ({
                 }
             ])
         }
-    }, [sorters])
+    }, [sorters]);
+    useEffect(() => {
+        if (isShowAllFilters && newSorters.length > 0 && newSorters[0]?.field) {
+            defaultSetSorters(newSorters);
+        }
+    }, [isShowAllFilters, newSorters])
 
     useEffect(() => {
         if (filters?.length > 0) {
@@ -190,10 +218,332 @@ const FilterInstitutions = ({
         defaultSetSorters([{field: "", order: "asc"}]);
         setOpenFilter(false);
     }
+    const search = () => {
+        defaultSetFilters([
+            {
+                field: 'title',
+                value: debouncedSearchText ?? '',
+                operator: 'contains'
+            }
+        ])
+    }
 
-    const isShowAllFilters = width > 1000;
+    const SearchByTypeComponent = (
+        <ButtonGroup variant={'contained'}>
+            {
+                [
+                    {
+                        title: 'restaurant'
+                    },
+                    {
+                        title: 'cafe',
+                    },
+                    {
+                        title: 'bar'
+                    }
+                ].map((item, index) => (
+                    <Button
+                        key={index}
+                        sx={{
+                            // bgcolor:
+                        }}
+                        onClick={() => {
+                            console.log(item.title)
+                            console.log(filters)
+                            setFilters([{
+                                field: 'propertyType',
+                                value: item.title,
+                                operator: 'eq'
+                            }])
+                        }}>
+                        {translate(`home.sortByType.${item.title}`)}
+                    </Button>
+                ))
+            }
+        </ButtonGroup>
+    );
 
-    const filtersComponents = (
+    const SortByTypeComponent = (
+        <FormControl
+            sx={{width: '100%',}}>
+            <FormHelperText
+                sx={{
+                    fontSize: '14px',
+                    mb: 0.5,
+                    color: (theme) => theme.palette.text.primary
+                }}
+            >
+                {translate('home.sort')}
+            </FormHelperText>
+            <Select
+                variant={"outlined"}
+                size="small"
+                color={"info"}
+                fullWidth
+                displayEmpty
+                required
+                inputProps={{'aria-label': 'Without label'}}
+                value={newSorters[0]?.field ? newSorters[0]?.field : sortBy ? sortBy : ""}
+                sx={{
+                    fontSize: {xs: '12px', sm: '16px'},
+                    ...selectStyle
+                }}
+                onChange={
+                    (e: any) => {
+                        setSortBy(e.target.value)
+                        toggleSort(e.target.value)
+                    }
+                }
+            >
+                <MenuItem value={""}>{translate("home.default")}</MenuItem>
+                {
+                    [
+                        {
+                            title: translate("home.sortRating") + '  ' + '↑',
+                            value: "rating_asc",
+                        },
+                        {
+                            title: translate("home.sortRating") + '  ' + '↓',
+                            value: "rating_desc",
+                        },
+                        {
+                            title: 'Найстаріші',
+                            value: 'createdAt_asc',
+                        },
+                        {
+                            title: 'Найновіші',
+                            value: 'createdAt_desc',
+                        },
+                        {
+                            title: translate("home.sortByABC.title") + ' ' + translate("home.sortByABC.a-z"),
+                            value: 'title_asc'
+                        },
+                        {
+                            title: translate("home.sortByABC.title") + ' ' + translate("home.sortByABC.z-a"),
+                            value: 'title_desc'
+                        },
+                        {
+                            title: translate("home.create.averageCheck") + '  ' + '↑',
+                            value: 'averageCheck_asc'
+                        },
+                        {
+                            title: translate("home.create.averageCheck") + '  ' + '↓',
+                            value: 'averageCheck_desc'
+                        },
+                    ].map((type) => (
+                        <MenuItem key={type.value}
+                                  value={type.value}>{type.title}</MenuItem>
+                    ))
+                }
+            </Select>
+        </FormControl>
+    )
+
+    const SearchByInputValueComponent = (
+        <Box sx={{
+            ...antdInputStyle,
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'row',
+            gap: width > 500 ? 1 : 0,
+            margin: '10px 0'
+        }}>
+            <Input
+                style={{
+                    width: '100%',
+                    fontSize: '20px',
+                    gap: 2,
+                    color: mode === 'dark' ? 'white' : 'black',
+                    background: 'transparent',
+                }}
+                value={searchValue ?? ''}
+                onChange={(event) => setSearchValue(event.target.value)}
+                suffix={
+                    <Box sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        gap: searchValue?.length > 0 ? 1 : 0
+                    }}>
+                        <SearchOutlined/>
+                        {
+                            width < 500 && searchValue?.length > 0 && (
+                                <IconButton size={"small"} onClick={() => setSearchValue('')}>
+                                    <ClearOutlined/>
+                                </IconButton>
+                            )
+                        }
+                    </Box>
+                }
+                size={'middle'}
+                placeholder={`${translate('buttons.search')}...`}
+            />
+            {
+                width > 500 &&
+                <Button
+                    onClick={() => {
+                        setSearchValue('');
+                        setFilters([
+                            {
+                                field: 'title',
+                                value: '',
+                                operator: 'contains'
+                            }
+                        ])
+                    }}
+                    variant={'contained'}
+                    sx={{
+                        ...buttonStyle,
+                        textTransform: 'capitalize',
+                        bgcolor: 'common.black',
+                        color: 'common.white',
+                        boxShadow: '0px 0px 1px 1px #000',
+                        "&:hover": {
+                            bgcolor: 'common.black',
+                            color: 'common.white',
+                        }
+                    }}>
+                    {translate('buttons.clear')}
+                </Button>
+            }
+            {
+                width > 500 &&
+                <Button
+                    onClick={search}
+                    variant={'contained'}
+                    sx={{
+                        ...buttonStyle,
+                        textTransform: 'capitalize',
+                        bgcolor: 'common.white',
+                        color: 'common.black',
+                        ":hover": {
+                            bgcolor: 'common.white',
+                            color: 'common.black',
+                        }
+                    }}>
+                    {translate('buttons.search')}
+                </Button>
+            }
+
+        </Box>
+    )
+    const SearchByAverageCheckComponent = (
+        <FormControl
+            sx={{width: '100%',}}>
+            <FormHelperText
+                sx={{
+                    fontSize: '14px',
+                    mb: 0.5,
+                    color: (theme) => theme.palette.text.primary
+                }}
+            >
+                {translate('home.create.averageCheck')}
+            </FormHelperText>
+            <Box sx={{
+                width: '100%'
+            }}>
+                <Box sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    width: '100%',
+                    justifyContent: 'space-between',
+                }}>
+                    <TextField
+                        color={"secondary"}
+                        sx={{
+                            width: '100px',
+                            borderColor: 'silver',
+                            minWidth: '140px',
+                            ...textFieldStyle
+                        }}
+                        id="outlined-number-1"
+                        size={"small"}
+                        type="number"
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                        InputProps={{
+                            inputProps: {
+                                min: 0
+                            }
+                        }}
+                        value={valueGte}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                            setValueGte(Number(e.target.value))
+                            setFilters([{
+                                field: 'averageCheck',
+                                operator: 'gte',
+                                value: e.target.value ? e.target.value : undefined
+                            }])
+                        }}
+                    />
+                    <TextField
+                        color={"secondary"}
+                        sx={{
+                            width: '100px',
+                            borderColor: 'silver',
+                            minWidth: '140px',
+                            ...textFieldStyle
+                        }}
+                        InputProps={{
+                            inputProps: {
+                                min: 0
+                            }
+                        }}
+                        id="outlined-number-2"
+                        size={"small"}
+                        type="number"
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                        value={valueLte}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                            setValueLte(Number(e.target.value))
+                            setFilters([{
+                                field: 'averageCheck',
+                                operator: 'lte',
+                                value: e.target.value ? e.target.value : undefined
+                            }])
+                        }}
+                    />
+                </Box>
+                <Box sx={{
+                    width: '90%',
+                    margin: 'auto'
+                }}>
+                    <Slider
+                        color={"secondary"}
+                        value={[Number(valueGte), Number(valueLte)]}
+                        min={0}
+                        max={100000}
+                        onChange={(event: any, value: any) => {
+                            handleChange(event, value);
+                        }}
+                        valueLabelDisplay="auto"
+                    />
+                </Box>
+            </Box>
+        </FormControl>
+    )
+    const SearchByCityComponent = (
+        <FormControl
+            sx={{width: '100%',}}>
+            <FormHelperText
+                sx={{
+                    fontSize: '14px',
+                    mb: 0.5,
+                    color: (theme) => theme.palette.text.primary
+                }}
+            >
+                {translate('home.create.location.title')}
+            </FormHelperText>
+            <SearchCity searchCity={searchCity} setSearchCity={setSearchCity}/>
+        </FormControl>
+    )
+
+    const SearchButtonsComponents = (
         <Box sx={{
             display: 'flex',
             flexDirection: 'column',
@@ -202,243 +552,12 @@ const FilterInstitutions = ({
             justifyContent: {xs: 'space-between', sm: 'start', md: 'end'},
             gap: 2
         }}>
-            <FormControl sx={{width: '100%',}}>
-                <FormHelperText
-                    sx={{
-                        fontSize: '14px',
-                        mb: 0.5,
-                        color: (theme) => theme.palette.text.primary
-                    }}
-                >
-                    {translate('home.create.type.title')}
-                </FormHelperText>
-                <Select
-                    variant={"outlined"}
-                    size="small"
-                    color={"info"}
-                    displayEmpty
-                    fullWidth
-                    required
-                    inputProps={{'aria-label': 'Without label'}}
-                    sx={{
-                        fontSize: {xs: '12px', sm: '16px'},
-                        ...selectStyle
-                    }}
-                    value={type ?? currentFilterValues.propertyType}
-                    onChange={(e) => {
-                        setType(e.target.value)
-                        setFilters([{
-                            field: 'propertyType',
-                            operator: 'eq',
-                            value: e.target.value ? e.target.value : undefined
-                        }])
-                    }}>
-                    <MenuItem value={""}>{translate("home.sortByType.all")}</MenuItem>
-                    {
-                        [{
-                            title: translate("home.sortByType.bar"),
-                            value: "bar"
-                        }, {
-                            title: translate("home.sortByType.cafe"),
-                            value: "cafe"
-                        }, {
-                            title: translate("home.sortByType.restaurant"),
-                            value: "restaurant"
-                        }].map((type) => (
-                            <MenuItem key={type.value}
-                                      value={type.value.toLowerCase()}>{type.title}</MenuItem>
-                        ))
-                    }
-                </Select>
-            </FormControl>
-            <FormControl
-                sx={{width: '100%',}}>
-                <FormHelperText
-                    sx={{
-                        fontSize: '14px',
-                        mb: 0.5,
-                        color: (theme) => theme.palette.text.primary
-                    }}
-                >
-                    {translate('home.create.location.title')}
-                </FormHelperText>
-                <SearchCity searchCity={searchCity} setSearchCity={setSearchCity}/>
-            </FormControl>
-            <FormControl
-                sx={{width: '100%',}}>
-                <FormHelperText
-                    sx={{
-                        fontSize: '14px',
-                        mb: 0.5,
-                        color: (theme) => theme.palette.text.primary
-                    }}
-                >
-                    {translate('home.sort')}
-                </FormHelperText>
-                <Select
-                    variant={"outlined"}
-                    size="small"
-                    color={"info"}
-                    fullWidth
-                    displayEmpty
-                    required
-                    inputProps={{'aria-label': 'Without label'}}
-                    value={newSorters[0]?.field ? newSorters[0]?.field : sortBy ? sortBy : ""}
-                    sx={{
-                        fontSize: {xs: '12px', sm: '16px'},
-                        ...selectStyle
-                    }}
-                    onChange={
-                        (e: any) => {
-                            setSortBy(e.target.value)
-                            toggleSort(e.target.value)
-                        }
-                    }
-                >
-                    <MenuItem value={""}>{translate("home.default")}</MenuItem>
-                    {
-                        [
-                            {
-                                title: translate("home.sortRating") + '  ' + '↑',
-                                value: "rating_asc",
-                            },
-                            {
-                                title: translate("home.sortRating") + '  ' + '↓',
-                                value: "rating_desc",
-                            },
-                            {
-                                title: 'Найстаріші',
-                                value: 'createdAt_asc',
-                            },
-                            {
-                                title: 'Найновіші',
-                                value: 'createdAt_desc',
-                            },
-                            {
-                                title: translate("home.sortByABC.title") + ' ' + translate("home.sortByABC.a-z"),
-                                value: 'title_asc'
-                            },
-                            {
-                                title: translate("home.sortByABC.title") + ' ' + translate("home.sortByABC.z-a"),
-                                value: 'title_desc'
-                            },
-                            {
-                                title: translate("home.create.averageCheck") + '  ' + '↑',
-                                value: 'averageCheck_asc'
-                            },
-                            {
-                                title: translate("home.create.averageCheck") + '  ' + '↓',
-                                value: 'averageCheck_desc'
-                            },
-                        ].map((type) => (
-                            <MenuItem key={type.value}
-                                      value={type.value}>{type.title}</MenuItem>
-                        ))
-                    }
-                </Select>
-            </FormControl>
-            <FormControl
-                sx={{width: '100%',}}>
-                <FormHelperText
-                    sx={{
-                        fontSize: '14px',
-                        mb: 0.5,
-                        color: (theme) => theme.palette.text.primary
-                    }}
-                >
-                    {translate('home.create.averageCheck')}
-                </FormHelperText>
-                <Box sx={{
-                    width: '100%'
-                }}>
-                    <Box sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        width: '100%',
-                        justifyContent: 'space-between',
-                    }}>
-                        <TextField
-                            color={"secondary"}
-                            sx={{
-                                width: '100px',
-                                borderColor: 'silver',
-                                minWidth: '140px',
-                                ...textFieldStyle
-                            }}
-                            id="outlined-number-1"
-                            size={"small"}
-                            type="number"
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
-                            InputProps={{
-                                inputProps: {
-                                    min: 0
-                                }
-                            }}
-                            value={valueGte}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                setValueGte(Number(e.target.value))
-                                setFilters([{
-                                    field: 'averageCheck',
-                                    operator: 'gte',
-                                    value: e.target.value ? e.target.value : undefined
-                                }])
-                            }}
-                        />
-                        <TextField
-                            color={"secondary"}
-                            sx={{
-                                width: '100px',
-                                borderColor: 'silver',
-                                minWidth: '140px',
-                                ...textFieldStyle
-                            }}
-                            InputProps={{
-                                inputProps: {
-                                    min: 0
-                                }
-                            }}
-                            id="outlined-number-2"
-                            size={"small"}
-                            type="number"
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
-                            value={valueLte}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                setValueLte(Number(e.target.value))
-                                setFilters([{
-                                    field: 'averageCheck',
-                                    operator: 'lte',
-                                    value: e.target.value ? e.target.value : undefined
-                                }])
-                            }}
-                        />
-                    </Box>
-                    <Box sx={{
-                        width: '90%',
-                        margin: 'auto'
-                    }}>
-                        <Slider
-                            color={"secondary"}
-                            value={[Number(valueGte), Number(valueLte)]}
-                            min={0}
-                            max={100000}
-                            onChange={(event: any, value: any) => {
-                                handleChange(event, value);
-                            }}
-                            valueLabelDisplay="auto"
-                        />
-                    </Box>
-                </Box>
-            </FormControl>
             <Button
                 onClick={handleReplace}
                 color={"inherit"}
                 variant={"outlined"}
                 sx={{
+                    width: '100%',
                     ...buttonStyle
                 }}
             >
@@ -450,24 +569,21 @@ const FilterInstitutions = ({
                 width: '100%',
                 display: 'flex',
                 flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'space-between'
+                gap: 1
             }}>
-                {
-                    !isShowAllFilters && (
-                        <Button
-                            sx={{
-                                width: '100%%',
-                                ...buttonStyle
-                            }}
-                            color={"error"}
-                            variant={"contained"}
-                            onClick={() => setOpenFilter(false)}
-                        >
-                            {translate("buttons.cancel")}
-                        </Button>
-                    )
-                }
+                <Button
+                    sx={{
+                        width: '100%%',
+                        ...buttonStyle
+                    }}
+                    color={"error"}
+                    variant={"contained"}
+                    onClick={() => {
+                        isShowAllFilters ? setOpenAllFilters(false) : setOpenFilter(false)
+                    }}
+                >
+                    {translate("buttons.close")}
+                </Button>
                 <Button
                     variant={"contained"}
                     color={"info"}
@@ -488,45 +604,8 @@ const FilterInstitutions = ({
             gap: isShowAllFilters ? 0 : 2,
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center'
+            alignItems: 'start',
         }}>
-            <Box sx={{
-                ...antdInputStyle,
-                width: '100%',
-            }}>
-                <Input
-                    style={{
-                        width: '100%',
-                        fontSize: '20px',
-                        gap: 2,
-                        color: mode === 'dark' ? 'white' : 'black',
-                        background: 'transparent',
-                    }}
-                    value={searchValue ?? ''}
-                    onChange={(event) => setSearchValue(event.target.value)}
-                    suffix={
-                        <Box sx={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            gap: searchValue?.length > 0 ? 1 : 0
-                        }}>
-                            <SearchOutlined/>
-                            {
-                                searchValue?.length > 0 && (
-                                    <IconButton size={"small"} onClick={() => setSearchValue('')}>
-                                        <ClearOutlined/>
-                                    </IconButton>
-                                )
-                            }
-                        </Box>
-                    }
-                    size={'middle'}
-                    placeholder={`${translate('buttons.search')}...`}
-                />
-            </Box>
             <Box sx={{
                 display: 'flex',
                 justifyContent: 'center',
@@ -534,26 +613,6 @@ const FilterInstitutions = ({
                 flexDirection: 'column',
                 width: '100%',
             }}>
-                {
-                    !isShowAllFilters && (
-                        <Button
-                            variant={'contained'}
-                            color={'primary'}
-                            onClick={() => setOpenFilter(true)}
-                            sx={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                gap: 1,
-                                width: '100%',
-                                alignItems: 'center'
-                            }}
-                        >
-                            <FilterList/>
-                            {translate('buttons.filter')}
-                        </Button>
-                    )
-                }
-
                 <ModalWindow open={openFilter} setOpen={setOpenFilter} title={
                     <Box>
                         {translate('buttons.filter')}
@@ -561,18 +620,27 @@ const FilterInstitutions = ({
                 }>
                     {openFilter && (
                         <Box>
-                            {filtersComponents}
+                            {}
                         </Box>
                     )}
                 </ModalWindow>
 
             </Box>
             {
-                isShowAllFilters && (
-                    <Box>
-                        {filtersComponents}
-                    </Box>
-                )
+                !openAllFilters && <Button
+                    variant={'contained'}
+                    sx={{
+                        ...hoverButtonStyle,
+                        color: 'common.white',
+                        bgcolor: 'common.black',
+                    }}
+                    onClick={() => {
+                        width > 600 ? setOpenAllFilters(true) : setOpenFilter(true)
+                    }}
+                    size={'small'}
+                >
+                    <FilterList/>
+                </Button>
             }
         </Box>
     );

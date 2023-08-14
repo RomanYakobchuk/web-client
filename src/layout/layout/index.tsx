@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useContext, useEffect} from "react";
 import {LayoutProps} from "@refinedev/core";
 import {Box, Button, Tooltip} from "@mui/material";
 
@@ -9,6 +9,7 @@ import {KeyboardArrowUp, WineBar} from "@mui/icons-material";
 import {Outlet, useLocation, useNavigate} from "react-router-dom";
 import {useMobile} from "../../utils";
 import {useSchema} from "../../settings";
+import {SchemaContext} from "../../settings/schema";
 
 export const Layout: React.FC<LayoutProps> = ({
                                                   Sider,
@@ -21,6 +22,7 @@ export const Layout: React.FC<LayoutProps> = ({
     const FooterToRender = Footer ?? DefaultFooter;
     const navigate = useNavigate();
     const {pathname} = useLocation();
+    const {schema} = useContext(SchemaContext);
     const {device, width} = useMobile();
     const {styles} = useSchema();
 
@@ -79,17 +81,27 @@ export const Layout: React.FC<LayoutProps> = ({
                     height: '100%',
                 }}
             >
-                <HeaderToRender/>
+                {
+                    schema !== 'schema_1' && (
+                        <HeaderToRender/>
+                    )
+                }
                 <Box
                     component="main"
                     sx={{
                         height: styles.heightLayoutS,
                         overflow: 'auto',
                         borderRadius: styles.borderRadiusS,
-                        bgcolor: (theme) => theme.palette.background.paper,
+                        bgcolor: 'common.black',
                         ...someStyle,
+                        // paddingTop: schema === 'schema_1' ? '80px' : '0',
                     }}
                 >
+                    {
+                        schema === 'schema_1' && (
+                            <HeaderToRender/>
+                        )
+                    }
                     <Outlet/>
                     <FooterToRender/>
                     <Box id={'scrollTop'}

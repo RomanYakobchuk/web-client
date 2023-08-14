@@ -1,31 +1,30 @@
-import {Box, IconButton, StyledEngineProvider, SxProps} from "@mui/material";
+import {Box, IconButton, Modal, StyledEngineProvider, SxProps} from "@mui/material";
 import {ReactNode, useContext, MouseEvent, useState, useEffect} from "react";
 import {CloseOutlined} from "@mui/icons-material";
+import ReactDOM from "react-dom";
 
 import {ColorModeContext} from "../../contexts";
 import {useMobile} from "../../utils";
 
 import './modalWindow.css';
+import {SchemaContext} from "../../settings/schema";
 
 interface IProps {
     children: ReactNode,
     open: boolean,
     setOpen: (value: boolean) => void,
     title: ReactNode,
-    titleStyle?: SxProps
+    titleStyle?: SxProps,
+    bodyProps?: SxProps,
 }
 
-const ModalWindow = ({children, open, setOpen, title, titleStyle}: IProps) => {
+const ModalWindow = ({children, open, setOpen, title, titleStyle, bodyProps}: IProps) => {
+
+    const {collapsed} = useContext(ColorModeContext);
+    const {schema} = useContext(SchemaContext);
 
     const [isVisible, setIsVisible] = useState(open);
 
-    useEffect(() => {
-        if (open) {
-            setIsVisible(true);
-        } else {
-            setTimeout(() => setIsVisible(false), 1000); // Додайте тут необхідний час анімації
-        }
-    }, [open]);
     const {width, device} = useMobile();
 
     const someStyle = !device ? {
@@ -49,103 +48,131 @@ const ModalWindow = ({children, open, setOpen, title, titleStyle}: IProps) => {
         event.stopPropagation();
     }
 
-    return (
-        <>
-            {
-                isVisible &&
-                <StyledEngineProvider injectFirst>
-                    <Box
-                        sx={{
-                            position: 'fixed',
-                            inset: 0,
-                            zIndex: 3000,
-                            width: '100%',
-                            top: open ? 0 : '100%',
-                            height: '100vh',
-                            transition: 'top 1s linear',
-                            animation: `${open ? 'OpenModalWindow' : 'CloseModalWindow'} 1s linear forwards`,
-                            bgcolor: 'rgba(107, 122, 144, 0.2)',
-                            backdropFilter: 'blur(4px)',
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            "& .ReactModal__Overlay": {
-                                opacity: 0,
-                                transform: " translateX(-100px)",
-                                transition: " all 500ms ease-in-out"
-                            },
+    useEffect(() => {
+        if (open) {
+            setIsVisible(true)
+        } else {
+            const timeoutId = setTimeout(() => {
+                setIsVisible(false)
+            }, 1000);
+            return () => clearTimeout(timeoutId);
+        }
+    }, [open]);
 
-                            "& .ReactModal__Overlay--after-open": {
-                                opacity: 1,
-                                transform: 'translateX(0px)'
-                            },
-                            ".ReactModal__Overlay--before-close ": {
-                                opacity: 0,
-                                transform: 'translateX(-100px)'
-                            }
-                        }}
-                        onClick={() => {
-                            setTimeout(() => {
-                                setOpen(false)
-                            }, 1000)
-                        }}
-                    >
-                        <Box
-                            onClick={handleModalClick}
-                            sx={{
-                                width: '100%',
-                                maxWidth: '700px',
-                                transform: width < 700 ? 'translateY(0)' : 'translateY(-5%)',
-                                boxShadow: 'rgba(67, 77, 91, 0.2) 0px 4px 20px',
-                                borderRadius: 'clamp(0px, (100vw - 750px) * 9999, 12px)',
-                                height: width < 700 ? '100vh' : '70vh',
-                                bgcolor: (theme) => theme.palette.common.black,
-                                // bgcolor: mode === 'dark' ? "#203e2d" : '#fcfcfc'
-                            }}>
-                            <header style={{
-                                borderBottom: title ? '1px solid rgb(218, 226, 237)' : '1px solid transparent',
-                                borderTopColor: 'rgb(218, 226, 237)',
-                                borderRightColor: 'rgb(218, 226, 237)',
-                                borderLeftColor: 'rgb(218, 226, 237)',
-                                padding: width > 600 ? '14px' : '8px',
-                                display: 'flex',
-                                justifyContent: 'center',
+    // const modalWidth = schema === 'schema_1' ? collapsed ? '' : '' : '100%'
 
-                                position: 'relative'
-                            }}>
-                                <Box sx={{
-                                    width: '100%',
-                                    ...titleStyle
-                                }}>
-                                    {title}
-                                </Box>
-                                <IconButton
-                                    sx={{
-                                        position: 'absolute',
-                                        top: '50%',
-                                        transform: 'translateY(-50%)',
-                                        right: '10px'
-                                    }}
-                                    onClick={() => setOpen(false)}
-                                >
-                                    <CloseOutlined/>
-                                </IconButton>
-                            </header>
-                            <Box
-                                sx={{
-                                    minHeight: '384px',
-                                    maxHeight: {xs: '100%', sm: '80%'},
-                                    overflow: 'auto',
-                                    ...someStyle
-                                }}
-                            >
-                                {children}
-                            </Box>
-                        </Box>
+    if (!isVisible) {
+        return null;
+    }
+
+    return ReactDOM.createPortal(
+        // <Modal
+        //     keepMounted
+        //     open={isVisible}
+        //     onClose={() => setOpen(false)}
+        //     // closeAfterTransition
+        //
+        //     sx={{
+        //         top: isVisible && open ? 0 : '100vh',
+        //         transition: 'top 1s linear',
+        //         animation: `${isVisible && open ? 'OpenModalWindow' : 'CloseModalWindow'} 1s linear forwards`,
+        //         bgcolor: 'rgba(107, 122, 144, 0.2)',
+        //         backdropFilter: 'blur(4px)'
+        //     }}
+        // >
+
+            <Box
+                role={'presentation'}
+                sx={{
+                    position: 'fixed',
+                    inset: 0,
+                    opacity: 1,
+                    zIndex: 30,
+                    width: '100%',
+                    top: open ? 0 : '100%',
+                    height: '100vh',
+                    transition: 'top 1s linear',
+                    animation: `${open ? 'OpenModalWindow' : 'CloseModalWindow'} 1s linear forwards`,
+                    bgcolor: 'rgba(107, 122, 144, 0.2)',
+                    backdropFilter: 'blur(4px)',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    "& .ReactModal__Overlay": {
+                        opacity: 0,
+                        transform: " translateX(-100px)",
+                        transition: " all 500ms ease-in-out"
+                    },
+                                "& .ReactModal__Overlay--after-open": {
+                        opacity: 1,
+                        transform: 'translateX(0px)'
+                    },
+                    ".ReactModal__Overlay--before-close ": {
+                        opacity: 0,
+                        transform: 'translateX(-100px)'
+                    }
+                }}
+                onClick={() => setOpen(false)}
+            >
+            <Box
+                onClick={handleModalClick}
+                sx={{
+                    width: '100%',
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    maxWidth: '700px',
+                    boxShadow: 'rgba(67, 77, 91, 0.2) 0px 4px 20px',
+                    borderRadius: 'clamp(0px, (100vw - 750px) * 9999, 12px)',
+                    height: width < 700 ? '100vh' : '70vh',
+                    bgcolor: 'common.black',
+                }}>
+                <header style={{
+                    borderBottom: title ? '1px solid rgb(218, 226, 237)' : '1px solid transparent',
+                    borderTopColor: 'rgb(218, 226, 237)',
+                    borderRightColor: 'rgb(218, 226, 237)',
+                    borderLeftColor: 'rgb(218, 226, 237)',
+                    padding: width > 600 ? '14px' : '8px',
+                    display: 'flex',
+                    justifyContent: 'center',
+
+                    position: 'relative'
+                }}>
+                    <Box sx={{
+                        width: '100%',
+                        ...titleStyle
+                    }}>
+                        {title}
                     </Box>
-                </StyledEngineProvider>
-            }
-        </>
+                    <IconButton
+                        sx={{
+                            position: 'absolute',
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            right: '10px'
+                        }}
+                        onClick={() => setOpen(false)}
+                    >
+                        <CloseOutlined/>
+                    </IconButton>
+                </header>
+                <Box
+                    sx={{
+                        minHeight: '384px',
+                        maxWidth: '80%',
+                        margin: '0 auto',
+                        maxHeight: {xs: '100%', sm: '80%'},
+                        overflow: 'auto',
+                        ...someStyle,
+                        ...bodyProps,
+                    }}
+                >
+                    {children}
+                </Box>
+            </Box>
+            </Box>, document.body
+        // </Modal>
     );
 };
 

@@ -68,7 +68,7 @@ export const SchemaProvider: FC<PropsWithChildren> = ({children}) => {
             setHeightLayoutS("100vh");
             setHeightSiderS("100%")
             setButtonSiderS({
-                top: {xs: "8px", sm: '15px'},
+                top: {xs: "8px", sm: '12px'},
                 left: '0px',
                 transform: 'translate(0, 35%)',
                 borderRadius: '0px 6px 6px 0px'

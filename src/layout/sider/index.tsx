@@ -40,8 +40,11 @@ import {Title as DefaultTitle} from "../title";
 import {useSchema} from "../../settings";
 import {ColorModeContext} from "../../contexts";
 import {ModalWindow} from "../../components";
+import {SchemaContext} from "../../settings/schema";
 
 export const Sider: typeof DefaultSider = ({render}) => {
+
+    const {schema} = useContext(SchemaContext);
 
     const {open: openSider, setOpen: setOpenSider, collapsed, setCollapsed} = useContext(ColorModeContext);
 
@@ -366,15 +369,28 @@ export const Sider: typeof DefaultSider = ({render}) => {
             });
         }
         return (
-            <>
-                {items}
-                {logout}
-            </>
+            <Box sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                height: '100%'
+            }}>
+                <div>
+                    {items}
+                </div>
+                <div>
+                    {logout}
+                </div>
+            </Box>
         );
     };
 
     const drawer = (
-        <MuiList disablePadding sx={{mt: 1, color: "#fcfcfc"}}>
+        <MuiList disablePadding sx={{
+            mt: 1,
+            color: "#fcfcfc",
+            height: '99%'
+        }}>
             {renderSider()}
         </MuiList>
     );
@@ -409,12 +425,13 @@ export const Sider: typeof DefaultSider = ({render}) => {
                         keepMounted: true, // Better open performance on mobile.
                     }}
                     sx={{
-                        // zIndex: 10,
                         display: {sm: "block", md: "none"},
                         "& .MuiDrawer-paper": {
                             width: 256,
-                            bgcolor: (theme) => theme.palette.primary.main,
+                            bgcolor: 'common.black',
+                            backdropFilter: 'blur(3px)',
                             margin: styles.marginSiderS,
+                            borderRight: '1px solid silver',
                             borderRadius: styles.borderRadiusS,
                             height: styles.heightSiderS
                         },
@@ -452,6 +469,7 @@ export const Sider: typeof DefaultSider = ({render}) => {
                 {/*        <MenuRounded/>*/}
                 {/*    </IconButton>*/}
                 {/*</Box>*/}
+                {/*desktop drwawer*/}
                 <Drawer
                     variant="permanent"
                     PaperProps={{elevation: 0}}
@@ -459,8 +477,9 @@ export const Sider: typeof DefaultSider = ({render}) => {
                         display: {xs: "none", md: "block"},
                         zIndex: 8,
                         "& .MuiDrawer-paper": {
+                            borderRight: schema === 'schema_1' ? '1px dashed silver' : '',
                             width: drawerWidth,
-                            bgcolor: (theme) => theme.palette.primary.main,
+                            bgcolor: 'common.black',
                             overflow: "hidden",
                             transition:
                                 "width 200ms cubic-bezier(0.4, 0, 0.6, 1) 0ms",

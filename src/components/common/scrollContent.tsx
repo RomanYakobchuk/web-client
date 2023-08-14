@@ -15,7 +15,7 @@ const ScrollContent = ({children}: IProps) => {
 
     return (
         <Box sx={{
-            width: {xs: '90vw', md: `calc(${layoutWidth}px - 10vw)`},
+            width: {xs: '87vw', md: `calc(${layoutWidth}px - 13vw)`},
             display: 'flex',
             flexDirection: 'column',
             gap: 6,
