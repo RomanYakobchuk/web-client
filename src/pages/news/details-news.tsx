@@ -210,7 +210,7 @@ const DetailsNews = () => {
                                                     zIndex: 1000,
                                                     width: (device || width < 600) ? '90%' : 'auto'
                                                 }}
-                                                value={news.mainPhoto}
+                                                value={news.otherPhoto[0]}
                                                 style={{
                                                     borderRadius: '5px',
                                                     height: width < 600 ? '200px'

@@ -46,7 +46,7 @@ const PlaceGallery = ({photos}: PlaceGalleryProps) => {
                                     objectFit: "cover",
                                     height: height1
                                 }}
-                                src={photos[0]}
+                                src={photos[0].url}
                                 alt=""
                             />
                         </Box>
@@ -65,7 +65,6 @@ const PlaceGallery = ({photos}: PlaceGalleryProps) => {
                             onClick={() => setShowAllPhotos(true)}
                             style={{
                                 cursor: "pointer",
-                                // aspectRatio: "square",
                                 objectFit: "cover",
                                 height: height2,
                                 width: '100%',
@@ -159,7 +158,9 @@ const PlaceGallery = ({photos}: PlaceGalleryProps) => {
                         photos?.length > 0 &&
                         photos?.map((photo: any, index: number) => (
                             <Box key={index} sx={{
-                                maxWidth: '700px'
+                                maxWidth: '700px',
+                                width: '100%',
+                                height: 'auto'
                             }}>
                                 <img
                                     style={{

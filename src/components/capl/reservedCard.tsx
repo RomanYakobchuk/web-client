@@ -68,7 +68,7 @@ const ReservedCard = ({reserve}: IProps) => {
                                 borderRadius: '10px',
                                 objectFit: 'cover'
                             }}
-                            src={institution?.mainPhoto}
+                            src={institution?.pictures[0]}
                             alt={institution?.title}/>
                         <Box sx={{
                             display: 'flex',

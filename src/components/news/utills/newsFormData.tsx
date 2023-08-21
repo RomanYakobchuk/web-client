@@ -33,8 +33,6 @@ const NewsFormData = ({
                           setStatus,
                           onFinishHandler,
                           status,
-                          mainPhoto,
-                          setMainPhoto,
                           otherPhoto,
                           setOtherPhoto,
                           description,
@@ -55,14 +53,6 @@ const NewsFormData = ({
     const navigate = useNavigate();
     const {mode} = useContext(ColorModeContext);
     const {device, width} = useMobile();
-
-
-    const handleMainPhotoChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setMainPhoto(e.target.files![0])
-    }
-    const deleteImage = () => {
-        setMainPhoto([])
-    }
 
     const handleOtherPhotoChange = (e: ChangeEvent<HTMLInputElement> | any) => {
         if (6 < otherPhoto.length) return alert(translate("home.create.otherPhoto.max") + "6")
@@ -121,156 +111,6 @@ const NewsFormData = ({
                         alignItems: "end",
                         gap: {xs: 3, sm: 2}
                     }}>
-                        <FormControl sx={{
-                            width: '100%',
-                            display: 'flex',
-                            flexDirection: "column",
-                            gap: 2,
-                            justifyContent: 'center',
-                            alignItems: 'center'
-                        }}>
-                            <Box sx={{
-                                width: '100%',
-                                display: 'flex',
-                                flexDirection: "row",
-                                gap: 2,
-                                justifyContent: 'center',
-                                alignItems: 'start'
-                            }}>
-                                <Box sx={{
-                                    width: {xs: "200px", sm: "250px", lg: "440px"},
-                                    height: {xs: "150px", sm: "170px", lg: "320px"},
-                                    borderRadius: "5px",
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                }}>
-                                    {
-                                        mainPhoto?.name || typeof mainPhoto === 'string' ?
-                                            <CardMedia
-                                                component={"img"}
-                                                src={typeof mainPhoto === 'string' ? mainPhoto : URL.createObjectURL(mainPhoto)}
-                                                alt={"title"}
-                                                style={{
-                                                    borderRadius: '5px',
-                                                    width: '100%',
-                                                    height: '100%',
-                                                    objectFit: 'cover',
-                                                }}
-                                            />
-                                            : <Button component={"label"} sx={
-                                                {
-                                                    width: {xs: "250px", lg: "440px"},
-                                                    height: {xs: "170px", lg: "320px"},
-                                                    display: 'flex',
-                                                    justifyContent: "center",
-                                                    alignItems: "center",
-                                                    flexDirection: 'column',
-                                                    borderRadius: '5px',
-                                                    cursor: "pointer",
-                                                    transition: "300ms linear",
-                                                    "&:hover": {
-                                                        bgcolor: 'silver',
-                                                    },
-                                                    border: `1px dashed ${mode === "dark" ? "#fcfcfc" : "#9ba5c9"}`
-                                                }
-                                            }>
-                                                <FormHelperText
-                                                    sx={{
-                                                        fontWeight: 500,
-                                                        margin: "10px 0",
-                                                        fontSize: {xs: 12, sm: 14, md: 16},
-                                                        color: mode === "dark" ? "#fcfcfc" : "#11142D",
-                                                    }}
-                                                >
-                                                    {translate("home.create.mainPhoto")}
-                                                </FormHelperText>
-                                                <AddCircleOutline sx={{
-                                                    color: mode === "dark" ? "#fcfcfc" : "#9ba5c9",
-                                                    fontSize: {xs: "70px", lg: "160px"}
-                                                }}/>
-                                                <input
-                                                    hidden
-                                                    accept="image/*"
-                                                    type="file"
-                                                    onChange={(
-                                                        e: ChangeEvent<HTMLInputElement>,
-                                                    ) => {
-                                                        handleMainPhotoChange(e);
-                                                    }}
-                                                />
-                                            </Button>
-                                    }
-                                </Box>
-                                <Box sx={{
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    justifyContent: 'space-evenly',
-                                    alignItems: 'center',
-                                    gap: 2
-                                }}>
-                                    {
-                                        mainPhoto && (mainPhoto?.name || typeof mainPhoto === 'string')
-                                            ? <Box sx={{
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                                alignItems: 'center',
-                                                gap: 1
-                                            }}>
-                                                {
-                                                    device
-                                                        ? <IconButton
-                                                            size={"large"}
-                                                        >
-                                                            <input
-                                                                hidden
-                                                                accept="image/*"
-                                                                type="file"
-                                                                onChange={(
-                                                                    e: ChangeEvent<HTMLInputElement>,
-                                                                ) => {
-                                                                    handleMainPhotoChange(e);
-                                                                }}
-                                                            />
-                                                            <Edit fontSize="inherit"/>
-                                                        </IconButton>
-                                                        : <Button
-                                                            variant={"contained"}
-                                                            startIcon={<Edit sx={{
-                                                                fontSize: {xs: '18px', sm: '24px'},
-                                                            }}/>}
-                                                            sx={{
-                                                                bgcolor: 'blue',
-                                                            }}
-                                                        >
-                                                            {translate("profile.edit.change")}
-                                                        </Button>
-                                                }
-                                                {
-                                                    device
-                                                        ? <IconButton
-                                                            size={"large"}
-                                                            onClick={deleteImage}
-                                                        >
-                                                            <DeleteForeverOutlined fontSize="inherit"/>
-                                                        </IconButton>
-                                                        : <Button
-                                                            onClick={deleteImage}
-                                                            startIcon={<DeleteForeverOutlined/>}
-                                                            sx={{
-                                                                bgcolor: '#cfcfcf',
-                                                                color: '#242539'
-                                                            }}
-                                                        >
-                                                            {translate("profile.edit.delete")}
-                                                        </Button>
-                                                }
-                                            </Box>
-                                            : <div></div>
-                                    }
-                                </Box>
-                            </Box>
-                        </FormControl>
                         <Box sx={{
                             display: 'flex',
                             flexDirection: 'column',

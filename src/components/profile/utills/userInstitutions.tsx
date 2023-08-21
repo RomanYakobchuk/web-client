@@ -1,7 +1,7 @@
 import {Box, Button, CircularProgress, MenuItem, Select} from "@mui/material";
 import {HourglassBottom, Public, ThumbDownAltOutlined} from "@mui/icons-material";
 import {PropertyProps} from "../../../interfaces/common";
-import InstitutionCard from "../../establishment/utills/InstitutionCard";
+import Variant1EstablishmentCard from "../../establishment/utills/variant1EstablishmentCard";
 import React, {useState} from "react";
 import {useInfiniteList, useTranslate} from "@refinedev/core";
 import Loading from "../../loading/loading";
@@ -118,12 +118,8 @@ const UserInstitutions = ({id}: IProps) => {
                 data?.pages?.length > 0 ?
                     data?.pages?.map((page) =>
                         page?.data?.map((property, index) => (
-                                <InstitutionCard
+                                <Variant1EstablishmentCard
                                     key={index}
-                                    otherProps={{
-                                        setFavoritePlaces: setFavoritePlaces,
-                                        favoritePlaces: favoritePlaces
-                                    }}
                                     institution={property}
                                 />
                             )

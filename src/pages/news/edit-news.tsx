@@ -52,7 +52,6 @@ const EditNews = () => {
     const [currentInstitutionId, setCurrentInstitutionId] = useState<string>("");
     const [description, setDescription] = useState<string>("");
     const [title, setTitle] = useState<string>("");
-    const [mainPhoto, setMainPhoto] = useState<any>();
     const [variantForDisplay, setVariantForDisplay] = useState<string | any>("1");
     const [otherPhoto, setOtherPhoto] = useState<any>([]);
     const [category, setCategory] = useState<any>('general');
@@ -70,7 +69,6 @@ const EditNews = () => {
             setDatePublish(news?.publishAt?.datePublish)
             setIsDatePublish(news?.publishAt?.isPublish)
             setCurrentInstitutionId(news?.institutionId)
-            setMainPhoto(news?.mainPhoto)
             setOtherPhoto(news?.otherPhoto)
             setVariantForDisplay(news?.variantForDisplay)
             setWorkDays(news?.dateEvent)
@@ -79,13 +77,12 @@ const EditNews = () => {
 
     const onFinishHandler = async (date: FieldValues) => {
 
-        if ((!mainPhoto && !mainPhoto?.name) || (!otherPhoto && otherPhoto?.length < 0)) return alert("Виберіть головне фото");
+        if (!otherPhoto && otherPhoto?.length < 0) return alert("Виберіть головне фото");
 
         if (otherPhoto.length > 8) return alert(translate("home.create.otherPhoto.max"))
 
         const formData = new FormData();
 
-        formData.append("mainPhoto", mainPhoto as File);
         for (let i = 0; i < otherPhoto.length; i++) {
             if (otherPhoto[i] instanceof File) {
                 formData.append('otherPhoto', otherPhoto[i] as File);
@@ -128,8 +125,6 @@ const EditNews = () => {
         <NewsFormData
             handleSubmit={handleSubmit}
             onFinishHandler={onFinishHandler}
-            mainPhoto={mainPhoto}
-            setMainPhoto={setMainPhoto}
             otherPhoto={otherPhoto}
             setOtherPhoto={setOtherPhoto}
             currentInstitutionId={currentInstitutionId}

@@ -87,7 +87,7 @@ const SearchInstitutions = ({setSearchPlace, searchPlace, typeSearch}: IProps) =
                             setCurrentInstitution(item?.title)
                         }
                         return (
-                            renderItem(item.title, item.place.address, item.mainPhoto, item._id)
+                            renderItem(item.title, item.place.address, item.pictures[0].url, item._id)
                         )
                     }
                 )

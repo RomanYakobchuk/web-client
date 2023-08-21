@@ -47,7 +47,6 @@ const EditEstablishment = () => {
         }
     }, [queryResult]);
 
-    const [mainPhoto, setMainPhoto] = useState<any>('');
     const [otherPhoto, setOtherPhoto] = useState<any>([]);
     const [open, setOpen] = useState<boolean>(false);
     const [type, setType] = useState<string>('');
@@ -81,7 +80,6 @@ const EditEstablishment = () => {
             setWorkScheduleWeekend(institution?.workSchedule?.weekend)
             setLocation(institution?.location)
             setPlace(institution?.place)
-            setMainPhoto(institution?.mainPhoto)
             setOtherPhoto(institution?.otherPhoto)
         }
     }, [institution])
@@ -96,13 +94,12 @@ const EditEstablishment = () => {
     }, [workDays, workScheduleWeekend])
     const onFinishHandler = async () => {
 
-        if ((!mainPhoto && !mainPhoto.name) || (!otherPhoto && otherPhoto?.length === 0)) return alert("Виберіть головне фото");
+        if (!otherPhoto && otherPhoto?.length === 0) return alert("Виберіть головне фото");
 
         if (otherPhoto.length > 10) return alert(translate("home.create.otherPhoto.max"))
 
         const formData = new FormData();
 
-        formData.append("mainPhoto", mainPhoto as File);
         for (let i = 0; i < otherPhoto.length; i++) {
             if (otherPhoto[i] instanceof File) {
                 formData.append('otherPhoto', otherPhoto[i] as File);
@@ -154,8 +151,6 @@ const EditEstablishment = () => {
     return (
         <CustomEdit bgColor={'transparent'} isLoading={isLoadingData}>
             <DataForm
-                setMainPhoto={setMainPhoto}
-                mainPhoto={mainPhoto}
                 titleAction={'edit'}
                 setOtherPhoto={setOtherPhoto}
                 otherPhoto={otherPhoto}

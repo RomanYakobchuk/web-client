@@ -1,23 +1,19 @@
-import {useNavigate} from "react-router-dom";
-import {CanAccess, useGetIdentity, useTable, useTranslate} from "@refinedev/core";
-import {Box, Button, Grid, Stack, Typography} from "@mui/material";
-import {Add} from "@mui/icons-material";
-import React, {useState} from "react";
+import {useLocation} from "react-router-dom";
+import {useTable, useTranslate} from "@refinedev/core";
+import {Box, Typography} from "@mui/material";
+import React, {useEffect, useState} from "react";
 
-import {FilterInstitutions, Loading, PaginationComponent, InstitutionCard} from "../index";
-import {IGetIdentity, ProfileProps, PropertyProps} from "../../interfaces/common";
-import {buttonStyle} from "../../styles";
+import {FilterInstitutions, Loading, PaginationComponent} from "../index";
+import {PropertyProps} from "../../interfaces/common";
 import {useMobile} from "../../utils";
+import PropertiesList from "./utills/propertiesList";
 
 const UserList = () => {
-    const navigate = useNavigate();
+    const {state} = useLocation();
     const translate = useTranslate();
-    const {data: identity} = useGetIdentity<IGetIdentity>();
-    const user: ProfileProps = identity?.user as ProfileProps;
     const [sortBy, setSortBy] = useState("");
     const {width} = useMobile();
 
-    const [favPlace, setFavPlaces] = useState<any>(user?.favoritePlaces);
     const [searchValue, setSearchValue] = useState<any>();
 
     const {
@@ -33,9 +29,23 @@ const UserList = () => {
         setFilters,
     } = useTable({
         resource: "institution/all",
+        syncWithLocation: true,
+
     });
 
-    const allInstitutions = data?.data ?? [];
+    useEffect(() => {
+        if (state && state?.value && state?.isTag) {
+            setFilters([
+                {
+                    field: 'title',
+                    value: '#' + state.value,
+                    operator: 'contains'
+                }
+            ])
+        }
+    }, [state]);
+
+    const allInstitutions = data?.data as PropertyProps[] ?? [] as PropertyProps[];
 
     if (isError) return <Typography>Error...</Typography>;
 
@@ -47,17 +57,14 @@ const UserList = () => {
             maxWidth: '1200px',
             margin: '0 auto'
         }}>
-
             <Box sx={{
                 display: 'flex',
                 flexDirection: 'row',
                 alignItems: 'center',
-                gap: 2,
             }}>
                 <Box sx={{
                     display: 'flex',
                     flexDirection: 'row',
-                    gap: 2,
                     width: '100%',
                     alignItems: 'center'
                 }}>
@@ -74,34 +81,6 @@ const UserList = () => {
                         />
                     </Box>
                 </Box>
-                <Box sx={{
-                    display: "flex",
-                    flexWrap: "wrap",
-                    gap: 3,
-                    maxHeight: '88vh',
-                    minHeight: 'fit-content',
-                }}>
-                    <Stack direction={"column"} width={"100%"}>
-                        <Box sx={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            justifyContent: 'space-between'
-                        }}>
-                            <CanAccess resource={"all_institutions"} action={"create"}>
-                                <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
-                                    <Button
-                                        color={"info"} variant={"contained"}
-                                        startIcon={<Add/>}
-                                        sx={buttonStyle}
-                                        onClick={() => navigate('/all_institutions/create')}>
-                                        {translate("home.create.title")}
-                                    </Button>
-                                </Stack>
-                            </CanAccess>
-                        </Box>
-                    </Stack>
-                </Box>
             </Box>
             <Box sx={{
                 display: 'flex',
@@ -110,44 +89,20 @@ const UserList = () => {
                 justifyContent: width > 1000 ? 'unset' : 'center',
                 alignItems: width > 1000 ? 'unset' : 'start'
             }}>
-                <Grid container spacing={2} sx={{
-                    justifyContent: {xs: 'center', sm: 'normal'}
-                }}>
-                    {
-                        isLoading ? <Loading height={'60vh'}/> :
-                            allInstitutions?.length > 0 ?
-                                allInstitutions.map((institution: PropertyProps | any) => (
-                                    <Grid
-                                        sx={{
-                                            display: 'grid',
-                                            maxWidth: {xs: '350px'}
-                                        }}
-                                        item
-                                        key={institution?._id}
-                                        xs={12}
-                                        sm={6}
-                                        md={4}
-                                        lg={3}
-                                        xl={3}
-                                    >
-                                        <InstitutionCard
-                                            otherProps={setFavPlaces}
-                                            key={institution._id}
-                                            institution={institution}
-                                        />
-                                    </Grid>
-                                ))
-                                : <Box sx={{
-                                    width: '100%',
-                                    height: '250px',
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center'
-                                }}>
-                                    {translate('text.notResult')}
-                                </Box>
-                    }
-                </Grid>
+                {
+                    isLoading ? <Loading height={'40vh'}/> :
+                        allInstitutions?.length > 0 ?
+                            <PropertiesList items={allInstitutions}/>
+                            : <Box sx={{
+                                width: '100%',
+                                height: '250px',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center'
+                            }}>
+                                {translate('text.notResult')}
+                            </Box>
+                }
                 {
                     allInstitutions.length > 0 && (
                         <PaginationComponent count={data?.total as number} current={current} setCurrent={setCurrent}

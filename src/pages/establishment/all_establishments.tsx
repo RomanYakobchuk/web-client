@@ -1,15 +1,19 @@
-import {CanAccess} from "@refinedev/core";
-import {Box, Button} from "@mui/material";
+import {CanAccess, useTranslate} from "@refinedev/core";
+import {Box, Button, Stack} from "@mui/material";
 
 import {
     InstitutionsAdminList,
     InstitutionsUserList,
 } from "../../components";
-import {useState} from "react";
+import React, {useState} from "react";
 import {useRole} from "../../utils";
+import {Add} from "@mui/icons-material";
+import {useNavigate} from "react-router-dom";
 
 const All_establishments = () => {
     const {role} = useRole();
+    const navigate = useNavigate();
+    const translate = useTranslate();
     const [showUserList, setShowUserList] = useState(true);
     return (
         <Box sx={{
@@ -29,6 +33,19 @@ const All_establishments = () => {
                             onClick={() => setShowUserList(false)}>AdminList</Button>
                 </Box>
             }
+            <CanAccess resource={"all_institutions"} action={"create"}>
+                <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+                    <Button
+                        color={"info"} variant={"contained"}
+                        startIcon={<Add/>}
+                        sx={{
+                            height: '100%'
+                        }}
+                        onClick={() => navigate('/all_institutions/create')}>
+                        {translate("home.create.title")}
+                    </Button>
+                </Stack>
+            </CanAccess>
             {
                 role === 'admin' ? (
                     !showUserList ?

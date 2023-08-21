@@ -150,20 +150,20 @@ export const Header: React.FC = () => {
             bgcolor: bgColor,
             // width: widthAppBar,
             backdropFilter: schema === 'schema_1' ? 'blur(4px)' : 'unset',
-            ransition:
+            transition:
                 "width 200ms cubic-bezier(0.4, 0, 0.6, 1) 0ms",
             borderBottom: schema === 'schema_1' ? '1px dashed silver' : ''
         }}>
-            <Toolbar>
+            <Toolbar sx={{
+                pl: '0 !important'
+            }}>
                 <Box
                     sx={{
                         display: {xs: "block", md: "none"},
-                        position: "fixed",
-                        top: styles.buttonSiderS.top,
-                        left: styles.buttonSiderS.left,
                         borderRadius: styles.buttonSiderS.borderRadius,
                         bgcolor: "#475be8",
                         zIndex: 9,
+                        ml: styles.buttonSiderS.left,
                         width: "36px",
                     }}
                 >

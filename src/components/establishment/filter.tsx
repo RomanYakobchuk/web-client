@@ -8,14 +8,14 @@ import {
     TextField
 } from "@mui/material";
 import {ClearOutlined, FilterList, SearchOutlined} from "@mui/icons-material";
-import React, {ChangeEvent, useContext, useEffect, useMemo, useState} from "react";
+import React, {ChangeEvent, ReactNode, useContext, useEffect, useMemo, useState} from "react";
 import {CrudFilter, CrudSorting, useTranslate} from "@refinedev/core";
 import {useLocation} from "react-router-dom";
 import {Input} from "antd";
 
 import {ColorModeContext} from "../../contexts";
-import {ModalWindow, SearchCity} from "../index";
-import {antdInputStyle, buttonStyle, hoverButtonStyle, selectStyle, textFieldStyle} from "../../styles";
+import {ModalWindow, SearchCity, VariantComponent} from "../index";
+import {antdInputStyle, textFieldStyle} from "../../styles";
 import {useMobile} from "../../utils";
 import {useDebounce} from "use-debounce";
 
@@ -47,6 +47,7 @@ const FilterInstitutions = ({
     const {mode} = useContext(ColorModeContext);
     const {width} = useMobile();
 
+    const [filterLength, setFilterLength] = useState<number>(0);
     const [openAllFilters, setOpenAllFilters] = useState<boolean>(false);
     const [openFilter, setOpenFilter] = useState(false);
     const [newFilters, setFilters] = useState<any>([{}]);
@@ -57,10 +58,13 @@ const FilterInstitutions = ({
     const [valueLte, setValueLte] = useState<number>(2000);
     const [state, setState] = useState<any>(locationState ?? "");
     const [debouncedSearchText] = useDebounce(searchValue, 500);
+    const [debouncedSearchCity] = useDebounce(searchCity, 500);
 
     const isShowAllFilters = width > 600;
 
-    const handleChange = (event: ChangeEvent<{}>, newValue: number | number[]) => {
+    const bRButtonFilter = '7px';
+
+    const handleChange = (newValue: number | number[]) => {
         if (Array.isArray(newValue)) {
             setValueGte(newValue[0])
             setValueLte(newValue[1])
@@ -89,12 +93,12 @@ const FilterInstitutions = ({
     }, [newSorters]);
     const toggleSort = (field: keyof typeof currentSorterOrders) => {
         const newOrder = field?.split('_')[1];
-        setNewSorters([
+        defaultSetSorters([
             {
                 field,
                 order: newOrder,
             },
-        ]);
+        ])
     };
 
     const currentFilterValues = useMemo(() => {
@@ -112,27 +116,21 @@ const FilterInstitutions = ({
                 logicalFilters?.find((item: any) => item.field === "averageCheck")?.value || 0,
             city:
                 logicalFilters?.find((item: any) => item.field === "city")?.value || ""
-
         };
     }, [newFilters]);
 
-    // useEffect(() => {
-    //     if (!isShowAllFilters) {
-    //         defaultSetFilters([
-    //             {
-    //                 field: 'title',
-    //                 value: debouncedSearchText ?? '',
-    //                 operator: 'contains'
-    //             }
-    //         ])
-    //     }
-    // }, [debouncedSearchText, isShowAllFilters])
+    useEffect(() => {
+        if (!isShowAllFilters) {
+            defaultSetFilters([
+                {
+                    field: 'title',
+                    value: searchValue ?? '',
+                    operator: 'contains'
+                }
+            ])
+        }
+    }, [debouncedSearchText, isShowAllFilters]);
 
-    // useEffect(() => {
-    //     if (isShowAllFilters && newFilters?.length > 0) {
-    //         defaultSetFilters(newFilters)
-    //     }
-    // }, [isShowAllFilters, newFilters]);
     useEffect(() => {
         setFilters([
             {
@@ -173,35 +171,48 @@ const FilterInstitutions = ({
             ])
         }
     }, [sorters]);
-    useEffect(() => {
-        if (isShowAllFilters && newSorters.length > 0 && newSorters[0]?.field) {
-            defaultSetSorters(newSorters);
-        }
-    }, [isShowAllFilters, newSorters])
 
     useEffect(() => {
         if (filters?.length > 0) {
+            let length = 1;
             for (const filter of filters) {
                 if (filter?.field === "averageCheck" && filter?.operator === 'lte') {
                     setValueLte(filter?.value)
-                } else if (filter?.field === "averageCheck" && filter?.operator === 'gte') {
+                }
+                if (filter?.field === "averageCheck" && filter?.operator === 'gte') {
                     setValueGte(filter?.value)
-                } else if (filter?.field === "propertyType") {
+                }
+                if (filter?.field === "propertyType" && filter?.value) {
                     setType(filter?.value)
-                } else if (filter?.field === "title_like" && filter?.value) {
+                    length++;
+                }
+                if (filter?.field === "title" && filter?.value) {
                     setSearchValue(filter?.value)
-                } else if (filter?.field === 'city' && filter?.value) {
+                }
+                if (filter?.field === 'city' && filter?.value) {
                     setSearchCity(filter?.value)
+                    length++;
                 }
             }
+            setFilterLength(length);
         }
-    }, [filters])
+    }, [filters]);
 
     useEffect(() => {
         if (state.value) {
             setSearchValue(state.value)
         }
-    }, [state])
+    }, [state]);
+
+    useEffect(() => {
+        if (isShowAllFilters) {
+            defaultSetFilters([{
+                field: 'city',
+                value: searchCity ?? '',
+                operator: 'contains'
+            }]);
+        }
+    }, [debouncedSearchCity, isShowAllFilters]);
 
     const handleSearch = () => {
         defaultSetFilters(newFilters)
@@ -214,6 +225,7 @@ const FilterInstitutions = ({
         setValueGte(0);
         setValueLte(100000);
         setSearchCity("");
+        setType('')
         defaultSetFilters([], "replace");
         defaultSetSorters([{field: "", order: "asc"}]);
         setOpenFilter(false);
@@ -222,40 +234,78 @@ const FilterInstitutions = ({
         defaultSetFilters([
             {
                 field: 'title',
-                value: debouncedSearchText ?? '',
+                value: searchValue ?? '',
                 operator: 'contains'
             }
         ])
     }
 
-    const SearchByTypeComponent = (
-        <ButtonGroup variant={'contained'}>
+    const SearchByTypeComponent: ReactNode = (
+        <ButtonGroup variant={'contained'} sx={{
+            p: '5px',
+            gap: '10px',
+            bgcolor: 'common.black',
+            borderRadius: bRButtonFilter,
+            border: `1px solid ${mode === 'dark' ? '#fff' : '#000'}`,
+            "& button": {
+                height: '30px !important',
+                borderRadius: '5px !important',
+                p: '0 10px !important',
+                "&:not(:last-of-type)": {
+                    position: 'relative',
+                    borderRight: 'unset !important',
+                }
+            }
+        }}>
             {
                 [
                     {
-                        title: 'restaurant'
+                        title: 'all',
+                        value: ''
+                    },
+                    {
+                        title: 'restaurant',
+                        value: 'restaurant'
                     },
                     {
                         title: 'cafe',
+                        value: 'cafe'
                     },
                     {
-                        title: 'bar'
+                        title: 'bar',
+                        value: 'bar'
                     }
                 ].map((item, index) => (
                     <Button
                         key={index}
                         sx={{
-                            // bgcolor:
+                            borderRadius: '5px',
+                            textTransform: 'capitalize',
+                            bgcolor: type === item.value ? 'common.white' : 'transparent',
+                            color: type === item.value ? 'common.black' : 'unset',
+                            transition: '300ms linear',
+                            "&:hover": {
+                                bgcolor: 'common.white',
+                                color: 'common.black',
+                            }
                         }}
                         onClick={() => {
-                            console.log(item.title)
-                            console.log(filters)
-                            setFilters([{
-                                field: 'propertyType',
-                                value: item.title,
-                                operator: 'eq'
-                            }])
-                        }}>
+                            if (isShowAllFilters) {
+                                defaultSetFilters([{
+                                    field: 'propertyType',
+                                    value: item.value,
+                                    operator: 'eq'
+                                }])
+                            } else {
+                                setFilters([{
+                                    field: 'propertyType',
+                                    value: item.value,
+                                    operator: 'eq'
+                                }])
+                                setType(item.value)
+                            }
+                        }
+                        }>
                         {translate(`home.sortByType.${item.title}`)}
                     </Button>
                 ))
@@ -263,18 +313,9 @@ const FilterInstitutions = ({
         </ButtonGroup>
     );
 
-    const SortByTypeComponent = (
+    const SortByTypeComponent: ReactNode = (
         <FormControl
             sx={{width: '100%',}}>
-            <FormHelperText
-                sx={{
-                    fontSize: '14px',
-                    mb: 0.5,
-                    color: (theme) => theme.palette.text.primary
-                }}
-            >
-                {translate('home.sort')}
-            </FormHelperText>
             <Select
                 variant={"outlined"}
                 size="small"
@@ -286,7 +327,10 @@ const FilterInstitutions = ({
                 value={newSorters[0]?.field ? newSorters[0]?.field : sortBy ? sortBy : ""}
                 sx={{
                     fontSize: {xs: '12px', sm: '16px'},
-                    ...selectStyle
+                    borderRadius: bRButtonFilter,
+                    borderColor: 'common.white',
+                    borderWidth: '1px',
+                    borderStyle: 'solid'
                 }}
                 onChange={
                     (e: any) => {
@@ -307,11 +351,11 @@ const FilterInstitutions = ({
                             value: "rating_desc",
                         },
                         {
-                            title: 'Найстаріші',
+                            title: translate('home.oldest'),
                             value: 'createdAt_asc',
                         },
                         {
-                            title: 'Найновіші',
+                            title: translate('home.newest'),
                             value: 'createdAt_desc',
                         },
                         {
@@ -339,15 +383,24 @@ const FilterInstitutions = ({
         </FormControl>
     )
 
-    const SearchByInputValueComponent = (
-        <Box sx={{
-            ...antdInputStyle,
-            width: '100%',
-            display: 'flex',
-            flexDirection: 'row',
-            gap: width > 500 ? 1 : 0,
-            margin: '10px 0'
-        }}>
+    const SearchByInputValueComponent: ReactNode = (
+        <Box
+            sx={{
+                ...antdInputStyle,
+                width: '100%',
+                display: 'flex',
+                flexDirection: 'row',
+                gap: width > 500 ? 1 : 0,
+                margin: '10px 0',
+                "& button": {
+                    borderRadius: bRButtonFilter
+                },
+                "& > span": {
+                    borderRadius: bRButtonFilter,
+                    border: `1px solid ${mode === 'dark' ? '#fff' : '#000'}`
+                },
+            }}
+        >
             <Input
                 style={{
                     width: '100%',
@@ -384,7 +437,7 @@ const FilterInstitutions = ({
                 <Button
                     onClick={() => {
                         setSearchValue('');
-                        setFilters([
+                        defaultSetFilters([
                             {
                                 field: 'title',
                                 value: '',
@@ -394,10 +447,10 @@ const FilterInstitutions = ({
                     }}
                     variant={'contained'}
                     sx={{
-                        ...buttonStyle,
                         textTransform: 'capitalize',
                         bgcolor: 'common.black',
                         color: 'common.white',
+                        border: `1px solid ${mode === 'dark' ? '#fff' : '#000'}`,
                         boxShadow: '0px 0px 1px 1px #000',
                         "&:hover": {
                             bgcolor: 'common.black',
@@ -413,7 +466,6 @@ const FilterInstitutions = ({
                     onClick={search}
                     variant={'contained'}
                     sx={{
-                        ...buttonStyle,
                         textTransform: 'capitalize',
                         bgcolor: 'common.white',
                         color: 'common.black',
@@ -425,17 +477,16 @@ const FilterInstitutions = ({
                     {translate('buttons.search')}
                 </Button>
             }
-
         </Box>
     )
-    const SearchByAverageCheckComponent = (
+    const SearchByAverageCheckComponent: ReactNode = (
         <FormControl
             sx={{width: '100%',}}>
             <FormHelperText
                 sx={{
                     fontSize: '14px',
                     mb: 0.5,
-                    color: (theme) => theme.palette.text.primary
+                    color: 'text.primary'
                 }}
             >
                 {translate('home.create.averageCheck')}
@@ -453,9 +504,9 @@ const FilterInstitutions = ({
                     <TextField
                         color={"secondary"}
                         sx={{
-                            width: '100px',
+                            width: '40%',
                             borderColor: 'silver',
-                            minWidth: '140px',
+                            minWidth: '30%',
                             ...textFieldStyle
                         }}
                         id="outlined-number-1"
@@ -482,9 +533,9 @@ const FilterInstitutions = ({
                     <TextField
                         color={"secondary"}
                         sx={{
-                            width: '100px',
+                            width: '40%',
                             borderColor: 'silver',
-                            minWidth: '140px',
+                            minWidth: '30%',
                             ...textFieldStyle
                         }}
                         InputProps={{
@@ -519,7 +570,7 @@ const FilterInstitutions = ({
                         min={0}
                         max={100000}
                         onChange={(event: any, value: any) => {
-                            handleChange(event, value);
+                            handleChange(value);
                         }}
                         valueLabelDisplay="auto"
                     />
@@ -527,23 +578,20 @@ const FilterInstitutions = ({
             </Box>
         </FormControl>
     )
-    const SearchByCityComponent = (
+    const SearchByCityComponent: ReactNode = (
         <FormControl
-            sx={{width: '100%',}}>
-            <FormHelperText
-                sx={{
-                    fontSize: '14px',
-                    mb: 0.5,
-                    color: (theme) => theme.palette.text.primary
-                }}
-            >
-                {translate('home.create.location.title')}
-            </FormHelperText>
+            sx={{
+                height: '100%',
+                width: '100%',
+                "& input::placeholder": {
+                    color: 'common.white'
+                }
+            }}>
             <SearchCity searchCity={searchCity} setSearchCity={setSearchCity}/>
         </FormControl>
     )
 
-    const SearchButtonsComponents = (
+    const SearchButtonsComponents: ReactNode = (
         <Box sx={{
             display: 'flex',
             flexDirection: 'column',
@@ -552,29 +600,29 @@ const FilterInstitutions = ({
             justifyContent: {xs: 'space-between', sm: 'start', md: 'end'},
             gap: 2
         }}>
-            <Button
-                onClick={handleReplace}
-                color={"inherit"}
-                variant={"outlined"}
-                sx={{
-                    width: '100%',
-                    ...buttonStyle
-                }}
-            >
-                {
-                    translate("home.reset")
-                }
-            </Button>
             <Box sx={{
                 width: '100%',
                 display: 'flex',
-                flexDirection: 'column',
+                flexDirection: 'row',
                 gap: 1
             }}>
                 <Button
+                    onClick={handleReplace}
+                    color={"inherit"}
+                    variant={"outlined"}
                     sx={{
-                        width: '100%%',
-                        ...buttonStyle
+                        width: '100%',
+                        borderRadius: bRButtonFilter
+                    }}
+                >
+                    {
+                        translate("home.reset")
+                    }
+                </Button>
+                <Button
+                    sx={{
+                        width: '100%',
+                        borderRadius: bRButtonFilter
                     }}
                     color={"error"}
                     variant={"contained"}
@@ -584,28 +632,149 @@ const FilterInstitutions = ({
                 >
                     {translate("buttons.close")}
                 </Button>
-                <Button
-                    variant={"contained"}
-                    color={"info"}
-                    sx={{
-                        width: '100%',
-                        ...buttonStyle
-                    }}
-                    onClick={handleSearch}>
-                    {translate("buttons.search")}
-                </Button>
             </Box>
+            <Button
+                variant={"contained"}
+                color={"info"}
+                sx={{
+                    width: '100%',
+                    borderRadius: bRButtonFilter
+                }}
+                onClick={handleSearch}>
+                {translate("buttons.search")}
+            </Button>
         </Box>
+    )
+
+    const filterButton: ReactNode = (
+        <Button
+            variant={'contained'}
+            sx={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 1,
+                color: 'common.black',
+                bgcolor: 'common.white',
+                "&:hover": {
+                    color: 'common.black',
+                    bgcolor: 'common.white'
+                },
+                height: '40px',
+                textTransform: 'unset',
+                fontSize: '14px',
+                fontWeight: 600,
+                borderRadius: bRButtonFilter
+            }}
+            onClick={() => setOpenFilter(true)}
+            size={'small'}
+        >
+            <FilterList sx={{
+                width: '25px',
+                height: '25px'
+            }}/>
+            {
+                isShowAllFilters ? (
+                    translate('buttons.moreFilter')
+                ) : (
+                    `${filterLength} ${translate('buttons.filtersApplied')}`
+                )
+            }
+        </Button>
     )
 
     return (
         <Box sx={{
             width: '100%',
-            gap: isShowAllFilters ? 0 : 2,
+            gap: isShowAllFilters ? 2 : 0,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'start',
+            "& input": {
+                border: `1px solid ${mode === 'dark' ? '#fff' : '#000'}`
+            },
         }}>
+            {
+                isShowAllFilters && (
+                    <Box sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        width: '100%',
+                        height: '40px'
+                    }}>
+                        <Box sx={{
+                            height: '100%',
+                            minWidth: '30%',
+                            maxWidth: '350px',
+                            width: '100%'
+                        }}>
+                            {
+                                SearchByCityComponent
+                            }
+                        </Box>
+                        {filterButton}
+                    </Box>
+                )
+            }
+            {
+                SearchByInputValueComponent
+            }
+            <Box sx={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                width: '100%'
+            }}>
+                {
+                    isShowAllFilters ? (
+                        <Box sx={{
+                            width: '100%',
+                            display: 'flex',
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
+                        }}>
+                            <Box sx={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                gap: 2,
+                            }}>
+                                {SearchByTypeComponent}
+                                {SortByTypeComponent}
+                            </Box>
+                            <VariantComponent type={'establishment'}/>
+                        </Box>
+                    ) : (
+                        <Box sx={{
+                            width: '100%',
+                            "& > button": {
+                                width: '100%'
+                            },
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: 1
+                        }}>
+                            {filterButton}
+                            <Box sx={{
+                                display: 'flex',
+                                width: '100%',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                "& > div": {
+                                    width: 'fit-content'
+                                }
+                            }}>
+                                {SortByTypeComponent}
+                                <VariantComponent type={'establishment'}/>
+                            </Box>
+                        </Box>
+                    )
+                }
+            </Box>
             <Box sx={{
                 display: 'flex',
                 justifyContent: 'center',
@@ -614,34 +783,45 @@ const FilterInstitutions = ({
                 width: '100%',
             }}>
                 <ModalWindow open={openFilter} setOpen={setOpenFilter} title={
-                    <Box>
+                    <Box sx={{
+                        fontSize: {xs: '20px', md: '24px'},
+                        fontWeight: 600,
+                        width: '100%',
+                        textAlign: 'center'
+                    }}>
                         {translate('buttons.filter')}
                     </Box>
                 }>
-                    {openFilter && (
-                        <Box>
-                            {}
-                        </Box>
-                    )}
+                    {
+                        openFilter && (
+                            <Box sx={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'space-between',
+                                height: '100%',
+                                pt: 2
+                            }}>
+                                <Box sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: 3,
+                                }}>
+                                    {
+                                        !isShowAllFilters && (
+                                            <>
+                                                {SearchByCityComponent}
+                                                {SearchByTypeComponent}
+                                            </>
+                                        )
+                                    }
+                                    {SearchByAverageCheckComponent}
+                                </Box>
+                                {SearchButtonsComponents}
+                            </Box>
+                        )
+                    }
                 </ModalWindow>
-
             </Box>
-            {
-                !openAllFilters && <Button
-                    variant={'contained'}
-                    sx={{
-                        ...hoverButtonStyle,
-                        color: 'common.white',
-                        bgcolor: 'common.black',
-                    }}
-                    onClick={() => {
-                        width > 600 ? setOpenAllFilters(true) : setOpenFilter(true)
-                    }}
-                    size={'small'}
-                >
-                    <FilterList/>
-                </Button>
-            }
         </Box>
     );
 };

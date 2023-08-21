@@ -66,21 +66,6 @@ const ModalWindow = ({children, open, setOpen, title, titleStyle, bodyProps}: IP
     }
 
     return ReactDOM.createPortal(
-        // <Modal
-        //     keepMounted
-        //     open={isVisible}
-        //     onClose={() => setOpen(false)}
-        //     // closeAfterTransition
-        //
-        //     sx={{
-        //         top: isVisible && open ? 0 : '100vh',
-        //         transition: 'top 1s linear',
-        //         animation: `${isVisible && open ? 'OpenModalWindow' : 'CloseModalWindow'} 1s linear forwards`,
-        //         bgcolor: 'rgba(107, 122, 144, 0.2)',
-        //         backdropFilter: 'blur(4px)'
-        //     }}
-        // >
-
             <Box
                 role={'presentation'}
                 sx={{
@@ -159,11 +144,13 @@ const ModalWindow = ({children, open, setOpen, title, titleStyle, bodyProps}: IP
                 </header>
                 <Box
                     sx={{
+                        height: '100%',
                         minHeight: '384px',
                         maxWidth: '80%',
                         margin: '0 auto',
-                        maxHeight: {xs: '100%', sm: '80%'},
-                        overflow: 'auto',
+                        maxHeight: '80%',
+                        overflowX: 'hidden',
+                        overflowY: 'auto',
                         ...someStyle,
                         ...bodyProps,
                     }}

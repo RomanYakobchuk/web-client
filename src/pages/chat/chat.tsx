@@ -140,7 +140,7 @@ const Chat = () => {
                                     openDrawer && currentChat?._id ?
                                         <>
                                             <img
-                                                src={role === 'user' ? currentChat?.institutionId?.mainPhoto : role === 'manager' ? currentChat?.userId?.avatar : currentChat?.institutionId?.mainPhoto}
+                                                src={role === 'user' ? currentChat?.institutionId?.pictures[0].url : role === 'manager' ? currentChat?.userId?.avatar : currentChat?.institutionId?.pictures[0].url}
                                                 alt={role === 'user' ? currentChat?.institutionId?.title : role === 'manager' ? currentChat?.userId?.name : ''}
                                                 style={{
                                                     width: '46px',
@@ -220,7 +220,7 @@ const Chat = () => {
                                 gap: 1
                             }}>
                                 <img
-                                    src={currentChat?.institutionId?.mainPhoto}
+                                    src={currentChat?.institutionId?.pictures[0].url}
                                     alt={currentChat?.institutionId?.title}
                                     style={{
                                         width: '100px',

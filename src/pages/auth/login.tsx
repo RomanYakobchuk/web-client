@@ -24,6 +24,7 @@ import {ColorModeContext} from "../../contexts";
 import {parseJwt, useMobile} from "../../utils";
 import {axiosInstance} from "../../authProvider";
 import {buttonStyle, textFieldStyle} from "../../styles";
+import ContainerComponent from "./utills/containerComponent";
 
 const Login = () => {
 
@@ -34,7 +35,6 @@ const Login = () => {
     const {open} = useNotification();
     const {width} = useMobile();
 
-    const [size, setSize] = useState<'small' | 'medium' | undefined>('medium');
     const [showPass, setShowPass] = useState(false);
     const [showActiveAcc, setShowActiveAcc] = useState(false);
     const [error, setError] = useState<any>([])
@@ -95,155 +95,139 @@ const Login = () => {
             email: data?.email
         })
     };
-    useEffect(() => {
-        if (width < 600) {
-            setSize('small')
-        }
-    }, [width]);
+
+    const size = 'small';
 
     return (
-        <Box sx={{
-            width: '100%',
-            flex: 1,
-            minHeight: '100vh',
-            height: '100%',
-            bgcolor: mode === "dark" ? "#173d4f" : '#E9EEF2',
-        }}>
-            <Header/>
-            <Container component="main" maxWidth="xs" sx={{
-                bgcolor: 'transparent'
-            }}>
-                <CssBaseline/>
-                <Box
-                    sx={{
-                        marginTop: 4,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                    }}
-                >
-                    <Avatar src={`/images/logo.png`} onClick={() => navigate('/welcome')}
-                            sx={{m: 1, cursor: 'pointer'}}/>
-                    <Typography component="h1" variant="h5" fontSize={{xs: 18, md: 22}}>
-                        {translate("pages.login.title")}
-                    </Typography>
-                    <Box component="form" onSubmit={handleSubmit(onFinishHandler)} noValidate sx={{mt: 1}}>
+        <ContainerComponent>
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    margin: 'auto'
+                }}
+            >
+                <Avatar src={`/images/logo.png`} onClick={() => navigate('/welcome')}
+                        sx={{m: 1, cursor: 'pointer'}}/>
+                <Typography component="h1" variant="h5" fontSize={{xs: 18, md: 22}}>
+                    {translate("pages.login.title")}
+                </Typography>
+                <Box component="form" onSubmit={handleSubmit(onFinishHandler)} noValidate sx={{mt: 1}}>
+                    <TextField
+                        margin="normal"
+                        required
+                        fullWidth
+                        id="email"
+                        size={size}
+                        sx={textFieldStyle}
+                        color={"secondary"}
+                        label={translate("pages.login.fields.email")}
+                        {...register("email", {required: true})}
+                        autoComplete="email"
+                        autoFocus
+                    />
+                    <FormControl fullWidth sx={{
+                        position: 'relative'
+                    }}>
                         <TextField
                             margin="normal"
                             required
-                            fullWidth
-                            id="email"
                             size={size}
+                            fullWidth
                             sx={textFieldStyle}
                             color={"secondary"}
-                            label={translate("pages.login.fields.email")}
-                            {...register("email", {required: true})}
-                            autoComplete="email"
-                            autoFocus
+                            {...register("password", {required: true})}
+                            label={translate("pages.login.fields.password")}
+                            type={showPass ? 'text' : 'password'}
+                            id="password"
+                            autoComplete="current-password"
                         />
-                        <FormControl fullWidth sx={{
-                            position: 'relative'
-                        }}>
-                            <TextField
-                                margin="normal"
-                                required
-                                size={size}
-                                fullWidth
-                                sx={textFieldStyle}
-                                color={"secondary"}
-                                {...register("password", {required: true})}
-                                label={translate("pages.login.fields.password")}
-                                type={showPass ? 'text' : 'password'}
-                                id="password"
-                                autoComplete="current-password"
-                            />
-                            <Box sx={{
-                                cursor: 'pointer',
-                                position: 'absolute',
-                                zIndex: 20,
-                                top: '45%',
-                                right: '5%',
-                                width: '20px',
-                                height: '20px',
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                "&:hover": {
-                                    color: 'cornflowerblue'
-                                }
-                            }}>
-                                {
-                                    showPass ?
-                                        <VisibilityOffOutlined onClick={handleShowPass}/> :
-                                        <VisibilityOutlined onClick={handleShowPass}/>
-                                }
-                            </Box>
-                        </FormControl>
-                        {
-                            showActiveAcc &&
-                            <div>
-                                <Typography>
-                                    {translate("pages.login.errors.active")}
-                                </Typography>
-                                <Button fullWidth variant={"outlined"} onClick={handleSubmit(ActivateAccount)}>
-                                    {translate("pages.login.activate")}
-                                </Button>
-                            </div>
-                        }
-                        <Grid item mt={2} mb={2}>
-                            <Button type={"submit"}
-                                    color={mode === "dark" ? "info" : "secondary"}
-                                    variant={'contained'}
-                                    sx={{
-                                        ...buttonStyle,
-                                        fontSize: '20px',
-                                        textTransform: 'uppercase',
-                                        width: '100%',
-                                    }}>
-                                {
-                                    formLoading ? <CircularProgress/> :
-                                        translate("pages.login.buttons.submit")
-                                }
-                            </Button>
-                        </Grid>
-                        <Grid container sx={{
+                        <Box sx={{
+                            cursor: 'pointer',
+                            position: 'absolute',
+                            zIndex: 20,
+                            top: '45%',
+                            right: '5%',
+                            width: '20px',
+                            height: '20px',
                             display: 'flex',
-                            mt: 4,
-                            flexDirection: 'column',
-                            gap: 1
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            "&:hover": {
+                                color: 'cornflowerblue'
+                            }
                         }}>
+                            {
+                                showPass ?
+                                    <VisibilityOffOutlined onClick={handleShowPass}/> :
+                                    <VisibilityOutlined onClick={handleShowPass}/>
+                            }
+                        </Box>
+                    </FormControl>
+                    {
+                        showActiveAcc &&
+                        <div>
+                            <Typography>
+                                {translate("pages.login.errors.active")}
+                            </Typography>
+                            <Button fullWidth variant={"outlined"} onClick={handleSubmit(ActivateAccount)}>
+                                {translate("pages.login.activate")}
+                            </Button>
+                        </div>
+                    }
+                    <Grid item mt={2} mb={2}>
+                        <Button type={"submit"}
+                                color={mode === "dark" ? "info" : "secondary"}
+                                variant={'contained'}
+                                sx={{
+                                    ...buttonStyle,
+                                    fontSize: '20px',
+                                    textTransform: 'uppercase',
+                                    width: '100%',
+                                }}>
+                            {
+                                formLoading ? <CircularProgress/> :
+                                    translate("pages.login.buttons.submit")
+                            }
+                        </Button>
+                    </Grid>
+                    <Grid container sx={{
+                        display: 'flex',
+                        mt: 4,
+                        flexDirection: 'column',
+                        gap: 1
+                    }}>
+                        <Link
+                            to={'/forgot-password'}
+                            style={{
+                                color: mode === 'dark' ? '#8aa4d3' : '#275ab7',
+                                fontSize: '16px',
+                                textTransform: 'none',
+                                width: '100%',
+                                transition: '300ms linear',
+                            }}>
+                            {translate("pages.login.buttons.forgotPassword")}
+                        </Link>
+                        <Box>
+                            {translate("pages.login.buttons.noAccount") + ' '}
                             <Link
-                                to={'/forgot-password'}
+                                to={'/register'}
                                 style={{
                                     color: mode === 'dark' ? '#8aa4d3' : '#275ab7',
                                     fontSize: '16px',
                                     textTransform: 'none',
                                     width: '100%',
                                     transition: '300ms linear',
-                                }}>
-                                {translate("pages.login.buttons.forgotPassword")}
-                            </Link>
-                            <Box>
-                                {translate("pages.login.buttons.noAccount") + ' '}
-                                <Link
-                                    to={'/register'}
-                                    style={{
-                                        color: mode === 'dark' ? '#8aa4d3' : '#275ab7',
-                                        fontSize: '16px',
-                                        textTransform: 'none',
-                                        width: '100%',
-                                        transition: '300ms linear',
 
-                                    }}>
-                                    {translate("pages.login.signup")}
-                                </Link>
-                            </Box>
-                        </Grid>
-                    </Box>
+                                }}>
+                                {translate("pages.login.signup")}
+                            </Link>
+                        </Box>
+                    </Grid>
                 </Box>
-                <Copyright sx={{mt: 8, mb: 4}}/>
-            </Container>
-        </Box>
+            </Box>
+        </ContainerComponent>
     );
 }
 export default Login;

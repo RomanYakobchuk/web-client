@@ -1,18 +1,17 @@
-import {DateRange, Edit, Email, HourglassBottom, Phone, Public} from "@mui/icons-material";
-import {Avatar, Box, Button, Grid, Stack, Typography} from "@mui/material";
-import React, {useContext, useEffect, useState} from "react";
+import {Edit, Email, Phone} from "@mui/icons-material";
+import {Avatar, Box, Grid, Stack, Typography} from "@mui/material";
+import React, {useContext, useState} from "react";
 import {useTranslate} from "@refinedev/core";
 import {useNavigate} from "react-router-dom";
 import {Image} from "antd";
 
 
 import {ProfileProps, PropertyProps} from "../../../interfaces/common";
-import InstitutionCard from "../../establishment/utills/InstitutionCard";
-import {CustomButton, UserInstitutions, UserReviews, UserComments} from "../../index";
+import Variant1EstablishmentCard from "../../establishment/utills/variant1EstablishmentCard";
+import {UserInstitutions, UserReviews} from "../../index";
 import {ColorModeContext} from "../../../contexts";
 import CustomAccordion from "./customAccordion";
 import dayjs from "dayjs";
-import CommentCard from "../../establishment/utills/commentCard";
 import TitleTextItem from "../TitleTextItem";
 import CommentsList from "../comments-list";
 
@@ -27,18 +26,13 @@ const CustomProfile = ({
                            phoneVerify,
                            status,
                            isActivated,
-                           favoritePlaces: places,
+                           favoritePlaces,
                        }: ProfileProps) => {
 
     const navigate = useNavigate();
     const {mode} = useContext(ColorModeContext);
     const translate = useTranslate();
-    const [favoritePlaces, setFavoritePlaces] = useState([]);
     const [selectedItem, setSelectedItem] = useState<number | null>(null);
-
-    useEffect(() => {
-        setFavoritePlaces(places)
-    }, [places]);
 
     const handleClick = (index: number) => {
         setSelectedItem((prevSelectedItem) =>
@@ -290,8 +284,7 @@ const CustomProfile = ({
                             }}
                         >
                             {favoritePlaces?.map((property: PropertyProps) => (
-                                <InstitutionCard
-                                    otherProps={setFavoritePlaces}
+                                <Variant1EstablishmentCard
                                     key={property?._id}
                                     institution={property}
                                 />

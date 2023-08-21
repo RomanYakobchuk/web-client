@@ -12,7 +12,6 @@ const Loading = ({height}: IProps) => {
     return (
         <Box sx={{
             display: 'flex',
-            flex: 1,
             height: height ? height : '100%',
             // minHeight: height ? height : '90vh',
             width: '100%',

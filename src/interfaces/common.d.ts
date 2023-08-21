@@ -7,6 +7,11 @@ export interface IUserLoginProps {
     password: string
 }
 
+export interface IPicture {
+    url: string,
+    name: string
+}
+
 export interface IGetIdentity {
     user: ProfileProps,
     favoritePlaces: string[]
@@ -87,6 +92,10 @@ export interface PropertyProps {
     _id: string,
     title: string,
     description: string,
+    pictures: {
+        name: string,
+        url: string
+    }[],
     otherPhoto: Array | undefined,
     place: {
         city: string,
@@ -149,7 +158,10 @@ export interface IComment {
     createdAt: Date | any,
     institutionId: {
         _id: string,
-        mainPhoto: string,
+        pictures: {
+            url: string,
+            name: string,
+        }[],
         title: string,
         type: string
     },
@@ -351,10 +363,8 @@ export interface IPlaceFormProps {
     formLoading: boolean,
     handleSubmit: FormEventHandler<HTMLFormElement> | any,
     onFinishHandler: (data: FieldValues) => Promise<void> | void,
-    setMainPhoto: (item: any) => void,
     setOtherPhoto: (item: any) => void,
     otherPhoto: any,
-    mainPhoto: any,
     open: boolean,
     titleAction: string,
     setOpen: (item: any) => void,
@@ -395,8 +405,6 @@ export interface IPlaceFormProps {
 export interface INewsDataProps {
     handleSubmit: any,
     onFinishHandler: any,
-    mainPhoto: string | any,
-    setMainPhoto: any,
     otherPhoto: any,
     setOtherPhoto: (item: any) => void,
     currentInstitutionId: string,

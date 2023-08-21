@@ -2,7 +2,9 @@
 import BookMark from "./common/BookMark";
 import CustomButton from "./common/custom/CustomButton";
 import CustomProfile from "./common/custom/CustomProfile";
-import InstitutionCard from "./establishment/utills/InstitutionCard";
+import VariantComponent from "./common/variantComponent";
+import Variant1EstablishmentCard from "./establishment/utills/variant1EstablishmentCard";
+import Variant2EstablishmentCard from "./establishment/utills/variant2EstablishmentCard";
 import CustomAccordion from "./common/custom/customAccordion";
 import CustomDrawer from "./common/custom/customDrawer";
 import ScrollContent from "./common/scrollContent";
@@ -10,6 +12,7 @@ import PaginationComponent from "./common/paginationComponent";
 import TitleTextItem from "./common/TitleTextItem";
 import ReviewsList from "./common/reviews-list";
 import CommentsList from "./common/comments-list";
+import CarouselComponent from "./common/carousel/carouselComponent";
 
 // custom
 import CustomShow from "./common/custom/customShow";
@@ -77,7 +80,8 @@ export {
     Loading,
     CreateMenu,
     UserInstitutions,
-    InstitutionCard,
+    Variant1EstablishmentCard,
+    Variant2EstablishmentCard,
     CustomProfile,
     UserReviews,
     FavoritePlaces,
@@ -117,5 +121,7 @@ export {
     SchemaSelector,
     CustomShow,
     CustomEdit,
-    CustomCreate
+    CustomCreate,
+    CarouselComponent,
+    VariantComponent
 }

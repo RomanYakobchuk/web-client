@@ -24,10 +24,6 @@ export interface Schema {
     type: 'schema_1' | 'schema_2' | 'schema_3'
 }
 
-interface Props {
-    children: ReactNode;
-}
-
 export const SchemaContext = createContext<ISchemaType>({} as ISchemaType);
 
 export const useSchema = (): ISchemaType => {
@@ -81,8 +77,8 @@ export const SchemaProvider: FC<PropsWithChildren> = ({children}) => {
             setHeightLayoutS("calc(98vh - 64px)");
             setHeightSiderS("calc(100% - 10px)");
             setButtonSiderS({
-                top: {xs: "14px", sm: '17px'},
-                left: '14px',
+                top: {xs: "12px", sm: '17px'},
+                left: '10px',
                 transform: 'translate(25%, 35%)',
                 borderRadius: '6px'
             })

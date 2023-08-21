@@ -128,7 +128,7 @@ const CommentCard = ({comment, setParent, setIsAnswer}: IProps) => {
                             onClick={() => navigate(`/all_institutions/show/${comment?.institutionId?._id}`)}
                         >
                             <img
-                                src={comment?.institutionId?.mainPhoto}
+                                src={comment?.institutionId?.pictures[0].url}
                                 alt={comment?.institutionId?.title}
                                 style={{
                                     width: '50px',

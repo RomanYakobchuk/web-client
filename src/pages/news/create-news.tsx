@@ -16,7 +16,6 @@ const CreateNews = () => {
     const [currentInstitutionId, setCurrentInstitutionId] = useState<string>("");
     const [description, setDescription] = useState<string>("");
     const [title, setTitle] = useState<string>("");
-    const [mainPhoto, setMainPhoto] = useState<any>();
     const [variantForDisplay, setVariantForDisplay] = useState<string>("1");
     const [otherPhoto, setOtherPhoto] = useState<any>([]);
     const [category, setCategory] = useState('general');
@@ -44,13 +43,12 @@ const CreateNews = () => {
 
     const onFinishHandler = async () => {
 
-        if ((!mainPhoto && !mainPhoto?.name) || (!otherPhoto && otherPhoto?.length < 0)) return alert("Виберіть головне фото");
+        if (!otherPhoto && otherPhoto?.length < 0) return alert("Виберіть головне фото");
 
         if (otherPhoto.length > 8) return alert(translate("home.create.otherPhoto.max"))
 
         const formData = new FormData();
 
-        formData.append("mainPhoto", mainPhoto as File);
         for (let i = 0; i < otherPhoto.length; i++) {
             console.log(otherPhoto[i].order)
             formData.append('otherPhoto', otherPhoto[i] as File);
@@ -92,8 +90,6 @@ const CreateNews = () => {
         <NewsFormData
             handleSubmit={handleSubmit}
             onFinishHandler={onFinishHandler}
-            mainPhoto={mainPhoto}
-            setMainPhoto={setMainPhoto}
             otherPhoto={otherPhoto}
             setOtherPhoto={setOtherPhoto}
             currentInstitutionId={currentInstitutionId}

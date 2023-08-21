@@ -38,8 +38,11 @@ const ListChats = ({setCurrentChat, setOpenDrawer}: IProps) => {
         isFetchingNextPage
     } = useInfiniteList<IConversation>({
         resource: `conversation/findChat`,
+        queryOptions: {
+            retry: false,
+        },
         filters: [
-            {field: 'userId', value: userId, operator: 'eq'},
+            {field: 'userId', value: user?._id, operator: 'eq'},
             {field: 'managerId', value: managerId, operator: 'eq'},
             {field: 'institutionId', value: institutionId, operator: 'eq'},
             {field: 'title', value: debouncedSearchText, operator: 'contains'},
@@ -48,6 +51,7 @@ const ListChats = ({setCurrentChat, setOpenDrawer}: IProps) => {
             pageSize: 20
         }
     });
+    console.log(data?.pages)
 
     useEffect(() => {
         if (data?.pages) {

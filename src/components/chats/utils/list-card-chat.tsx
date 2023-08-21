@@ -52,7 +52,7 @@ const ListCardChat = ({conversation, setCurrentChat, setOpenDrawer}: IProps) => 
                 height: '66px'
             }}>
                 <img
-                    src={conversation?.institutionId?.mainPhoto}
+                    src={conversation?.institutionId?.pictures[0].url}
                     alt={conversation?.userId?.name}
                     style={{
                         width: '46px',

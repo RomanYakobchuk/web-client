@@ -41,7 +41,7 @@ const ScrollContent = ({children}: IProps) => {
                     borderRadius: '5px'
                 }
             }}>
-                <Box sx={{
+                <Box id={'childrenScrollContent'} sx={{
                     display: 'flex',
                     flexDirection: 'row',
                     gap: 2,

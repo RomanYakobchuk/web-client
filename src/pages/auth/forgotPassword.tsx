@@ -20,6 +20,7 @@ import Copyright from "./utills/copyright";
 import {ColorModeContext} from "../../contexts";
 import {useMobile} from "../../utils";
 import {buttonStyle, textFieldStyle} from "../../styles";
+import ContainerComponent from "./utills/containerComponent";
 
 const ForgotPassword = () => {
 
@@ -68,86 +69,76 @@ const ForgotPassword = () => {
         }
     }, [width])
     return (
-        <Box sx={{
-            width: '100%',
-            flex: 1,
-            minHeight: '100vh',
-            bgcolor: mode === "dark" ? "#173d4f" : '#E9EEF2',
+        <ContainerComponent pictureProps={{
+            order: 1
         }}>
-            <Header/>
-            <Container component="main" maxWidth="xs" sx={{
-                bgcolor: 'transparent'
-            }}>
-                <CssBaseline/>
-                <Box
-                    sx={{
-                        marginTop: 8,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        minWidth: '270px'
-                    }}
-                >
-                    <Avatar src={`/images/logo.png`} onClick={() => navigate('/welcome')}
-                            sx={{m: 1, cursor: 'pointer'}}/>
-                    <Typography component="h1" variant="h5" fontSize={{xs: 18, md: 22}}>
-                        {translate("pages.forgotPassword.title")}
-                    </Typography>
-                    <Box component="form" onSubmit={handleSubmit(onFinishHandler)} noValidate sx={{mt: 1}}>
-                        <TextField
-                            margin="normal"
-                            required
-                            minRows={5}
-                            fullWidth
-                            color={"secondary"}
-                            id="email"
-                            size={size}
+            <Box
+                sx={{
+                    marginTop: 8,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    minWidth: '270px'
+                }}
+            >
+                <Avatar src={`/images/logo.png`} onClick={() => navigate('/welcome')}
+                        sx={{m: 1, cursor: 'pointer'}}/>
+                <Typography component="h1" variant="h5" fontSize={{xs: 18, md: 22}}>
+                    {translate("pages.forgotPassword.title")}
+                </Typography>
+                <Box component="form" onSubmit={handleSubmit(onFinishHandler)} noValidate sx={{mt: 1}}>
+                    <TextField
+                        margin="normal"
+                        required
+                        minRows={5}
+                        fullWidth
+                        color={"secondary"}
+                        id="email"
+                        size={size}
+                        sx={{
+                            ...textFieldStyle,
+                            minWidth: '300px'
+                        }}
+                        label={translate("pages.forgotPassword.fields.email")}
+                        {...register('email', {required: true})}
+                        autoComplete="code"
+                        autoFocus
+                    />
+                    <Grid container mt={4} flexDirection={"column"} gap={2}>
+                        <Button
+                            color={mode === "dark" ? "info" : "secondary"}
+                            variant={'contained'}
+                            type={"submit"}
                             sx={{
-                                ...textFieldStyle,
-                                minWidth: '300px'
-                            }}
-                            label={translate("pages.forgotPassword.fields.email")}
-                            {...register('email', {required: true})}
-                            autoComplete="code"
-                            autoFocus
-                        />
-                        <Grid container mt={4} flexDirection={"column"} gap={2}>
-                            <Button
-                                color={mode === "dark" ? "info" : "secondary"}
-                                variant={'contained'}
-                                type={"submit"}
-                                sx={{
-                                    ...buttonStyle,
+                                ...buttonStyle,
+                                textTransform: 'none',
+                                width: '100%',
+                            }}>
+                            {
+                                formLoading ?
+                                    <CircularProgress/> :
+                                    translate("pages.forgotPassword.buttons.submit")
+                            }
+                        </Button>
+                        <Box>
+                            {translate("pages.register.buttons.haveAccount") + ' '}
+                            <Link
+                                to={'/login'}
+                                style={{
+                                    color: mode === 'dark' ? '#8aa4d3' : '#275ab7',
+                                    fontSize: '16px',
                                     textTransform: 'none',
                                     width: '100%',
-                                }}>
-                                {
-                                    formLoading ?
-                                        <CircularProgress/> :
-                                        translate("pages.forgotPassword.buttons.submit")
-                                }
-                            </Button>
-                            <Box>
-                                {translate("pages.register.buttons.haveAccount") + ' '}
-                                <Link
-                                    to={'/login'}
-                                    style={{
-                                        color: mode === 'dark' ? '#8aa4d3' : '#275ab7',
-                                        fontSize: '16px',
-                                        textTransform: 'none',
-                                        width: '100%',
-                                        transition: '300ms linear',
+                                    transition: '300ms linear',
 
-                                    }}>
-                                    {translate("pages.login.signin")}
-                                </Link>
-                            </Box>
-                        </Grid>
-                    </Box>
+                                }}>
+                                {translate("pages.login.signin")}
+                            </Link>
+                        </Box>
+                    </Grid>
                 </Box>
-                <Copyright sx={{mt: 8, mb: 4}}/>
-            </Container>
-        </Box>
+            </Box>
+        </ContainerComponent>
     );
 };
 

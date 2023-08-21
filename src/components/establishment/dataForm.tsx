@@ -20,7 +20,7 @@ import {CustomButton, ModalWindow, SearchManager} from "../index";
 import {ColorModeContext} from "../../contexts";
 import ImageSelector from "./utills/ImageSelector";
 import ScheduleList from "./utills/scheduleList";
-import ItemsList from "./utills/ItemsList";
+import ItemsList from "./utills/dataPropertyList";
 import {buttonStyle, selectStyle, textFieldStyle} from "../../styles";
 
 
@@ -28,8 +28,6 @@ const DataForm = ({
                       handleSubmit,
                       formLoading,
                       onFinishHandler,
-                      mainPhoto,
-                      setMainPhoto,
                       otherPhoto,
                       setOtherPhoto,
                       open,
@@ -116,9 +114,6 @@ const DataForm = ({
         setType(event.target.value);
     };
 
-    const handleMainPhotoChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setMainPhoto(e.target.files![0])
-    }
 
     const handleOtherPhotoChange = (e: ChangeEvent<HTMLInputElement> | any) => {
         if (10 < otherPhoto.length) return alert(translate("home.create.otherPhoto.max") + "10");
@@ -133,12 +128,9 @@ const DataForm = ({
         setOtherPhoto([...arr])
     }
 
-    const deleteImage = () => {
-        setMainPhoto([])
-    }
 
     const handleOpen = () => {
-        if ((!mainPhoto && !mainPhoto?.name) || (!otherPhoto && otherPhoto?.length < 0)) return alert("Виберіть головне фото");
+        if (!otherPhoto && otherPhoto?.length < 0) return alert("Виберіть головне фото");
 
         if (otherPhoto.length > 10) return alert(translate("home.create.otherPhoto.max"))
 
@@ -169,7 +161,7 @@ const DataForm = ({
                 borderRadius: '15px',
                 p: '15px',
                 paddingBottom: '30px',
-                bgcolor: (theme) => theme.palette.primary.main,
+                bgcolor: 'primary.main',
             }}
         >
             <Box
@@ -191,142 +183,6 @@ const DataForm = ({
                         flexDirection: {xs: 'column', md: 'row'}
                     }}
                 >
-                    <FormControl sx={{
-                        width: {xs: '100%', md: '48%'},
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: 0.5,
-                    }}>
-                        <FormHelperText
-                            sx={{
-                                fontWeight: 500,
-                                margin: "0",
-                                fontSize: {xs: 12, sm: 16},
-                                color: mode === "dark" ? "#fcfcfc" : "#11142D",
-                            }}
-                        >
-                            {translate("home.create.mainPhoto")}
-                        </FormHelperText>
-                        <Box sx={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            gap: mainPhoto && (mainPhoto?.name || (typeof mainPhoto === "string" && mainPhoto?.length > 0)) ? {
-                                xs: 1,
-                                sm: 2
-                            } : 0,
-                            width: '100%'
-                        }}>
-                            <Box sx={{
-                                width: '100%',
-                                height: {xs: '190px', sm: '270px', md: '370px'},
-                                borderRadius: "5px",
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                            }}>
-                                {
-                                    mainPhoto?.name || (typeof mainPhoto === "string" && mainPhoto?.length > 0) ?
-                                        <CardMedia
-                                            component={"img"}
-                                            src={typeof mainPhoto === "string" ? mainPhoto : URL.createObjectURL(mainPhoto)}
-                                            alt={"image"}
-                                            style={{
-                                                borderRadius: '5px',
-                                                width: '100%',
-                                                height: '100%',
-                                                objectFit: 'cover',
-                                            }}
-                                        />
-                                        : <Button component={"label"} sx={
-                                            {
-                                                width: '100%',
-                                                height: '90%',
-                                                display: 'flex',
-                                                justifyContent: "center",
-                                                alignItems: "center",
-                                                borderRadius: '5px',
-                                                cursor: "pointer",
-                                                transition: "300ms linear",
-                                                "&:hover": {
-                                                    bgcolor: 'silver',
-                                                },
-                                                border: `1px dashed ${mode === "dark" ? "#fcfcfc" : "#9ba5c9"}`
-                                            }
-                                        }>
-                                            <AddCircleOutline sx={{
-                                                color: mode === "dark" ? "#fcfcfc" : "#9ba5c9",
-                                                fontSize: {xs: "70px", md: "160px"}
-                                            }}/>
-                                            <input
-                                                hidden
-                                                accept="image/*"
-                                                type="file"
-                                                onChange={(
-                                                    e: ChangeEvent<HTMLInputElement>,
-                                                ) => {
-                                                    handleMainPhotoChange(e);
-                                                }}
-                                            />
-                                        </Button>
-                                }
-                            </Box>
-
-                            <Box sx={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                justifyContent: 'space-evenly',
-                                alignItems: 'center',
-                                gap: 2
-                            }}>
-                                {
-                                    mainPhoto && (mainPhoto?.name || (typeof mainPhoto === "string" && mainPhoto?.length > 0))
-                                        ? <Box sx={{
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            gap: 1
-                                        }}>
-                                            <Button
-                                                component="label"
-                                                color={'info'}
-                                                variant={'contained'}
-                                                sx={{
-                                                    ...buttonStyle,
-                                                    fontSize: {xs: 12, sm: 14},
-                                                    width: '130px',
-                                                    textTransform: 'capitalize',
-                                                }}
-                                                startIcon={<Edit sx={{fontSize: {xs: 16, sm: 18}}}/>}
-                                            >
-                                                {translate("profile.edit.change")}
-                                                <input
-                                                    hidden
-                                                    accept="image/*"
-                                                    type="file"
-                                                    onChange={(
-                                                        e: ChangeEvent<HTMLInputElement>,
-                                                    ) => {
-                                                        handleMainPhotoChange(e);
-                                                    }}
-                                                />
-                                            </Button>
-                                            <Button
-                                                onClick={deleteImage}
-                                                color={"error"}
-                                                variant={'contained'}
-                                                sx={{
-                                                    ...buttonStyle,
-                                                    textTransform: 'capitalize'
-                                                }}
-                                                startIcon={<DeleteForeverOutlined style={{color: '#fcfcfc'}}/>}
-                                            >
-                                                {translate("profile.edit.delete")}
-                                            </Button>
-                                        </Box>
-                                        : <div></div>
-                                }
-                            </Box>
-                        </Box>
-                    </FormControl>
                     <Box sx={{
                         display: 'grid',
                         gridTemplateColumns: {xs: '1fr', sm: '1fr 1fr', md: '1fr'},

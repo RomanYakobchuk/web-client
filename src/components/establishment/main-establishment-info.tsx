@@ -9,10 +9,7 @@ import {
     Typography, Button
 } from "@mui/material";
 import {
-    MessageOutlined,
-    NewspaperOutlined,
     Place,
-    ReviewsOutlined
 } from "@mui/icons-material";
 import MDEditor from "@uiw/react-md-editor";
 import {GoogleMap, MarkerF, useJsApiLoader} from "@react-google-maps/api";
@@ -25,7 +22,6 @@ import {containerStyle} from "./utills/mapsOptrions";
 import {IGetIdentity, ProfileProps, PropertyProps} from "../../interfaces/common";
 import {ColorModeContext} from "../../contexts";
 import dayjs from "dayjs";
-import {useMobile} from "../../utils";
 import {buttonStyle} from "../../styles";
 
 
@@ -41,20 +37,14 @@ const MainEstablishmentInfo = ({institution, rowHeight, otherProps}: IProps) => 
     const user: ProfileProps = identity?.user as ProfileProps;
     const translate = useTranslate();
     const {mode} = useContext(ColorModeContext);
-    const {device, width} = useMobile();
     const navigate = useNavigate();
 
     const [postRating, setPostRating] = useState(0);
     const [postRatings, setPostRatings] = useState([]);
-    const [favoritePlaces, setFavoritePlaces] = useState([]);
 
     useEffect(() => {
         setPostRating(institution?.rating)
     }, [institution?.rating])
-
-    useEffect(() => {
-        setFavoritePlaces(user?.favoritePlaces)
-    }, [user?.favoritePlaces])
 
     useEffect(() => {
         setPostRatings(institution?.ratings);
@@ -169,8 +159,8 @@ const MainEstablishmentInfo = ({institution, rowHeight, otherProps}: IProps) => 
                     gap: 2
                 }}>
                     {
-                        institution?.otherPhoto?.length > 0 &&
-                        <ImageGallery photos={[institution?.mainPhoto, ...institution?.otherPhoto]}/>
+                        institution?.pictures?.length > 0 &&
+                        <ImageGallery photos={institution?.pictures}/>
                     }
                     <Box sx={{
                         p: 0,
@@ -277,8 +267,7 @@ const MainEstablishmentInfo = ({institution, rowHeight, otherProps}: IProps) => 
                                 {
                                     institution?.createdBy !== user?._id &&
                                     <BookMark showText={true} color={mode === "dark" ? '#fcfcfc' : '#000'}
-                                              type={'favoritePlaces'} id={institution?._id}
-                                              otherProps={setFavoritePlaces}/>
+                                              type={'favoritePlaces'} id={institution?._id}/>
                                 }
                                 {
                                     institution?.createdBy !== user?._id &&
@@ -383,7 +372,7 @@ const MainEstablishmentInfo = ({institution, rowHeight, otherProps}: IProps) => 
                             {
                                 institution?.tags?.map((tag: any, index: number) => (
                                     <Chip
-                                        onClick={() => navigate(`/all_institutions?pageSize=10&current=1&sorters[0][field]=createdAt_desc&sorters[0][order]=desc&filters[0][field]=tag&filters[0][value]=${tag.value}&filters[0][operator]=contains&filters[1][field]=title&filters[1][value]=&filters[1][operator]=contains`,
+                                        onClick={() => navigate(`/all_institutions?pageSize=10&current=1&sorters[0][field]=createdAt_desc&sorters[0][order]=desc&filters[0][field]=title&filters[0][value]=${'#'+tag.value}&filters[0][operator]=contains`,
                                             {state: {value: tag.value, isTag: true}})} key={index} label={tag.value}
                                         sx={{
                                             color: '#fff',

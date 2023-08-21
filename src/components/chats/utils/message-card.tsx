@@ -57,7 +57,7 @@ const MessageCard = ({conversation, receiver, setReplyTo, group, message}: IProp
                 <img
                     src={
                         (data?.sender === conversation?.managerId?._id)
-                            ? conversation?.institutionId?.mainPhoto
+                            ? conversation?.institutionId?.pictures[0].url
                             : conversation?.userId?.avatar
                     }
                     alt={data?._id}

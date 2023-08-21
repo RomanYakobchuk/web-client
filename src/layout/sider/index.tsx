@@ -10,8 +10,6 @@ import {
     Collapse,
     Tooltip,
     Button,
-    IconButton,
-    StyledEngineProvider,
 } from "@mui/material";
 
 import {List as MuiList} from "@mui/material";
@@ -51,6 +49,10 @@ export const Sider: typeof DefaultSider = ({render}) => {
     const drawerWidth = () => {
         if (collapsed) return 64;
         return 200;
+    };
+    const drawerXsWidth = () => {
+        if (collapsed) return 68;
+        return 256;
     };
 
     const t = useTranslate();
@@ -316,7 +318,10 @@ export const Sider: typeof DefaultSider = ({render}) => {
                 {/*        ?  :*/}
                 <ListItemButton
                     key="logout"
-                    onClick={() => setIsLogOut(true)}
+                    onClick={() => {
+                        setIsLogOut(true)
+                        setOpenSider()
+                    }}
                     sx={{
                         justifyContent: "center",
                         margin: "10px auto",
@@ -389,7 +394,7 @@ export const Sider: typeof DefaultSider = ({render}) => {
         <MuiList disablePadding sx={{
             mt: 1,
             color: "#fcfcfc",
-            height: '99%'
+            height: '98%'
         }}>
             {renderSider()}
         </MuiList>
@@ -427,7 +432,9 @@ export const Sider: typeof DefaultSider = ({render}) => {
                     sx={{
                         display: {sm: "block", md: "none"},
                         "& .MuiDrawer-paper": {
-                            width: 256,
+                            width: drawerXsWidth,
+                            transition:
+                                "width 200ms cubic-bezier(0.4, 0, 0.6, 1) 0ms",
                             bgcolor: 'common.black',
                             backdropFilter: 'blur(3px)',
                             margin: styles.marginSiderS,
@@ -445,31 +452,35 @@ export const Sider: typeof DefaultSider = ({render}) => {
                             justifyContent: "center",
                         }}
                     >
-                        <RenderToTitle collapsed={false}/>
+                        <RenderToTitle collapsed={collapsed}/>
                     </Box>
-                    {drawer}
+                    <Box
+                        sx={{
+                            flexGrow: 1,
+                            overflowX: "hidden",
+                            overflowY: "auto",
+                        }}
+                    >
+                        {drawer}
+                    </Box>
+                    <Button
+                        sx={{
+                            background: "#475BE8",
+                            color: "primary.contrastText",
+                            textAlign: "center",
+                            borderRadius: 0,
+                            borderTop: "1px solid #ffffff1a",
+                            "&:hover": {
+                                background: "#1e36e8",
+                            },
+                        }}
+                        fullWidth
+                        size="large"
+                        onClick={setCollapsed}
+                    >
+                        {collapsed ? <ChevronRight/> : <ChevronLeft/>}
+                    </Button>
                 </Drawer>
-                {/*</StyledEngineProvider>*/}
-                {/*<Box*/}
-                {/*    sx={{*/}
-                {/*        display: {xs: "block", md: "none"},*/}
-                {/*        position: "fixed",*/}
-                {/*        top: buttonSiderS.top,*/}
-                {/*        left: buttonSiderS.left,*/}
-                {/*        borderRadius: buttonSiderS.borderRadius,*/}
-                {/*        bgcolor: "#475be8",*/}
-                {/*        zIndex: 9,*/}
-                {/*        width: "36px",*/}
-                {/*    }}*/}
-                {/*>*/}
-                {/*    <IconButton*/}
-                {/*        sx={{color: "#fff", width: "36px"}}*/}
-                {/*        onClick={() => setOpened((prev) => !prev)}*/}
-                {/*    >*/}
-                {/*        <MenuRounded/>*/}
-                {/*    </IconButton>*/}
-                {/*</Box>*/}
-                {/*desktop drwawer*/}
                 <Drawer
                     variant="permanent"
                     PaperProps={{elevation: 0}}

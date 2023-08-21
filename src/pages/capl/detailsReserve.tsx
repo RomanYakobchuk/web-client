@@ -223,7 +223,7 @@ const DetailsReserve = () => {
                         title={translate('home.one')}/>
                     <CardContent>
                         <img
-                            src={reserve?.institution?.mainPhoto}
+                            src={reserve?.institution?.pictures[0].url}
                             alt={reserve?.institution?.title}
                             style={{
                                 width: '100%',

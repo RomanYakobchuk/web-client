@@ -1,9 +1,9 @@
-import {createContext, FC, PropsWithChildren} from "react";
+import {createContext, FC, PropsWithChildren, useEffect, useState} from "react";
 
 
 type AppContextType = {
-    state: string;
-    setState: () => void;
+    favoritePlaces: string[];
+    setFavoritePlaces: (items: string[] | any[]) => void;
 };
 
 export const AppContext = createContext<AppContextType>(
@@ -11,17 +11,24 @@ export const AppContext = createContext<AppContextType>(
 );
 
 
-const AppContextProvider: FC<PropsWithChildren> = ({children}) => {
-    return (
-        <div>
+export const AppContextProvider: FC<PropsWithChildren> = ({children}) => {
 
-        </div>
-        // <AppContext.Provider value={{
-        //     state,
-        //     setState
-        // }}>
-        //      {children}
-        //  </AppContext.Provider>
-     );
- };
- export default AppContext
+    const favPlaces = JSON.parse(localStorage.getItem('favoritePlaces') as string);
+
+    const [favoritePlaces, setFavoritePlaces] = useState(favPlaces || [])
+
+
+    useEffect(() => {
+        window.localStorage.setItem('favoritePlaces', JSON.stringify(favoritePlaces))
+    }, [favPlaces])
+
+
+    return (
+        <AppContext.Provider value={{
+            favoritePlaces,
+            setFavoritePlaces
+        }}>
+            {children}
+        </AppContext.Provider>
+    );
+};

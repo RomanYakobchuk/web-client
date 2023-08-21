@@ -157,7 +157,6 @@ export const authProvider: AuthBindings = {
         login: async ({user, access_token, refresh_token, favoritePlaces}: IData) => {
             if (user) {
                 const profileObj = user ? parseJwt(user) : null;
-
                 if (profileObj) {
                     localStorage.setItem(
                         "user",
@@ -186,6 +185,7 @@ export const authProvider: AuthBindings = {
             localStorage.removeItem(ACCESS_TOKEN_KEY);
             localStorage.removeItem(REFRESH_TOKEN_KEY);
             localStorage.removeItem("user");
+            localStorage.removeItem("favoritePlaces");
             return {
                 success: true,
                 redirectTo: '/login'
@@ -212,7 +212,8 @@ export const authProvider: AuthBindings = {
             }
             return {
                 authenticated: false,
-                redirectTo: '/login'
+                redirectTo: '/login',
+                logout: true
             };
 
         },

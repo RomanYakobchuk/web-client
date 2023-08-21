@@ -25,7 +25,6 @@ const CreateEstablishment: FC = () => {
     const navigate = useNavigate();
     const translate = useTranslate();
 
-    const [mainPhoto, setMainPhoto] = useState<any>();
     const [otherPhoto, setOtherPhoto] = useState<any>([]);
     const [open, setOpen] = useState<boolean>(false);
     const [type, setType] = useState<string>('');
@@ -57,13 +56,12 @@ const CreateEstablishment: FC = () => {
     }, [workDays, workScheduleWeekend])
     const onFinishHandler = async () => {
 
-        if ((!mainPhoto && !mainPhoto.name) || (!otherPhoto && otherPhoto?.length < 0)) return alert("Виберіть головне фото");
+        if (!otherPhoto && otherPhoto?.length < 0) return alert("Виберіть головне фото");
 
         if (otherPhoto.length > 10) return alert(translate("home.create.otherPhoto.max"))
 
         const formData = new FormData();
 
-        formData.append("mainPhoto", mainPhoto as File);
         for (let i = 0; i < otherPhoto.length; i++) {
             formData.append('otherPhoto', otherPhoto[i] as File);
         }
@@ -110,8 +108,6 @@ const CreateEstablishment: FC = () => {
     return (
         <CustomCreate isLoading={false} bgColor={'transparent'}>
             <DataForm
-                setMainPhoto={setMainPhoto}
-                mainPhoto={mainPhoto}
                 setOtherPhoto={setOtherPhoto}
                 otherPhoto={otherPhoto}
                 onFinishHandler={onFinishHandler}
