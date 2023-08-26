@@ -34,7 +34,7 @@ const InputList = ({elements, setData, label}: Props) => {
     };
 
     return (
-        <Grid container spacing={2}>
+        <Grid container spacing={2} maxWidth={'100%'}>
             <Grid item xs={12} gap={2} sx={{
                 display: 'flex',
                 flexDirection: 'row',
@@ -52,7 +52,6 @@ const InputList = ({elements, setData, label}: Props) => {
                     onChange={handleInputChange}
                 />
                 <Button
-                    sx={buttonStyle}
                     variant="contained" color={"info"} onClick={handleAddNumber}>
                     <Add />
                 </Button>

@@ -8,7 +8,7 @@ import {
     Select, TextareaAutosize, TextField,
     Typography
 } from "@mui/material";
-import {Add, ArrowBackIosNew, } from "@mui/icons-material";
+import {Add, ArrowBackIosNew,} from "@mui/icons-material";
 import React, {ChangeEvent, useContext} from "react";
 import {DateTimePicker, LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
@@ -115,7 +115,8 @@ const NewsFormData = ({
                             gap: 2,
                         }}>
                             <FormControl fullWidth>
-                                <SearchInstitutions typeSearch={'userInstitutions'} searchPlace={currentInstitutionId} setSearchPlace={setCurrentInstitutionId}/>
+                                <SearchInstitutions typeSearch={'userInstitutions'} searchPlace={currentInstitutionId}
+                                                    setSearchPlace={setCurrentInstitutionId}/>
                             </FormControl>
                             <FormControl fullWidth>
                                 <TextField
@@ -273,9 +274,11 @@ const NewsFormData = ({
                         >
                             {translate("home.create.pictures.title")}
                         </FormHelperText>
-                        <ImageSelector maxImages={8} images={pictures}
-                                       setPictures={setPictures}
-                                       handleChange={handlePicturesChange}/>
+                        <ImageSelector
+                            defaultPictures={[]}
+                            maxImages={8} images={pictures}
+                            setPictures={setPictures}
+                            handleChange={handlePicturesChange}/>
 
                     </FormControl>
                     <FormControl sx={{

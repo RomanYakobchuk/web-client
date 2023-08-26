@@ -380,7 +380,7 @@ export interface IPlaceFormProps {
     tags: Array<any> | any,
     setTags: (item: any) => void,
     place: { address: string, city: string },
-    setPlace: (item: { address: string, city: string }) => void,
+    setPlace: ({ address: string, city: string }) => void,
     features: Array<any> | any,
     setFeatures: (item: any) => void,
     contacts: Array<any> | any,

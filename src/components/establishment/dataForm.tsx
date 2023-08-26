@@ -65,6 +65,8 @@ const DataForm = ({
     const {data: identity} = useGetIdentity<IGetIdentity>();
     const currentUser: ProfileProps = identity?.user as ProfileProps;
 
+    const [defaultPictures, setDefaultPictures] = useState(pictures);
+
     const {isLoaded} = useJsApiLoader({
         id: 'google-map-script',
         googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_KEY!
@@ -81,7 +83,10 @@ const DataForm = ({
         if (currentUser?.status !== 'admin') {
             setCreatedBy(currentUser?._id)
         }
-    }, [currentUser])
+    }, [currentUser]);
+    useEffect(() => {
+        setDefaultPictures(pictures)
+    }, [])
 
     const handleAddWorkDays = (workSchedule: IWorkDay) => {
         setWorkDays([...workDays, workSchedule])
@@ -96,10 +101,12 @@ const DataForm = ({
             fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.lat},${location.lng}&key=${process.env.REACT_APP_GOOGLE_MAPS_KEY!}`)
                 .then((data) => data.json())
                 .then((data) => {
-                    setPlace({
-                        address: data.results[0].formatted_address?.split(',')?.splice(0, 2)?.join(','),
-                        city: `${data.results[0].address_components[4].long_name}, ${data.results[0].address_components[3].long_name}, ${data.results[0].address_components[2].long_name}`
-                    })
+                    if (!place.address || !place.city) {
+                        setPlace({
+                            address: data.results[0]?.formatted_address?.split(',')?.splice(0, 2)?.join(','),
+                            city: `${data.results[0]?.address_components[4].long_name}, ${data.results[0]?.address_components[3]?.long_name}, ${data.results[0]?.address_components[2]?.long_name}`
+                        })
+                    }
                 })
                 .catch((error) => console.log(error))
         }
@@ -183,26 +190,28 @@ const DataForm = ({
                 >
                     <Box sx={{
                         display: 'grid',
-                        gridTemplateColumns: {xs: '1fr', sm: '1fr 1fr', md: '1fr'},
-                        width: {xs: '100%', md: '48%'},
-                        gridTemplateRows: '80px',
-                        gap: 1
+                        gridTemplateColumns: {xs: '1fr', sm: '1fr 1fr',},
+                        width: {xs: '100%'},
+                        // gridTemplateRows: '80px',
+                        gap: 1,
+                        alignItems: 'end'
                     }}>
                         <FormControl fullWidth>
-                            <FormHelperText
-                                sx={{
-                                    fontWeight: 500,
-                                    margin: "10px 0",
-                                    fontSize: {xs: 12, sm: 16},
-                                    color: mode === "dark" ? "#fcfcfc" : "#11142D",
-                                    lineHeight: 'normal'
-                                }}
-                            >
-                                {translate("home.create.name")}
-                            </FormHelperText>
+                            {/*<FormHelperText*/}
+                            {/*    sx={{*/}
+                            {/*        fontWeight: 500,*/}
+                            {/*        margin: "10px 0",*/}
+                            {/*        fontSize: {xs: 12, sm: 16},*/}
+                            {/*        color: mode === "dark" ? "#fcfcfc" : "#11142D",*/}
+                            {/*        lineHeight: 'normal'*/}
+                            {/*    }}*/}
+                            {/*>*/}
+                            {/*    {translate("home.create.name")}*/}
+                            {/*</FormHelperText>*/}
                             <TextField
                                 fullWidth
                                 required
+                                label={translate("home.create.name")}
                                 sx={textFieldStyle}
                                 size={"small"}
                                 id="outlined-basic"
@@ -245,7 +254,6 @@ const DataForm = ({
                                 }}
                             >
                                 {translate("home.create.type.title")}
-
                             </FormHelperText>
                             <Select
                                 labelId="demo-simple-select-label"
@@ -373,7 +381,7 @@ const DataForm = ({
                                     id="outlined-basic3"
                                     color={"secondary"}
                                     size={"small"}
-                                    value={place.city ? place.city : ''}
+                                    value={place.city ?? ''}
                                     label={translate("home.create.city")}
                                     onChange={(e: ChangeEvent<HTMLInputElement>) => setPlace({
                                         address: place.address,
@@ -402,11 +410,11 @@ const DataForm = ({
                             </> : ''
                     }
                 </FormControl>
-                {/*<ScheduleList dataLabel={translate("home.create.workSchedule.workDays.title")}*/}
-                {/*              label={translate("home.create.workSchedule.weekend.title")}*/}
-                {/*              onSubmit={handleAddWorkDays} onDelete={handleDeleteWorkDays}*/}
-                {/*              onSubmitWeekend={setWorkScheduleWeekend} workScheduleWeekend={workScheduleWeekend}*/}
-                {/*              elements={workDays ? workDays : []}/>*/}
+                <ScheduleList dataLabel={translate("home.create.workSchedule.workDays.title")}
+                              label={translate("home.create.workSchedule.weekend.title")}
+                              onSubmit={handleAddWorkDays} onDelete={handleDeleteWorkDays}
+                              onSubmitWeekend={setWorkScheduleWeekend} workScheduleWeekend={workScheduleWeekend}
+                              elements={workDays ? workDays : []}/>
                 <Box sx={{
                     display: 'flex',
                     flexDirection: {xs: 'column', lg: 'row'},
@@ -456,8 +464,10 @@ const DataForm = ({
                         }}
                     >
                         {translate("home.create.pictures.title")}
-                    </FormHelperText>5px
-                    <ImageSelector maxImages={12} images={pictures}
+                    </FormHelperText>
+                    <ImageSelector
+                        maxImages={10} images={pictures}
+                        defaultPictures={defaultPictures}
                                    setPictures={setPictures}
                                    handleChange={handlePicturesChange}/>
 

@@ -1,6 +1,6 @@
 import React, {useContext,} from 'react';
 import {Box, Button, FormControl, Typography} from "@mui/material";
-import {AddCircleOutline, DeleteForeverOutlined, Edit} from "@mui/icons-material";
+import {AddCircleOutline, DeleteForeverOutlined, DeleteOutline, Edit} from "@mui/icons-material";
 import {useTranslate} from "@refinedev/core";
 
 import {ColorModeContext} from "../../../contexts";
@@ -9,6 +9,7 @@ import {buttonStyle} from "../../../styles";
 
 interface Props {
     images: string[] | any;
+    defaultPictures: any;
     setPictures: any;
     handleChange: any;
     maxImages: number,
@@ -18,6 +19,7 @@ interface Props {
 const ImageSelector = ({
                            images: items,
                            handleChange,
+                           defaultPictures,
                            setPictures,
                            maxImages,
                        }: Props) => {
@@ -27,6 +29,13 @@ const ImageSelector = ({
 
     const {device, width} = useMobile();
 
+    const changeItem = (index: number) => {
+        setPictures(items.filter((item: {name: string, url: string} | File, item_index: number) => item_index !== index))
+    }
+
+    const getDefaultPictures = () => {
+        setPictures(defaultPictures)
+    }
     return (
         <>
             <FormControl sx={{
@@ -93,6 +102,10 @@ const ImageSelector = ({
                                     >
                                         {translate("home.create.pictures.deleteAll")}
                                     </Button>
+                                    <Button
+                                        color={'success'}
+                                        onClick={getDefaultPictures}
+                                    >Reset</Button>
                                 </Box>
                             </Box>
                             : <div></div>
@@ -113,8 +126,56 @@ const ImageSelector = ({
                     }
                     {
                         items?.length > 0 ?
-                            <div>Images</div>
+                            <Box sx={{
+                                width: '100%',
+                                display: 'flex',
+                                flexDirection: 'row',
+                                gap: 2,
+                                flexWrap: 'wrap',
 
+                            }}>
+                                {
+                                    items?.map((item: {name: string, url: string} | File, index: number) => (
+                                        <Box
+                                            sx={{
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                maxWidth: {xs: '150px', md: '195px'},
+                                                whiteSpace: '',
+                                                position: 'relative',
+                                                gap: 1,
+                                                "& img": {
+                                                    borderRadius: {xs: '10px', sm: '15px'},
+                                                    width: {xs: '150px', md: '195px'},
+                                                    height: {xs: '150px', md: '195px'},
+                                                }
+                                            }}
+                                            key={index}>
+                                            <img
+                                                style={{
+                                                    objectFit: 'cover'
+                                                }}
+                                                src={item instanceof File ? URL.createObjectURL(item) : item.url}
+                                                alt={item.name}/>
+                                            {item.name}
+                                            <DeleteOutline
+                                                color={'error'}
+                                                sx={{
+                                                    cursor: 'pointer',
+                                                    p: '5px',
+                                                    bgcolor: 'silver',
+                                                    borderRadius: '5px',
+                                                    position: 'absolute',
+                                                    top: '10px',
+                                                    boxSizing:'content-box',
+                                                    right: '10px'
+                                                }}
+                                                onClick={()=> changeItem(index)}
+                                            />
+                                        </Box>
+                                    ))
+                                }
+                            </Box>
                             : <Button component={"label"} sx={
                                 {
                                     width: "100%",
