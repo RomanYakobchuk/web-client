@@ -1,6 +1,7 @@
 import {FormEventHandler, ReactNode} from "react";
 import {FieldValues} from "react-hook-form";
 import {BaseRecord, CreateResponse, UpdateResponse} from "@refinedev/core";
+import {CredentialResponse} from "./google";
 
 export interface IUserLoginProps {
     email: string,
@@ -30,7 +31,7 @@ export interface IData {
     access_token: string,
     refresh_token: string,
     error?: any,
-    favoritePlaces: string[]
+    favoritePlaces: string[],
 }
 
 export interface IUserRegisterProps {
@@ -96,13 +97,11 @@ export interface PropertyProps {
         name: string,
         url: string
     }[],
-    otherPhoto: Array | undefined,
     place: {
         city: string,
         address: string
     },
     type: string,
-    mainPhoto: string,
     workSchedule: {
         workDays: IWorkDay[],
         weekend: string,
@@ -189,8 +188,10 @@ export interface NewsProps {
             to?: string
         }
     }],
-    mainPhoto: string,
-    photos?: Array<string>,
+    pictures?: {
+        name: string,
+        url: string
+    }[],
     category: string,
     description: string,
     status?: string,
@@ -255,8 +256,10 @@ export interface INews {
     index?: number,
     createdAt: Date | any,
     status?: "published" | "draft" | "rejected",
-    mainPhoto?: Array<string> | any,
-    otherPhoto?: any,
+    pictures: {
+        name: string,
+        url: string
+    }[],
     description: string,
     category?: "general" | "event" | "promotions",
     createdBy?: string,
@@ -363,8 +366,8 @@ export interface IPlaceFormProps {
     formLoading: boolean,
     handleSubmit: FormEventHandler<HTMLFormElement> | any,
     onFinishHandler: (data: FieldValues) => Promise<void> | void,
-    setOtherPhoto: (item: any) => void,
-    otherPhoto: any,
+    setPictures: (item: any) => void,
+    pictures: any,
     open: boolean,
     titleAction: string,
     setOpen: (item: any) => void,
@@ -390,8 +393,6 @@ export interface IPlaceFormProps {
     setDescription: (value?: string, event?: any, state?: any) => void,
     createdBy: string,
     setCreatedBy: (item: string) => void,
-    variantForDisplay: string,
-    setVariantForDisplay: (item: string) => void,
     searchManagerInput?: string,
     setSearchManagerInput?: (item: string) => void,
     searchInputValue?: string,
@@ -405,8 +406,8 @@ export interface IPlaceFormProps {
 export interface INewsDataProps {
     handleSubmit: any,
     onFinishHandler: any,
-    otherPhoto: any,
-    setOtherPhoto: (item: any) => void,
+    pictures: any,
+    setPictures: (item: any) => void,
     currentInstitutionId: string,
     setCurrentInstitutionId: (item: string) => void,
     userInstitutions?: any,
@@ -424,8 +425,6 @@ export interface INewsDataProps {
     setIsDatePublished: (value: boolean) => void,
     datePublished: any,
     setDatePublished: any,
-    variantForDisplay: string,
-    setVariantForDisplay: (value: string) => void,
     formLoading: boolean
 }
 

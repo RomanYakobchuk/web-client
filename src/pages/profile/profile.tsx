@@ -1,21 +1,27 @@
-import {useGetIdentity, useOne} from "@refinedev/core";
+import {useGetIdentity, useList, useOne} from "@refinedev/core";
 
 import {CustomProfile, Loading} from "../../components";
 import {IComment, IGetIdentity, IReviews, ProfileProps, PropertyProps} from "../../interfaces/common";
+import {useEffect, useState} from "react";
 
 
 const Profile = () => {
-    const {data} = useGetIdentity<IGetIdentity>();
-    const user: ProfileProps = data?.user as ProfileProps;
-    // const {data, isLoading, isError} = useOne({
-    //     resource: 'users/userInfo',
-    //     id: user?._id
-    // });
+    const {data: identity} = useGetIdentity<IGetIdentity>();
+    const user: ProfileProps = identity?.user as ProfileProps;
+
+    const [favoritePlaces, setFavoritePlaces] = useState<PropertyProps[]>([] as PropertyProps[]);
 
     const myProfile: ProfileProps = user as ProfileProps;
 
-    // if (isLoading) return <Loading/>;
-    // if (isError) return <div>error...</div>;
+    const {data} = useList<PropertyProps>({
+        resource: 'users/getUserFavPlaces'
+    });
+
+    useEffect(() => {
+        if (data?.data as PropertyProps[]) {
+            setFavoritePlaces(data?.data as PropertyProps[])
+        }
+    }, [data?.data]);
 
     return (
         <CustomProfile
@@ -28,7 +34,7 @@ const Profile = () => {
             avatar={myProfile.avatar}
             isActivated={myProfile.isActivated}
             phoneVerify={myProfile.phoneVerify}
-            favoritePlaces={myProfile.favoritePlaces}
+            favoritePlaces={favoritePlaces}
         />
     );
 };

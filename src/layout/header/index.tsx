@@ -157,23 +157,27 @@ export const Header: React.FC = () => {
             <Toolbar sx={{
                 pl: '0 !important'
             }}>
-                <Box
-                    sx={{
-                        display: {xs: "block", md: "none"},
-                        borderRadius: styles.buttonSiderS.borderRadius,
-                        bgcolor: "#475be8",
-                        zIndex: 9,
-                        ml: styles.buttonSiderS.left,
-                        width: "36px",
-                    }}
-                >
-                    <IconButton
-                        sx={{color: "#fff", width: "36px"}}
-                        onClick={setOpen}
-                    >
-                        <MenuRounded/>
-                    </IconButton>
-                </Box>
+                {
+                    showUserInfo && (
+                        <Box
+                            sx={{
+                                display: {xs: "block", md: "none"},
+                                borderRadius: styles.buttonSiderS.borderRadius,
+                                bgcolor: "#475be8",
+                                zIndex: 9,
+                                ml: styles.buttonSiderS.left,
+                                width: "36px",
+                            }}
+                        >
+                            <IconButton
+                                sx={{color: "#fff", width: "36px"}}
+                                onClick={setOpen}
+                            >
+                                <MenuRounded/>
+                            </IconButton>
+                        </Box>
+                    )
+                }
                 <Stack
                     direction="row"
                     width="100%"

@@ -21,6 +21,8 @@
             name="twitter:image"
             content="images/logo.png"
     />
+    <meta name="google-signin-client_id" content={495583971120-ki01714kbouu8nciat4fpfo86g5e3ed2.apps.googleusercontent.com}>
+
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
     <style>
@@ -40,6 +42,16 @@
     <title>
         Capl
     </title>
+    <script
+            src="https://accounts.google.com/gsi/client"
+            async
+            defer
+    ></script>
+    <script src="https://apis.google.com/js/platform.js?onload=init" async defer></script>
+    <script src="https://accounts.google.com/gsi/client" async></script>
+    <script src="https://apis.google.com/js/platform.js?onload=onLoadCallback" async defer></script>
+    <script src="https://accounts.google.com/gsi/client"></script>
+    <script src="https://connect.facebook.net/en_US/sdk.js" async defer></script>
 </head>
 <body>
 <div id="root"></div>

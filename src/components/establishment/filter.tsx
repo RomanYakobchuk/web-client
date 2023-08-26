@@ -296,6 +296,7 @@ const FilterInstitutions = ({
                                     value: item.value,
                                     operator: 'eq'
                                 }])
+                                setType(item.value)
                             } else {
                                 setFilters([{
                                     field: 'propertyType',

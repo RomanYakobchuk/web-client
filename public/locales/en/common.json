@@ -22,6 +22,14 @@
         "forgotPassword": "Forgot password",
         "noAccount": "Don’t have an account?",
         "rememberMe": "Remember me"
+      },
+      "importantly": {
+        "title": "Importantly",
+        "loginMethod": "To Login, use the method you used to register on the site",
+        "facebook": {
+          "part1": "To Logout and change your Facebook account, go to",
+          "part2": "and logout or change your account"
+        }
       }
     },
     "forgotPassword": {
@@ -112,7 +120,15 @@
     "isDraft": "Expect",
     "isRejected": "Rejected",
     "reply": "Reply",
-    "nearby": "Establishments nearby"
+    "nearby": "Establishments nearby",
+    "google": {
+      "signin_with": "Sign in with Google",
+      "signup_with": "Sign up with Google"
+    },
+    "facebook": {
+      "signin_with": "Sign in with Facebook",
+      "signup_with": "Sign up with Facebook"
+    }
   },
   "warnWhenUnsavedChanges": "Are you sure you want to leave? You have unsaved changes.",
   "notifications": {
@@ -215,8 +231,8 @@
       "mainPhoto": "Add a main photo",
       "name": "Name of the institution",
       "description": "Description",
-      "otherPhoto": {
-        "title": "Add additional photo",
+      "pictures": {
+        "title": "Add photos",
         "message": "Select variant for display",
         "variant": "Variant",
         "inputPlace": "Enter the order number for the photo",
@@ -475,7 +491,7 @@
     "odesa": "Odesa",
     "kharkiv": "Kharkiv",
     "lviv": "Lviv",
-    "institutions": "Institutions: {{number}}"
+    "institutions": "Establishments: {{number}}"
   },
   "roles": {
     "manager": "Manager",

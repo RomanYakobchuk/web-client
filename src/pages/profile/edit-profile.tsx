@@ -16,13 +16,14 @@ import {useNavigate, useParams} from "react-router-dom";
 
 import {CustomButton} from "../../components";
 import {ColorModeContext} from "../../contexts";
-import {ProfileProps} from "../../interfaces/common";
+import {IGetIdentity, ProfileProps} from "../../interfaces/common";
 import {buttonStyle, textFieldStyle} from "../../styles";
 
 const EditProfile = () => {
     const {id: _id} = useParams();
     const navigate = useNavigate();
-    const {data: currentUser} = useGetIdentity<ProfileProps>();
+    const {data: identity} = useGetIdentity<IGetIdentity>();
+    const currentUser = identity?.user as ProfileProps;
     const {mode} = useContext(ColorModeContext);
 
     const [propertyImage, setPropertyImage] = useState<any>();
@@ -216,9 +217,8 @@ const EditProfile = () => {
                                 variant={'contained'}
                                 color={'info'}
                                 sx={{
+                                    ...buttonStyle,
                                     width: '130px',
-                                    textTransform: 'capitalize',
-                                    ...buttonStyle
                                 }}
                                 startIcon={
                                     <Edit/>

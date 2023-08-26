@@ -91,22 +91,35 @@ const CountCities = () => {
                                     backgroundPosition: 'center',
                                     flexDirection: 'column',
                                     justifyContent: 'end',
+                                }}>
+                                <Box sx={{
+                                    width: '100%',
                                     padding: '10px',
+                                    borderRadius: '0 0 10px 10px',
+                                    bgcolor: 'rgba(0, 0, 0, 0.2)',
+                                    backdropFilter: 'blur(4px)',
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    gap: 2,
+                                    alignItems: 'baseline'
                                 }}>
-                                <Text style={{
-                                    fontSize: width < 600 ? '18px' : '22px',
-                                    fontWeight: 900
-                                }}>
-                                    {
-                                        currentLocale === 'ua' ? city.name_ua : city.name_en
-                                    }
-                                </Text>
-                                <Text style={{
-                                    fontSize: width < 600 ? '16px' : '18px',
-                                    fontWeight: 600
-                                }}>
-                                    {translate("cities.institutions", {"number": city.institutionCount})}
-                                </Text>
+                                    <Text style={{
+                                        fontSize: width < 600 ? '18px' : '22px',
+                                        fontWeight: 900,
+                                        color: '#fff',
+                                    }}>
+                                        {
+                                            currentLocale === 'ua' ? city.name_ua : city.name_en
+                                        }
+                                    </Text>
+                                    <Text style={{
+                                        fontSize: width < 600 ? '16px' : '18px',
+                                        fontWeight: 600,
+                                        color: '#fff',
+                                    }}>
+                                        {translate("cities.institutions", {"number": city.institutionCount})}
+                                    </Text>
+                                </Box>
                             </Link>
                         ))
                 }

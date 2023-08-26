@@ -25,7 +25,7 @@ const CreateEstablishment: FC = () => {
     const navigate = useNavigate();
     const translate = useTranslate();
 
-    const [otherPhoto, setOtherPhoto] = useState<any>([]);
+    const [pictures, setPictures] = useState<any>([]);
     const [open, setOpen] = useState<boolean>(false);
     const [type, setType] = useState<string>('');
     const [title, setTitle] = useState<string>('');
@@ -56,14 +56,14 @@ const CreateEstablishment: FC = () => {
     }, [workDays, workScheduleWeekend])
     const onFinishHandler = async () => {
 
-        if (!otherPhoto && otherPhoto?.length < 0) return alert("Виберіть головне фото");
+        if (!pictures && pictures?.length < 0) return alert("Виберіть головне фото");
 
-        if (otherPhoto.length > 10) return alert(translate("home.create.otherPhoto.max"))
+        if (pictures.length > 10) return alert(translate("home.create.pictures.max"))
 
         const formData = new FormData();
 
-        for (let i = 0; i < otherPhoto.length; i++) {
-            formData.append('otherPhoto', otherPhoto[i] as File);
+        for (let i = 0; i < pictures.length; i++) {
+            formData.append('pictures', pictures[i] as File);
         }
         formData.append("description", description);
         formData.append("title", title);
@@ -86,7 +86,7 @@ const CreateEstablishment: FC = () => {
 
         const {data}: any = await onFinish(formData);
 
-        if (data && data?.createdById === currentUser?._id) {
+        if (data && data?.createdBy === currentUser?._id) {
             if (data?.user) {
                 localStorage.setItem(
                     "user",
@@ -108,8 +108,8 @@ const CreateEstablishment: FC = () => {
     return (
         <CustomCreate isLoading={false} bgColor={'transparent'}>
             <DataForm
-                setOtherPhoto={setOtherPhoto}
-                otherPhoto={otherPhoto}
+                setPictures={setPictures}
+                pictures={pictures}
                 onFinishHandler={onFinishHandler}
                 formLoading={formLoading}
                 titleAction={'create'}
@@ -129,7 +129,6 @@ const CreateEstablishment: FC = () => {
                 setWorkScheduleWeekend={setWorkScheduleWeekend}
                 setWorkDays={setWorkDays}
                 searchManagerInput={searchManagerInput}
-                setVariantForDisplay={setVariantForDisplay}
                 contacts={contacts}
                 setContacts={setContacts}
                 description={description}
@@ -143,7 +142,6 @@ const CreateEstablishment: FC = () => {
                 setSearchManagerInput={setSearchManagerInput}
                 setType={setType}
                 type={type}
-                variantForDisplay={variantForDisplay}
                 workDays={workDays}
                 workScheduleWeekend={workScheduleWeekend}
             />

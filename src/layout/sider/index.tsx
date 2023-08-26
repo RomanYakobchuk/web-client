@@ -20,7 +20,6 @@ import {
     ExpandMore,
     ChevronLeft,
     ChevronRight,
-    MenuRounded,
     CheckOutlined, CloseOutlined,
 } from "@mui/icons-material";
 import {
@@ -39,6 +38,7 @@ import {useSchema} from "../../settings";
 import {ColorModeContext} from "../../contexts";
 import {ModalWindow} from "../../components";
 import {SchemaContext} from "../../settings/schema";
+import {googleLogout} from "@react-oauth/google";
 
 export const Sider: typeof DefaultSider = ({render}) => {
 
@@ -96,7 +96,7 @@ export const Sider: typeof DefaultSider = ({render}) => {
 
     const renderTreeView = (tree: ITreeMenu[], selectedKey: string) => {
         return tree.map((item: ITreeMenu) => {
-            const {name, children, meta: {icon, label, parent: parentName}, route}: any = item;
+            const {name, children, meta: {icon, parent: parentName}, route}: any = item;
             const isOpen = open[name || ""] || false;
             const isSelected = route === path;
             const isNested = !(parentName === undefined);
@@ -305,7 +305,10 @@ export const Sider: typeof DefaultSider = ({render}) => {
                                     bgcolor: '#365d10'
                                 }
                             }}
-                            onClick={() => mutateLogout()}
+                            onClick={() => {
+                                googleLogout()
+                                mutateLogout()
+                            }}
                         >
                             <CheckOutlined sx={{
                                 color: 'white'

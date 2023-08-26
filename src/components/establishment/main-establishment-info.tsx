@@ -26,12 +26,12 @@ import {buttonStyle} from "../../styles";
 
 
 interface IProps {
-    institution: PropertyProps,
+    establishment: PropertyProps,
     rowHeight: number,
     otherProps?: any
 }
 
-const MainEstablishmentInfo = ({institution, rowHeight, otherProps}: IProps) => {
+const MainEstablishmentInfo = ({establishment, rowHeight, otherProps}: IProps) => {
 
     const {data: identity} = useGetIdentity<IGetIdentity>();
     const user: ProfileProps = identity?.user as ProfileProps;
@@ -43,19 +43,19 @@ const MainEstablishmentInfo = ({institution, rowHeight, otherProps}: IProps) => 
     const [postRatings, setPostRatings] = useState([]);
 
     useEffect(() => {
-        setPostRating(institution?.rating)
-    }, [institution?.rating])
+        setPostRating(establishment?.rating)
+    }, [establishment?.rating])
 
     useEffect(() => {
-        setPostRatings(institution?.ratings);
-    }, [institution?.ratings])
+        setPostRatings(establishment?.ratings);
+    }, [establishment?.ratings])
 
 
     const {isLoaded} = useJsApiLoader({
         id: 'google-map-script',
         googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_KEY!
     });
-    const location: PropertyProps["location"] | any = typeof institution?.location?.lat !== undefined && institution?.location;
+    const location: PropertyProps["location"] | any = typeof establishment?.location?.lat !== undefined && establishment?.location;
     return (
         <Box
             sx={{
@@ -70,36 +70,66 @@ const MainEstablishmentInfo = ({institution, rowHeight, otherProps}: IProps) => 
             <Box>
                 <Box sx={{
                     display: 'flex',
-                    flexDirection: {xs: 'column', sm: 'row'},
+                    flexDirection: {xs: 'column',},
                     justifyContent: {xs: 'start', sm: 'space-between'}
                 }}>
                     <Box>
                         <Box sx={{
                             display: 'flex',
-                            flexDirection: 'row',
-                            gap: {xs: 3, sm: 6},
-                            alignItems: 'center'
+                            width: '100%',
+                            alignItems: 'center',
+                            justifyContent: 'space-between'
                         }}>
-                            <Typography
-                                sx={{
-                                    color: 'common.white',
-                                    textTransform: 'capitalize',
-                                    fontSize: {xs: '24px', sm: '30px'},
-                                    fontWeight: 700,
-                                }}>
-                                {institution.title}
-                            </Typography>
-                            <Typography color="default" sx={{
+                            <Box sx={{
                                 display: 'flex',
-                                justifyContent: 'start',
+                                flexDirection: 'row',
+                                gap: {xs: 3, sm: 6},
                                 alignItems: 'center',
-                                color: 'common.white',
-                                fontSize: {xs: 14, sm: 16},
-                            }}>
-                                {
-                                    translate(`home.create.type.${institution.type}`)
+                                "& a": {
+                                    fontSize: {xs: 14, sm: 16},
                                 }
-                            </Typography>
+                            }}>
+                                <Typography
+                                    sx={{
+                                        color: 'common.white',
+                                        textTransform: 'capitalize',
+                                        fontSize: {xs: '24px', sm: '30px'},
+                                        fontWeight: 700,
+                                    }}>
+                                    {establishment.title}
+                                </Typography>
+                                <Link
+                                    to={`/all_institutions?pageSize=10&current=1&sorters[0][field]=createdAt_asc&sorters[0][order]=desc&filters[0][field]=propertyType&filters[0][operator]=eq&filters[0][value]=${establishment.type}`}
+                                    style={{
+                                        textDecoration: 'none',
+                                        display: 'flex',
+                                        justifyContent: 'start',
+                                        alignItems: 'center',
+                                        color: '#fff',
+                                        padding: '5px',
+                                        backgroundColor: '#5e49c3',
+                                        borderRadius: '5px',
+                                    }}>
+                                    {
+                                        translate(`home.create.type.${establishment.type}`)
+                                    }
+                                </Link>
+                            </Box>
+                            {
+                                establishment?.createdBy !== user?._id &&
+                                <BookMark showText={false} color={'common.white'}
+                                          bgColor={'transparent'}
+                                          style={{
+                                              p: '5px',
+                                              borderRadius: '5px',
+                                              minWidth: '20px',
+                                              bgcolor: mode === 'dark' ? '#86a8cf' : '#e6f2ff',
+                                              "& svg": {
+                                                  fontSize: {xs: '26px', sm: '30px'}
+                                              }
+                                          }}
+                                          type={'favoritePlaces'} id={establishment?._id}/>
+                            }
                         </Box>
                         <Box sx={{
                             display: 'flex',
@@ -115,20 +145,20 @@ const MainEstablishmentInfo = ({institution, rowHeight, otherProps}: IProps) => 
                                 flexDirection: 'column'
                             }}>
                                 <Link
-                                    to={`/all_institutions?pageSize=10&current=1&sorters[0][field]=&sorters[0][order]=asc&filters[0][field]=averageCheck&filters[0][operator]=lte&filters[0][value]=100000&filters[1][field]=averageCheck&filters[1][operator]=gte&filters[1][value]=20&filters[2][field]=tag&filters[2][value]=&filters[2][operator]=contains&filters[3][field]=title&filters[3][value]=&filters[3][operator]=contains&filters[4][field]=propertyType&filters[4][operator]=eq&filters[4][value]=&filters[5][field]=city&filters[5][operator]=contains&filters[5][value]=${institution?.place?.city}`}
+                                    to={`/all_institutions?pageSize=10&current=1&sorters[0][field]=&sorters[0][order]=asc&filters[0][field]=averageCheck&filters[0][operator]=lte&filters[0][value]=100000&filters[1][field]=averageCheck&filters[1][operator]=gte&filters[1][value]=20&filters[2][field]=tag&filters[2][value]=&filters[2][operator]=contains&filters[3][field]=title&filters[3][value]=&filters[3][operator]=contains&filters[4][field]=propertyType&filters[4][operator]=eq&filters[4][value]=&filters[5][field]=city&filters[5][operator]=contains&filters[5][value]=${establishment?.place?.city}`}
                                     style={{
                                         fontSize: '14px',
                                         width: 'fit-content',
                                         color: mode === 'dark' ? 'silver' : 'blueviolet',
                                         borderBottom: `1px solid ${mode === 'dark' ? 'silver' : 'blueviolet'}`
                                     }}>
-                                    {institution?.place?.city}
+                                    {establishment?.place?.city}
                                 </Link>
                                 <Typography sx={{
                                     fontSize: '13px',
                                     color: 'common.white',
                                 }}>
-                                    {institution?.place?.address}
+                                    {establishment?.place?.address}
                                 </Typography>
                             </Box>
                         </Box>
@@ -141,7 +171,7 @@ const MainEstablishmentInfo = ({institution, rowHeight, otherProps}: IProps) => 
                         mb: 0.5
                     }}>
                         {
-                            institution?._id && postRating !== undefined && <>
+                            establishment?._id && postRating !== undefined && <>
                                 <Rating precision={0.5} name="read-only" value={postRating} readOnly/>
                                 <Box sx={{
                                     color: 'common.white'
@@ -159,8 +189,8 @@ const MainEstablishmentInfo = ({institution, rowHeight, otherProps}: IProps) => 
                     gap: 2
                 }}>
                     {
-                        institution?.pictures?.length > 0 &&
-                        <ImageGallery photos={institution?.pictures}/>
+                        establishment?.pictures?.length > 0 &&
+                        <ImageGallery photos={establishment?.pictures}/>
                     }
                     <Box sx={{
                         p: 0,
@@ -201,7 +231,7 @@ const MainEstablishmentInfo = ({institution, rowHeight, otherProps}: IProps) => 
                             p: '15px',
                             bgcolor: mode === 'dark' ? '#3b93a7' : '#f39c7d',
                         }}>
-                            <MDEditor.Markdown source={institution?.description}
+                            <MDEditor.Markdown source={establishment?.description}
                                                style={{
                                                    whiteSpace: 'pre-wrap',
                                                    fontSize: "14px",
@@ -229,7 +259,7 @@ const MainEstablishmentInfo = ({institution, rowHeight, otherProps}: IProps) => 
                                 </Typography>
                                 <>
                                     {
-                                        institution?.workSchedule?.workDays?.map((workDay, index) => (
+                                        establishment?.workSchedule?.workDays?.map((workDay, index) => (
                                             <Box key={index} sx={{
                                                 display: 'flex',
                                                 flexDirection: 'row',
@@ -256,29 +286,23 @@ const MainEstablishmentInfo = ({institution, rowHeight, otherProps}: IProps) => 
                                 <Box sx={{
                                     ml: 1
                                 }}>
-                                    {institution?.workSchedule?.weekend}
+                                    {establishment?.workSchedule?.weekend}
                                 </Box>
                             </Stack>
                             <Box sx={{
                                 display: 'flex',
                                 flexDirection: 'column',
-                                gap: 1
                             }}>
                                 {
-                                    institution?.createdBy !== user?._id &&
-                                    <BookMark showText={true} color={mode === "dark" ? '#fcfcfc' : '#000'}
-                                              type={'favoritePlaces'} id={institution?._id}/>
-                                }
-                                {
-                                    institution?.createdBy !== user?._id &&
+                                    establishment?.createdBy !== user?._id &&
                                     <Button
                                         variant={'contained'}
                                         color={'info'}
                                         sx={{
+                                            ...buttonStyle,
                                             textTransform: 'inherit',
-                                            ...buttonStyle
                                         }}
-                                        onClick={() => navigate(`/capl/create?institution=${institution?._id}`)}
+                                        onClick={() => navigate(`/capl/create?institution=${establishment?._id}`)}
                                     >
                                         {translate('capl.title')}
                                     </Button>
@@ -295,7 +319,7 @@ const MainEstablishmentInfo = ({institution, rowHeight, otherProps}: IProps) => 
                 width: '100%'
             }}>
                 {
-                    isLoaded && institution?._id ?
+                    isLoaded && establishment?._id ?
                         <Box sx={{
                             width: {xs: '100%', sm: '350px', md: '100%', lg: '50%'},
                             height: '350px',
@@ -349,7 +373,7 @@ const MainEstablishmentInfo = ({institution, rowHeight, otherProps}: IProps) => 
                             mt: 1
                         }}>
                             {
-                                institution?.contacts?.map((contact: any, index: number) => (
+                                establishment?.contacts?.map((contact: any, index: number) => (
                                     <Box key={index}>
                                         {contact?.value}
                                     </Box>
@@ -370,9 +394,9 @@ const MainEstablishmentInfo = ({institution, rowHeight, otherProps}: IProps) => 
 
                         }}>
                             {
-                                institution?.tags?.map((tag: any, index: number) => (
+                                establishment?.tags?.map((tag: any, index: number) => (
                                     <Chip
-                                        onClick={() => navigate(`/all_institutions?pageSize=10&current=1&sorters[0][field]=createdAt_desc&sorters[0][order]=desc&filters[0][field]=title&filters[0][value]=${'#'+tag.value}&filters[0][operator]=contains`,
+                                        onClick={() => navigate(`/all_institutions?pageSize=10&current=1&sorters[0][field]=createdAt_desc&sorters[0][order]=desc&filters[0][field]=title&filters[0][value]=${'#' + tag.value}&filters[0][operator]=contains`,
                                             {state: {value: tag.value, isTag: true}})} key={index} label={tag.value}
                                         sx={{
                                             color: '#fff',
@@ -395,7 +419,7 @@ const MainEstablishmentInfo = ({institution, rowHeight, otherProps}: IProps) => 
                 </Typography>
                 <List>
                     {
-                        institution?.features?.map((feature, index) => (
+                        establishment?.features?.map((feature, index) => (
                             <ListItem key={index}>
                                 {feature?.value}
                             </ListItem>

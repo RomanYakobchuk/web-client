@@ -53,46 +53,6 @@ axiosInstance.interceptors.request.use(async (request: AxiosRequestConfig) => {
     (error) => Promise.reject(error)
 );
 
-
-// axiosInstance.interceptors.response.use(
-//     (response) => {
-//         return response
-//     },
-//     async (error) => {
-//         if (error.response) {
-//             const config = error?.config;
-//             if (error?.response?.status === 401 && !config._retry) {
-//                 config._retry = true;
-//                 try {
-//                     const refresh_token = localStorage.getItem(REFRESH_TOKEN_KEY);
-//                     const response = await axios.post(`${baseURL}/auth/refreshToken`, {
-//                         refresh_token
-//                     })
-//                     config.headers.authorization = response?.data?.access_token;
-//
-//                     localStorage.setItem(ACCESS_TOKEN_KEY, response?.data?.access_token)
-//                     localStorage.setItem(REFRESH_TOKEN_KEY, response?.data?.refresh_token)
-//                     localStorage.setItem("user", response?.data?.user)
-//
-//                     config._retry = true;
-//
-//                     return await axios.request(config);
-//                 } catch (error: any) {
-//                     if (error?.response?.data?.code === 401 || error?.response?.data?.code === '401') {
-//
-//                         localStorage.removeItem(ACCESS_TOKEN_KEY);
-//                         localStorage.removeItem(REFRESH_TOKEN_KEY);
-//                         localStorage.removeItem("user");
-//                         return window.location.reload();
-//                     }
-//                     return Promise.reject(error)
-//                 }
-//             }
-//         }
-//         return Promise.reject(error)
-//     }
-// )
-
 axiosInstance.interceptors.response.use(
     (response) => {
         return response;
@@ -186,6 +146,7 @@ export const authProvider: AuthBindings = {
             localStorage.removeItem(REFRESH_TOKEN_KEY);
             localStorage.removeItem("user");
             localStorage.removeItem("favoritePlaces");
+            axios.defaults.headers.common = {};
             return {
                 success: true,
                 redirectTo: '/login'

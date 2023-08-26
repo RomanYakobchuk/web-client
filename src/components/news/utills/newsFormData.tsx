@@ -1,15 +1,14 @@
 import {
     Box,
     Button,
-    CardMedia, CircularProgress,
+    CircularProgress,
     FormControl,
     FormHelperText,
-    IconButton,
     MenuItem,
     Select, TextareaAutosize, TextField,
     Typography
 } from "@mui/material";
-import {Add, AddCircleOutline, ArrowBackIosNew, DeleteForeverOutlined, Edit} from "@mui/icons-material";
+import {Add, ArrowBackIosNew, } from "@mui/icons-material";
 import React, {ChangeEvent, useContext} from "react";
 import {DateTimePicker, LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
@@ -18,7 +17,6 @@ import {useTranslate} from "@refinedev/core";
 import {useNavigate} from "react-router-dom";
 
 import {CustomButton} from "../../index";
-import DateTimeList from "./dateTimeList";
 import ImageSelector from "../../establishment/utills/ImageSelector";
 import {ColorModeContext} from "../../../contexts";
 import {useMobile} from "../../../utils";
@@ -33,13 +31,11 @@ const NewsFormData = ({
                           setStatus,
                           onFinishHandler,
                           status,
-                          otherPhoto,
-                          setOtherPhoto,
+                          pictures,
+                          setPictures,
                           description,
                           setDescription,
                           handleSubmit,
-                          setVariantForDisplay,
-                          variantForDisplay,
                           setIsDatePublished,
                           isDatePublished,
                           workDays,
@@ -54,9 +50,9 @@ const NewsFormData = ({
     const {mode} = useContext(ColorModeContext);
     const {device, width} = useMobile();
 
-    const handleOtherPhotoChange = (e: ChangeEvent<HTMLInputElement> | any) => {
-        if (6 < otherPhoto.length) return alert(translate("home.create.otherPhoto.max") + "6")
-        if (6 < e.target.files?.length) return alert(translate("home.create.otherPhoto.max") + "6");
+    const handlePicturesChange = (e: ChangeEvent<HTMLInputElement> | any) => {
+        if (6 < pictures.length) return alert(translate("home.create.pictures.max") + "6")
+        if (6 < e.target.files?.length) return alert(translate("home.create.pictures.max") + "6");
 
         let arr = [];
         const items = e.target.files;
@@ -64,7 +60,7 @@ const NewsFormData = ({
             const item = items[i];
             arr.push(item)
         }
-        setOtherPhoto([...arr])
+        setPictures([...arr])
     }
 
     const handleAddWorkDays = (workSchedule: any) => {
@@ -275,12 +271,11 @@ const NewsFormData = ({
                                 color: mode === "dark" ? "#fcfcfc" : "#11142D",
                             }}
                         >
-                            {translate("home.create.otherPhoto.title")}
+                            {translate("home.create.pictures.title")}
                         </FormHelperText>
-                        <ImageSelector variantForDisplay={variantForDisplay} setVariantForDisplay={setVariantForDisplay}
-                                       maxImages={8} images={otherPhoto}
-                                       setOtherPhoto={setOtherPhoto}
-                                       handleChange={handleOtherPhotoChange}/>
+                        <ImageSelector maxImages={8} images={pictures}
+                                       setPictures={setPictures}
+                                       handleChange={handlePicturesChange}/>
 
                     </FormControl>
                     <FormControl sx={{

@@ -81,6 +81,7 @@ const SearchCity = ({setSearchCity, searchCity}: IProps) => {
     const onSearch = (value: string) => {
         setSearchInputValue(value)
         setSearchCityInput(value)
+        setSearchCity(value)
     }
 
     useEffect(() => {

@@ -8,14 +8,15 @@ import {
     Stack, Rating,
 } from "@mui/material";
 import dayjs from "dayjs";
+import {Link} from "react-router-dom";
+import {useTranslation} from "react-i18next";
 import relativeTime from "dayjs/plugin/relativeTime"
-import {IGetIdentity, ProfileProps, PropertyProps} from "../../../interfaces/common";
 import {useGetIdentity, useTranslate} from "@refinedev/core";
 import React, {useContext, useEffect} from "react";
+
+import {IGetIdentity, ProfileProps, PropertyProps} from "../../../interfaces/common";
 import {ColorModeContext} from "../../../contexts";
 import BookMark from "../../common/BookMark";
-import {Link, useNavigate} from "react-router-dom";
-import {useTranslation} from "react-i18next";
 import 'dayjs/locale/uk';
 import 'dayjs/locale/en';
 import {tagStyle} from "../../../styles";
@@ -36,7 +37,6 @@ const Variant1EstablishmentCard = ({
     const {mode} = useContext(ColorModeContext);
     const {data: identity} = useGetIdentity<IGetIdentity>();
     const user: ProfileProps = identity?.user as ProfileProps;
-    const navigate = useNavigate();
     const color = mode === "dark" ? '#f1e6e6' : "#1d1a39";
 
     useEffect(() => {
@@ -58,6 +58,7 @@ const Variant1EstablishmentCard = ({
                     justifyContent: 'space-between',
                     width: '100%',
                     p: '10px',
+                    height: '100%',
                     gap: 2,
                     borderRadius: '20px',
                     transition: '0.3s linear',

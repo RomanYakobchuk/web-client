@@ -19,18 +19,18 @@ import {
 import {useForm} from "@refinedev/react-hook-form";
 import {Link, useNavigate} from "react-router-dom";
 
-import UserAgreement from "../../components/userAgreement";
 import {ColorModeContext} from "../../contexts";
 import {buttonStyle, selectStyle, textFieldStyle} from "../../styles";
-import {useMobile} from "../../utils";
 import ContainerComponent from "./utills/containerComponent";
+import {ModalWindow} from "../../components";
+import OrPart from "./utills/orPart";
+import UserAgreement from "./utills/userAgreement";
 
 const Register = () => {
     const translate = useTranslate();
     const navigate = useNavigate();
     const {mode} = useContext(ColorModeContext);
     const {open} = useNotification();
-    const {width} = useMobile();
 
     const [show, setShow] = useState(false);
     const [error, setError] = useState<any>([]);
@@ -52,7 +52,6 @@ const Register = () => {
         }
     },);
 
-
     const onFinishHandler = async (data: FieldValues) => {
         if (!accept) return alert(translate("agreement.alert"));
 
@@ -60,12 +59,15 @@ const Register = () => {
             return alert(translate("account.edit.alert"))
         }
 
-        await onFinish({
-            ...data
+        const response: any = await onFinish({
+            ...data,
+            registerBy: "Email"
         });
-
-        setOpenModal(true)
-
+        if (response?.data) {
+            if (!response?.data?.isVerify) {
+                setOpenModal(true)
+            }
+        }
     };
 
     useEffect(() => {
@@ -85,14 +87,16 @@ const Register = () => {
     const size = 'small';
 
     return (
-        <ContainerComponent>
+        <ContainerComponent isPicture={false}>
             <Box
                 sx={{
                     marginTop: 2,
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    margin: 'auto'
+                    margin: 'auto',
+                    width: {xs: '90%', md: '700px'},
+                    maxWidth: '700px',
                 }}
             >
                 <Avatar src={`/images/logo.png`} onClick={() => navigate('/welcome')}
@@ -104,7 +108,16 @@ const Register = () => {
                     {translate("importantText")}
                 </Typography>
                 <Box component="form" onSubmit={handleSubmit(onFinishHandler)} noValidate sx={{mt: 3}}>
-                    <Grid container spacing={3}>
+                    <Grid container spacing={3}
+                          sx={{
+                              display: 'flex',
+                              flexDirection: {xs: 'column', md: 'row'},
+                              flexWrap: {xs: 'unset', md: 'wrap'},
+                              "& div.MuiGrid-item": {
+                                  maxWidth: '350px !important'
+                              }
+                          }}
+                    >
                         <Grid item xs={12}>
                             <TextField
                                 autoComplete="given-name"
@@ -184,14 +197,12 @@ const Register = () => {
                                     <MenuItem value={'manager'}>{translate("roles.manager")}</MenuItem>
                                 </Select>
                             </FormControl>
-
                         </Grid>
                         <Grid item xs={12}>
                             <FormControl fullWidth sx={{
                                 position: 'relative'
                             }}>
                                 <TextField
-                                    margin="normal"
                                     required
                                     fullWidth
                                     label={translate("pages.login.fields.password")}
@@ -209,7 +220,8 @@ const Register = () => {
                                     cursor: 'pointer',
                                     position: 'absolute',
                                     zIndex: 20,
-                                    top: '45%',
+                                    top: '50%',
+                                    transform: 'translateY(-45%)',
                                     right: '5%',
                                     width: '20px',
                                     height: '20px',
@@ -257,7 +269,10 @@ const Register = () => {
                         </Grid>
                         <UserAgreement show={show} setShow={setShow}/>
                     </Grid>
-                    <Grid item mt={2} mb={2}>
+                    <Grid item sx={{
+                        mt: '10px',
+                        display: 'flex'
+                    }}>
                         <Button
                             type={"submit"}
                             variant={'contained'}
@@ -266,31 +281,106 @@ const Register = () => {
                                 ...buttonStyle,
                                 fontSize: '18px',
                                 width: '100%',
+                                maxWidth: '300px',
+                                margin: '0 auto'
                             }}>
                             {
                                 formLoading ? <CircularProgress/> :
                                     translate("pages.register.buttons.submit")}
                         </Button>
                     </Grid>
-                    <Grid container justifyContent="start">
-                        <Box>
-                            {translate("pages.register.buttons.haveAccount") + ' '}
-                            <Link
-                                to={'/login'}
-                                style={{
-                                    color: mode === 'dark' ? '#8aa4d3' : '#275ab7',
-                                    fontSize: '16px',
-                                    textTransform: 'none',
-                                    width: '100%',
-                                    transition: '300ms linear',
-
-                                }}>
-                                {translate("pages.login.signin")}
-                            </Link>
-                        </Box>
-                    </Grid>
                 </Box>
+                <OrPart
+                    githubType={'register_github'}
+                    googleType={'register'}
+                    googleText={'signup_with'}
+                    facebookType={'register'}
+                    facebookText={'signup_with'}
+                />
+                <Grid container justifyContent="start">
+                    <Box>
+                        {translate("pages.register.buttons.haveAccount") + ' '}
+                        <Link
+                            to={'/login'}
+                            style={{
+                                color: mode === 'dark' ? '#8aa4d3' : '#275ab7',
+                                fontSize: '16px',
+                                textTransform: 'none',
+                                width: '100%',
+                                transition: '300ms linear',
+
+                            }}>
+                            {translate("pages.login.signin")}
+                        </Link>
+                    </Box>
+                </Grid>
             </Box>
+            <ModalWindow
+                title={
+                    <Box sx={{
+                        fontWeight: 700,
+                        fontSize: {xs: '20px', sm: '24px'}
+                    }}>
+                        {translate("verify.activation")}
+                    </Box>
+                }
+                setOpen={setOpenModal}
+                open={openModal}
+                contentProps={{
+                    maxWidth: '500px',
+                    width: '90%',
+                    height: '40vh',
+                    borderRadius: '15px'
+                }}
+                bodyProps={{
+                    width: '80%',
+                    margin: '50px auto',
+                }}
+            >
+                <Box sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: 6,
+                    width: '100%',
+                    maxWidth: '300px',
+                    margin: '0 auto'
+                }}>
+                    <Typography sx={{
+                        fontSize: {xs: '16px', sm: '18px', md: '20px'}
+                    }}>
+                        {translate("verify.verifyMes")}
+                    </Typography>
+                    <Box sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        width: '100%'
+                    }}>
+                        <Button
+                            sx={{
+                                ...buttonStyle
+                            }}
+                            variant={'contained'}
+                            color={'error'}
+                            onClick={() => setOpenModal(false)}>
+                            {translate("buttons.close")}
+                        </Button>
+                        <Button
+                            sx={{
+                                ...buttonStyle
+                            }}
+                            variant={'contained'}
+                            color={'info'}
+                            onClick={() => window.location.replace('https://mail.google.com/')}
+                        >
+                            {translate("verify.openGmail")}
+                        </Button>
+                    </Box>
+                </Box>
+
+            </ModalWindow>
         </ContainerComponent>
     );
 }

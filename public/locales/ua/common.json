@@ -22,6 +22,14 @@
         "forgotPassword": "Відновити пароль",
         "noAccount": "Не маєте облікового запису?",
         "rememberMe": "Запам'ятати мене"
+      },
+      "importantly": {
+        "title": "Важливо",
+        "loginMethod": "Для входу використовуйте той метод, яким ви реєструвалися на сайті.",
+        "facebook": {
+          "part1": "Для виходу і зміни облікового запису Facebook перейдіть на сайт",
+          "part2": "та вийдіть або змініть обліковий запис"
+        }
       }
     },
     "forgotPassword": {
@@ -112,7 +120,15 @@
     "isDraft": "Очікують",
     "isRejected": "Відхилено",
     "reply": "Відповісти",
-    "nearby": "Заклади поблизу"
+    "nearby": "Заклади поблизу",
+    "google": {
+      "signin_with": "Увійти з Google",
+      "signup_with": "Зареєструватися з Google"
+    },
+    "facebook": {
+      "signin_with": "Увійти з Facebook",
+      "signup_with": "Зареєструватися з Facebook"
+    }
   },
   "warnWhenUnsavedChanges": "Ви впевнені, що хочете піти? У вас є незбережені зміни.",
   "notifications": {
@@ -215,8 +231,8 @@
       "mainPhoto": "Додайте головне фото",
       "name": "Назва закладу",
       "description": "Опис",
-      "otherPhoto": {
-        "title": "Додайте додаткові фото",
+      "pictures": {
+        "title": "Додайте фото",
         "message": "Виберіть варіант для відображення",
         "variant": "Варіант",
         "inputPlace": "Введіть номер порядку для фото",

@@ -160,7 +160,7 @@ const EstablishmentDetails: FC = () => {
             }}>
                 <MainEstablishmentInfo
                     rowHeight={device && width < 600 ? 120 : 200}
-                    institution={institution}/>
+                    establishment={institution}/>
                 <Box sx={{
                     display: 'flex',
                     flexDirection: 'column',

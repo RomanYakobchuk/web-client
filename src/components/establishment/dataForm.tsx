@@ -28,8 +28,8 @@ const DataForm = ({
                       handleSubmit,
                       formLoading,
                       onFinishHandler,
-                      otherPhoto,
-                      setOtherPhoto,
+                      pictures,
+                      setPictures,
                       open,
                       setOpen,
                       titleAction,
@@ -39,8 +39,6 @@ const DataForm = ({
                       setTags,
                       setWorkScheduleWeekend,
                       workScheduleWeekend,
-                      setVariantForDisplay,
-                      variantForDisplay,
                       workDays,
                       setWorkDays,
                       setCreatedBy,
@@ -115,9 +113,9 @@ const DataForm = ({
     };
 
 
-    const handleOtherPhotoChange = (e: ChangeEvent<HTMLInputElement> | any) => {
-        if (10 < otherPhoto.length) return alert(translate("home.create.otherPhoto.max") + "10");
-        if (10 < e.target.files?.length) return alert(translate("home.create.otherPhoto.max") + '10');
+    const handlePicturesChange = (e: ChangeEvent<HTMLInputElement> | any) => {
+        if (10 < pictures.length) return alert(translate("home.create.pictures.max") + "10");
+        if (10 < e.target.files?.length) return alert(translate("home.create.pictures.max") + '10');
 
         let arr = [];
         const items = e.target.files;
@@ -125,14 +123,14 @@ const DataForm = ({
             const item = items[i];
             arr.push(item)
         }
-        setOtherPhoto([...arr])
+        setPictures([...arr])
     }
 
 
     const handleOpen = () => {
-        if (!otherPhoto && otherPhoto?.length < 0) return alert("Виберіть головне фото");
+        if (!pictures && pictures?.length < 0) return alert("Виберіть головне фото");
 
-        if (otherPhoto.length > 10) return alert(translate("home.create.otherPhoto.max"))
+        if (pictures.length > 10) return alert(translate("home.create.pictures.max"))
 
         setOpen(true)
     }
@@ -457,12 +455,11 @@ const DataForm = ({
                             color: mode === "dark" ? "#fcfcfc" : "#11142D",
                         }}
                     >
-                        {translate("home.create.otherPhoto.title")}
-                    </FormHelperText>
-                    <ImageSelector variantForDisplay={variantForDisplay} setVariantForDisplay={setVariantForDisplay}
-                                   maxImages={12} images={otherPhoto}
-                                   setOtherPhoto={setOtherPhoto}
-                                   handleChange={handleOtherPhotoChange}/>
+                        {translate("home.create.pictures.title")}
+                    </FormHelperText>5px
+                    <ImageSelector maxImages={12} images={pictures}
+                                   setPictures={setPictures}
+                                   handleChange={handlePicturesChange}/>
 
                 </FormControl>
                 <FormControl sx={{

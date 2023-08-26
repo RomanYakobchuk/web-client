@@ -1,6 +1,6 @@
 import {Edit, Email, Phone} from "@mui/icons-material";
 import {Avatar, Box, Grid, Stack, Typography} from "@mui/material";
-import React, {useContext, useState} from "react";
+import React, {useContext} from "react";
 import {useTranslate} from "@refinedev/core";
 import {useNavigate} from "react-router-dom";
 import {Image} from "antd";
@@ -32,23 +32,13 @@ const CustomProfile = ({
     const navigate = useNavigate();
     const {mode} = useContext(ColorModeContext);
     const translate = useTranslate();
-    const [selectedItem, setSelectedItem] = useState<number | null>(null);
 
-    const handleClick = (index: number) => {
-        setSelectedItem((prevSelectedItem) =>
-            prevSelectedItem === index ? null : index
-        );
-    };
-
-    const calculateGridSize = (index: number): string => {
-        if (selectedItem === index) {
-            return "span 2";
-        } else {
-            return "span 1";
-        }
-    };
     return (
-        <Box>
+        <Box sx={{
+            p: '20px',
+            margin: '0 auto',
+            maxWidth: '1200px'
+        }}>
             <Typography fontSize={{xs: '18px', sm: '22px'}} fontWeight={700}
                         color={mode === "dark" ? "#fcfcfc" : "#11142D"}>
                 {translate("profile.profile")}
@@ -60,6 +50,7 @@ const CustomProfile = ({
                         display: "flex",
                         flexDirection: {xs: 'column', sm: 'row'},
                         gap: 2.5,
+                        alignItems: 'center'
                     }}
                 >
                     <Box
@@ -78,7 +69,10 @@ const CustomProfile = ({
                             flexDirection: 'column',
                             width: {xs: "120px", sm: '150px', md: '220px', lg: "300px"},
                             height: {xs: "120px", sm: '150px', md: '220px', lg: "300px"},
-                            gap: 3
+                            gap: 3,
+                            "& > div > div":{
+                                borderRadius: '50%'
+                            }
                         }}>
                             {
                                 avatar ?
@@ -89,7 +83,7 @@ const CustomProfile = ({
                                            height={"100%"}
                                            style={{
                                                objectFit: "cover",
-                                               borderRadius: '5px'
+                                               borderRadius: '50%'
                                            }}/> :
                                     <Avatar sx={{
                                         width: {xs: "140px", md: "340px"},
@@ -98,26 +92,42 @@ const CustomProfile = ({
                                     }}/>
                             }
                         </Box>
-                        <Box sx={{
-                            display: {xs: 'block', lg: 'none'},
-                            ml: {xs: 6, sm: 0},
-                        }}>
-                            <Stack direction="row" justifyContent={"space-between"}>
-                                <Box display={"flex"} flexDirection={"column"}>
-                                    <Typography
-                                        fontSize={{xs: 16, md: 20}}
-                                        fontWeight={600}
-                                        color={mode === "dark" ? "#fcfcfc" : "#11142D"}
-                                    >
-                                        {name}
-                                    </Typography>
-                                </Box>
-                            </Stack>
-                        </Box>
+                        {/*<Box sx={{*/}
+                        {/*    display: {xs: 'block', lg: 'none'},*/}
+                        {/*    ml: {xs: 6, sm: 0},*/}
+                        {/*}}>*/}
+                        {/*    <Stack direction="row" justifyContent={"space-between"}>*/}
+                        {/*        <Box display={"flex"} flexDirection={"column"}>*/}
+                        {/*            <Typography*/}
+                        {/*                fontSize={{xs: 16, md: 20}}*/}
+                        {/*                fontWeight={600}*/}
+                        {/*                color={mode === "dark" ? "#fcfcfc" : "#11142D"}*/}
+                        {/*            >*/}
+                        {/*                {name}*/}
+                        {/*            </Typography>*/}
+                        {/*        </Box>*/}
+                        {/*    </Stack>*/}
+                        {/*</Box>*/}
                     </Box>
                     <Box
-                        flex={1}
+                        sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: 2
+                        }}
                     >
+                        <Box sx={{
+                            display: 'flex',
+                            width: '100%'
+                        }}>
+                            <Typography
+                                fontSize={{xs: 16, sm: 20, md: 30}}
+                                fontWeight={600}
+                                color={mode === "dark" ? "#fcfcfc" : "#11142D"}
+                            >
+                                {name}
+                            </Typography>
+                        </Box>
                         <Box
                             flex={1}
                             display="flex"
@@ -136,14 +146,8 @@ const CustomProfile = ({
                                         container
                                         spacing={2}
                                         sx={{
-                                            display: 'grid',
-                                            gridTemplateColumns: {
-                                                xs: 'repeat(1, 1fr)',
-                                                sm: 'repeat(2, 1fr)',
-                                                md: 'repeat(3, 1fr)',
-                                                xl: 'repeat(4, 1fr)'
-                                            },
-                                            gridAutoRows: "minmax(0, 1fr)"
+                                            display: 'flex',
+                                            flexWrap: 'wrap'
                                         }}
                                     >
                                         {
@@ -210,10 +214,8 @@ const CustomProfile = ({
                                                     key={index}
                                                     item
                                                     sx={{
-                                                        gridRow: calculateGridSize(index),
-                                                        transition: "all 0.3s ease",
+                                                        flex: '1 1 200px'
                                                     }}
-                                                    onClick={() => handleClick(index)}
                                                 >
                                                     <TitleTextItem
                                                         title={item.title}
@@ -227,36 +229,6 @@ const CustomProfile = ({
                                     </Grid>
                                 </Stack>
                             </Box>
-                        </Box>
-                        <Box sx={{
-                            display: {xs: 'none', lg: 'block'},
-                            width: '100%'
-                        }}>
-                            <Stack direction="row" justifyContent={"space-between"}>
-                                <Box display={"flex"} flexDirection={"column"}>
-                                    <Typography
-                                        fontSize={{xs: 16, md: 20}}
-                                        fontWeight={600}
-                                        color={mode === "dark" ? "#fcfcfc" : "#11142D"}
-                                    >
-                                        {name}
-                                    </Typography>
-                                </Box>
-                            </Stack>
-                            {/*    <CustomButton*/}
-                            {/*        fullWidth*/}
-                            {/*        title={translate("profile.edit.title")}*/}
-                            {/*        backgroundColor="#475BE8"*/}
-                            {/*        color="#FCFCFC"*/}
-                            {/*        icon={*/}
-                            {/*            <Edit/>*/}
-                            {/*        }*/}
-                            {/*        handleClick={() => {*/}
-                            {/*            navigate(*/}
-                            {/*                `/profile/edit/${_id}`*/}
-                            {/*            )*/}
-                            {/*        }}*/}
-                            {/*    />*/}
                         </Box>
                     </Box>
                 </Box>

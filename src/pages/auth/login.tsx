@@ -1,30 +1,28 @@
 import {
     Box,
-    Container,
     Typography,
     Grid,
     Avatar,
     Button,
     TextField,
-    CssBaseline,
     FormControl, CircularProgress
 } from "@mui/material";
 import React, {useContext, useEffect, useState} from "react";
 import {useForm} from "@refinedev/react-hook-form";
-import {useNavigate, useNavigation, Link} from "react-router-dom";
+import {useNavigate, Link} from "react-router-dom";
 import {FieldValues} from "react-hook-form";
 import {useNotification} from "@refinedev/core";
 import {useLogin, useTranslate} from "@refinedev/core";
-import {VisibilityOffOutlined, VisibilityOutlined} from "@mui/icons-material";
+import {PriorityHigh, VisibilityOffOutlined, VisibilityOutlined} from "@mui/icons-material";
 
-import Copyright from "./utills/copyright";
 import {IData} from "../../interfaces/common";
-import {Header} from "../../layout";
 import {ColorModeContext} from "../../contexts";
-import {parseJwt, useMobile} from "../../utils";
+import {parseJwt} from "../../utils";
 import {axiosInstance} from "../../authProvider";
 import {buttonStyle, textFieldStyle} from "../../styles";
 import ContainerComponent from "./utills/containerComponent";
+import OrPart from "./utills/orPart";
+import {ModalWindow} from "../../components";
 
 const Login = () => {
 
@@ -33,8 +31,8 @@ const Login = () => {
     const navigate = useNavigate();
     const {mutate: login} = useLogin<IData>()
     const {open} = useNotification();
-    const {width} = useMobile();
 
+    const [openImportantly, setOpenImportantly] = useState<boolean>(false);
     const [showPass, setShowPass] = useState(false);
     const [showActiveAcc, setShowActiveAcc] = useState(false);
     const [error, setError] = useState<any>([])
@@ -62,7 +60,8 @@ const Login = () => {
         if (!formData?.email || !formData?.password) return alert(translate("pages.login.notHave"))
         const {data}: IData | any = await onFinish({
             email: formData?.email,
-            password: formData?.password
+            password: formData?.password,
+            registerBy: 'Email'
         });
         const user = data?.user ? parseJwt(data?.user) : null
         if (user?.isActivated) {
@@ -105,7 +104,9 @@ const Login = () => {
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    margin: 'auto'
+                    margin: 'auto',
+                    maxWidth: '90%',
+                    width: '400px'
                 }}
             >
                 <Avatar src={`/images/logo.png`} onClick={() => navigate('/welcome')}
@@ -113,9 +114,89 @@ const Login = () => {
                 <Typography component="h1" variant="h5" fontSize={{xs: 18, md: 22}}>
                     {translate("pages.login.title")}
                 </Typography>
-                <Box component="form" onSubmit={handleSubmit(onFinishHandler)} noValidate sx={{mt: 1}}>
+                <Button
+                    variant={'text'}
+                    color={'warning'}
+                    endIcon={<PriorityHigh/>}
+                    onClick={() => setOpenImportantly(true)}
+                >
+                    {translate("pages.login.importantly.title")}
+                </Button>
+                {
+                    openImportantly && (
+                        <ModalWindow
+                            open={openImportantly}
+                            setOpen={setOpenImportantly}
+                            contentProps={{
+                                maxWidth: {xs: '90%', sm: '500px'},
+                                height: '60vh',
+                                borderRadius: '15px'
+                            }}
+                            title={
+                                <Box sx={{
+                                    width: '100%',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    fontWeight: 700,
+                                    fontSize: {xs: '20px', sm: '24px'}
+                                }}>
+                                    {translate("pages.login.importantly.title")}
+                                </Box>
+                            }
+                            bodyProps={{
+                                p: '30px 20px'
+                            }}
+                        >
+                            <Box sx={{
+                                fontSize: {xs: '16px', sm: '18px'},
+                                "& p": {
+                                    fontSize: {xs: '16px', sm: '18px'},
+                                },
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: 2
+                            }}>
+                                <Typography>
+                                    {translate('pages.login.importantly.loginMethod')}
+                                </Typography>
+                                <Box>
+                                    <Box component={'span'}>
+                                        {translate('pages.login.importantly.facebook.part1')}
+                                    </Box>
+                                    <Link
+                                        style={{
+                                            padding: '3px',
+                                            margin: '0 3px',
+                                            backgroundColor: 'silver',
+                                            borderRadius: '5px'
+                                        }}
+                                        to={'https://www.facebook.com'}>
+                                        {
+                                            " " + "https://www.facebook.com" + " "
+                                        }
+                                    </Link>
+                                    <Box component={'span'}>
+                                        {translate('pages.login.importantly.facebook.part2')}
+                                    </Box>
+                                </Box>
+                            </Box>
+                        </ModalWindow>
+                    )
+                }
+                <Box
+                    component="form"
+                    onSubmit={handleSubmit(onFinishHandler)}
+                    noValidate
+                    sx={{
+                        mt: 1,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        width: '100%',
+                        gap: 3
+                    }}
+                >
                     <TextField
-                        margin="normal"
                         required
                         fullWidth
                         id="email"
@@ -131,7 +212,6 @@ const Login = () => {
                         position: 'relative'
                     }}>
                         <TextField
-                            margin="normal"
                             required
                             size={size}
                             fullWidth
@@ -147,7 +227,8 @@ const Login = () => {
                             cursor: 'pointer',
                             position: 'absolute',
                             zIndex: 20,
-                            top: '45%',
+                            top: '50%',
+                            transform: 'translateY(-45%)',
                             right: '5%',
                             width: '20px',
                             height: '20px',
@@ -176,7 +257,7 @@ const Login = () => {
                             </Button>
                         </div>
                     }
-                    <Grid item mt={2} mb={2}>
+                    <Grid item>
                         <Button type={"submit"}
                                 color={mode === "dark" ? "info" : "secondary"}
                                 variant={'contained'}
@@ -192,40 +273,44 @@ const Login = () => {
                             }
                         </Button>
                     </Grid>
-                    <Grid container sx={{
-                        display: 'flex',
-                        mt: 4,
-                        flexDirection: 'column',
-                        gap: 1
-                    }}>
+                </Box>
+                <OrPart
+                    githubType={'login_github'}
+                    googleType={'login'} googleText={'signin_with'} facebookType={'login'}
+                        facebookText={'signin_with'}/>
+                <Grid container sx={{
+                    display: 'flex',
+                    mt: 4,
+                    flexDirection: 'column',
+                    gap: 1
+                }}>
+                    <Link
+                        to={'/forgot-password'}
+                        style={{
+                            color: mode === 'dark' ? '#8aa4d3' : '#275ab7',
+                            fontSize: '16px',
+                            textTransform: 'none',
+                            width: '100%',
+                            transition: '300ms linear',
+                        }}>
+                        {translate("pages.login.buttons.forgotPassword")}
+                    </Link>
+                    <Box>
+                        {translate("pages.login.buttons.noAccount") + ' '}
                         <Link
-                            to={'/forgot-password'}
+                            to={'/register'}
                             style={{
                                 color: mode === 'dark' ? '#8aa4d3' : '#275ab7',
                                 fontSize: '16px',
                                 textTransform: 'none',
                                 width: '100%',
                                 transition: '300ms linear',
-                            }}>
-                            {translate("pages.login.buttons.forgotPassword")}
-                        </Link>
-                        <Box>
-                            {translate("pages.login.buttons.noAccount") + ' '}
-                            <Link
-                                to={'/register'}
-                                style={{
-                                    color: mode === 'dark' ? '#8aa4d3' : '#275ab7',
-                                    fontSize: '16px',
-                                    textTransform: 'none',
-                                    width: '100%',
-                                    transition: '300ms linear',
 
-                                }}>
-                                {translate("pages.login.signup")}
-                            </Link>
-                        </Box>
-                    </Grid>
-                </Box>
+                            }}>
+                            {translate("pages.login.signup")}
+                        </Link>
+                    </Box>
+                </Grid>
             </Box>
         </ContainerComponent>
     );

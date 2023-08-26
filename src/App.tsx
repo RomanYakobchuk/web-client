@@ -56,8 +56,8 @@ import {Header, Title, Layout, Sider} from "./layout";
 import {
     ErrorComponent,
     RefineSnackbarProvider,
-    notificationProvider,
 } from "@refinedev/mui";
+import {notificationProvider} from "@refinedev/antd"
 
 import {CssBaseline, GlobalStyles} from "@mui/material";
 import routerBindings, {
@@ -75,9 +75,11 @@ import {socket} from './socketClient'
 import {SchemaProvider} from "./settings/schema";
 import {VariantProvider} from "./settings/variantEstablishment";
 import {AppContextProvider} from "./contexts/AppContext";
+import {GoogleOAuthProvider} from "@react-oauth/google";
 
 const API_URL = process.env.REACT_APP_API;
 const STATISTIC_API_URL = process.env.REACT_APP_STATISTIC_API;
+const clientId = `${process.env.REACT_APP_GOOGLE_CLIENT_ID}`;
 
 function App() {
     const {t, i18n} = useTranslation();
@@ -103,396 +105,398 @@ function App() {
             <RefineKbarProvider>
                 <ColorModeContextProvider>
                     <SchemaProvider>
-                        <VariantProvider>
-                            <CssBaseline/>
-                            <GlobalStyles styles={{html: {WebkitFontSmoothing: "auto"}}}/>
-                            <RefineSnackbarProvider>
-                                <Refine
-                                    dataProvider={{
-                                        default: dataProvider(`${API_URL}/api/v1`, axiosInstance),
-                                        statistics: dataProvider(`${STATISTIC_API_URL}/statistics_api/v1`)
-                                    }}
-                                    notificationProvider={notificationProvider}
-                                    resources={[
-                                        {
-                                            name: "home",
-                                            meta: {
-                                                icon: <HomeIcon/>,
+                        <GoogleOAuthProvider clientId={clientId}>
+                            <VariantProvider>
+                                <CssBaseline/>
+                                <GlobalStyles styles={{html: {WebkitFontSmoothing: "auto"}}}/>
+                                <RefineSnackbarProvider>
+                                    <Refine
+                                        dataProvider={{
+                                            default: dataProvider(`${API_URL}/api/v1`, axiosInstance),
+                                            statistics: dataProvider(`${STATISTIC_API_URL}/statistics_api/v1`)
+                                        }}
+                                        notificationProvider={notificationProvider}
+                                        resources={[
+                                            {
+                                                name: "home",
+                                                meta: {
+                                                    icon: <HomeIcon/>,
+                                                },
+                                                list: '/home',
+                                                show: '/home/show/:id',
+                                                create: '/home/create',
+                                                edit: '/home/edit/:id',
                                             },
-                                            list: '/home',
-                                            show: '/home/show/:id',
-                                            create: '/home/create',
-                                            edit: '/home/edit/:id',
-                                        },
-                                        {
-                                            name: "all_institutions",
-                                            meta: {
-                                                icon: <Apartment/>,
-                                                canDelete: true,
+                                            {
+                                                name: "all_institutions",
+                                                meta: {
+                                                    icon: <Apartment/>,
+                                                    canDelete: true,
+                                                },
+                                                list: '/all_institutions',
+                                                show: '/all_institutions/show/:id',
+                                                create: '/all_institutions/create',
+                                                edit: '/all_institutions/edit/:id',
                                             },
-                                            list: '/all_institutions',
-                                            show: '/all_institutions/show/:id',
-                                            create: '/all_institutions/create',
-                                            edit: '/all_institutions/edit/:id',
-                                        },
-                                        {
-                                            name: "news",
-                                            meta: {
-                                                icon: <NewspaperOutlined/>,
+                                            {
+                                                name: "news",
+                                                meta: {
+                                                    icon: <NewspaperOutlined/>,
+                                                },
+                                                list: '/news',
+                                                show: '/news/show/:id',
+                                                create: '/news/create',
+                                                edit: '/news/edit/:id',
                                             },
-                                            list: '/news',
-                                            show: '/news/show/:id',
-                                            create: '/news/create',
-                                            edit: '/news/edit/:id',
-                                        },
-                                        {
-                                            name: "top-institutions",
-                                            list: '/top-institutions',
-                                            meta: {
-                                                icon: <Star/>,
-                                                label: "Top Institutions"
+                                            {
+                                                name: "top-institutions",
+                                                list: '/top-institutions',
+                                                meta: {
+                                                    icon: <Star/>,
+                                                    label: "Top Institutions"
+                                                },
+                                                show: '/top-institutions/show/:id',
                                             },
-                                            show: '/top-institutions/show/:id',
-                                        },
-                                        {
-                                            name: "capl",
-                                            list: '/capl',
-                                            meta: {
-                                                icon: <WineBar/>,
-                                                label: 'Capl'
+                                            {
+                                                name: "capl",
+                                                list: '/capl',
+                                                meta: {
+                                                    icon: <WineBar/>,
+                                                    label: 'Capl'
+                                                },
+                                                show: '/capl/show/:id',
+                                                edit: '/capl/edit/:id',
+                                                create: '/capl/create'
                                             },
-                                            show: '/capl/show/:id',
-                                            edit: '/capl/edit/:id',
-                                            create: '/capl/create'
-                                        },
-                                        {
-                                            name: 'chats',
-                                            list: '/chats',
-                                            meta: {
-                                                icon: <ForumOutlined/>
+                                            {
+                                                name: 'chats',
+                                                list: '/chats',
+                                                meta: {
+                                                    icon: <ForumOutlined/>
+                                                },
+                                                show: '/chats/:userId/:institutionId'
                                             },
-                                            show: '/chats/:userId/:institutionId'
-                                        },
-                                        {
-                                            name: "profile",
-                                            list: '/profile',
-                                            meta: {
-                                                icon: <Person/>,
-                                                label: "Profile"
+                                            {
+                                                name: "profile",
+                                                list: '/profile',
+                                                meta: {
+                                                    icon: <Person/>,
+                                                    label: "Profile"
+                                                },
+                                                show: '/profile/show/:id',
+                                                edit: '/profile/edit/:id'
                                             },
-                                            show: '/profile/show/:id',
-                                            edit: '/profile/edit/:id'
-                                        },
-                                        {
-                                            name: "all-users",
-                                            list: '/all-users',
-                                            meta: {
-                                                icon: <Group/>,
-                                                label: "All users"
+                                            {
+                                                name: "all-users",
+                                                list: '/all-users',
+                                                meta: {
+                                                    icon: <Group/>,
+                                                    label: "All users"
+                                                },
                                             },
-                                        },
-                                        {
-                                            name: "all-reviews",
-                                            list: '/all-reviews',
-                                            meta: {
-                                                icon: <Reviews/>,
-                                                label: "All reviews"
+                                            {
+                                                name: "all-reviews",
+                                                list: '/all-reviews',
+                                                meta: {
+                                                    icon: <Reviews/>,
+                                                    label: "All reviews"
+                                                },
                                             },
-                                        },
-                                    ]}
-                                    accessControlProvider={{
-                                        can: async ({action, params, resource}) => {
-                                            const enforcer = await newEnforcer(model, adapter);
-                                            if (
-                                                action === "delete" ||
-                                                action === "edit" ||
-                                                action === "show"
-                                            ) {
-                                                return {
-                                                    can: await enforcer.enforce(
-                                                        role,
-                                                        `${resource}/${params?.id}`,
-                                                        action,
-                                                    ),
-                                                }
+                                        ]}
+                                        accessControlProvider={{
+                                            can: async ({action, params, resource}) => {
+                                                const enforcer = await newEnforcer(model, adapter);
+                                                if (
+                                                    action === "delete" ||
+                                                    action === "edit" ||
+                                                    action === "show"
+                                                ) {
+                                                    return {
+                                                        can: await enforcer.enforce(
+                                                            role,
+                                                            `${resource}/${params?.id}`,
+                                                            action,
+                                                        ),
+                                                    }
 
-                                            }
-                                            if (action === "field") {
-                                                return {
-                                                    can: await enforcer.enforce(
-                                                        role,
-                                                        `${resource}/${params?.field}`,
-                                                        action,
-                                                    ),
                                                 }
+                                                if (action === "field") {
+                                                    return {
+                                                        can: await enforcer.enforce(
+                                                            role,
+                                                            `${resource}/${params?.field}`,
+                                                            action,
+                                                        ),
+                                                    }
+                                                }
+                                                return {
+                                                    can: await enforcer.enforce(role, resource, action),
+                                                };
                                             }
-                                            return {
-                                                can: await enforcer.enforce(role, resource, action),
-                                            };
-                                        }
-                                    }}
-                                    routerProvider={routerBindings}
-                                    authProvider={authProvider}
-                                    i18nProvider={i18nProvider}
-                                    options={{
-                                        syncWithLocation: true,
-                                        liveMode: 'auto',
-                                        warnWhenUnsavedChanges: true,
-                                        reactQuery: {devtoolConfig: false},
-                                    }}
-                                >
-                                    <Routes>
-                                        <Route
-                                            element={
-                                                <Authenticated v3LegacyAuthProviderCompatible={true}
-                                                               fallback={<CatchAllNavigate to="/welcome"/>}>
-                                                    <AppContextProvider>
+                                        }}
+                                        routerProvider={routerBindings}
+                                        authProvider={authProvider}
+                                        i18nProvider={i18nProvider}
+                                        options={{
+                                            syncWithLocation: true,
+                                            liveMode: 'auto',
+                                            warnWhenUnsavedChanges: true,
+                                            reactQuery: {devtoolConfig: false},
+                                        }}
+                                    >
+                                        <Routes>
+                                            <Route
+                                                element={
+                                                    <Authenticated v3LegacyAuthProviderCompatible={true}
+                                                                   fallback={<CatchAllNavigate to="/welcome"/>}>
+                                                        <AppContextProvider>
+                                                            <Layout Header={Header} Sider={Sider} Title={Title}>
+                                                                <Outlet/>
+                                                            </Layout>
+                                                        </AppContextProvider>
+                                                    </Authenticated>
+                                                }
+                                            >
+                                                <Route
+                                                    index
+                                                    element={<NavigateToResource resource="home"/>}
+                                                />
+                                                <Route path="/home">
+                                                    <Route index element={
+                                                        <Home/>
+                                                    }/>
+                                                    <Route path={'update-city'}
+                                                           element={
+                                                               <CanAccess
+                                                                   action={'cityWithData'}
+                                                                   resource={'cities'}
+                                                                   fallback={<ErrorComponent/>}
+                                                               >
+                                                                   <UpdateCity/>
+                                                               </CanAccess>
+                                                           }
+                                                    />
+                                                </Route>
+                                                <Route path={'/notifications'}>
+                                                    <Route index element={<Notifications/>}/>
+                                                </Route>
+                                                <Route path={'/all_institutions'}>
+                                                    <Route index element={<AllEstablishments/>}/>
+                                                    <Route
+                                                        path="create"
+                                                        element={
+                                                            <CanAccess
+                                                                action={"create"}
+                                                                resource={"all_institutions"}
+                                                                fallback={<ErrorComponent/>}
+                                                            >
+                                                                <CreateEstablishment/>
+                                                            </CanAccess>
+                                                        }
+                                                    />
+                                                    <Route
+                                                        path="show/:id" element={<EstablishmentDetails/>}/>
+                                                    <Route
+                                                        path={'edit/:id'}
+                                                        element={
+                                                            <CanAccess
+                                                                action={"edit"}
+                                                                resource={"all_institutions"}
+                                                                fallback={<ErrorComponent/>}
+                                                            >
+                                                                <EditEstablishment/>
+                                                            </CanAccess>
+                                                        }/>
+                                                    <Route
+                                                        path={'updateStatus/:id'}
+                                                        element={
+                                                            <CanAccess
+                                                                action={"update_status"}
+                                                                resource={"all_institutions"}
+                                                                fallback={<ErrorComponent/>}
+                                                            >
+                                                                <EditUpdateStatus/>
+                                                            </CanAccess>
+                                                        }/>
+                                                    <Route path={"menu/show/:id"} element={
+                                                        <Menu/>
+                                                    }/>
+                                                    <Route path={"menu/edit/:id"} element={
+                                                        <CanAccess
+                                                            action={"edit"}
+                                                            resource={"menu"}
+                                                            fallback={<ErrorComponent/>}
+                                                        >
+                                                            <EditMenu/>
+                                                        </CanAccess>
+                                                    }/>
+                                                    <Route path={'menu/create/:id'} element={
+                                                        <CanAccess
+                                                            action={'create'}
+                                                            resource={'menu'}
+                                                            fallback={<ErrorComponent/>}
+                                                        >
+                                                            <CreateMenu/>
+                                                        </CanAccess>
+                                                    }/>
+                                                </Route>
+                                                <Route path={"/news"}>
+                                                    <Route index element={<News/>}/>
+                                                    <Route
+                                                        path="create"
+                                                        element={
+                                                            <CanAccess
+                                                                action={"create"}
+                                                                resource={"news"}
+                                                                fallback={<ErrorComponent/>}
+                                                            >
+                                                                <CreateNews/>
+                                                            </CanAccess>
+                                                        }
+                                                    />
+                                                    <Route
+                                                        path="show/:id" element={<DetailsNews/>}/>
+                                                    <Route
+                                                        path={'edit/:id'}
+                                                        element={
+                                                            <CanAccess
+                                                                action={"edit"}
+                                                                resource={"news"}
+                                                                fallback={<ErrorComponent/>}
+                                                            >
+                                                                <EditNews/>
+                                                            </CanAccess>
+                                                        }/>
+                                                </Route>
+                                                <Route path={'/profile'}>
+                                                    <Route index element={<Profile/>}/>
+                                                    <Route path={'edit/:id'} element={
+                                                        <CanAccess
+                                                            action={"edit"}
+                                                            resource={"profile"}
+                                                            fallback={<ErrorComponent/>}
+                                                        >
+                                                            <EditProfile/>
+                                                        </CanAccess>
+                                                    }/>
+                                                    <Route path={'show/:id'} element={
+                                                        <CanAccess
+                                                            action={"show"}
+                                                            resource={"profile"}
+                                                            fallback={<ErrorComponent/>}
+                                                        >
+                                                            <ShowUserInfo/>
+                                                        </CanAccess>
+                                                    }/>
+                                                </Route>
+                                                <Route path={'/chats'}>
+                                                    <Route index element={<Chat/>}/>
+                                                    <Route path={'show/:userId/:institutionId'} element={
+                                                        <ShowChats/>
+                                                    }/>
+                                                </Route>
+                                                <Route path={'/capl'}>
+                                                    <Route index element={<Capl/>}/>
+                                                    <Route path={'create'} element={<CreateReservation/>}/>
+                                                    <Route path='show/:id' element={<DetailsReserve/>}/>
+                                                    <Route path='edit/:id' element={<EditReserve/>}/>
+                                                </Route>
+                                                <Route path={'/all-reviews'}>
+                                                    <Route index element={
+                                                        <CanAccess
+                                                            action={'list'}
+                                                            resource={"all-reviews"}
+                                                            fallback={<ErrorComponent/>}
+                                                        >
+                                                            <AllReviews/>
+                                                        </CanAccess>
+                                                    }/>
+                                                </Route>
+                                                <Route path={'/all-users'}>
+                                                    <Route index element={
+                                                        <CanAccess
+                                                            action={'list'}
+                                                            resource={"all-users"}
+                                                            fallback={<ErrorComponent/>}
+                                                        >
+                                                            <AllUsers/>
+                                                        </CanAccess>
+                                                    }/>
+                                                </Route>
+                                                <Route path={'/top-institutions'}>
+                                                    <Route index element={<TopInstitutions/>}/>
+                                                </Route>
+                                                <Route path={'/settings'}>
+                                                    <Route index element={<Settings/>}/>
+                                                </Route>
+                                                <Route path="*" element={<ErrorComponent/>}/>
+                                            </Route>
+                                            <Route
+                                                element={
+                                                    <Authenticated v3LegacyAuthProviderCompatible={true}
+                                                                   fallback={<Outlet/>}>
+                                                        <NavigateToResource resource={'home'}/>
+                                                    </Authenticated>
+                                                }
+                                            >
+                                                <Route index element={<Welcome/>}/>
+                                                <Route
+                                                    path="/login"
+                                                    element={
+                                                        <Login/>
+                                                    }
+                                                />
+                                                <Route
+                                                    path='/welcome'
+                                                    element={
+                                                        <Welcome/>
+                                                    }
+                                                />
+                                                <Route
+                                                    path="/register"
+                                                    element={
+                                                        <Register/>
+                                                    }
+                                                />
+                                                <Route
+                                                    path="/forgot-password"
+                                                    element={
+                                                        <ForgotPassword/>
+                                                    }
+                                                />
+                                                <Route
+                                                    path="/update-password/:token"
+                                                    element={
+                                                        <UpdatePassword/>
+                                                    }
+                                                />
+
+                                                <Route
+                                                    path="/verifyNumber"
+                                                    element={
+                                                        <VerifyNumber/>
+                                                    }
+                                                />
+                                            </Route>
+                                            <Route
+                                                element={
+                                                    <Authenticated v3LegacyAuthProviderCompatible={true}>
                                                         <Layout Header={Header} Sider={Sider} Title={Title}>
                                                             <Outlet/>
                                                         </Layout>
-                                                    </AppContextProvider>
-                                                </Authenticated>
-                                            }
-                                        >
-                                            <Route
-                                                index
-                                                element={<NavigateToResource resource="home"/>}
-                                            />
-                                            <Route path="/home">
-                                                <Route index element={
-                                                    <Home/>
-                                                }/>
-                                                <Route path={'update-city'}
-                                                       element={
-                                                           <CanAccess
-                                                               action={'cityWithData'}
-                                                               resource={'cities'}
-                                                               fallback={<ErrorComponent/>}
-                                                           >
-                                                               <UpdateCity/>
-                                                           </CanAccess>
-                                                       }
-                                                />
-                                            </Route>
-                                            <Route path={'/notifications'}>
-                                                <Route index element={<Notifications/>}/>
-                                            </Route>
-                                            <Route path={'/all_institutions'}>
-                                                <Route index element={<AllEstablishments/>}/>
-                                                <Route
-                                                    path="create"
-                                                    element={
-                                                        <CanAccess
-                                                            action={"create"}
-                                                            resource={"all_institutions"}
-                                                            fallback={<ErrorComponent/>}
-                                                        >
-                                                            <CreateEstablishment/>
-                                                        </CanAccess>
-                                                    }
-                                                />
-                                                <Route
-                                                    path="show/:id" element={<EstablishmentDetails/>}/>
-                                                <Route
-                                                    path={'edit/:id'}
-                                                    element={
-                                                        <CanAccess
-                                                            action={"edit"}
-                                                            resource={"all_institutions"}
-                                                            fallback={<ErrorComponent/>}
-                                                        >
-                                                            <EditEstablishment/>
-                                                        </CanAccess>
-                                                    }/>
-                                                <Route
-                                                    path={'updateStatus/:id'}
-                                                    element={
-                                                        <CanAccess
-                                                            action={"update_status"}
-                                                            resource={"all_institutions"}
-                                                            fallback={<ErrorComponent/>}
-                                                        >
-                                                            <EditUpdateStatus/>
-                                                        </CanAccess>
-                                                    }/>
-                                                <Route path={"menu/show/:id"} element={
-                                                    <Menu/>
-                                                }/>
-                                                <Route path={"menu/edit/:id"} element={
-                                                    <CanAccess
-                                                        action={"edit"}
-                                                        resource={"menu"}
-                                                        fallback={<ErrorComponent/>}
-                                                    >
-                                                        <EditMenu/>
-                                                    </CanAccess>
-                                                }/>
-                                                <Route path={'menu/create/:id'} element={
-                                                    <CanAccess
-                                                        action={'create'}
-                                                        resource={'menu'}
-                                                        fallback={<ErrorComponent/>}
-                                                    >
-                                                        <CreateMenu/>
-                                                    </CanAccess>
-                                                }/>
-                                            </Route>
-                                            <Route path={"/news"}>
-                                                <Route index element={<News/>}/>
-                                                <Route
-                                                    path="create"
-                                                    element={
-                                                        <CanAccess
-                                                            action={"create"}
-                                                            resource={"news"}
-                                                            fallback={<ErrorComponent/>}
-                                                        >
-                                                            <CreateNews/>
-                                                        </CanAccess>
-                                                    }
-                                                />
-                                                <Route
-                                                    path="show/:id" element={<DetailsNews/>}/>
-                                                <Route
-                                                    path={'edit/:id'}
-                                                    element={
-                                                        <CanAccess
-                                                            action={"edit"}
-                                                            resource={"news"}
-                                                            fallback={<ErrorComponent/>}
-                                                        >
-                                                            <EditNews/>
-                                                        </CanAccess>
-                                                    }/>
-                                            </Route>
-                                            <Route path={'/profile'}>
-                                                <Route index element={<Profile/>}/>
-                                                <Route path={'edit/:id'} element={
-                                                    <CanAccess
-                                                        action={"edit"}
-                                                        resource={"profile"}
-                                                        fallback={<ErrorComponent/>}
-                                                    >
-                                                        <EditProfile/>
-                                                    </CanAccess>
-                                                }/>
-                                                <Route path={'show/:id'} element={
-                                                    <CanAccess
-                                                        action={"show"}
-                                                        resource={"profile"}
-                                                        fallback={<ErrorComponent/>}
-                                                    >
-                                                        <ShowUserInfo/>
-                                                    </CanAccess>
-                                                }/>
-                                            </Route>
-                                            <Route path={'/chats'}>
-                                                <Route index element={<Chat/>}/>
-                                                <Route path={'show/:userId/:institutionId'} element={
-                                                    <ShowChats/>
-                                                }/>
-                                            </Route>
-                                            <Route path={'/capl'}>
-                                                <Route index element={<Capl/>}/>
-                                                <Route path={'create'} element={<CreateReservation/>}/>
-                                                <Route path='show/:id' element={<DetailsReserve/>}/>
-                                                <Route path='edit/:id' element={<EditReserve/>}/>
-                                            </Route>
-                                            <Route path={'/all-reviews'}>
-                                                <Route index element={
-                                                    <CanAccess
-                                                        action={'list'}
-                                                        resource={"all-reviews"}
-                                                        fallback={<ErrorComponent/>}
-                                                    >
-                                                        <AllReviews/>
-                                                    </CanAccess>
-                                                }/>
-                                            </Route>
-                                            <Route path={'/all-users'}>
-                                                <Route index element={
-                                                    <CanAccess
-                                                        action={'list'}
-                                                        resource={"all-users"}
-                                                        fallback={<ErrorComponent/>}
-                                                    >
-                                                        <AllUsers/>
-                                                    </CanAccess>
-                                                }/>
-                                            </Route>
-                                            <Route path={'/top-institutions'}>
-                                                <Route index element={<TopInstitutions/>}/>
-                                            </Route>
-                                            <Route path={'/settings'}>
-                                                <Route index element={<Settings/>}/>
-                                            </Route>
-                                            <Route path="*" element={<ErrorComponent/>}/>
-                                        </Route>
-                                        <Route
-                                            element={
-                                                <Authenticated v3LegacyAuthProviderCompatible={true}
-                                                               fallback={<Outlet/>}>
-                                                    <NavigateToResource resource={'home'}/>
-                                                </Authenticated>
-                                            }
-                                        >
-                                            <Route index element={<Welcome/>}/>
-                                            <Route
-                                                path="/login"
-                                                element={
-                                                    <Login/>
+                                                    </Authenticated>
                                                 }
-                                            />
-                                            <Route
-                                                path='/welcome'
-                                                element={
-                                                    <Welcome/>
-                                                }
-                                            />
-                                            <Route
-                                                path="/register"
-                                                element={
-                                                    <Register/>
-                                                }
-                                            />
-                                            <Route
-                                                path="/forgot-password"
-                                                element={
-                                                    <ForgotPassword/>
-                                                }
-                                            />
-                                            <Route
-                                                path="/update-password"
-                                                element={
-                                                    <UpdatePassword/>
-                                                }
-                                            />
+                                            >
+                                                <Route path="*" element={<ErrorComponent/>}/>
+                                            </Route>
+                                        </Routes>
 
-                                            <Route
-                                                path="/verifyNumber"
-                                                element={
-                                                    <VerifyNumber/>
-                                                }
-                                            />
-                                        </Route>
-                                        <Route
-                                            element={
-                                                <Authenticated v3LegacyAuthProviderCompatible={true}>
-                                                    <Layout Header={Header} Sider={Sider} Title={Title}>
-                                                        <Outlet/>
-                                                    </Layout>
-                                                </Authenticated>
-                                            }
-                                        >
-                                            <Route path="*" element={<ErrorComponent/>}/>
-                                        </Route>
-                                    </Routes>
-
-                                    <RefineKbar/>
-                                    <UnsavedChangesNotifier/>
-                                </Refine>
-                            </RefineSnackbarProvider>
-                        </VariantProvider>
+                                        <RefineKbar/>
+                                        <UnsavedChangesNotifier/>
+                                    </Refine>
+                                </RefineSnackbarProvider>
+                            </VariantProvider>
+                        </GoogleOAuthProvider>
                     </SchemaProvider>
                 </ColorModeContextProvider>
             </RefineKbarProvider>

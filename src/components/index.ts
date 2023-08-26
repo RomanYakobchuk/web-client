@@ -20,7 +20,8 @@ import CustomEdit from "./common/custom/customEdit";
 import CustomCreate from "./common/custom/customCreate";
 
 // google
-import GoogleButton from "./google/googleAuth";
+import {GoogleAuth} from "../auth";
+import {FacebookAuth} from "../auth";
 
 // loading
 import Loading from "./loading/loading";
@@ -75,7 +76,8 @@ import SchemaSelector from "./settings/SchemaSelector";
 // home
 import UpdateCity from "./home/utils/update-city";
 export {
-    GoogleButton,
+    GoogleAuth,
+    FacebookAuth,
     BookMark,
     Loading,
     CreateMenu,

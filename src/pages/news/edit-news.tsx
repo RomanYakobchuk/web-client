@@ -53,7 +53,7 @@ const EditNews = () => {
     const [description, setDescription] = useState<string>("");
     const [title, setTitle] = useState<string>("");
     const [variantForDisplay, setVariantForDisplay] = useState<string | any>("1");
-    const [otherPhoto, setOtherPhoto] = useState<any>([]);
+    const [pictures, setPictures] = useState<any>([]);
     const [category, setCategory] = useState<any>('general');
     const [workDays, setWorkDays] = useState<any>([]);
     const [status, setStatus] = useState<any>('published');
@@ -69,7 +69,7 @@ const EditNews = () => {
             setDatePublish(news?.publishAt?.datePublish)
             setIsDatePublish(news?.publishAt?.isPublish)
             setCurrentInstitutionId(news?.institutionId)
-            setOtherPhoto(news?.otherPhoto)
+            setPictures(news?.pictures)
             setVariantForDisplay(news?.variantForDisplay)
             setWorkDays(news?.dateEvent)
         }
@@ -77,17 +77,17 @@ const EditNews = () => {
 
     const onFinishHandler = async (date: FieldValues) => {
 
-        if (!otherPhoto && otherPhoto?.length < 0) return alert("Виберіть головне фото");
+        if (!pictures && pictures?.length < 0) return alert("Виберіть головне фото");
 
-        if (otherPhoto.length > 8) return alert(translate("home.create.otherPhoto.max"))
+        if (pictures.length > 8) return alert(translate("home.create.pictures.max"))
 
         const formData = new FormData();
 
-        for (let i = 0; i < otherPhoto.length; i++) {
-            if (otherPhoto[i] instanceof File) {
-                formData.append('otherPhoto', otherPhoto[i] as File);
+        for (let i = 0; i < pictures.length; i++) {
+            if (pictures[i] instanceof File) {
+                formData.append('pictures', pictures[i] as File);
             } else {
-                formData.append('otherPhoto', JSON.stringify(otherPhoto[i]))
+                formData.append('pictures', JSON.stringify(pictures[i]))
             }
         }
         formData.append("description", JSON.stringify(description));
@@ -125,8 +125,8 @@ const EditNews = () => {
         <NewsFormData
             handleSubmit={handleSubmit}
             onFinishHandler={onFinishHandler}
-            otherPhoto={otherPhoto}
-            setOtherPhoto={setOtherPhoto}
+            pictures={pictures}
+            setPictures={setPictures}
             currentInstitutionId={currentInstitutionId}
             setCurrentInstitutionId={setCurrentInstitutionId}
             title={title}
@@ -141,8 +141,6 @@ const EditNews = () => {
             setStatus={setStatus}
             isDatePublished={isDatePublish}
             setIsDatePublished={setIsDatePublish}
-            variantForDisplay={variantForDisplay}
-            setVariantForDisplay={setVariantForDisplay}
             formLoading={formLoading}
             datePublished={datePublish}
             setDatePublished={setDatePublish}

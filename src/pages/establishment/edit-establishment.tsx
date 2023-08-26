@@ -5,7 +5,6 @@ import {useEffect, useState} from "react";
 
 import {ProfileProps, PropertyProps} from "../../interfaces/common";
 import DataForm from "../../components/establishment/dataForm";
-import Loading from "../../components/loading/loading";
 import {ErrorComponent} from "@refinedev/mui";
 import {CustomEdit} from "../../components";
 
@@ -47,7 +46,7 @@ const EditEstablishment = () => {
         }
     }, [queryResult]);
 
-    const [otherPhoto, setOtherPhoto] = useState<any>([]);
+    const [pictures, setPictures] = useState<any>([]);
     const [open, setOpen] = useState<boolean>(false);
     const [type, setType] = useState<string>('');
     const [title, setTitle] = useState<string>('');
@@ -80,7 +79,7 @@ const EditEstablishment = () => {
             setWorkScheduleWeekend(institution?.workSchedule?.weekend)
             setLocation(institution?.location)
             setPlace(institution?.place)
-            setOtherPhoto(institution?.otherPhoto)
+            setPictures(institution?.pictures)
         }
     }, [institution])
 
@@ -94,17 +93,17 @@ const EditEstablishment = () => {
     }, [workDays, workScheduleWeekend])
     const onFinishHandler = async () => {
 
-        if (!otherPhoto && otherPhoto?.length === 0) return alert("Виберіть головне фото");
+        if (!pictures && pictures?.length === 0) return alert("Виберіть головне фото");
 
-        if (otherPhoto.length > 10) return alert(translate("home.create.otherPhoto.max"))
+        if (pictures.length > 10) return alert(translate("home.create.pictures.max"))
 
         const formData = new FormData();
 
-        for (let i = 0; i < otherPhoto.length; i++) {
-            if (otherPhoto[i] instanceof File) {
-                formData.append('otherPhoto', otherPhoto[i] as File);
+        for (let i = 0; i < pictures.length; i++) {
+            if (pictures[i] instanceof File) {
+                formData.append('pictures', pictures[i] as File);
             } else {
-                formData.append('otherPhoto', JSON.stringify(otherPhoto[i]))
+                formData.append('pictures', JSON.stringify(pictures[i]))
             }
         }
         formData.append("description", JSON.stringify(description));
@@ -152,8 +151,8 @@ const EditEstablishment = () => {
         <CustomEdit bgColor={'transparent'} isLoading={isLoadingData}>
             <DataForm
                 titleAction={'edit'}
-                setOtherPhoto={setOtherPhoto}
-                otherPhoto={otherPhoto}
+                setPictures={setPictures}
+                pictures={pictures}
                 onFinishHandler={onFinishHandler}
                 formLoading={formLoading}
                 handleSubmit={handleSubmit}
@@ -169,7 +168,6 @@ const EditEstablishment = () => {
                 createdBy={createdBy}
                 setWorkScheduleWeekend={setWorkScheduleWeekend}
                 setWorkDays={setWorkDays}
-                setVariantForDisplay={setVariantForDisplay}
                 contacts={contacts}
                 setContacts={setContacts}
                 description={description}
@@ -182,7 +180,6 @@ const EditEstablishment = () => {
                 setLocation={setLocation}
                 setType={setType}
                 type={type}
-                variantForDisplay={variantForDisplay}
                 workDays={workDays}
                 workScheduleWeekend={workScheduleWeekend}
             />

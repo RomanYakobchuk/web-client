@@ -59,12 +59,23 @@ const UpdatePassword = () => {
 
     const onFinishHandler = async (date: FieldValues) => {
         if (date?.password !== date?.confirmPassword) return alert(translate("pages.updatePassword.errors.confirmPasswordNotMatch"))
-        await onFinish({
-            email: data_token?.email,
-            password: date?.password,
-            token
-        });
-
+        try {
+            const data = await onFinish({
+                email: data_token?.email,
+                password: date?.password,
+                token
+            });
+            if (data?.data?.message) {
+                open?.({
+                    type: 'success',
+                    message: data?.data?.message,
+                    description: 'Ok'
+                })
+                navigate('/login')
+            }
+        } catch (e: any) {
+            console.log(e)
+        }
     };
 
     const handleShowPass = () => {
@@ -74,7 +85,7 @@ const UpdatePassword = () => {
         showConfirmPass ? setShowConfirmPass(false) : setShowConfirmPass(true)
     }
     return (
-        <ContainerComponent isPicture={false} >
+        <ContainerComponent isPicture={false}>
             <Box
                 sx={{
                     marginTop: 8,

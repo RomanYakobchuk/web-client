@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext,} from 'react';
 import {Box, Button, FormControl, Typography} from "@mui/material";
 import {AddCircleOutline, DeleteForeverOutlined, Edit} from "@mui/icons-material";
 import {useTranslate} from "@refinedev/core";
@@ -9,21 +9,17 @@ import {buttonStyle} from "../../../styles";
 
 interface Props {
     images: string[] | any;
-    setOtherPhoto: any;
+    setPictures: any;
     handleChange: any;
     maxImages: number,
-    setVariantForDisplay: any,
-    variantForDisplay: string
 }
 
 
 const ImageSelector = ({
                            images: items,
                            handleChange,
-                           setOtherPhoto,
+                           setPictures,
                            maxImages,
-                           setVariantForDisplay,
-                           variantForDisplay
                        }: Props) => {
 
     const translate = useTranslate();
@@ -66,9 +62,8 @@ const ImageSelector = ({
                                         color={'info'}
                                         variant={'contained'}
                                         sx={{
+                                            ...buttonStyle,
                                             width: '130px',
-                                            textTransform: 'capitalize',
-                                            ...buttonStyle
                                         }}
                                         startIcon={
                                             <Edit/>
@@ -86,7 +81,7 @@ const ImageSelector = ({
                                     <Button
                                         variant={'contained'}
                                         color={'error'}
-                                        onClick={() => setOtherPhoto([])}
+                                        onClick={() => setPictures([])}
                                         sx={{
                                             ...buttonStyle,
                                             width: '170px',
@@ -96,7 +91,7 @@ const ImageSelector = ({
                                             <DeleteForeverOutlined/>
                                         }
                                     >
-                                        {translate("home.create.otherPhoto.deleteAll")}
+                                        {translate("home.create.pictures.deleteAll")}
                                     </Button>
                                 </Box>
                             </Box>
@@ -113,7 +108,7 @@ const ImageSelector = ({
                     {
                         items?.length > 0 &&
                         <Typography>
-                            {translate("home.create.otherPhoto.count")}: {items.length}
+                            {translate("home.create.pictures.count")}: {items.length}
                         </Typography>
                     }
                     {

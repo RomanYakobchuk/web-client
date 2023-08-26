@@ -137,7 +137,14 @@ const InstitutionReviews = ({id}: IProps) => {
                 height: '100%',
                 bottom: 0
             }}>
-                <Box component={'form'} onSubmit={handleSubmit(handleSend)}>
+                <Box
+                    component={'form'}
+                    onSubmit={handleSubmit(handleSend)}
+                    sx={{
+                        maxWidth: '550px',
+                        margin: '0 auto'
+                    }}
+                >
                     {
                         isAllowedNewReview ? <>
                             <Box sx={{

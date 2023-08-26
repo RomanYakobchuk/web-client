@@ -17,7 +17,7 @@ const NewsCard = ({
                       news,
                       index
                   }: IProps) => {
-    const {title, _id, place, dateEvent, description, otherPhoto} = news;
+    const {title, _id, place, dateEvent, description, pictures} = news;
 
     const {data: identity} = useGetIdentity<IGetIdentity>();
     const user: ProfileProps = identity?.user as ProfileProps;
@@ -185,7 +185,7 @@ const NewsCard = ({
                     width: '100%',
                     height: '100%',
                     objectFit: 'cover'
-                }} src={otherPhoto[0].url} alt={"mainPhoto"}/>
+                }} src={pictures[0].url} alt={"mainPhoto"}/>
             </Box>
         </Box>
     );

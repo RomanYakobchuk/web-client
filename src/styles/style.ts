@@ -5,7 +5,9 @@ export const textFieldStyle = {
 }
 
 export const buttonStyle = {
-    borderRadius: '20px'
+    borderRadius: '20px',
+    height: '40px',
+    textTransform: 'capitalize'
 }
 
 export const hoverButtonStyle = {

@@ -15,7 +15,7 @@ const Welcome: FC = () => {
 
     return (
         <ContainerComponent isPicture={false} childrenProps={{
-            maxWidth: '100%'
+            maxWidth: '90%'
         }}>
             <Box
                 sx={{
@@ -82,10 +82,10 @@ const Welcome: FC = () => {
                     <Button onClick={() => navigate('/register')}
                             color={mode === "dark" ? "info" : "secondary"} variant={"contained"}
                             sx={{
+                                ...buttonStyle,
                                 padding: '5px 10px',
                                 height: {xs: '40px', md: '60px'},
                                 width: '300px',
-                                ...buttonStyle
                             }}>
                         {translate("pages.login.signup")}
                     </Button>
@@ -106,10 +106,10 @@ const Welcome: FC = () => {
                     <Button
                         onClick={() => navigate('/login')} variant={"contained"}
                         color={mode === "dark" ? "info" : "secondary"} sx={{
+                        ...buttonStyle,
                         padding: '5px 10px',
                         height: {xs: '40px', md: '60px'},
                         width: '150px',
-                        ...buttonStyle
                     }}>
                         {translate("pages.login.signin")}
                     </Button>

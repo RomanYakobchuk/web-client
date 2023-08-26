@@ -17,7 +17,7 @@ const CreateNews = () => {
     const [description, setDescription] = useState<string>("");
     const [title, setTitle] = useState<string>("");
     const [variantForDisplay, setVariantForDisplay] = useState<string>("1");
-    const [otherPhoto, setOtherPhoto] = useState<any>([]);
+    const [pictures, setPictures] = useState<any>([]);
     const [category, setCategory] = useState('general');
     const [workDays, setWorkDays] = useState<any>([]);
     const [status, setStatus] = useState('published');
@@ -43,15 +43,15 @@ const CreateNews = () => {
 
     const onFinishHandler = async () => {
 
-        if (!otherPhoto && otherPhoto?.length < 0) return alert("Виберіть головне фото");
+        if (!pictures && pictures?.length < 0) return alert("Виберіть головне фото");
 
-        if (otherPhoto.length > 8) return alert(translate("home.create.otherPhoto.max"))
+        if (pictures.length > 8) return alert(translate("home.create.pictures.max"))
 
         const formData = new FormData();
 
-        for (let i = 0; i < otherPhoto.length; i++) {
-            console.log(otherPhoto[i].order)
-            formData.append('otherPhoto', otherPhoto[i] as File);
+        for (let i = 0; i < pictures.length; i++) {
+            console.log(pictures[i].order)
+            formData.append('pictures', pictures[i] as File);
         }
         formData.append("description", description);
         formData.append("title", title);
@@ -90,8 +90,8 @@ const CreateNews = () => {
         <NewsFormData
             handleSubmit={handleSubmit}
             onFinishHandler={onFinishHandler}
-            otherPhoto={otherPhoto}
-            setOtherPhoto={setOtherPhoto}
+            pictures={pictures}
+            setPictures={setPictures}
             currentInstitutionId={currentInstitutionId}
             setCurrentInstitutionId={setCurrentInstitutionId}
             title={title}
@@ -106,8 +106,6 @@ const CreateNews = () => {
             setStatus={setStatus}
             isDatePublished={isDatePublish}
             setIsDatePublished={setIsDatePublish}
-            variantForDisplay={variantForDisplay}
-            setVariantForDisplay={setVariantForDisplay}
             formLoading={formLoading}
             datePublished={datePublish}
             setDatePublished={setDatePublish}

@@ -91,8 +91,12 @@ const Variant2EstablishmentCard = ({establishment}: IProps) => {
                                     {title}
                                 </Typography>
                                 <Typography sx={{
-                                    color: '#a09391',
-                                    fontWeight: 500
+                                    color: 'common.black',
+                                    bgcolor: 'common.white',
+                                    p: '5px 10px',
+                                    borderRadius: '7px',
+                                    fontWeight: 500,
+
                                 }}>
                                     {translate(`home.create.type.${type}`)}
                                 </Typography>

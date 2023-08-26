@@ -1,13 +1,10 @@
-import {Box, IconButton, Modal, StyledEngineProvider, SxProps} from "@mui/material";
-import {ReactNode, useContext, MouseEvent, useState, useEffect} from "react";
+import {Box, IconButton, SxProps} from "@mui/material";
+import {ReactNode, MouseEvent, useState, useEffect} from "react";
 import {CloseOutlined} from "@mui/icons-material";
 import ReactDOM from "react-dom";
 
-import {ColorModeContext} from "../../contexts";
 import {useMobile} from "../../utils";
-
 import './modalWindow.css';
-import {SchemaContext} from "../../settings/schema";
 
 interface IProps {
     children: ReactNode,
@@ -16,12 +13,10 @@ interface IProps {
     title: ReactNode,
     titleStyle?: SxProps,
     bodyProps?: SxProps,
+    contentProps?: SxProps
 }
 
-const ModalWindow = ({children, open, setOpen, title, titleStyle, bodyProps}: IProps) => {
-
-    const {collapsed} = useContext(ColorModeContext);
-    const {schema} = useContext(SchemaContext);
+const ModalWindow = ({children, open, setOpen, title, titleStyle, bodyProps, contentProps}: IProps) => {
 
     const [isVisible, setIsVisible] = useState(open);
 
@@ -58,8 +53,6 @@ const ModalWindow = ({children, open, setOpen, title, titleStyle, bodyProps}: IP
             return () => clearTimeout(timeoutId);
         }
     }, [open]);
-
-    // const modalWidth = schema === 'schema_1' ? collapsed ? '' : '' : '100%'
 
     if (!isVisible) {
         return null;
@@ -112,6 +105,7 @@ const ModalWindow = ({children, open, setOpen, title, titleStyle, bodyProps}: IP
                     borderRadius: 'clamp(0px, (100vw - 750px) * 9999, 12px)',
                     height: width < 700 ? '100vh' : '70vh',
                     bgcolor: 'common.black',
+                    ...contentProps
                 }}>
                 <header style={{
                     borderBottom: title ? '1px solid rgb(218, 226, 237)' : '1px solid transparent',
@@ -146,7 +140,7 @@ const ModalWindow = ({children, open, setOpen, title, titleStyle, bodyProps}: IP
                     sx={{
                         height: '100%',
                         minHeight: '384px',
-                        maxWidth: '80%',
+                        maxWidth: '90%',
                         margin: '0 auto',
                         maxHeight: '80%',
                         overflowX: 'hidden',
