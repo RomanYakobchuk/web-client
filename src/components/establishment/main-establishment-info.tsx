@@ -17,27 +17,30 @@ import React, {useContext, useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import {useGetIdentity, useTranslate} from "@refinedev/core";
 
-import {BookMark, ImageGallery} from "../index";
+import {BookMarkButton, ImageGallery, SubscribeButton} from "../index";
 import {containerStyle} from "./utills/mapsOptrions";
-import {IGetIdentity, ProfileProps, PropertyProps} from "../../interfaces/common";
+import {IGetIdentity, ISubscribe, ProfileProps, PropertyProps} from "../../interfaces/common";
 import {ColorModeContext} from "../../contexts";
 import dayjs from "dayjs";
 import {buttonStyle} from "../../styles";
+import {useMobile} from "../../utils";
 
 
 interface IProps {
     establishment: PropertyProps,
     rowHeight: number,
-    otherProps?: any
+    otherProps?: any,
+    subscribe: ISubscribe
 }
 
-const MainEstablishmentInfo = ({establishment, rowHeight, otherProps}: IProps) => {
+const MainEstablishmentInfo = ({establishment, rowHeight, otherProps, subscribe}: IProps) => {
 
     const {data: identity} = useGetIdentity<IGetIdentity>();
     const user: ProfileProps = identity?.user as ProfileProps;
     const translate = useTranslate();
     const {mode} = useContext(ColorModeContext);
     const navigate = useNavigate();
+    const {width} = useMobile();
 
     const [postRating, setPostRating] = useState(0);
     const [postRatings, setPostRatings] = useState([]);
@@ -53,7 +56,7 @@ const MainEstablishmentInfo = ({establishment, rowHeight, otherProps}: IProps) =
 
     const {isLoaded} = useJsApiLoader({
         id: 'google-map-script',
-        googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_KEY!
+        googleMapsApiKey: import.meta.env.VITE_APP_GOOGLE_MAPS_KEY!
     });
     const location: PropertyProps["location"] | any = typeof establishment?.location?.lat !== undefined && establishment?.location;
     return (
@@ -116,19 +119,43 @@ const MainEstablishmentInfo = ({establishment, rowHeight, otherProps}: IProps) =
                                 </Link>
                             </Box>
                             {
-                                establishment?.createdBy !== user?._id &&
-                                <BookMark showText={false} color={'common.white'}
-                                          bgColor={'transparent'}
-                                          style={{
-                                              p: '5px',
-                                              borderRadius: '5px',
-                                              minWidth: '20px',
-                                              bgcolor: mode === 'dark' ? '#86a8cf' : '#e6f2ff',
-                                              "& svg": {
-                                                  fontSize: {xs: '26px', sm: '30px'}
-                                              }
-                                          }}
-                                          type={'favoritePlaces'} id={establishment?._id}/>
+                                establishment?.createdBy !== user?._id && (
+                                    <Box sx={{
+                                        display: 'flex',
+                                        gap: 2,
+                                        alignItems: 'center'
+                                    }}>
+                                        {
+                                            establishment?._id &&
+                                            <SubscribeButton
+                                                showText={width > 600}
+                                                subscribe={subscribe}
+                                                establishmentId={establishment?._id}
+                                                style={{
+                                                    p: '5px',
+                                                    "& svg": {
+                                                        fontSize: {xs: '26px', sm: '30px'}
+                                                    }
+                                                }}
+                                            />
+                                        }
+                                        <BookMarkButton
+                                            showText={false}
+                                            color={'common.white'}
+                                            bgColor={'transparent'}
+                                            style={{
+                                                p: '5px',
+                                                borderRadius: '5px',
+                                                minWidth: '20px',
+                                                bgcolor: mode === 'dark' ? '#86a8cf' : '#e6f2ff',
+                                                "& svg": {
+                                                    fontSize: {xs: '26px', sm: '30px'}
+                                                }
+                                            }}
+                                            type={'favoritePlaces'} id={establishment?._id}
+                                        />
+                                    </Box>
+                                )
                             }
                         </Box>
                         <Box sx={{
@@ -177,6 +204,16 @@ const MainEstablishmentInfo = ({establishment, rowHeight, otherProps}: IProps) =
                                     color: 'common.white'
                                 }}>
                                     {postRating > 0 ? postRating?.toFixed(2) : postRating}
+                                </Box>
+                                <Box
+                                    component={'span'}
+                                    sx={{
+                                        margin: '0 5px',
+                                        fontSize: {xs: '12px', sm: '14px'},
+                                        color: 'silver'
+                                    }}
+                                >
+                                    ({establishment?.reviewsLength})
                                 </Box>
                             </>
                         }
@@ -272,7 +309,7 @@ const MainEstablishmentInfo = ({establishment, rowHeight, otherProps}: IProps) =
                                                     {translate(`home.create.workSchedule.dayName.${workDay?.days?.from}`)} - {translate(`home.create.workSchedule.dayName.${workDay?.days?.to}`)}
                                                 </span>
                                                 <span>
-                                                    {dayjs(workDay?.time?.from).format("HH:mm")} - {dayjs(workDay?.time?.to).format("HH:mm")}
+                                                    {workDay?.time?.from} - {workDay?.time?.to}
                                                 </span>
                                             </Box>
                                         ))

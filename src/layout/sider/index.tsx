@@ -308,6 +308,11 @@ export const Sider: typeof DefaultSider = ({render}) => {
                             onClick={() => {
                                 googleLogout()
                                 mutateLogout()
+                                FB?.getLoginStatus(function (response) {
+                                    if (response.status === 'connected') {
+                                        FB?.logout()
+                                    }
+                                })
                             }}
                         >
                             <CheckOutlined sx={{

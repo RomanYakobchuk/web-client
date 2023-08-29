@@ -5,6 +5,7 @@ import {Facebook} from '@mui/icons-material';
 import {useLogin, useNotification, useTranslate} from "@refinedev/core";
 import {axiosInstance} from "../authProvider";
 import {useMobile} from "../utils";
+import {useEffect} from "react";
 
 type IProps = {
     text: "signin_with" | "signup_with" | "continue_with" | undefined,
@@ -12,14 +13,17 @@ type IProps = {
 }
 
 
-const appId = `${process.env.REACT_APP_FACEBOOK_APP_ID}`;
+const appId = `${import.meta.env.VITE_APP_FACEBOOK_APP_ID}`;
 const FacebookAuth = ({type, text}: IProps) => {
-    FB?.init({
-        appId: appId,
-        status: true,
-        xfbml: true,
-        version: 'v17.0'
-    })
+
+    useEffect(() => {
+        FB?.init({
+            appId: appId,
+            status: true,
+            xfbml: true,
+            version: 'v17.0'
+        })
+    }, [FB]);
 
     const {mutate: login} = useLogin<CredentialResponse>();
     const translate = useTranslate();

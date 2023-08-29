@@ -18,7 +18,7 @@ interface IProps {
     style?: SxProps
 }
 
-const BookMark = ({id, color, bgColor, type, showText, style}: IProps) => {
+const BookMarkButton = ({id, color, bgColor, type, showText, style}: IProps) => {
 
     const {open} = useNotification();
     const translate = useTranslate();
@@ -105,4 +105,4 @@ const BookMark = ({id, color, bgColor, type, showText, style}: IProps) => {
         </Button>
     );
 };
-export default BookMark;
+export default BookMarkButton;

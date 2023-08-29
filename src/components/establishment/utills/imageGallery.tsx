@@ -4,6 +4,7 @@ import {useMobile} from "../../../utils";
 import {Close, PermMediaOutlined} from "@mui/icons-material";
 import {useTranslate} from "@refinedev/core";
 import ScrollLock from 'react-scrolllock';
+import ImageSlider from "../../common/imageSlider";
 
 interface PlaceGalleryProps {
     photos: any
@@ -13,6 +14,7 @@ const PlaceGallery = ({photos}: PlaceGalleryProps) => {
     const {width, device} = useMobile();
     const translate = useTranslate();
 
+    const [selectedSlideNumber, setSelectedSlideNumber] = useState(0);
     const [showAllPhotos, setShowAllPhotos] = useState(false);
 
     const height = width < 600 ? '208px' : width < 900 ? '308px' : width < 1200 ? '408px' : '458px';
@@ -20,6 +22,10 @@ const PlaceGallery = ({photos}: PlaceGalleryProps) => {
     const height2 = width < 600 ? '100px' : width < 900 ? '150px' : width < 1200 ? '200px' : '225px';
 
 
+    const handleOpen = (i: number) => {
+        setSelectedSlideNumber(i)
+        setShowAllPhotos(true)
+    }
     return (
         <Box sx={{position: "relative", width: '100%', height}}>
             <Box
@@ -38,7 +44,7 @@ const PlaceGallery = ({photos}: PlaceGalleryProps) => {
                             height
                         }}>
                             <img
-                                onClick={() => setShowAllPhotos(true)}
+                                onClick={() => handleOpen(0)}
                                 style={{
                                     cursor: "pointer",
                                     width: '100%',
@@ -62,7 +68,7 @@ const PlaceGallery = ({photos}: PlaceGalleryProps) => {
                 >
                     {photos[1] && (
                         <img
-                            onClick={() => setShowAllPhotos(true)}
+                            onClick={() => handleOpen(1)}
                             style={{
                                 cursor: "pointer",
                                 objectFit: "cover",
@@ -75,7 +81,7 @@ const PlaceGallery = ({photos}: PlaceGalleryProps) => {
                     )}
                     {photos[2] && (
                         <img
-                            onClick={() => setShowAllPhotos(true)}
+                            onClick={() => handleOpen(2)}
                             style={{
                                 cursor: "pointer",
                                 // aspectRatio: "square",
@@ -109,67 +115,19 @@ const PlaceGallery = ({photos}: PlaceGalleryProps) => {
                 }}/>
             </Button>
             {
-                showAllPhotos &&
-                <Box
-                    sx={{
-                        WebkitBackfaceVisibility: 'hidden',
-                        position: "fixed",
-                        backfaceVisibility: 'hidden',
-                        inset: 0,
-                        bgcolor: "rgba(0,0,0,0.75)",
-                        color: "white",
-                        height: "100%",
-                        minHeight: '100vh',
-                        p: 8,
-                        gap: 4,
-                        overflow: 'auto',
-                        width: '100%',
-                        zIndex: {xs: 200},
-                        display: "flex",
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        '&::-webkit-scrollbar': {
-                            display: 'none'
+                showAllPhotos && (
+                    <ImageSlider
+                        selectedSlideNumber={selectedSlideNumber}
+                        images={photos}
+                        open={showAllPhotos}
+                        setOpen={setShowAllPhotos}
+                        modalTitle={
+                            <Typography variant="h5" sx={{mb: 2}}>
+                                {translate('pictures.pictures')}
+                            </Typography>
                         }
-                    }}
-                >
-                    <Box>
-                        <Typography variant="h5" sx={{mb: 2}}>
-                            {translate('pictures.pictures')}
-                        </Typography>
-                        <Button
-                            onClick={() => setShowAllPhotos(false)}
-                            variant="contained"
-                            sx={{
-                                position: "fixed",
-                                right: "15px",
-                                zIndex: 201,
-                                top: '15px',
-                                borderRadius: "10px",
-                                boxShadow: "0 0 2px black",
-                                bgcolor: "white",
-                                color: "black",
-                            }}
-                        >
-                            <Close/>
-                        </Button>
-                    </Box>
-                    {
-                        photos?.length > 0 &&
-                        photos?.map((photo: any, index: number) => (
-                            <Box key={index} sx={{
-                                maxWidth: '700px',
-                                width: '100%',
-                                height: 'auto'
-                            }}>
-                                <img
-                                    style={{
-                                        width: '100%',
-                                    }}
-                                    src={photo?.url ? photo?.url : photo} alt=""/>
-                            </Box>
-                        ))}
-                </Box>
+                    />
+                )
             }
         </Box>
     );

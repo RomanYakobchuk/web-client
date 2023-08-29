@@ -1,76 +1,138 @@
 import {Box, Typography} from "@mui/material";
 import {ListButton} from "@refinedev/mui";
-import {Breadcrumb, Edit} from "@refinedev/antd";
-import React, {ReactNode, useContext} from "react";
-import {ButtonProps} from "antd";
+import {Breadcrumb, DeleteButton, Edit, SaveButton} from "@refinedev/antd";
+import React, {BaseSyntheticEvent, ReactNode, useContext} from "react";
+import {Button, ButtonProps} from "antd";
 import {ColorModeContext} from "../../../contexts";
 import {useTranslate} from "@refinedev/core";
-import { ArrowBackOutlined } from "@mui/icons-material";
+import {ArrowBackOutlined, Close} from "@mui/icons-material";
+import {useNavigate} from "react-router-dom";
 
 interface IProps {
-    saveButtonProps?: ButtonProps & {onClick: () => void },
+    saveButtonProps?: ButtonProps & { onClick: () => void } | { disabled: boolean; onClick: (e: BaseSyntheticEvent<object, any, any>) => void },
     children: ReactNode,
     isLoading: boolean,
-    bgColor?: string
+    bgColor?: string,
+    onClick?: () => void
 }
-const CustomEdit = ({saveButtonProps, children, isLoading, bgColor}: IProps) => {
+
+const CustomEdit = ({saveButtonProps, children, isLoading, bgColor, onClick}: IProps) => {
 
     const {mode} = useContext(ColorModeContext);
+    const navigate = useNavigate();
     const translate = useTranslate();
 
     return (
-        <Edit
-            isLoading={isLoading}
-            contentProps={{
-                style: {
-                    background: bgColor ? bgColor : mode === 'dark' ? "#4d4d44" : '#fff',
-                    padding: '0'
-                },
-            }}
-            headerProps={{
-                title: <Typography
-                    sx={{
+        <Box sx={{
+            width: '100%',
+            "& .ant-card-actions": {
+                bgcolor: 'transparent !important',
+                borderTop: 'unset !important'
+            },
+            "& li span div.ant-space":{
+                mr: 'unset !important',
+                float: 'unset !important',
+                width: '100% !important',
+                "& > div":{
+                    width: '100% !important',
+                    p: '20px'
+                }
+            }
+        }}>
+            <Edit
+                isLoading={isLoading}
+                contentProps={{
+                    style: {
+                        background: bgColor ? bgColor : mode === 'dark' ? "#4d4d44" : '#fff',
+                        padding: '0',
+                    },
+                }}
+                headerProps={{
+                    title: <Typography
+                        sx={{
+                            color: mode === 'dark' ? '#fcfcfc' : '#000',
+                            fontSize: '18px'
+                        }}
+                    >{translate('actions.edit')}</Typography>,
+                    style: {
                         color: mode === 'dark' ? '#fcfcfc' : '#000',
-                        fontSize: '18px'
-                    }}
-                >{translate('actions.edit')}</Typography>,
-                style: {
-                    color: mode === 'dark' ? '#fcfcfc' : '#000',
-                    padding: '10px',
-                    maxWidth: '1100px',
-                    margin: '0 auto'
-                },
-                backIcon: <ArrowBackOutlined sx={{
-                    color: mode === 'dark' ? '#fcfcfc' : '#000'
-                }}/>
-            }}
-            headerButtons={[]}
-            breadcrumb={
-                <Box sx={{
-                    color: mode === 'dark' ? '#fcfcfc' : '#000',
-                    "& nav ol li > span": {
+                        padding: '10px',
+                        maxWidth: '1100px',
+                        margin: '0 auto'
+                    },
+                    backIcon: <ArrowBackOutlined sx={{
+                        color: mode === 'dark' ? '#fcfcfc' : '#000'
+                    }}/>,
+                }}
+                footerButtons={({saveButtonProps, deleteButtonProps}) => (
+                    <Box sx={{
                         display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        color: mode === 'dark' ? '#fcfcfc' : '#000'
-                    },
-                    "& nav ol li > span > div > a": {
-                        color: mode === 'dark' ? '#d0c9c9' : '#2c2121'
-                    },
-                    "& nav ol li.ant-breadcrumb-separator" : {
-                        color: mode === 'dark' ? '#fcfcfc' : '#000'
-                    }
-                }}>
-                    <Breadcrumb breadcrumbProps={{
-                        style: {
+                        gap: 2,
+                        flexWrap: 'wrap',
+                        "& button":{
+                            flex: '1 1 150px'
+                        }
+                    }}>
+                        <Button
+                            size={'large'}
+                            style={{
+                                display: 'flex',
+                                gap: 1,
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                            }}
+                            onClick={() => navigate(-1)}
+                            icon={<Close/>}
+                        >
+                            {translate('buttons.cancel')}
+                        </Button>
+                        {deleteButtonProps && (
+                            <DeleteButton size={"large"} {...deleteButtonProps}/>
+                        )}
+                        {saveButtonProps && (
+                            <SaveButton size={"large"} {...saveButtonProps} onClick={onClick}/>
+                        )}
+                    </Box>
+                )}
+                footerButtonProps={{
+                    // onClick: onClick,
+                    // color: 'transparent',
+                    // style: {
+                    //     color: mode === 'dark' ? '#fcfcfc' : '#000',
+                    //     padding: '10px',
+                    //     maxWidth: '1100px',
+                    //     margin: '0 auto',
+                    //     background: 'transparent'
+                    // }
+                }}
+                headerButtons={[]}
+                breadcrumb={
+                    <Box sx={{
+                        color: mode === 'dark' ? '#fcfcfc' : '#000',
+                        "& nav ol li > span": {
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            color: mode === 'dark' ? '#fcfcfc' : '#000'
+                        },
+                        "& nav ol li > span > div > a": {
+                            color: mode === 'dark' ? '#d0c9c9' : '#2c2121'
+                        },
+                        "& nav ol li.ant-breadcrumb-separator": {
                             color: mode === 'dark' ? '#fcfcfc' : '#000'
                         }
-                    }}/>
-                </Box>
-            }
-        >
-            {children}
-        </Edit>
+                    }}>
+                        <Breadcrumb breadcrumbProps={{
+                            style: {
+                                color: mode === 'dark' ? '#fcfcfc' : '#000'
+                            }
+                        }}/>
+                    </Box>
+                }
+            >
+                {children}
+            </Edit>
+        </Box>
     );
 };
 export default CustomEdit

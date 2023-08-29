@@ -15,8 +15,9 @@ const EditEstablishment = () => {
     const translate = useTranslate();
 
     const {
-        refineCore: {onFinish, formLoading, queryResult,},
+        refineCore: {onFinish, queryResult},
         handleSubmit,
+        saveButtonProps
     } = useForm({
         refineCoreProps: {
             resource: `institution/infoById`,
@@ -46,8 +47,9 @@ const EditEstablishment = () => {
         }
     }, [queryResult]);
 
-    const [pictures, setPictures] = useState<any>([]);
-    const [open, setOpen] = useState<boolean>(false);
+    const [sendNotifications, setSendNotifications] = useState<boolean>(false)
+    const [pictures, setPictures] = useState<Array<{url: string, name: string} | File>>([]);
+    const [defaultPictures, setDefaultPictures] = useState<any>([]);
     const [type, setType] = useState<string>('');
     const [title, setTitle] = useState<string>('');
     const [averageCheck, setAverageCheck] = useState<string>('');
@@ -61,7 +63,6 @@ const EditEstablishment = () => {
     const [workDays, setWorkDays] = useState<any>([]);
     const [description, setDescription] = useState<string | any>('');
     const [createdBy, setCreatedBy] = useState<string>('');
-    const [variantForDisplay, setVariantForDisplay] = useState<string>('1');
 
     useEffect(() => {
         if (institution) {
@@ -69,7 +70,6 @@ const EditEstablishment = () => {
             setTags(institution?.tags)
             setType(institution?.type)
             setFeatures(institution?.features)
-            setVariantForDisplay(institution?.variantForDisplay)
             setAverageCheck(institution?.averageCheck)
             setCreatedBy(institution?.createdBy)
             setDescription(institution?.description)
@@ -80,8 +80,10 @@ const EditEstablishment = () => {
             setLocation(institution?.location)
             setPlace(institution?.place)
             setPictures(institution?.pictures)
+            setDefaultPictures(institution?.pictures)
+            setSendNotifications(institution?.sendNotifications)
         }
-    }, [institution])
+    }, [institution]);
 
     useEffect(() => {
         if (workDays && workScheduleWeekend) {
@@ -93,9 +95,8 @@ const EditEstablishment = () => {
     }, [workDays, workScheduleWeekend])
     const onFinishHandler = async () => {
 
-        if (!pictures && pictures?.length === 0) return alert("Виберіть головне фото");
-
         if (pictures.length > 10) return alert(translate("home.create.pictures.max"))
+        if (pictures.length < 3) return alert('Minimum 3 pictures')
 
         const formData = new FormData();
 
@@ -107,9 +108,9 @@ const EditEstablishment = () => {
             }
         }
         formData.append("description", JSON.stringify(description));
+        formData.append("sendNotifications", JSON.stringify(sendNotifications));
         formData.append("title", JSON.stringify(title));
         formData.append("type", JSON.stringify(type));
-        formData.append("variantForDisplay", JSON.stringify(variantForDisplay));
         formData.append("createdBy", JSON.stringify(createdBy?.length > 0 ? createdBy : currentUser?._id));
         formData.append("place", JSON.stringify(place));
 
@@ -140,48 +141,54 @@ const EditEstablishment = () => {
         //         );
         //     }
         // }
-        setOpen(false);
 
         navigate(`/all_institutions/show/${id}`)
     }
 
     if (isErrorData) return <ErrorComponent/>
 
+    const props = {
+        defaultPictures,
+        setPictures,
+        pictures,
+        onFinishHandler,
+        handleSubmit,
+        tags,
+        setAverageCheck,
+        averageCheck,
+        setTitle,
+        title,
+        setTags,
+        setCreatedBy,
+        createdBy,
+        setWorkScheduleWeekend,
+        setWorkDays,
+        contacts,
+        setContacts,
+        description,
+        features,
+        setFeatures,
+        location,
+        setDescription,
+        place,
+        setPlace,
+        setLocation,
+        setType,
+        type,
+        workDays,
+        workScheduleWeekend,
+        sendNotifications,
+        setSendNotifications
+    }
     return (
-        <CustomEdit bgColor={'transparent'} isLoading={isLoadingData}>
+        <CustomEdit
+            bgColor={'transparent'}
+            isLoading={isLoadingData}
+            onClick={onFinishHandler}
+            saveButtonProps={saveButtonProps}
+        >
             <DataForm
-                titleAction={'edit'}
-                setPictures={setPictures}
-                pictures={pictures}
-                onFinishHandler={onFinishHandler}
-                formLoading={formLoading}
-                handleSubmit={handleSubmit}
-                open={open}
-                setOpen={setOpen}
-                tags={tags}
-                setAverageCheck={setAverageCheck}
-                averageCheck={averageCheck}
-                setTitle={setTitle}
-                title={title}
-                setTags={setTags}
-                setCreatedBy={setCreatedBy}
-                createdBy={createdBy}
-                setWorkScheduleWeekend={setWorkScheduleWeekend}
-                setWorkDays={setWorkDays}
-                contacts={contacts}
-                setContacts={setContacts}
-                description={description}
-                features={features}
-                setFeatures={setFeatures}
-                location={location}
-                setDescription={setDescription}
-                place={place}
-                setPlace={setPlace}
-                setLocation={setLocation}
-                setType={setType}
-                type={type}
-                workDays={workDays}
-                workScheduleWeekend={workScheduleWeekend}
+                {...props}
             />
         </CustomEdit>
     )

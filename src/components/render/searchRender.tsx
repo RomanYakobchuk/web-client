@@ -22,7 +22,7 @@ const renderItem = (item: any, resource: string, index: number, mode: string, se
     const text2 = item?.description ?? item?.text ?? '';
 
     return {
-        value: item?.title,
+        title: item?.title,
         key: item?._id,
         label: (
             <Box component={Link}

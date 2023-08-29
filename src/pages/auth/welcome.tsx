@@ -46,7 +46,7 @@ const Welcome: FC = () => {
                         alignItems: 'center',
                         gap: 1,
                     }}>
-                        <Avatar src={'/images/logo.png'}/>
+                        <Avatar src={'/images/favicon.ico'}/>
                         <Typography sx={{
                             fontSize: {xs: 30, md: 40},
                             fontWeight: 700

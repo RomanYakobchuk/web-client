@@ -1,11 +1,11 @@
-import {Place} from "@mui/icons-material";
+import {Place, Star} from "@mui/icons-material";
 import {
     Typography,
     Box,
     Card,
     CardMedia,
     CardContent,
-    Stack, Rating,
+    Stack,
 } from "@mui/material";
 import dayjs from "dayjs";
 import {Link} from "react-router-dom";
@@ -16,7 +16,7 @@ import React, {useContext, useEffect} from "react";
 
 import {IGetIdentity, ProfileProps, PropertyProps} from "../../../interfaces/common";
 import {ColorModeContext} from "../../../contexts";
-import BookMark from "../../common/BookMark";
+import BookMarkButton from "../../common/BookMarkButton";
 import 'dayjs/locale/uk';
 import 'dayjs/locale/en';
 import {tagStyle} from "../../../styles";
@@ -129,8 +129,8 @@ const Variant1EstablishmentCard = ({
                                     zIndex: 20,
                                 }}
                             >
-                                <BookMark showText={false} bgColor={mode === "dark" ? '#000' : '#fff'}
-                                          color={'common.white'} id={_id} type={'favoritePlaces'}/>
+                                <BookMarkButton showText={false} bgColor={mode === "dark" ? '#000' : '#fff'}
+                                                color={'common.white'} id={_id} type={'favoritePlaces'}/>
                             </Box>
                         }
                         <Box color={"default"} sx={{
@@ -166,8 +166,18 @@ const Variant1EstablishmentCard = ({
                                         gap: 1,
                                         alignItems: 'center'
                                     }}>
-                                        <Rating precision={0.5} name="read-only" value={rating} readOnly/>
+                                        <Star sx={{color: 'yellow'}}/>
                                         {rating > 0 ? rating?.toFixed(2) : rating}
+                                        <Box
+                                            component={'span'}
+                                            sx={{
+                                                margin: '0 5px',
+                                                fontSize: '14px',
+                                                color: 'silver'
+                                            }}
+                                        >
+                                            ({institution?.reviewsLength})
+                                        </Box>
                                     </Box>
                                     <Typography sx={{
                                         display: 'flex',
@@ -225,7 +235,8 @@ const Variant1EstablishmentCard = ({
                             m: '5px 0',
                             ...tagStyle,
                             fontSize: {xs: '12px', sm: '14px'},
-                            color: 'common.white'
+                            color: 'common.white',
+                            flexWrap: 'wrap'
                         }}>
                             <Box component={"span"}>
                                 {translate("home.create.averageCheck")}

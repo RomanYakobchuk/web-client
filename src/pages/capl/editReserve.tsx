@@ -52,7 +52,11 @@ const EditReserve = () => {
     const bgColor = 'transparent';
 
     return (
-        <CustomEdit isLoading={isLoading} saveButtonProps={saveButtonProps}>
+        <CustomEdit
+            isLoading={isLoading}
+            saveButtonProps={saveButtonProps}
+
+        >
             <Form
                 {...formProps}
                 initialValues={{

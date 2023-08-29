@@ -1,5 +1,5 @@
 import axios, {AxiosRequestConfig} from "axios";
-import {parseJwt} from "utils/parse-jwt";
+import {parseJwt} from "./utils";
 import {IData, IGetIdentity, ProfileProps} from "./interfaces/common";
 import type {AuthBindings} from "@refinedev/core";
 
@@ -7,12 +7,12 @@ import type {AuthBindings} from "@refinedev/core";
 export const ACCESS_TOKEN_KEY = "access-refine-auth";
 export const REFRESH_TOKEN_KEY = "refresh-refine-auth";
 
-export const baseURL = `${process.env.REACT_APP_API}/api/v1`;
+export const baseURL = `${import.meta.env.VITE_APP_API}/api/v1`;
 // export const baseURL = ``;
 
 export const axiosInstance = axios.create({
     baseURL, headers: {
-        'Access-Control-Allow-Origin': `${process.env.REACT_APP_API}`,
+        'Access-Control-Allow-Origin': `${import.meta.env.VITE_APP_API}`,
     }
 });
 

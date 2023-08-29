@@ -3,8 +3,9 @@ import React, {useEffect, useState} from "react";
 import {useGetIdentity, useTranslate} from "@refinedev/core";
 import {useForm} from "@refinedev/react-hook-form";
 
-import {IGetIdentity, ProfileProps} from "../../interfaces/common";
+import {IGetIdentity, INewsDataProps, INewsDateEvent, IPicture, ProfileProps} from "../../interfaces/common";
 import NewsFormData from "../../components/news/utills/newsFormData";
+import {CustomCreate} from "../../components";
 
 const CreateNews = () => {
     const {search} = useLocation();
@@ -13,13 +14,13 @@ const CreateNews = () => {
     const translate = useTranslate();
     const navigate = useNavigate();
 
+    const [defaultPictures, _] = useState<IPicture[]>([] as IPicture[])
     const [currentInstitutionId, setCurrentInstitutionId] = useState<string>("");
     const [description, setDescription] = useState<string>("");
     const [title, setTitle] = useState<string>("");
-    const [variantForDisplay, setVariantForDisplay] = useState<string>("1");
-    const [pictures, setPictures] = useState<any>([]);
+    const [pictures, setPictures] = useState<IPicture[] | File[]>([] as IPicture[] | File[]);
     const [category, setCategory] = useState('general');
-    const [workDays, setWorkDays] = useState<any>([]);
+    const [dateEvent, setDateEvent] = useState<INewsDateEvent[]>([] as INewsDateEvent[]);
     const [status, setStatus] = useState('published');
     const [datePublish, setDatePublish] = useState<Date | any>();
     const [isDatePublish, setIsDatePublish] = useState<boolean>(false);
@@ -43,14 +44,13 @@ const CreateNews = () => {
 
     const onFinishHandler = async () => {
 
-        if (!pictures && pictures?.length < 0) return alert("Виберіть головне фото");
+        if (!pictures || pictures?.length <= 0) return alert("Виберіть головне фото");
 
         if (pictures.length > 8) return alert(translate("home.create.pictures.max"))
 
         const formData = new FormData();
 
         for (let i = 0; i < pictures.length; i++) {
-            console.log(pictures[i].order)
             formData.append('pictures', pictures[i] as File);
         }
         formData.append("description", description);
@@ -63,8 +63,7 @@ const CreateNews = () => {
         }
         formData.append("createdBy", user?._id);
         formData.append("institutionId", currentInstitutionId);
-        formData.append("variantForDisplay", variantForDisplay);
-        formData.append("dateEvent", JSON.stringify(workDays));
+        formData.append("dateEvent", JSON.stringify(dateEvent));
 
         const {data}: any = await onFinish(formData);
 
@@ -87,29 +86,35 @@ const CreateNews = () => {
     }
 
     return (
-        <NewsFormData
-            handleSubmit={handleSubmit}
-            onFinishHandler={onFinishHandler}
-            pictures={pictures}
-            setPictures={setPictures}
-            currentInstitutionId={currentInstitutionId}
-            setCurrentInstitutionId={setCurrentInstitutionId}
-            title={title}
-            setTitle={setTitle}
-            setWorkDays={setWorkDays}
-            category={category}
-            setCategory={setCategory}
-            workDays={workDays}
-            description={description}
-            setDescription={setDescription}
-            status={status}
-            setStatus={setStatus}
-            isDatePublished={isDatePublish}
-            setIsDatePublished={setIsDatePublish}
-            formLoading={formLoading}
-            datePublished={datePublish}
-            setDatePublished={setDatePublish}
-        />
+        <CustomCreate
+            bgColor={'transparent'}
+            onClick={onFinishHandler}
+            isLoading={formLoading}>
+            <NewsFormData
+                defaultPictures={defaultPictures}
+                handleSubmit={handleSubmit}
+                onFinishHandler={onFinishHandler}
+                pictures={pictures}
+                setPictures={setPictures}
+                currentInstitutionId={currentInstitutionId}
+                setCurrentInstitutionId={setCurrentInstitutionId}
+                title={title}
+                setTitle={setTitle}
+                setDateEvent={setDateEvent}
+                category={category}
+                setCategory={setCategory}
+                dateEvent={dateEvent}
+                description={description}
+                setDescription={setDescription}
+                status={status}
+                setStatus={setStatus}
+                isDatePublished={isDatePublish}
+                setIsDatePublished={setIsDatePublish}
+                formLoading={formLoading}
+                datePublished={datePublish}
+                setDatePublished={setDatePublish}
+            />
+        </CustomCreate>
     )
 };
 export default CreateNews;

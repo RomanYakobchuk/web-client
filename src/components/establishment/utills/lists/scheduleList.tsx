@@ -17,9 +17,9 @@ import {DemoContainer, DemoItem} from "@mui/x-date-pickers/internals/demo";
 import dayjs from "dayjs";
 import {useTranslate} from "@refinedev/core";
 
-import {ColorModeContext} from "../../../contexts";
-import {IWorkDay} from "../../../interfaces/common";
-import {buttonStyle, selectStyle, textFieldStyle} from "../../../styles";
+import {ColorModeContext} from "../../../../contexts";
+import {IWorkDay} from "../../../../interfaces/common";
+import {buttonStyle, selectStyle, textFieldStyle} from "../../../../styles";
 
 
 type Props = {
@@ -61,10 +61,7 @@ const ScheduleList = ({
     }, [weekend])
     const {mode} = useContext(ColorModeContext);
     const handleAddWorkDay = () => {
-        console.log('----')
-        console.log(workDay)
         if (workDay.days.from && workDay.days.to && workDay.time.from && workDay.time.to) {
-            console.log('plus')
             onSubmit(workDay as IWorkDay);
             setWorkDay({days: {from: '1', to: '5'}, time: {from: "08:00", to: "21:00"}});
         }

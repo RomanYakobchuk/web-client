@@ -133,8 +133,8 @@ const SearchInstitutions = ({setSearchPlace, searchPlace, typeSearch}: IProps) =
                     filterOption={false}
                     onSearch={onSearch}
                     onSelect={(value, option) => {
-                        // const {id} = option;
-                        setSearchPlace(value)
+                        const {id} = option;
+                        setSearchPlace(id)
                         setSearchPlaceInput(value);
                         setSearchInputValue(value)
                     }}

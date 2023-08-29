@@ -1,38 +1,30 @@
-import {useNavigate} from "react-router-dom";
-import React, {ChangeEvent, useContext, useEffect, useRef, useState} from "react";
+import React, {ChangeEvent, useContext, useEffect, useRef} from "react";
 import {useGetIdentity, useTranslate} from "@refinedev/core";
 import {GoogleMap, MarkerF, useJsApiLoader} from "@react-google-maps/api";
 import {
-    Box,
-    Button,
-    CardMedia, CircularProgress,
+    Box, CircularProgress,
     FormControl,
-    FormHelperText, IconButton, MenuItem, Select,
-    SelectChangeEvent, TextField,
-    Typography
+    FormHelperText, MenuItem, Select,
+    SelectChangeEvent, TextField, Typography,
 } from "@mui/material";
 import MDEditor from "@uiw/react-md-editor";
-import {AddCircleOutline, ArrowBackIosNew, DeleteForeverOutlined, Edit} from "@mui/icons-material";
 
 import {IGetIdentity, IPlaceFormProps, IWorkDay, ProfileProps} from "../../interfaces/common";
 import {center, containerStyle, options} from "./utills/mapsOptrions";
-import {CustomButton, ModalWindow, SearchManager} from "../index";
+import {SearchManager} from "../index";
 import {ColorModeContext} from "../../contexts";
 import ImageSelector from "./utills/ImageSelector";
-import ScheduleList from "./utills/scheduleList";
-import ItemsList from "./utills/dataPropertyList";
-import {buttonStyle, selectStyle, textFieldStyle} from "../../styles";
+import ScheduleList from "./utills/lists/scheduleList";
+import ItemsList from "./utills/lists/dataPropertyList";
+import {selectStyle, textFieldStyle} from "../../styles";
+import {Switch} from "antd";
 
 
 const DataForm = ({
                       handleSubmit,
-                      formLoading,
                       onFinishHandler,
                       pictures,
                       setPictures,
-                      open,
-                      setOpen,
-                      titleAction,
                       type,
                       setType,
                       tags,
@@ -56,20 +48,20 @@ const DataForm = ({
                       title,
                       setTitle,
                       averageCheck,
-                      setAverageCheck
+                      defaultPictures,
+                      setAverageCheck,
+                      setSendNotifications,
+                      sendNotifications
                   }: IPlaceFormProps) => {
-
-    const navigate = useNavigate();
+    const maxImages = 10;
     const {mode} = useContext(ColorModeContext);
     const translate = useTranslate();
     const {data: identity} = useGetIdentity<IGetIdentity>();
     const currentUser: ProfileProps = identity?.user as ProfileProps;
 
-    const [defaultPictures, setDefaultPictures] = useState(pictures);
-
     const {isLoaded} = useJsApiLoader({
         id: 'google-map-script',
-        googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_KEY!
+        googleMapsApiKey: import.meta.env.VITE_APP_GOOGLE_MAPS_KEY!
     });
     const mapRef = useRef<google.maps.Map | null>(null);
     const onLoad = (map: google.maps.Map): void => {
@@ -84,9 +76,6 @@ const DataForm = ({
             setCreatedBy(currentUser?._id)
         }
     }, [currentUser]);
-    useEffect(() => {
-        setDefaultPictures(pictures)
-    }, [])
 
     const handleAddWorkDays = (workSchedule: IWorkDay) => {
         setWorkDays([...workDays, workSchedule])
@@ -98,7 +87,7 @@ const DataForm = ({
 
     useEffect(() => {
         if (location?.lat && location?.lng) {
-            fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.lat},${location.lng}&key=${process.env.REACT_APP_GOOGLE_MAPS_KEY!}`)
+            fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.lat},${location.lng}&key=${import.meta.env.VITE_APP_GOOGLE_MAPS_KEY!}`)
                 .then((data) => data.json())
                 .then((data) => {
                     if (!place.address || !place.city) {
@@ -121,46 +110,20 @@ const DataForm = ({
 
 
     const handlePicturesChange = (e: ChangeEvent<HTMLInputElement> | any) => {
-        if (10 < pictures.length) return alert(translate("home.create.pictures.max") + "10");
-        if (10 < e.target.files?.length) return alert(translate("home.create.pictures.max") + '10');
+        if (pictures.length > maxImages || e.target.files?.length > 10) return alert(translate("home.create.pictures.max") + maxImages);
 
         let arr = [];
         const items = e.target.files;
         for (let i = 0; i < items?.length; i++) {
             const item = items[i];
-            arr.push(item)
+            if ((arr?.length + pictures?.length) < maxImages) {
+                arr.push(item)
+            }
         }
-        setPictures([...arr])
-    }
-
-
-    const handleOpen = () => {
-        if (!pictures && pictures?.length < 0) return alert("Виберіть головне фото");
-
-        if (pictures.length > 10) return alert(translate("home.create.pictures.max"))
-
-        setOpen(true)
+        setPictures([...pictures, ...arr]);
     }
 
     return (
-        // <Box sx={{
-        //     display: 'flex',
-        //     flexDirection: 'row',
-        //     alignItems: 'center',
-        //     justifyContent: "start",
-        //     gap: {xs: '10%', sm: '30%', md: '40%'}
-        // }}>
-        //     <Button
-        //         variant={"outlined"}
-        //         onClick={() => navigate(-1)}
-        //         color={'secondary'}>
-        //         <ArrowBackIosNew/>
-        //     </Button>
-        //
-        //     <Typography fontSize={{xs: 18, md: 22}} fontWeight={700} textAlign={"start"}>
-        //         {translate(`home.${titleAction}.title`)}
-        //     </Typography>
-        // </Box>
         <Box
             sx={{
                 borderRadius: '15px',
@@ -454,6 +417,27 @@ const DataForm = ({
                         />
                     </FormControl>
                 </Box>
+                <FormControl sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    gap: 2,
+                    alignItems: 'center'
+                }}>
+                    <Switch
+                        style={{
+                            width: 'fit-content'
+                        }}
+                        checked={sendNotifications ?? false}
+                        onChange={(checked) => setSendNotifications(checked)}
+                    />
+                    <Typography
+                        sx={{
+                            color: 'common.white'
+                        }}
+                    >
+                        {translate('notification.send')}
+                    </Typography>
+                </FormControl>
                 <FormControl>
                     <FormHelperText
                         sx={{
@@ -466,54 +450,44 @@ const DataForm = ({
                         {translate("home.create.pictures.title")}
                     </FormHelperText>
                     <ImageSelector
-                        maxImages={10} images={pictures}
+                        maxImages={maxImages} images={pictures}
                         defaultPictures={defaultPictures}
-                                   setPictures={setPictures}
-                                   handleChange={handlePicturesChange}/>
+                        setPictures={setPictures}
+                        handleChange={handlePicturesChange}/>
 
                 </FormControl>
-                <FormControl sx={{
-                    display: 'flex',
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    alignItems: 'center'
-                }}>
-                    <Button
-                        color="error"
-                        variant={'contained'}
-                        sx={{
-                            ...buttonStyle,
-                            width: '32%',
-                            textTransform: 'capitalize'
-                        }}
-                        onClick={() => navigate("/home")}
-                    >
-                        {translate("profile.edit.cancel")}
-                    </Button>
-                    <Button
-                        color="info"
-                        variant={'contained'}
-                        sx={{
-                            ...buttonStyle,
-                            width: '60%'
-                        }}
-                        onClick={handleOpen}
-                    >
-                        {translate("profile.edit.save")}
-                    </Button>
-                    {/*<ModalWindow*/}
-                    {/*    close={setOpen}*/}
-                    {/*    open={open}*/}
-                    {/*    handleSubmit={handleSubmit(onFinishHandler)}*/}
-                    {/*    message={translate("home.create.message")}*/}
-                    {/*    textButtonCancel={translate("buttons.cancel")}*/}
-                    {/*    textButtonConfirm={formLoading ? '' : translate("buttons.save")}*/}
-                    {/*    icon={formLoading ? <CircularProgress/> : ""}*/}
-                    {/*    textTitle={translate("home.create.confirmTitle")}*/}
-                    {/*/>*/}
-                </FormControl>
+                {/*<FormControl sx={{*/}
+                {/*    display: 'flex',*/}
+                {/*    flexDirection: "row",*/}
+                {/*    justifyContent: "space-between",*/}
+                {/*    alignItems: 'center'*/}
+                {/*}}>*/}
+                {/*    <Button*/}
+                {/*        color="error"*/}
+                {/*        variant={'contained'}*/}
+                {/*        sx={{*/}
+                {/*            ...buttonStyle,*/}
+                {/*            width: '32%',*/}
+                {/*            textTransform: 'capitalize'*/}
+                {/*        }}*/}
+                {/*        onClick={() => navigate("/home")}*/}
+                {/*    >*/}
+                {/*        {translate("profile.edit.cancel")}*/}
+                {/*    </Button>*/}
+                {/*    <Button*/}
+                {/*        color="info"*/}
+                {/*        variant={'contained'}*/}
+                {/*        sx={{*/}
+                {/*            ...buttonStyle,*/}
+                {/*            width: '60%'*/}
+                {/*        }}*/}
+                {/*        onClick={handleOpen}*/}
+                {/*    >*/}
+                {/*        {translate("profile.edit.save")}*/}
+                {/*    </Button>*/}
+                {/*</FormControl>*/}
             </Box>
         </Box>
     );
 };
-export default DataForm
+export default DataForm;

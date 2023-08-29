@@ -1,8 +1,8 @@
 import React, {useContext, useState} from "react";
 import {Button, Chip, Grid, TextField} from "@mui/material";
 import {Add} from "@mui/icons-material";
-import {ColorModeContext} from "../../../contexts";
-import {buttonStyle, textFieldStyle} from "../../../styles";
+import {ColorModeContext} from "../../../../contexts";
+import {buttonStyle, textFieldStyle} from "../../../../styles";
 
 
 type Props = {

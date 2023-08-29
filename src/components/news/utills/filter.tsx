@@ -6,40 +6,18 @@ import {
     TextField
 } from "@mui/material";
 import {CancelOutlined, TuneOutlined} from "@mui/icons-material";
-import {AutoComplete, Input, Typography as TypographyAntd} from "antd";
+import {AutoComplete, Input} from "antd";
 import React, {useContext, useEffect, useMemo, useState} from "react";
-import {CrudFilter, CrudSorting, useList, useTranslate} from "@refinedev/core";
-import {useLocation} from "react-router-dom";
+import {CrudFilter, CrudSorting, useTranslate} from "@refinedev/core";
+import {DatePicker, LocalizationProvider} from "@mui/x-date-pickers";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 
 import {IOptions} from "../../../interfaces/common";
 import {ColorModeContext} from "../../../contexts";
-import {DatePicker, LocalizationProvider} from "@mui/x-date-pickers";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import {useDebounce} from "use-debounce";
 import {buttonStyle, selectStyle, textFieldStyle} from "../../../styles";
 
-const {Text} = TypographyAntd;
-const renderTitle = (title: string) => {
-    return (
-        <Text strong style={{fontSize: "16px"}}>
-            {title}
-        </Text>
-    );
-};
-
-const renderItem = (title: string, resource: string, id: number) => {
-    return {
-        value: title,
-        label: (
-            <Text style={{
-                textTransform: 'capitalize'
-            }}>
-                {title}
-            </Text>
-        ),
-    };
-};
 
 interface IProps {
     setFilters: any,
@@ -64,7 +42,6 @@ const FilterNews = ({
                     }: IProps) => {
 
     const translate = useTranslate();
-    const {state: locationState, search} = useLocation();
     const {mode} = useContext(ColorModeContext);
 
     const [openFilter, setOpenFilter] = useState(false);
@@ -78,42 +55,11 @@ const FilterNews = ({
     const [options, setOptions] = useState<IOptions[]>([]);
     const [debounceValue] = useDebounce(searchCityInput, 500);
 
-    const {refetch: refetchCities, isLoading: citiesIsLoading} = useList<any>({
-        resource: 'city/all',
-        filters: [{field: 'city', operator: 'contains', value: debounceValue}],
-        queryOptions: {
-            enabled: false,
-            onSuccess: (data) => {
-                const citiesOptionGroup = data.data.map((item) => {
-                        return (
-                            renderItem(item.name, translate("cities.cities"), item._id)
-                        )
-                    }
-                )
-                if (citiesOptionGroup.length > 0) {
-                    setOptions((prevState) => [
-                        ...prevState,
-                        {
-                            label: renderTitle(translate("cities.cities")),
-                            options: citiesOptionGroup
-                        }
-                    ])
-                }
-            }
-        }
-    })
-
     const onSearch = (value: string) => {
         setSearchInputValue(value)
         setSearchCityInput(value)
     }
 
-    useEffect(() => {
-        setOptions([]);
-        (async () => {
-            await refetchCities();
-        })()
-    }, [debounceValue])
 
 
     const currentSorterOrders = useMemo(() => {

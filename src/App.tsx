@@ -43,13 +43,13 @@ import {
     CreateReservation,
     DetailsReserve,
     EditReserve,
-} from "pages";
+} from "./pages";
 import {
     Loading,
     Menu,
     EditMenu,
     CreateMenu, EditUpdateStatus, ShowChats, UpdateCity
-} from "components";
+} from "./components";
 import {model, adapter} from "./accessControl";
 import {Header, Title, Layout, Sider} from "./layout";
 
@@ -77,9 +77,9 @@ import {VariantProvider} from "./settings/variantEstablishment";
 import {AppContextProvider} from "./contexts/AppContext";
 import {GoogleOAuthProvider} from "@react-oauth/google";
 
-const API_URL = process.env.REACT_APP_API;
-const STATISTIC_API_URL = process.env.REACT_APP_STATISTIC_API;
-const clientId = `${process.env.REACT_APP_GOOGLE_CLIENT_ID}`;
+const API_URL = import.meta.env.VITE_APP_API;
+const STATISTIC_API_URL = import.meta.env.VITE_APP_STATISTIC_API;
+const clientId = `${import.meta.env.VITE_APP_GOOGLE_CLIENT_ID}`;
 
 function App() {
     const {t, i18n} = useTranslation();
@@ -248,7 +248,7 @@ function App() {
                                             <Route
                                                 element={
                                                     <Authenticated v3LegacyAuthProviderCompatible={true}
-                                                                   fallback={<CatchAllNavigate to="/welcome"/>}>
+                                                                   fallback={<CatchAllNavigate to="/login"/>}>
                                                         <AppContextProvider>
                                                             <Layout Header={Header} Sider={Sider} Title={Title}>
                                                                 <Outlet/>

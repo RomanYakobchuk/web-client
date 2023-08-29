@@ -4,7 +4,7 @@ import {
     Button,
 } from "@mui/material";
 import {useParams} from "react-router-dom";
-import {useGetIdentity, useOne, useTranslate} from "@refinedev/core";
+import {useGetIdentity, useShow, useTranslate} from "@refinedev/core";
 import {ErrorComponent} from "@refinedev/mui";
 import {
     MessageOutlined,
@@ -12,7 +12,7 @@ import {
     ReviewsOutlined,
 } from "@mui/icons-material";
 
-import {IGetIdentity, ProfileProps, PropertyProps} from "../../interfaces/common";
+import {IGetIdentity, ISubscribe, ProfileProps, PropertyProps} from "../../interfaces/common";
 import {ColorModeContext} from "../../contexts";
 import MainEstablishmentInfo from "../../components/establishment/main-establishment-info";
 import InstitutionNews from "../../components/establishment/institution-news";
@@ -45,8 +45,8 @@ const EstablishmentDetails: FC = () => {
     const translate = useTranslate();
     const {device, width} = useMobile();
 
-    const {data, isLoading, isError} = useOne<PropertyProps>({
-        resource: 'institution/allInfoById',
+    const {queryResult} = useShow<{institution: PropertyProps, subscribe: ISubscribe }>({
+        resource: 'institution/infoById',
         id: id as string,
         errorNotification: (data: any) => {
             return {
@@ -55,12 +55,14 @@ const EstablishmentDetails: FC = () => {
             }
         }
     });
+    const {data, isLoading, isError} = queryResult;
 
-    const institution: PropertyProps = data?.data ?? {} as PropertyProps;
+
+    const institution: PropertyProps = data?.data?.institution ?? {} as PropertyProps;
+    const subscribe: ISubscribe = data?.data?.subscribe ?? {} as ISubscribe;
 
     const [dataForBody, setDataForBody] = useState("news");
 
-    // if (isLoading) return <Loading/>
     if (isError) return <ErrorComponent/>
 
     return (
@@ -68,87 +70,6 @@ const EstablishmentDetails: FC = () => {
                     bgColor={'transparent'}
                     showButtons={user?._id === institution?.createdBy || user?.status === 'admin'}
         >
-            {/*<Box sx={{*/}
-            {/*    display: 'flex',*/}
-            {/*    width: '100%',*/}
-            {/*    justifyContent: 'space-between',*/}
-            {/*    alignItems: 'center',*/}
-            {/*}}>*/}
-            {/*    <Typography sx={{*/}
-            {/*        fontSize: {xs: '16px', sm: '24px'}*/}
-            {/*    }} fontWeight={700} color={mode === "dark" ? "#fcfcfc" : "#11142D"}>*/}
-            {/*        {translate('home.show.title')}*/}
-            {/*    </Typography>*/}
-            {/*    {*/}
-            {/*        (institution?.createdBy === user?._id) || user?.status === 'admin'*/}
-            {/*            ? <Box sx={{*/}
-            {/*                display: 'flex',*/}
-            {/*                alignItems: 'center',*/}
-            {/*                gap: 1*/}
-            {/*            }}>*/}
-            {/*                {*/}
-            {/*                    device || width < 600*/}
-            {/*                        ? <IconButton*/}
-            {/*                            size={"large"}*/}
-            {/*                            onClick={() => navigate(`/all_institutions/edit/${institution?._id}`)}*/}
-            {/*                        >*/}
-            {/*                            <Edit fontSize="inherit"/>*/}
-            {/*                        </IconButton>*/}
-            {/*                        : <Button*/}
-            {/*                            variant={"contained"}*/}
-            {/*                            startIcon={<Edit sx={{*/}
-            {/*                                fontSize: {xs: '18px', sm: '24px'},*/}
-            {/*                            }}/>}*/}
-            {/*                            onClick={() => navigate(`/all_institutions/edit/${institution?._id}`)}*/}
-            {/*                            sx={{*/}
-            {/*                                bgcolor: 'blue',*/}
-            {/*                                borderRadius: '25px',*/}
-            {/*                            }}*/}
-            {/*                        >*/}
-            {/*                            {translate('profile.edit.title')}*/}
-            {/*                        </Button>*/}
-            {/*                }*/}
-            {/*                {*/}
-            {/*                    device || width < 600*/}
-            {/*                        ? <IconButton*/}
-            {/*                            size={"large"}*/}
-            {/*                            onClick={() => navigate(`/news/create?institution_id=${institution._id}`)}*/}
-            {/*                        >*/}
-            {/*                            <Add fontSize="inherit"/>*/}
-            {/*                        </IconButton>*/}
-            {/*                        : <Button*/}
-            {/*                            onClick={() => navigate(`/news/create?institution_id=${institution._id}`)}*/}
-            {/*                            startIcon={<Add/>}*/}
-            {/*                            sx={{*/}
-            {/*                                bgcolor: '#cfcfcf',*/}
-            {/*                                color: '#242539',*/}
-            {/*                                borderRadius: '25px',*/}
-            {/*                            }}*/}
-            {/*                        >*/}
-            {/*                            {translate("home.createNews.title")}*/}
-            {/*                        </Button>*/}
-            {/*                }*/}
-            {/*            </Box>*/}
-            {/*            : <Button*/}
-            {/*                startIcon={<WineBarOutlined sx={{*/}
-            {/*                    fontSize: {xs: '18px', sm: '24px'},*/}
-            {/*                }}/>}*/}
-            {/*                sx={{*/}
-            {/*                    bgcolor: 'blue',*/}
-            {/*                    p: "10px 15px",*/}
-            {/*                    transition: '300ms linear',*/}
-            {/*                    borderRadius: '25px',*/}
-            {/*                    minWidth: '100px',*/}
-            {/*                    "&:hover": {*/}
-            {/*                        bgcolor: 'info.main',*/}
-            {/*                    }*/}
-            {/*                }}*/}
-            {/*                onClick={() => navigate(`/capl/create?institution=${institution?._id}`)}*/}
-            {/*            >*/}
-            {/*                Capl*/}
-            {/*            </Button>*/}
-            {/*    }*/}
-            {/*</Box>*/}
             <Box sx={{
                 display: 'flex',
                 width: '100%',
@@ -160,6 +81,7 @@ const EstablishmentDetails: FC = () => {
             }}>
                 <MainEstablishmentInfo
                     rowHeight={device && width < 600 ? 120 : 200}
+                    subscribe={subscribe}
                     establishment={institution}/>
                 <Box sx={{
                     display: 'flex',

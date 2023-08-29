@@ -1,5 +1,5 @@
 import {useNavigate, useParams} from "react-router-dom";
-import {useGetIdentity, useOne, useTranslate} from "@refinedev/core";
+import {useGetIdentity, useShow, useTranslate} from "@refinedev/core";
 import {ErrorComponent} from "@refinedev/mui";
 import {
     Box, Button,
@@ -21,7 +21,6 @@ import dayjs from "dayjs";
 import React, {useContext} from "react";
 
 import {IGetIdentity, INews, ProfileProps} from "../../interfaces/common";
-import Loading from "../../components/loading/loading";
 import {useMobile} from "../../utils";
 import {ColorModeContext} from "../../contexts";
 import OtherNews from "../../components/news/utills/otherNews";
@@ -39,7 +38,7 @@ const DetailsNews = () => {
 
     const rowHeight = device && width < 600 ? 120 : 200;
 
-    const {data, isLoading, isError} = useOne<INews | any>({
+    const {queryResult} = useShow<INews>({
         resource: 'news/infoById',
         id: id as string,
         errorNotification: (data: any) => {
@@ -49,13 +48,14 @@ const DetailsNews = () => {
             }
         }
     });
+    const {data, isLoading, isError} = queryResult;
 
     const {isLoaded} = useJsApiLoader({
         id: 'google-map-script',
-        googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_KEY!
+        googleMapsApiKey: import.meta.env.VITE_APP_GOOGLE_MAPS_KEY!
     });
 
-    const news: INews = data?.data ?? [];
+    const news: INews = data?.data ?? {} as INews;
 
     if (isError) return <ErrorComponent/>
     return (
@@ -205,19 +205,23 @@ const DetailsNews = () => {
                                                 objectFit: 'cover'
                                             }
                                         }}>
-                                            <ImageField
-                                                preview={{
-                                                    zIndex: 1000,
-                                                    width: (device || width < 600) ? '90%' : 'auto'
-                                                }}
-                                                value={news.pictures[0].url}
-                                                style={{
-                                                    borderRadius: '5px',
-                                                    height: width < 600 ? '200px'
-                                                        : width < 900 ? "320px" : '400px',
-                                                    width: '100%',
-                                                    objectFit: 'cover',
-                                                }}/>
+                                            {
+                                                news?.pictures?.length > 0 && (
+                                                    <ImageField
+                                                        preview={{
+                                                            zIndex: 1000,
+                                                            width: (device || width < 600) ? '90%' : 'auto'
+                                                        }}
+                                                        value={news?.pictures[0]?.url}
+                                                        style={{
+                                                            borderRadius: '5px',
+                                                            height: width < 600 ? '200px'
+                                                                : width < 900 ? "320px" : '400px',
+                                                            width: '100%',
+                                                            objectFit: 'cover',
+                                                        }}/>
+                                                )
+                                            }
                                             <Box sx={{
                                                 position: 'absolute',
                                                 zIndex: 1,

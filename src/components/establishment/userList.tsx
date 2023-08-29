@@ -1,18 +1,15 @@
 import {useLocation} from "react-router-dom";
-import {useTable, useTranslate} from "@refinedev/core";
+import {useTable} from "@refinedev/core";
 import {Box, Typography} from "@mui/material";
 import React, {useEffect, useState} from "react";
 
-import {FilterInstitutions, Loading, PaginationComponent} from "../index";
+import {FilterInstitutions} from "../index";
 import {PropertyProps} from "../../interfaces/common";
-import {useMobile} from "../../utils";
-import PropertiesList from "./utills/propertiesList";
+import ListForUsers from "./utills/lists/listForUsers";
 
 const UserList = () => {
     const {state} = useLocation();
-    const translate = useTranslate();
     const [sortBy, setSortBy] = useState("");
-    const {width} = useMobile();
 
     const [searchValue, setSearchValue] = useState<any>();
 
@@ -21,7 +18,6 @@ const UserList = () => {
         current,
         setCurrent,
         setPageSize,
-        pageCount,
         sorters,
         pageSize,
         setSorters,
@@ -82,34 +78,15 @@ const UserList = () => {
                     </Box>
                 </Box>
             </Box>
-            <Box sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                position: 'relative',
-                justifyContent: width > 1000 ? 'unset' : 'center',
-                alignItems: width > 1000 ? 'unset' : 'start'
-            }}>
-                {
-                    isLoading ? <Loading height={'40vh'}/> :
-                        allInstitutions?.length > 0 ?
-                            <PropertiesList items={allInstitutions}/>
-                            : <Box sx={{
-                                width: '100%',
-                                height: '250px',
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignItems: 'center'
-                            }}>
-                                {translate('text.notResult')}
-                            </Box>
-                }
-                {
-                    allInstitutions.length > 0 && (
-                        <PaginationComponent count={data?.total as number} current={current} setCurrent={setCurrent}
-                                             pageCount={pageSize} setPageSize={setPageSize}/>
-                    )
-                }
-            </Box>
+            <ListForUsers
+                isLoading={isLoading}
+                allInstitutions={allInstitutions}
+                data={data}
+                current={current}
+                setCurrent={setCurrent}
+                pageSize={pageSize}
+                setPageSize={setPageSize}
+            />
         </Box>
     );
 };

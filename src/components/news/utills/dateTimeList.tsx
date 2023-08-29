@@ -1,12 +1,11 @@
 import {useTranslate} from "@refinedev/core";
 import React, {useContext, useState} from "react";
-import {ColorModeContext} from "../../../contexts";
 import {Box, Button, Chip, FormControl, FormHelperText, Grid} from "@mui/material";
-import {DatePicker, LocalizationProvider, MobileTimePicker} from "@mui/x-date-pickers";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import {DemoContainer, DemoItem} from "@mui/x-date-pickers/internals/demo";
 import dayjs from "dayjs";
 import {Add} from "@mui/icons-material";
+
+import {ColorModeContext} from "../../../contexts";
+import {INewsDateEvent} from "../../../interfaces/common";
 
 
 type Props = {
@@ -18,19 +17,13 @@ type Props = {
 const DateTimeList = ({onSubmit, elements, onDelete, dataLabel}: Props) => {
     const translate = useTranslate();
 
-    const [dateEvent, setDateEvent] = useState<any>({
-        schedule: {from: '', to: ''},
-        time: {from: null, to: null}
-    });
+    const [dateEvent, setDateEvent] = useState<INewsDateEvent>({} as INewsDateEvent);
 
     const {mode} = useContext(ColorModeContext);
 
     const handleAddWorkDay = () => {
         onSubmit(dateEvent);
-        setDateEvent({
-            schedule: {from: '', to: ''},
-            time: {from: "", to: ""}
-        })
+        setDateEvent({} as INewsDateEvent)
     };
 
     return (
@@ -84,59 +77,7 @@ const DateTimeList = ({onSubmit, elements, onDelete, dataLabel}: Props) => {
                                         alignItems: "center",
                                         gap: 1
                                     }}>
-                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                            <DatePicker
-                                                sx={{
-                                                    "> div": {
-                                                        fontSize: '14px'
-                                                    },
-                                                    "> div > input":{
-                                                        p: '7px 10px'
-                                                    }
-                                                }}
-                                                views={['year', 'month', 'day']}
-                                                value={dateEvent?.schedule?.from ? dateEvent?.schedule?.from : ""}
-                                                onChange={(value) => {
-                                                    setDateEvent({
-                                                        schedule: {
-                                                            from: value,
-                                                            to: dateEvent?.schedule?.to
-                                                        },
-                                                        time: {
-                                                            from: dateEvent?.time?.from,
-                                                            to: dateEvent?.time?.to,
-                                                        }
-                                                    })
-                                                }}
-                                            />
-                                        </LocalizationProvider>
-                                        -
-                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                            <DatePicker
-                                                sx={{
-                                                    "> div": {
-                                                        fontSize: '14px'
-                                                    },
-                                                    "> div > input":{
-                                                        p: '7px 10px'
-                                                    }
-                                                }}
-                                                views={['year', 'month', 'day']}
-                                                value={dateEvent?.schedule?.to ? dateEvent?.schedule?.to : ''}
-                                                onChange={(value) => {
-                                                    setDateEvent({
-                                                        schedule: {
-                                                            from: dateEvent?.schedule?.from,
-                                                            to: value,
-                                                        },
-                                                        time: {
-                                                            from: dateEvent?.time?.from,
-                                                            to: dateEvent?.time?.to,
-                                                        }
-                                                    })
-                                                }}
-                                            />
-                                        </LocalizationProvider>
+                                       Schedule
                                     </Box>
                                     <Box sx={{
                                         display: "flex",
@@ -145,85 +86,7 @@ const DateTimeList = ({onSubmit, elements, onDelete, dataLabel}: Props) => {
                                         alignItems: "center",
                                         gap: 1
                                     }}>
-                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                            <DemoContainer
-                                                components={[
-                                                    'MobileTimePicker',
-                                                ]}
-                                                sx={{
-                                                    width: "50%",
-                                                    display: "flex",
-                                                    flexDirection: "column",
-                                                    justifyContent: 'center',
-                                                    alignItems: "center"
-                                                }}
-                                            >
-                                                <DemoItem label={translate("")}>
-                                                    <MobileTimePicker
-                                                        sx={{
-                                                            width: "100%", color: "info",
-                                                            p: 0,
-                                                            "input": {
-                                                                p: '5px 14px'
-                                                            }
-                                                        }}
-                                                        views={['hours', 'minutes']}
-                                                        defaultValue={dayjs('2022-04-17T15:30')}
-                                                        value={dateEvent?.time?.from ?? ""}
-                                                        onChange={(value: any) => setDateEvent({
-                                                            days: {
-                                                                from: dateEvent?.schedule?.from,
-                                                                to: dateEvent?.schedule?.to
-                                                            },
-                                                            time: {
-                                                                from: value,
-                                                                to: dateEvent?.time?.to,
-                                                            }
-                                                        })}
-                                                    />
-                                                </DemoItem>
-                                            </DemoContainer>
-                                        </LocalizationProvider>
-                                        -
-                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                            <DemoContainer
-                                                components={[
-                                                    'MobileTimePicker',
-                                                ]}
-                                                sx={{
-                                                    width: "50%",
-                                                    display: "flex",
-                                                    flexDirection: "column",
-                                                    justifyContent: 'center',
-                                                    alignItems: "center"
-                                                }}
-                                            >
-                                                <DemoItem label={translate("")}>
-                                                    <MobileTimePicker
-                                                        sx={{
-                                                            width: "100%", color: "info",
-                                                            p: 0,
-                                                            "input": {
-                                                                p: '5px 14px'
-                                                            }
-                                                        }}
-                                                        views={['hours', 'minutes']}
-                                                        defaultValue={dayjs('2022-04-17T15:30')}
-                                                        value={dateEvent?.time?.to ?? ""}
-                                                        onChange={(value: any) => setDateEvent({
-                                                            days: {
-                                                                from: dateEvent?.schedule?.from,
-                                                                to: dateEvent?.schedule?.to
-                                                            },
-                                                            time: {
-                                                                from: dateEvent?.time?.from,
-                                                                to: value,
-                                                            }
-                                                        })}
-                                                    />
-                                                </DemoItem>
-                                            </DemoContainer>
-                                        </LocalizationProvider>
+                                        Time
                                     </Box>
                                 </Box>
                                 <Button variant="contained" color={"info"} onClick={handleAddWorkDay}>

@@ -1,16 +1,14 @@
 import {useNavigate, useParams} from "react-router-dom";
-import {useGetIdentity, useTranslate} from "@refinedev/core";
+import {useTranslate} from "@refinedev/core";
 import React, {useEffect, useState} from "react";
 import {useForm} from "@refinedev/react-hook-form";
-import {FieldValues} from "react-hook-form";
 
-import {IGetIdentity, INews, ProfileProps} from "../../interfaces/common";
+import {INews, INewsDateEvent, IPicture} from "../../interfaces/common";
 import NewsFormData from "../../components/news/utills/newsFormData";
 import Loading from "../../components/loading/loading";
+import {CustomEdit} from "../../components";
 
 const EditNews = () => {
-    const {data: identity} = useGetIdentity<IGetIdentity>();
-    const user: ProfileProps = identity?.user as ProfileProps;
     const translate = useTranslate();
     const navigate = useNavigate();
 
@@ -49,13 +47,14 @@ const EditNews = () => {
         }
     }, [queryResult])
 
+    const [defaultPictures, _] = useState<IPicture[]>([] as IPicture[])
     const [currentInstitutionId, setCurrentInstitutionId] = useState<string>("");
     const [description, setDescription] = useState<string>("");
     const [title, setTitle] = useState<string>("");
     const [variantForDisplay, setVariantForDisplay] = useState<string | any>("1");
-    const [pictures, setPictures] = useState<any>([]);
+    const [pictures, setPictures] = useState<IPicture[] | File[]>([] as IPicture[] | File[]);
     const [category, setCategory] = useState<any>('general');
-    const [workDays, setWorkDays] = useState<any>([]);
+    const [dateEvent, setDateEvent] = useState<INewsDateEvent[]>([] as INewsDateEvent[]);
     const [status, setStatus] = useState<any>('published');
     const [datePublish, setDatePublish] = useState<Date | any>();
     const [isDatePublish, setIsDatePublish] = useState<boolean | any>(false);
@@ -71,13 +70,13 @@ const EditNews = () => {
             setCurrentInstitutionId(news?.institutionId)
             setPictures(news?.pictures)
             setVariantForDisplay(news?.variantForDisplay)
-            setWorkDays(news?.dateEvent)
+            setDateEvent(news?.dateEvent)
         }
     }, [news]);
 
-    const onFinishHandler = async (date: FieldValues) => {
+    const onFinishHandler = async () => {
 
-        if (!pictures && pictures?.length < 0) return alert("Виберіть головне фото");
+        if (!pictures || pictures?.length < 0) return alert("Виберіть головне фото");
 
         if (pictures.length > 8) return alert(translate("home.create.pictures.max"))
 
@@ -96,7 +95,7 @@ const EditNews = () => {
         // formData.append("createdBy", JSON.stringify(user?._id));
         formData.append("institutionId", JSON.stringify(currentInstitutionId));
         formData.append("variantForDisplay", JSON.stringify(variantForDisplay));
-        formData.append("dateEvent", JSON.stringify(workDays));
+        formData.append("dateEvent", JSON.stringify(dateEvent));
 
         const {data}: any = await onFinish(formData);
 
@@ -122,29 +121,35 @@ const EditNews = () => {
     if (isErrorData) return <div>Error</div>
 
     return (
-        <NewsFormData
-            handleSubmit={handleSubmit}
-            onFinishHandler={onFinishHandler}
-            pictures={pictures}
-            setPictures={setPictures}
-            currentInstitutionId={currentInstitutionId}
-            setCurrentInstitutionId={setCurrentInstitutionId}
-            title={title}
-            setTitle={setTitle}
-            setWorkDays={setWorkDays}
-            category={category}
-            setCategory={setCategory}
-            workDays={workDays}
-            description={description}
-            setDescription={setDescription}
-            status={status}
-            setStatus={setStatus}
-            isDatePublished={isDatePublish}
-            setIsDatePublished={setIsDatePublish}
-            formLoading={formLoading}
-            datePublished={datePublish}
-            setDatePublished={setDatePublish}
-        />
+        <CustomEdit
+            bgColor={'transparent'}
+            onClick={onFinishHandler}
+            isLoading={formLoading}>
+            <NewsFormData
+                defaultPictures={defaultPictures}
+                handleSubmit={handleSubmit}
+                onFinishHandler={onFinishHandler}
+                pictures={pictures}
+                setPictures={setPictures}
+                currentInstitutionId={currentInstitutionId}
+                setCurrentInstitutionId={setCurrentInstitutionId}
+                title={title}
+                setTitle={setTitle}
+                setDateEvent={setDateEvent}
+                category={category}
+                setCategory={setCategory}
+                dateEvent={dateEvent}
+                description={description}
+                setDescription={setDescription}
+                status={status}
+                setStatus={setStatus}
+                isDatePublished={isDatePublish}
+                setIsDatePublished={setIsDatePublish}
+                formLoading={formLoading}
+                datePublished={datePublish}
+                setDatePublished={setDatePublish}
+            />
+        </CustomEdit>
     )
 };
 export default EditNews;

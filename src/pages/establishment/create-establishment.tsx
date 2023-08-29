@@ -11,7 +11,7 @@ import {CustomCreate} from "../../components";
 const CreateEstablishment: FC = () => {
 
     const {
-        refineCore: {onFinish, formLoading},
+        refineCore: {onFinish},
         handleSubmit,
     } = useForm({
         refineCoreProps: {
@@ -25,8 +25,9 @@ const CreateEstablishment: FC = () => {
     const navigate = useNavigate();
     const translate = useTranslate();
 
-    const [pictures, setPictures] = useState<any>([]);
-    const [open, setOpen] = useState<boolean>(false);
+    const [sendNotifications, setSendNotifications] = useState<boolean>(false);
+    const [pictures, setPictures] = useState<Array<{name: string, url: string} | File>>([]);
+    const [defaultPictures, setDefaultPictures] = useState([]);
     const [type, setType] = useState<string>('');
     const [title, setTitle] = useState<string>('');
     const [averageCheck, setAverageCheck] = useState<string>('');
@@ -41,7 +42,6 @@ const CreateEstablishment: FC = () => {
     const [workDays, setWorkDays] = useState<Array<any>>([]);
     const [description, setDescription] = useState<any>("");
     const [createdBy, setCreatedBy] = useState<any>("");
-    const [variantForDisplay, setVariantForDisplay] = useState<string>('1');
 
     const [searchManagerInput, setSearchManagerInput] = useState<string>("");
     const [searchInputValue, setSearchInputValue] = useState<string>("");
@@ -56,7 +56,7 @@ const CreateEstablishment: FC = () => {
     }, [workDays, workScheduleWeekend])
     const onFinishHandler = async () => {
 
-        if (!pictures && pictures?.length < 0) return alert("Виберіть головне фото");
+        if (!pictures || pictures.length === 0) return alert("Виберіть головне фото");
 
         if (pictures.length > 10) return alert(translate("home.create.pictures.max"))
 
@@ -68,7 +68,6 @@ const CreateEstablishment: FC = () => {
         formData.append("description", description);
         formData.append("title", title);
         formData.append("type", type);
-        formData.append("variantForDisplay", variantForDisplay);
         formData.append("createdBy", createdBy?.length > 0 ? createdBy : currentUser?._id);
         formData.append("place", JSON.stringify(place));
 
@@ -79,6 +78,7 @@ const CreateEstablishment: FC = () => {
         formData.append("features", JSON.stringify(features))
 
         formData.append("averageCheck", averageCheck)
+        formData.append("sendNotifications", JSON.stringify(sendNotifications));
 
         formData.append("workSchedule", JSON.stringify(workSchedule))
 
@@ -86,64 +86,67 @@ const CreateEstablishment: FC = () => {
 
         const {data}: any = await onFinish(formData);
 
-        if (data && data?.createdBy === currentUser?._id) {
-            if (data?.user) {
-                localStorage.setItem(
-                    "user",
-                    JSON.stringify(data?.user)
-                );
-            } else if (data) {
-                localStorage.setItem(
-                    "user",
-                    JSON.stringify(data)
-                );
-            }
-        }
-        setOpen(false);
+        // if (data && data?.createdBy === currentUser?._id) {
+        //     if (data?.user) {
+        //         localStorage.setItem(
+        //             "user",
+        //             JSON.stringify(data?.user)
+        //         );
+        //     } else if (data) {
+        //         localStorage.setItem(
+        //             "user",
+        //             JSON.stringify(data)
+        //         );
+        //     }
+        // }
 
         navigate('/home')
     }
 
-
+    const props = {
+        defaultPictures,
+        setPictures,
+        pictures,
+        onFinishHandler,
+        handleSubmit,
+        tags,
+        setAverageCheck,
+        averageCheck,
+        setTitle,
+        title,
+        setTags,
+        setCreatedBy,
+        createdBy,
+        searchInputValue,
+        setSearchInputValue,
+        setWorkScheduleWeekend,
+        setWorkDays,
+        searchManagerInput,
+        contacts,
+        setContacts,
+        description,
+        features,
+        setFeatures,
+        location,
+        setDescription,
+        place,
+        setPlace,
+        setLocation,
+        setSearchManagerInput,
+        setType,
+        type,
+        workDays,
+        workScheduleWeekend,
+        sendNotifications,
+        setSendNotifications
+    }
     return (
-        <CustomCreate isLoading={false} bgColor={'transparent'}>
+        <CustomCreate
+            isLoading={false}
+            onClick={onFinishHandler}
+            bgColor={'transparent'}>
             <DataForm
-                setPictures={setPictures}
-                pictures={pictures}
-                onFinishHandler={onFinishHandler}
-                formLoading={formLoading}
-                titleAction={'create'}
-                handleSubmit={handleSubmit}
-                open={open}
-                setOpen={setOpen}
-                tags={tags}
-                setAverageCheck={setAverageCheck}
-                averageCheck={averageCheck}
-                setTitle={setTitle}
-                title={title}
-                setTags={setTags}
-                setCreatedBy={setCreatedBy}
-                createdBy={createdBy}
-                searchInputValue={searchInputValue}
-                setSearchInputValue={setSearchInputValue}
-                setWorkScheduleWeekend={setWorkScheduleWeekend}
-                setWorkDays={setWorkDays}
-                searchManagerInput={searchManagerInput}
-                contacts={contacts}
-                setContacts={setContacts}
-                description={description}
-                features={features}
-                setFeatures={setFeatures}
-                location={location}
-                setDescription={setDescription}
-                place={place}
-                setPlace={setPlace}
-                setLocation={setLocation}
-                setSearchManagerInput={setSearchManagerInput}
-                setType={setType}
-                type={type}
-                workDays={workDays}
-                workScheduleWeekend={workScheduleWeekend}
+                {...props}
             />
         </CustomCreate>
     )

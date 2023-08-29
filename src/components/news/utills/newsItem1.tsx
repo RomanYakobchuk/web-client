@@ -1,24 +1,24 @@
-import {IGetIdentity, ProfileProps, PropertyProps} from "../../../interfaces/common";
-import {Box, CardMedia, Typography} from "@mui/material";
-import React, {useContext} from "react";
 import {Link} from "react-router-dom";
+import {Box, CardMedia, Typography} from "@mui/material";
 import {BookMarkButton} from "../../index";
-import {ColorModeContext} from "../../../contexts";
+import {Place} from "@mui/icons-material";
+import React, {useContext} from "react";
+import {IGetIdentity, INews, ProfileProps} from "../../../interfaces/common";
 import {useGetIdentity, useTranslate} from "@refinedev/core";
-import {Place, Star} from "@mui/icons-material";
+import {ColorModeContext} from "../../../contexts";
 
-interface IProps {
-    establishment: PropertyProps
+type IProps = {
+    itemNews: INews
 }
-
-const Variant2EstablishmentCard = ({establishment}: IProps) => {
+const NewsItem1 = ({itemNews}: IProps) => {
     const {data: identity} = useGetIdentity<IGetIdentity>();
     const user = identity?.user as ProfileProps;
 
-    const {_id, type, place, pictures, rating, title, averageCheck, createdBy} = establishment;
+    const {_id, title, createdBy, category, pictures, dateEvent, description} = itemNews;
 
-    const {mode} = useContext(ColorModeContext);
     const translate = useTranslate();
+    const {mode} = useContext(ColorModeContext);
+
 
     return (
         <Box sx={{
@@ -45,7 +45,7 @@ const Variant2EstablishmentCard = ({establishment}: IProps) => {
                     textDecoration: 'none',
                     width: '100%'
                 }}
-                to={`/all_institutions/show/${_id}`}
+                to={`/news/show/${_id}`}
             >
                 <Box sx={{
                     padding: '10px',
@@ -101,7 +101,7 @@ const Variant2EstablishmentCard = ({establishment}: IProps) => {
                                     fontWeight: 500,
 
                                 }}>
-                                    {translate(`home.create.type.${type}`)}
+                                    {translate(`news.sortByCategory.${category}`)}
                                 </Typography>
                             </Box>
                             {
@@ -124,27 +124,6 @@ const Variant2EstablishmentCard = ({establishment}: IProps) => {
                                     />
                                 )
                             }
-                        </Box>
-                        <Box>
-                            <Box sx={{
-                                display: 'flex',
-                                gap: 1,
-                                alignItems: 'center',
-                                fontSize: {xs: '1.5rem', md: '2rem'}
-                            }}>
-                                <Star sx={{color: 'yellow'}}/>
-                                {rating > 0 ? rating?.toFixed(2) : rating}
-                                <Box
-                                    component={'span'}
-                                    sx={{
-                                        margin: '0 5px',
-                                        fontSize: '14px',
-                                        color: 'silver'
-                                    }}
-                                >
-                                    ({establishment?.reviewsLength})
-                                </Box>
-                            </Box>
                         </Box>
                         <Box sx={{
                             display: 'flex',
@@ -174,9 +153,9 @@ const Variant2EstablishmentCard = ({establishment}: IProps) => {
                                     justifyContent: 'center',
                                     alignItems: 'center'
                                 }}>
-                                    {
-                                        place?.city
-                                    }
+                                    {/*{*/}
+                                    {/*    place?.city*/}
+                                    {/*}*/}
                                 </Box>
                             </Box>
                             <Box sx={{
@@ -185,12 +164,12 @@ const Variant2EstablishmentCard = ({establishment}: IProps) => {
                                 alignItems: 'center',
                                 gap: 1
                             }}>
-                                <Box component={"span"}>
-                                    {translate("home.create.averageCheck")}
-                                </Box>
-                                <Box>
-                                    ~ ₴ {averageCheck}
-                                </Box>
+                                {/*<Box component={"span"}>*/}
+                                {/*    {translate("home.create.averageCheck")}*/}
+                                {/*</Box>*/}
+                                {/*<Box>*/}
+                                {/*    ~ ₴ {averageCheck}*/}
+                                {/*</Box>*/}
                             </Box>
                         </Box>
                     </Box>
@@ -199,4 +178,4 @@ const Variant2EstablishmentCard = ({establishment}: IProps) => {
         </Box>
     );
 };
-export default Variant2EstablishmentCard;
+export default NewsItem1

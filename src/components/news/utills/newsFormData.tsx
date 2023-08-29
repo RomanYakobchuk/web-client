@@ -1,32 +1,27 @@
 import {
     Box,
     Button,
-    CircularProgress,
     FormControl,
     FormHelperText,
     MenuItem,
     Select, TextareaAutosize, TextField,
-    Typography
 } from "@mui/material";
-import {Add, ArrowBackIosNew,} from "@mui/icons-material";
+import {Add} from "@mui/icons-material";
 import React, {ChangeEvent, useContext} from "react";
 import {DateTimePicker, LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {DemoContainer} from "@mui/x-date-pickers/internals/demo";
 import {useTranslate} from "@refinedev/core";
-import {useNavigate} from "react-router-dom";
 
-import {CustomButton} from "../../index";
 import ImageSelector from "../../establishment/utills/ImageSelector";
 import {ColorModeContext} from "../../../contexts";
-import {useMobile} from "../../../utils";
-import {INewsDataProps} from "interfaces/common";
+import {INewsDataProps, IPicture} from "interfaces/common";
 import SearchInstitutions from "../../search/searchInstitutions";
+import DateTimeList from "./dateTimeList";
 
 const NewsFormData = ({
                           title,
                           setCurrentInstitutionId,
-                          formLoading,
                           currentInstitutionId,
                           setStatus,
                           onFinishHandler,
@@ -38,59 +33,40 @@ const NewsFormData = ({
                           handleSubmit,
                           setIsDatePublished,
                           isDatePublished,
-                          workDays,
+                          dateEvent,
                           category,
                           setCategory,
                           setTitle,
-                          setWorkDays,
-                          datePublished, setDatePublished
+                          setDateEvent,
+                          datePublished, setDatePublished,
+                          defaultPictures
                       }: INewsDataProps) => {
     const translate = useTranslate();
-    const navigate = useNavigate();
     const {mode} = useContext(ColorModeContext);
-    const {device, width} = useMobile();
 
     const handlePicturesChange = (e: ChangeEvent<HTMLInputElement> | any) => {
         if (6 < pictures.length) return alert(translate("home.create.pictures.max") + "6")
         if (6 < e.target.files?.length) return alert(translate("home.create.pictures.max") + "6");
 
-        let arr = [];
+        let arr = [] as IPicture[] | File[];
         const items = e.target.files;
         for (let i = 0; i < items?.length; i++) {
             const item = items[i];
-            arr.push(item)
+            arr.push(item as IPicture & File)
         }
-        setPictures([...arr])
+        setPictures((prevState) => ([...prevState, ...arr] as IPicture[] | File[]))
     }
 
     const handleAddWorkDays = (workSchedule: any) => {
-        setWorkDays([...workDays, workSchedule])
+        setDateEvent((prevState) => ([...prevState, workSchedule]))
     }
     const handleDeleteWorkDays = (index: number | any) => {
-        setWorkDays(workDays.filter((_: any, i: any) => i !== index))
+        setDateEvent(dateEvent.filter((_: any, i: any) => i !== index))
     }
 
     return (
         <Box>
-            <Box sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: "start",
-                gap: {xs: '10%', sm: '30%', md: '40%'}
-            }}>
-                <Button
-                    variant={"outlined"}
-                    onClick={() => navigate(-1)}
-                    color={'secondary'}>
-                    <ArrowBackIosNew/>
-                </Button>
-                <Typography fontSize={{xs: '18px', sm: '22px'}} fontWeight={700} textAlign={"center"}>
-                    {translate("news.button")}
-                </Typography>
-            </Box>
-
-            <Box mt={2.5} borderRadius="15px" padding="20px" bgcolor={mode === "dark" ? "#2e424d" : "#fcfcfc"}>
+            <Box borderRadius="15px" padding="20px" bgcolor={mode === "dark" ? "#2e424d" : "#fcfcfc"}>
                 <form
                     style={{
                         marginTop: "20px",
@@ -209,9 +185,9 @@ const NewsFormData = ({
                                 sx={{
                                     fontSize: {xs: '12px', sm: '16px'}
                                 }}
-                                value={status ? status : ""}
+                                value={status ? status : "published"}
                                 onChange={(e) => {
-                                    setStatus(e.target.value)
+                                    setStatus(e.target.value as string)
                                 }}>
                             <MenuItem value={"published"}>{translate(`posts.fields.status.published`)}</MenuItem>
                             <MenuItem value={"private"}>{translate(`posts.fields.status.private`)}</MenuItem>
@@ -275,32 +251,11 @@ const NewsFormData = ({
                             {translate("home.create.pictures.title")}
                         </FormHelperText>
                         <ImageSelector
-                            defaultPictures={[]}
+                            defaultPictures={defaultPictures}
                             maxImages={8} images={pictures}
                             setPictures={setPictures}
                             handleChange={handlePicturesChange}/>
 
-                    </FormControl>
-                    <FormControl sx={{
-                        display: 'flex',
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: 'center'
-                    }}>
-                        <CustomButton
-                            width={"38%"}
-                            title={translate("profile.edit.cancel")}
-                            backgroundColor="red"
-                            color="#fcfcfc"
-                            handleClick={() => navigate("/news")}
-                        />
-                        <CustomButton
-                            type="submit"
-                            width={"60%"}
-                            title={formLoading ? <CircularProgress/> : translate("profile.edit.save")}
-                            backgroundColor="#475be8"
-                            color="#fcfcfc"
-                        />
                     </FormControl>
                 </form>
             </Box>

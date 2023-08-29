@@ -115,8 +115,7 @@ const ModalWindow = ({children, open, setOpen, title, titleStyle, bodyProps, con
                     padding: width > 600 ? '14px' : '8px',
                     display: 'flex',
                     justifyContent: 'center',
-
-                    position: 'relative'
+                    position: 'relative',
                 }}>
                     <Box sx={{
                         width: '100%',

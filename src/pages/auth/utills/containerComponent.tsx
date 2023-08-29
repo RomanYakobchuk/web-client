@@ -39,6 +39,7 @@ const ContainerComponent = ({children, isPicture = true, childrenProps, pictureP
                 height: 'calc(100vh - 60px)',
                 zIndex: 0,
                 p: '0 !important',
+                overflow: 'hidden',
                 maxWidth: '100% !important'
             }}>
                 <CssBaseline/>

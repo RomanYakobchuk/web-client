@@ -1,5 +1,5 @@
 // common
-import BookMark from "./common/BookMark";
+import BookMarkButton from "./common/BookMarkButton";
 import CustomButton from "./common/custom/CustomButton";
 import CustomProfile from "./common/custom/CustomProfile";
 import VariantComponent from "./common/variantComponent";
@@ -12,6 +12,8 @@ import PaginationComponent from "./common/paginationComponent";
 import TitleTextItem from "./common/TitleTextItem";
 import ReviewsList from "./common/reviews-list";
 import CommentsList from "./common/comments-list";
+import ImageSlider from "./common/imageSlider";
+import SubscribeButton from "./common/SubscribeButton";
 import CarouselComponent from "./common/carousel/carouselComponent";
 
 // custom
@@ -78,7 +80,7 @@ import UpdateCity from "./home/utils/update-city";
 export {
     GoogleAuth,
     FacebookAuth,
-    BookMark,
+    BookMarkButton,
     Loading,
     CreateMenu,
     UserInstitutions,
@@ -113,6 +115,7 @@ export {
     CaplManagerList,
     InstitutionsUserList,
     InstitutionsAdminList,
+    ImageSlider,
     SearchCity,
     NewsUserList,
     NewsAdminList,
@@ -125,5 +128,6 @@ export {
     CustomEdit,
     CustomCreate,
     CarouselComponent,
-    VariantComponent
+    VariantComponent,
+    SubscribeButton
 }

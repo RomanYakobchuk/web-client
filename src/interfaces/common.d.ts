@@ -1,4 +1,4 @@
-import {FormEventHandler, ReactNode} from "react";
+import {Dispatch, FormEventHandler, ReactNode, SetStateAction} from "react";
 import {FieldValues} from "react-hook-form";
 import {BaseRecord, CreateResponse, UpdateResponse} from "@refinedev/core";
 import {CredentialResponse} from "./google";
@@ -92,7 +92,9 @@ export interface PropertyProps {
     otherProps?: any,
     _id: string,
     title: string,
+    reviewsLength?: number,
     description: string,
+    sendNotifications: boolean,
     pictures: {
         name: string,
         url: string
@@ -256,25 +258,12 @@ export interface INews {
     index?: number,
     createdAt: Date | any,
     status?: "published" | "draft" | "rejected",
-    pictures: {
-        name: string,
-        url: string
-    }[],
+    pictures: IPicture[],
     description: string,
     category?: "general" | "event" | "promotions",
     createdBy?: string,
     variantForDisplay?: string,
-    dateEvent: [{
-        date?: Date,
-        schedule?: {
-            from: string | any,
-            to: string | any
-        },
-        time?: {
-            from: Date | any,
-            to: Date | any
-        },
-    }],
+    dateEvent: INewsDateEvent[],
     publishAt?: {
         isPublish: boolean,
         datePublish: Date | any
@@ -304,6 +293,7 @@ export interface IOptionGroup {
     value: string;
     label: string | ReactNode;
     userId?: string,
+    title: string,
     id?: string,
     key?: string
 }
@@ -363,14 +353,13 @@ export interface IMenu {
 
 export interface IPlaceFormProps {
     onFinish?: (values: FieldValues) => Promise<void | CreateResponse<BaseRecord> | UpdateResponse<BaseRecord>>,
-    formLoading: boolean,
+    setSendNotifications: (value: boolean) => void,
+    sendNotifications: boolean,
+    defaultPictures: {name: string, url: string}[],
     handleSubmit: FormEventHandler<HTMLFormElement> | any,
     onFinishHandler: (data: FieldValues) => Promise<void> | void,
-    setPictures: (item: any) => void,
+    setPictures: (item: [{name: string, url: string}] | Array[]) => void,
     pictures: any,
-    open: boolean,
-    titleAction: string,
-    setOpen: (item: any) => void,
     type: string,
     setType: (item: string) => void,
     workScheduleWeekend: PropertyProps["workSchedule"]["weekend"],
@@ -402,12 +391,22 @@ export interface IPlaceFormProps {
     averageCheck: string,
     setAverageCheck: (value: string) => void,
 }
-
+export interface INewsDateEvent {
+    schedule: {
+        from: Date | string,
+        to: Date | string
+    },
+    time: {
+        from: Date | string,
+        to: Date | string
+    }
+}
 export interface INewsDataProps {
     handleSubmit: any,
     onFinishHandler: any,
-    pictures: any,
-    setPictures: (item: any) => void,
+    defaultPictures: IPicture[],
+    pictures: IPicture[] | File[],
+    setPictures: Dispatch<SetStateAction<IPicture[] | File[]>>,
     currentInstitutionId: string,
     setCurrentInstitutionId: (item: string) => void,
     userInstitutions?: any,
@@ -415,8 +414,8 @@ export interface INewsDataProps {
     setTitle: (value: string) => void,
     category: string,
     setCategory: (value: string) => void,
-    workDays: any,
-    setWorkDays: any,
+    dateEvent: any,
+    setDateEvent: Dispatch<SetStateAction<INewsDateEvent[]>>,
     description: string,
     setDescription: (value: string) => void,
     status: string,
@@ -504,4 +503,20 @@ export interface IReserveFilterVariables {
     },
     institution: string,
     day: Date
+}
+
+export interface ISubscribe {
+    _id: string,
+    subscriberId: string,
+    institutionId: string,
+    createdAt?: Date,
+    updatedAt?: Date,
+}
+
+export interface INotification  {
+    _id: string,
+    subscribeId: string,
+    newsId: string,
+    createdAt?: Date,
+    updatedAt?: Date,
 }

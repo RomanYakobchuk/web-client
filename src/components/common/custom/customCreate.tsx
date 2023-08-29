@@ -1,76 +1,123 @@
 import React, {ReactNode, useContext} from "react";
-import {Breadcrumb, Create} from "@refinedev/antd";
+import {Breadcrumb, Create, SaveButton} from "@refinedev/antd";
+import {useTranslate} from "@refinedev/core";
+import {Box, Typography as MuiTypography} from "@mui/material";
+import {ArrowBackOutlined, Close} from "@mui/icons-material";
+import {Button} from "antd";
+import {useNavigate} from "react-router-dom";
 
 import './custom.css';
 import {ColorModeContext} from "../../../contexts";
-import {useTranslate} from "@refinedev/core";
-import {EditButton} from "@refinedev/mui";
-import {Box, Typography as MuiTypography} from "@mui/material";
-import {ArrowBackOutlined} from "@mui/icons-material";
 
 interface IProps {
     isLoading: boolean,
     children: ReactNode,
     showButtons?: boolean,
-    bgColor?: string
+    bgColor?: string,
+    onClick?: () => void
 }
-const CustomCreate = ({isLoading, children, showButtons, bgColor}: IProps) => {
+
+const CustomCreate = ({isLoading, children, bgColor, onClick}: IProps) => {
     const {mode} = useContext(ColorModeContext);
     const translate = useTranslate();
-
+    const navigate = useNavigate();
     return (
-        <Create
-            isLoading={isLoading}
-            contentProps={{
-                style: {
-                    background: bgColor ? bgColor : mode === 'dark' ? "#3e3e36" : '#fff',
-                    padding: '0',
-                },
-            }}
-            headerButtons={[]}
-            headerProps={{
-                title: <MuiTypography
-                    sx={{
-                        fontSize: '18px',
+        <Box sx={{
+            width: '100%',
+            "& .ant-card-actions": {
+                bgcolor: 'transparent !important',
+                borderTop: 'unset !important'
+            },
+            "& li span div.ant-space": {
+                mr: 'unset !important',
+                float: 'unset !important',
+                width: '100% !important',
+                "& > div": {
+                    width: '100% !important',
+                    p: '20px'
+                }
+            }
+        }}>
+            <Create
+                isLoading={isLoading}
+                contentProps={{
+                    style: {
+                        background: bgColor ? bgColor : mode === 'dark' ? "#3e3e36" : '#fff',
+                        padding: '0',
+                    },
+                }}
+                headerButtons={[]}
+                headerProps={{
+                    title: <MuiTypography
+                        sx={{
+                            fontSize: '18px',
+                            color: mode === 'dark' ? '#fcfcfc' : '#000'
+                        }}
+                    >{translate('buttons.create')}</MuiTypography>,
+                    style: {
+                        color: mode === 'dark' ? '#fcfcfc' : '#000',
+                        padding: '10px',
+                        maxWidth: '1100px',
+                        margin: '0 auto'
+                    },
+                    backIcon: <ArrowBackOutlined sx={{
                         color: mode === 'dark' ? '#fcfcfc' : '#000'
-                    }}
-                >{translate('buttons.create')}</MuiTypography>,
-                style: {
-                    color: mode === 'dark' ? '#fcfcfc' : '#000',
-                    padding: '10px',
-                    maxWidth: '1100px',
-                    margin: '0 auto'
-                },
-                backIcon: <ArrowBackOutlined sx={{
-                    color: mode === 'dark' ? '#fcfcfc' : '#000'
-                }}/>
-            }}
-            breadcrumb={
-                <Box sx={{
-                    color: mode === 'dark' ? '#fcfcfc' : '#000',
-                    "& nav ol li > span": {
+                    }}/>
+                }}
+                footerButtons={({saveButtonProps}) => (
+                    <Box sx={{
                         display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        color: mode === 'dark' ? '#fcfcfc' : '#000'
-                    },
-                    "& nav ol li > span > div > a": {
-                        color: mode === 'dark' ? '#d0c9c9' : '#2c2121'
-                    },
-                    "& nav ol li.ant-breadcrumb-separator": {
-                        color: mode === 'dark' ? '#fcfcfc' : '#000'
-                    }
-                }}>
-                    <Breadcrumb breadcrumbProps={{
-                        style: {
+                        gap: 2,
+                        flexWrap: 'wrap',
+                        "& button": {
+                            flex: '1 1 150px'
+                        }
+                    }}>
+                        <Button
+                            size={'large'}
+                            style={{
+                                display: 'flex',
+                                gap: 1,
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                            }}
+                            onClick={() => navigate(-1)}
+                            icon={<Close/>}
+                        >
+                            {translate('buttons.cancel')}
+                        </Button>
+                        {saveButtonProps && (
+                            <SaveButton size={"large"} {...saveButtonProps} onClick={onClick}/>
+                        )}
+                    </Box>
+                )}
+                breadcrumb={
+                    <Box sx={{
+                        color: mode === 'dark' ? '#fcfcfc' : '#000',
+                        "& nav ol li > span": {
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            color: mode === 'dark' ? '#fcfcfc' : '#000'
+                        },
+                        "& nav ol li > span > div > a": {
+                            color: mode === 'dark' ? '#d0c9c9' : '#2c2121'
+                        },
+                        "& nav ol li.ant-breadcrumb-separator": {
                             color: mode === 'dark' ? '#fcfcfc' : '#000'
                         }
-                    }}/>
-                </Box>
-            }
-        >
-            {children}
-        </Create>
+                    }}>
+                        <Breadcrumb breadcrumbProps={{
+                            style: {
+                                color: mode === 'dark' ? '#fcfcfc' : '#000'
+                            }
+                        }}/>
+                    </Box>
+                }
+            >
+                {children}
+            </Create>
+        </Box>
     );
 };
 export default CustomCreate

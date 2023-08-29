@@ -1,9 +1,9 @@
-import { PropertyProps} from "../../../interfaces/common";
+import { PropertyProps} from "../../../../interfaces/common";
 import {Box, Grid, SxProps} from "@mui/material";
-import {Variant1EstablishmentCard} from "../../index";
+import {Variant1EstablishmentCard} from "../../../index";
 import React, {useContext} from "react";
-import {VariantContext} from "../../../settings/variantEstablishment";
-import Variant2EstablishmentCard from "./variant2EstablishmentCard";
+import {VariantContext} from "../../../../settings/variantEstablishment";
+import Variant2EstablishmentCard from "../variant2EstablishmentCard";
 
 interface IProps {
     items: PropertyProps[]

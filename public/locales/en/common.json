@@ -109,6 +109,7 @@
     "clear": "Clear",
     "reset": "Reset",
     "refresh": "Refresh",
+    "restore": "Restore",
     "show": "Show",
     "undo": "Undo",
     "search": "Search",
@@ -199,7 +200,7 @@
     "search": "Search by title, description, city, features",
     "searchByTag": "Search by #tag",
     "sortByType": {
-      "all": "All",
+      "all": "all",
       "bar": "Bar",
       "cafe": "Cafe",
       "restaurant": "Restaurant",
@@ -546,5 +547,12 @@
   },
   "pictures": {
     "pictures": "Pictures"
+  },
+  "notification": {
+    "send": "Send notifications to subscribers about  news",
+    "subscribe": {
+      "true": "Subscribed",
+      "false": "Subscribe"
+    }
   }
 }
