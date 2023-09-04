@@ -181,7 +181,7 @@ const DetailsReserve = () => {
     return (
         <CustomShow
             isLoading={isLoading}
-            showButtons={(user?._id === reserve?.user || user?._id === reserve?.manager || user?.status === 'admin')}
+            isShowButtons={user?._id === reserve?.user || user?._id === reserve?.manager || user?.status === 'admin'}
         >
             <Box
                 sx={{

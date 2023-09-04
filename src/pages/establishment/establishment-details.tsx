@@ -68,7 +68,7 @@ const EstablishmentDetails: FC = () => {
     return (
         <CustomShow isLoading={isLoading}
                     bgColor={'transparent'}
-                    showButtons={user?._id === institution?.createdBy || user?.status === 'admin'}
+                    isShowButtons={user?._id === institution?.createdBy || user?.status === 'admin'}
         >
             <Box sx={{
                 display: 'flex',

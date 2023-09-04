@@ -13,7 +13,7 @@ import {
     MenuItem,
     Select,
     Toolbar,
-    Typography, SelectChangeEvent, Button, Box, Autocomplete, TextField, createFilterOptions,
+    Typography, SelectChangeEvent, Button, Box
 } from "@mui/material";
 import {
     ClearOutlined,
@@ -36,7 +36,6 @@ import {Loading, ModalWindow} from "../../components";
 import {searchRender} from "../../components/render"
 import {antdInputStyle} from "../../styles";
 import {SchemaContext} from "../../settings/schema";
-import {useAutocomplete} from "@refinedev/mui";
 
 export const Header: React.FC = () => {
     const {mode, setMode, setOpen, collapsed} = useContext(ColorModeContext);
@@ -77,52 +76,7 @@ export const Header: React.FC = () => {
     };
     const [value, setValue] = useState<string>("");
     const [options, setOptions] = useState<IOptions[]>([]);
-    const [debounceValue, setDebounce] = useDebounce(value, 500);
-
-    const {autocompleteProps: placeProps} = useAutocomplete<IOptions>({
-        resource: 'institution/all',
-        debounce: 500,
-        filters: [{field: "title", operator: "contains", value: value}],
-        queryOptions: {
-            enabled: false,
-            onSuccess: (data) => {
-                const postOptionGroup = data.data.map((item, index) =>
-                    searchRender.renderItem(item, "all_institutions", index, mode, setOpenModal, data.data.length, translate),
-                );
-                if (postOptionGroup.length > 0) {
-                    setOptions((prevOptions) => [
-                        ...prevOptions,
-                        {
-                            label: searchRender.renderTitle(translate("all_institutions.all_institutions"), mode),
-                            options: postOptionGroup,
-                        },
-                    ] as IOptions[]);
-                }
-            },
-        },
-    });
-    const {autocompleteProps: newsProps} = useAutocomplete<IOptions>({
-        resource: "news/all",
-        debounce: 500,
-        filters: [{field: "title", operator: "contains", value: value}],
-        queryOptions: {
-            enabled: false,
-            onSuccess: (data) => {
-                const categoryOptionGroup = data.data.map((item, index) =>
-                    searchRender.renderItem(item, "news", index, mode, setOpenModal, data.data.length),
-                );
-                if (categoryOptionGroup.length > 0) {
-                    setOptions((prevOptions) => [
-                        ...prevOptions,
-                        {
-                            label: searchRender.renderTitle(translate("news.news"), mode),
-                            options: categoryOptionGroup,
-                        },
-                    ] as IOptions[]);
-                }
-            },
-        },
-    })
+    const [debounceValue, _] = useDebounce(value ?? '', 500);
 
     const {refetch: refetchPlaces, isRefetching: isRefetchPlace, isLoading: isLoadPlace} = useList<PropertyProps>({
         resource: "institution/all",
@@ -270,57 +224,37 @@ export const Header: React.FC = () => {
                                 ml: '20px',
                                 ...antdInputStyle
                             }}>
-                                <Autocomplete
-                                    freeSolo
-                                    {...placeProps}
-                                    {...newsProps}
-                                    renderInput={(params) => (
-                                        <TextField {...params}/>
-                                    )}
-                                    disablePortal
-                                    // value={value ?? ''}
-                                    // onChange={(_: any, newValue: string | null) => setValue(newValue as string)}
+                                <Input
+                                    style={{
+                                        width: '100%',
+                                        fontSize: '20px',
+                                        gap: 2,
+                                        color: mode === 'dark' ? 'white' : 'black',
+                                        background: 'transparent',
+                                    }}
+                                    value={value ?? ''}
+                                    onChange={(e) => setValue(e.target.value)}
+                                    suffix={
+                                        <Box sx={{
+                                            display: 'flex',
+                                            flexDirection: 'row',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            gap: value?.length > 0 ? 1 : 0
+                                        }}>
+                                            <SearchOutlined/>
+                                            {
+                                                value?.length > 0 && (
+                                                    <IconButton size={"small"} onClick={() => setValue('')}>
+                                                        <ClearOutlined/>
+                                                    </IconButton>
+                                                )
+                                            }
+                                        </Box>
+                                    }
+                                    size={'middle'}
+                                    placeholder={`${translate('buttons.search')}...`}
                                 />
-                                {/*<AutoComplete*/}
-                                {/*    style={{*/}
-                                {/*        width: '100%',*/}
-                                {/*    }}*/}
-                                {/*    filterOption={false}*/}
-                                {/*    options={options}*/}
-                                {/*    popupMatchSelectWidth={width > 500 ? 500 : width - 50}*/}
-                                {/*    value={value ?? ''}*/}
-                                {/*    onSearch={(value: string) => setValue(value)}*/}
-                                {/*>*/}
-                                {/*    <Input*/}
-                                {/*        style={{*/}
-                                {/*            width: '100%',*/}
-                                {/*            fontSize: '20px',*/}
-                                {/*            gap: 2,*/}
-                                {/*            color: mode === 'dark' ? 'white' : 'black',*/}
-                                {/*            background: 'transparent',*/}
-                                {/*        }}*/}
-                                {/*        suffix={*/}
-                                {/*            <Box sx={{*/}
-                                {/*                display: 'flex',*/}
-                                {/*                flexDirection: 'row',*/}
-                                {/*                justifyContent: 'center',*/}
-                                {/*                alignItems: 'center',*/}
-                                {/*                gap: value?.length > 0 ? 1 : 0*/}
-                                {/*            }}>*/}
-                                {/*                <SearchOutlined/>*/}
-                                {/*                {*/}
-                                {/*                    value?.length > 0 && (*/}
-                                {/*                        <IconButton size={"small"} onClick={() => setValue('')}>*/}
-                                {/*                            <ClearOutlined/>*/}
-                                {/*                        </IconButton>*/}
-                                {/*                    )*/}
-                                {/*                }*/}
-                                {/*            </Box>*/}
-                                {/*        }*/}
-                                {/*        size={'middle'}*/}
-                                {/*        placeholder={`${translate('buttons.search')}...`}*/}
-                                {/*    />*/}
-                                {/*</AutoComplete>*/}
                             </Box>
                         }
                     >

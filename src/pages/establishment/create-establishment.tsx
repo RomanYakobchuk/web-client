@@ -1,9 +1,8 @@
-import {useGetIdentity, useTranslate} from "@refinedev/core";
+import {useBack, useGetIdentity, useTranslate} from "@refinedev/core";
 import {useForm} from "@refinedev/react-hook-form";
 import {FC, useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
 
-import {ProfileProps, PropertyProps} from "../../interfaces/common";
+import {IPicture, ProfileProps, PropertyProps} from "../../interfaces/common";
 import DataForm from "../../components/establishment/dataForm";
 import {CustomCreate} from "../../components";
 
@@ -22,12 +21,12 @@ const CreateEstablishment: FC = () => {
 
     const {data: currentUser} = useGetIdentity<ProfileProps>();
 
-    const navigate = useNavigate();
+    const goBack = useBack();
     const translate = useTranslate();
 
     const [sendNotifications, setSendNotifications] = useState<boolean>(false);
-    const [pictures, setPictures] = useState<Array<{name: string, url: string} | File>>([]);
-    const [defaultPictures, setDefaultPictures] = useState([]);
+    const [pictures, setPictures] = useState<IPicture[] | File[]>([] as IPicture[] | File[]);
+    const [defaultPictures, _] = useState([]);
     const [type, setType] = useState<string>('');
     const [title, setTitle] = useState<string>('');
     const [averageCheck, setAverageCheck] = useState<string>('');
@@ -58,8 +57,9 @@ const CreateEstablishment: FC = () => {
 
         if (!pictures || pictures.length === 0) return alert("Виберіть головне фото");
 
-        if (pictures.length > 10) return alert(translate("home.create.pictures.max"))
+        if (pictures.length > 10) return alert(translate("home.create.pictures.max") + ' ' + 10)
 
+        if (pictures.length < 3) return alert('Minimum pictures: 3')
         const formData = new FormData();
 
         for (let i = 0; i < pictures.length; i++) {
@@ -84,7 +84,7 @@ const CreateEstablishment: FC = () => {
 
         formData.append("location", JSON.stringify(location))
 
-        const {data}: any = await onFinish(formData);
+        await onFinish(formData);
 
         // if (data && data?.createdBy === currentUser?._id) {
         //     if (data?.user) {
@@ -100,7 +100,7 @@ const CreateEstablishment: FC = () => {
         //     }
         // }
 
-        navigate('/home')
+        goBack();
     }
 
     const props = {

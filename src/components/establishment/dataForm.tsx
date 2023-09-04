@@ -20,39 +20,40 @@ import {selectStyle, textFieldStyle} from "../../styles";
 import {Switch} from "antd";
 
 
-const DataForm = ({
-                      handleSubmit,
-                      onFinishHandler,
-                      pictures,
-                      setPictures,
-                      type,
-                      setType,
-                      tags,
-                      setTags,
-                      setWorkScheduleWeekend,
-                      workScheduleWeekend,
-                      workDays,
-                      setWorkDays,
-                      setCreatedBy,
-                      createdBy,
-                      setDescription,
-                      description,
-                      setPlace,
-                      place,
-                      location,
-                      setLocation,
-                      features,
-                      setFeatures,
-                      contacts,
-                      setContacts,
-                      title,
-                      setTitle,
-                      averageCheck,
-                      defaultPictures,
-                      setAverageCheck,
-                      setSendNotifications,
-                      sendNotifications
-                  }: IPlaceFormProps) => {
+const DataForm = (props: IPlaceFormProps) => {
+    const {
+        handleSubmit,
+        onFinishHandler,
+        pictures,
+        setPictures,
+        type,
+        setType,
+        tags,
+        setTags,
+        setWorkScheduleWeekend,
+        workScheduleWeekend,
+        workDays,
+        setWorkDays,
+        setCreatedBy,
+        createdBy,
+        setDescription,
+        description,
+        setPlace,
+        place,
+        location,
+        setLocation,
+        features,
+        setFeatures,
+        contacts,
+        setContacts,
+        title,
+        setTitle,
+        averageCheck,
+        defaultPictures,
+        setAverageCheck,
+        setSendNotifications,
+        sendNotifications
+    } = props;
     const maxImages = 10;
     const {mode} = useContext(ColorModeContext);
     const translate = useTranslate();
@@ -110,7 +111,7 @@ const DataForm = ({
 
 
     const handlePicturesChange = (e: ChangeEvent<HTMLInputElement> | any) => {
-        if (pictures.length > maxImages || e.target.files?.length > 10) return alert(translate("home.create.pictures.max") + maxImages);
+        if (pictures.length > maxImages || e.target.files?.length > maxImages) return alert(translate("home.create.pictures.max") + maxImages);
 
         let arr = [];
         const items = e.target.files;
@@ -160,21 +161,20 @@ const DataForm = ({
                         alignItems: 'end'
                     }}>
                         <FormControl fullWidth>
-                            {/*<FormHelperText*/}
-                            {/*    sx={{*/}
-                            {/*        fontWeight: 500,*/}
-                            {/*        margin: "10px 0",*/}
-                            {/*        fontSize: {xs: 12, sm: 16},*/}
-                            {/*        color: mode === "dark" ? "#fcfcfc" : "#11142D",*/}
-                            {/*        lineHeight: 'normal'*/}
-                            {/*    }}*/}
-                            {/*>*/}
-                            {/*    {translate("home.create.name")}*/}
-                            {/*</FormHelperText>*/}
+                            <FormHelperText
+                                sx={{
+                                    fontWeight: 500,
+                                    margin: "10px 0",
+                                    fontSize: {xs: 12, sm: 16},
+                                    color: mode === "dark" ? "#fcfcfc" : "#11142D",
+                                    lineHeight: 'normal'
+                                }}
+                            >
+                                {translate("home.create.name")}
+                            </FormHelperText>
                             <TextField
                                 fullWidth
                                 required
-                                label={translate("home.create.name")}
                                 sx={textFieldStyle}
                                 size={"small"}
                                 id="outlined-basic"
@@ -334,42 +334,48 @@ const DataForm = ({
                                     onChange={() => {
                                     }}
                                 />
-                                <TextField
-                                    fullWidth
-                                    required
-                                    sx={{
-                                        mt: 2,
-                                        ...textFieldStyle
-                                    }}
-                                    id="outlined-basic3"
-                                    color={"secondary"}
-                                    size={"small"}
-                                    value={place.city ?? ''}
-                                    label={translate("home.create.city")}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => setPlace({
-                                        address: place.address,
-                                        city: e.target.value
-                                    })}
-                                    variant="outlined"
-                                />
-                                <TextField
-                                    fullWidth
-                                    required
-                                    id="outlined-basic3"
-                                    color={"secondary"}
-                                    sx={{
-                                        mt: 2,
-                                        ...textFieldStyle
-                                    }}
-                                    label={translate("home.create.address")}
-                                    size={"small"}
-                                    value={place.address ? place.address : ''}
-                                    onChange={(e: ChangeEvent<HTMLInputElement>) => setPlace({
-                                        address: e.target.value,
-                                        city: place.city
-                                    })}
-                                    variant="outlined"
-                                />
+                                <Box sx={{
+                                    display: 'grid',
+                                    gridTemplateColumns: {xs: '1fr', md: 'repeat(2, 1fr)'},
+                                    gap: {xs: 1, md: 2}
+                                }}>
+                                    <TextField
+                                        fullWidth
+                                        required
+                                        sx={{
+                                            mt: 2,
+                                            ...textFieldStyle
+                                        }}
+                                        id="outlined-basic3"
+                                        color={"secondary"}
+                                        size={"small"}
+                                        value={place.city ?? ''}
+                                        label={translate("home.create.city")}
+                                        onChange={(e: ChangeEvent<HTMLInputElement>) => setPlace({
+                                            address: place.address,
+                                            city: e.target.value
+                                        })}
+                                        variant="outlined"
+                                    />
+                                    <TextField
+                                        fullWidth
+                                        required
+                                        id="outlined-basic3"
+                                        color={"secondary"}
+                                        sx={{
+                                            mt: 2,
+                                            ...textFieldStyle
+                                        }}
+                                        label={translate("home.create.address")}
+                                        size={"small"}
+                                        value={place.address ? place.address : ''}
+                                        onChange={(e: ChangeEvent<HTMLInputElement>) => setPlace({
+                                            address: e.target.value,
+                                            city: place.city
+                                        })}
+                                        variant="outlined"
+                                    />
+                                </Box>
                             </> : ''
                     }
                 </FormControl>
@@ -379,10 +385,11 @@ const DataForm = ({
                               onSubmitWeekend={setWorkScheduleWeekend} workScheduleWeekend={workScheduleWeekend}
                               elements={workDays ? workDays : []}/>
                 <Box sx={{
-                    display: 'flex',
-                    flexDirection: {xs: 'column', lg: 'row'},
+                    display: 'grid',
+                    gridTemplateColumns: {xs: '1fr', md: 'repeat(2, 1fr)'},
                     width: '100%',
-                    gap: {xs: 2, sm: 4}
+                    alignItems: 'start',
+                    gap: 2
                 }}>
                     <FormControl fullWidth>
                         <ItemsList elements={contacts} label={translate('home.create.contacts')}
@@ -391,13 +398,6 @@ const DataForm = ({
                     <FormControl fullWidth>
                         <ItemsList elements={tags} label={translate('home.create.tags')} setData={setTags}/>
                     </FormControl>
-                </Box>
-                <Box sx={{
-                    display: 'flex',
-                    flexDirection: {xs: 'column', lg: 'row'},
-                    width: '100%',
-                    gap: {xs: 2, sm: 4}
-                }}>
                     <FormControl fullWidth>
                         <ItemsList elements={features} label={translate('home.create.features')}
                                    setData={setFeatures}/>
@@ -438,7 +438,11 @@ const DataForm = ({
                         {translate('notification.send')}
                     </Typography>
                 </FormControl>
-                <FormControl>
+                <FormControl sx={{
+                    bgcolor: mode === 'dark' ? "#1a1313" : '#f4f4f4',
+                    borderRadius: '10px',
+                    p: '10px'
+                }}>
                     <FormHelperText
                         sx={{
                             fontWeight: 500,
@@ -456,36 +460,6 @@ const DataForm = ({
                         handleChange={handlePicturesChange}/>
 
                 </FormControl>
-                {/*<FormControl sx={{*/}
-                {/*    display: 'flex',*/}
-                {/*    flexDirection: "row",*/}
-                {/*    justifyContent: "space-between",*/}
-                {/*    alignItems: 'center'*/}
-                {/*}}>*/}
-                {/*    <Button*/}
-                {/*        color="error"*/}
-                {/*        variant={'contained'}*/}
-                {/*        sx={{*/}
-                {/*            ...buttonStyle,*/}
-                {/*            width: '32%',*/}
-                {/*            textTransform: 'capitalize'*/}
-                {/*        }}*/}
-                {/*        onClick={() => navigate("/home")}*/}
-                {/*    >*/}
-                {/*        {translate("profile.edit.cancel")}*/}
-                {/*    </Button>*/}
-                {/*    <Button*/}
-                {/*        color="info"*/}
-                {/*        variant={'contained'}*/}
-                {/*        sx={{*/}
-                {/*            ...buttonStyle,*/}
-                {/*            width: '60%'*/}
-                {/*        }}*/}
-                {/*        onClick={handleOpen}*/}
-                {/*    >*/}
-                {/*        {translate("profile.edit.save")}*/}
-                {/*    </Button>*/}
-                {/*</FormControl>*/}
             </Box>
         </Box>
     );

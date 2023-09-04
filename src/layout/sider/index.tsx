@@ -253,6 +253,13 @@ export const Sider: typeof DefaultSider = ({render}) => {
             );
         });
     };
+    const [logoutPath, setLogoutPath] = useState(window.location.pathname + window.location.search);
+
+    useEffect(() => {
+        if (window.location.pathname) {
+            setLogoutPath(window.location.pathname + window?.location?.search)
+        }
+    }, [window.location.pathname, window.location.search]);
 
     const logout = isExistAuthentication && (
         <Tooltip

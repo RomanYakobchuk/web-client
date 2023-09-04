@@ -50,7 +50,7 @@ import {
     EditMenu,
     CreateMenu, EditUpdateStatus, ShowChats, UpdateCity
 } from "./components";
-import {model, adapter} from "./accessControl";
+import {accessControlProvider} from "./accessControlProvider";
 import {Header, Title, Layout, Sider} from "./layout";
 
 import {
@@ -203,37 +203,7 @@ function App() {
                                                 },
                                             },
                                         ]}
-                                        accessControlProvider={{
-                                            can: async ({action, params, resource}) => {
-                                                const enforcer = await newEnforcer(model, adapter);
-                                                if (
-                                                    action === "delete" ||
-                                                    action === "edit" ||
-                                                    action === "show"
-                                                ) {
-                                                    return {
-                                                        can: await enforcer.enforce(
-                                                            role,
-                                                            `${resource}/${params?.id}`,
-                                                            action,
-                                                        ),
-                                                    }
-
-                                                }
-                                                if (action === "field") {
-                                                    return {
-                                                        can: await enforcer.enforce(
-                                                            role,
-                                                            `${resource}/${params?.field}`,
-                                                            action,
-                                                        ),
-                                                    }
-                                                }
-                                                return {
-                                                    can: await enforcer.enforce(role, resource, action),
-                                                };
-                                            }
-                                        }}
+                                        accessControlProvider={accessControlProvider}
                                         routerProvider={routerBindings}
                                         authProvider={authProvider}
                                         i18nProvider={i18nProvider}

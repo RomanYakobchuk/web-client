@@ -1,6 +1,6 @@
-import {useLocation, useNavigate} from "react-router-dom";
+import {useLocation} from "react-router-dom";
 import React, {useEffect, useState} from "react";
-import {useGetIdentity, useTranslate} from "@refinedev/core";
+import {useBack, useGetIdentity, useTranslate} from "@refinedev/core";
 import {useForm} from "@refinedev/react-hook-form";
 
 import {IGetIdentity, INewsDataProps, INewsDateEvent, IPicture, ProfileProps} from "../../interfaces/common";
@@ -12,10 +12,10 @@ const CreateNews = () => {
     const {data: identity} = useGetIdentity<IGetIdentity>();
     const user: ProfileProps = identity?.user as ProfileProps;
     const translate = useTranslate();
-    const navigate = useNavigate();
+    const goBack = useBack();
 
     const [defaultPictures, _] = useState<IPicture[]>([] as IPicture[])
-    const [currentInstitutionId, setCurrentInstitutionId] = useState<string>("");
+    const [institutionId, setInstitutionId] = useState<{_id: string, title: string}>({} as {_id: "", title: ''});
     const [description, setDescription] = useState<string>("");
     const [title, setTitle] = useState<string>("");
     const [pictures, setPictures] = useState<IPicture[] | File[]>([] as IPicture[] | File[]);
@@ -28,7 +28,7 @@ const CreateNews = () => {
 
     useEffect(() => {
         if (search) {
-            setCurrentInstitutionId(search?.split('=')[1])
+            setInstitutionId((prevState) => ({...prevState, _id: search?.split('=')[1]}))
         }
     }, [search]);
 
@@ -44,9 +44,14 @@ const CreateNews = () => {
 
     const onFinishHandler = async () => {
 
-        if (!pictures || pictures?.length <= 0) return alert("Виберіть головне фото");
+        if (!pictures || pictures?.length <= 0) return alert("");
 
         if (pictures.length > 8) return alert(translate("home.create.pictures.max"))
+
+        const currentDate = new Date();
+        const desiredDate = new Date(datePublish);
+
+        if (desiredDate < currentDate) return alert('The publication date must be greater than the current date');
 
         const formData = new FormData();
 
@@ -62,7 +67,7 @@ const CreateNews = () => {
             formData.append('datePublished', JSON.stringify(datePublish));
         }
         formData.append("createdBy", user?._id);
-        formData.append("institutionId", currentInstitutionId);
+        formData.append("institutionId", institutionId?._id);
         formData.append("dateEvent", JSON.stringify(dateEvent));
 
         const {data}: any = await onFinish(formData);
@@ -82,37 +87,39 @@ const CreateNews = () => {
         // }
         // setOpen(false);
 
-        navigate(-1)
+        goBack();
     }
 
+    const props: INewsDataProps ={
+        defaultPictures,
+        handleSubmit,
+        onFinishHandler,
+        pictures,
+        setPictures,
+        institutionId,
+        setInstitutionId,
+        title,
+        setTitle,
+        setDateEvent,
+        category,
+        setCategory,
+        dateEvent,
+        description,
+        setDescription,
+        status,
+        setStatus,
+        isDatePublished: isDatePublish,
+        setIsDatePublished: setIsDatePublish,
+        datePublished: datePublish,
+        setDatePublished: setDatePublish,
+    }
     return (
         <CustomCreate
             bgColor={'transparent'}
             onClick={onFinishHandler}
             isLoading={formLoading}>
             <NewsFormData
-                defaultPictures={defaultPictures}
-                handleSubmit={handleSubmit}
-                onFinishHandler={onFinishHandler}
-                pictures={pictures}
-                setPictures={setPictures}
-                currentInstitutionId={currentInstitutionId}
-                setCurrentInstitutionId={setCurrentInstitutionId}
-                title={title}
-                setTitle={setTitle}
-                setDateEvent={setDateEvent}
-                category={category}
-                setCategory={setCategory}
-                dateEvent={dateEvent}
-                description={description}
-                setDescription={setDescription}
-                status={status}
-                setStatus={setStatus}
-                isDatePublished={isDatePublish}
-                setIsDatePublished={setIsDatePublish}
-                formLoading={formLoading}
-                datePublished={datePublish}
-                setDatePublished={setDatePublish}
+                {...props}
             />
         </CustomCreate>
     )

@@ -1,8 +1,8 @@
 // common
-import BookMarkButton from "./common/BookMarkButton";
+import BookMarkButton from "./common/buttons/BookMarkButton";
 import CustomButton from "./common/custom/CustomButton";
 import CustomProfile from "./common/custom/CustomProfile";
-import VariantComponent from "./common/variantComponent";
+import VariantComponent from "./common/buttons/variantComponent";
 import Variant1EstablishmentCard from "./establishment/utills/variant1EstablishmentCard";
 import Variant2EstablishmentCard from "./establishment/utills/variant2EstablishmentCard";
 import CustomAccordion from "./common/custom/customAccordion";
@@ -13,13 +13,14 @@ import TitleTextItem from "./common/TitleTextItem";
 import ReviewsList from "./common/reviews-list";
 import CommentsList from "./common/comments-list";
 import ImageSlider from "./common/imageSlider";
-import SubscribeButton from "./common/SubscribeButton";
+import SubscribeButton from "./common/buttons/SubscribeButton";
 import CarouselComponent from "./common/carousel/carouselComponent";
 
 // custom
 import CustomShow from "./common/custom/customShow";
 import CustomEdit from "./common/custom/customEdit";
 import CustomCreate from "./common/custom/customCreate";
+import NewComponentButton from "./common/custom/newComponentButton";
 
 // google
 import {GoogleAuth} from "../auth";
@@ -129,5 +130,6 @@ export {
     CustomCreate,
     CarouselComponent,
     VariantComponent,
-    SubscribeButton
+    SubscribeButton,
+    NewComponentButton
 }

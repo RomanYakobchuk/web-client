@@ -18,45 +18,47 @@ import {ColorModeContext} from "../../../contexts";
 import {INewsDataProps, IPicture} from "interfaces/common";
 import SearchInstitutions from "../../search/searchInstitutions";
 import DateTimeList from "./dateTimeList";
+import dayjs from "dayjs";
 
-const NewsFormData = ({
-                          title,
-                          setCurrentInstitutionId,
-                          currentInstitutionId,
-                          setStatus,
-                          onFinishHandler,
-                          status,
-                          pictures,
-                          setPictures,
-                          description,
-                          setDescription,
-                          handleSubmit,
-                          setIsDatePublished,
-                          isDatePublished,
-                          dateEvent,
-                          category,
-                          setCategory,
-                          setTitle,
-                          setDateEvent,
-                          datePublished, setDatePublished,
-                          defaultPictures
-                      }: INewsDataProps) => {
+const NewsFormData = (props: INewsDataProps) => {
+    const {
+        title,
+        setInstitutionId,
+        setStatus,
+        onFinishHandler,
+        status,
+        pictures,
+        setPictures,
+        description,
+        setDescription,
+        handleSubmit,
+        setIsDatePublished,
+        isDatePublished,
+        dateEvent,
+        category,
+        setCategory,
+        institutionId,
+        setTitle,
+        setDateEvent,
+        datePublished, setDatePublished,
+        defaultPictures
+    } = props;
     const translate = useTranslate();
     const {mode} = useContext(ColorModeContext);
-
+    const maxImages = 6;
     const handlePicturesChange = (e: ChangeEvent<HTMLInputElement> | any) => {
-        if (6 < pictures.length) return alert(translate("home.create.pictures.max") + "6")
-        if (6 < e.target.files?.length) return alert(translate("home.create.pictures.max") + "6");
+        if (pictures.length > maxImages || e.target.files?.length > maxImages) return alert(translate("home.create.pictures.max") + "6")
 
         let arr = [] as IPicture[] | File[];
         const items = e.target.files;
         for (let i = 0; i < items?.length; i++) {
             const item = items[i];
-            arr.push(item as IPicture & File)
+            if ((arr?.length + pictures?.length) < maxImages) {
+                arr.push(item)
+            }
         }
         setPictures((prevState) => ([...prevState, ...arr] as IPicture[] | File[]))
     }
-
     const handleAddWorkDays = (workSchedule: any) => {
         setDateEvent((prevState) => ([...prevState, workSchedule]))
     }
@@ -78,35 +80,59 @@ const NewsFormData = ({
                     onSubmit={handleSubmit(onFinishHandler)}
                 >
                     <Box sx={{
-                        display: 'flex',
-                        flexDirection: {xs: 'column', sm: 'row'},
-                        alignItems: "end",
-                        gap: {xs: 3, sm: 2}
+                        display: 'grid',
+                        gridTemplateColumns: {xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)'},
+                        gap: 2,
+                        alignItems: 'start'
                     }}>
-                        <Box sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'start',
-                            width: '100%',
-                            gap: 2,
-                        }}>
-                            <FormControl fullWidth>
-                                <SearchInstitutions typeSearch={'userInstitutions'} searchPlace={currentInstitutionId}
-                                                    setSearchPlace={setCurrentInstitutionId}/>
-                            </FormControl>
-                            <FormControl fullWidth>
-                                <TextField
-                                    fullWidth
-                                    label={translate("news.create.title")}
-                                    required
-                                    size={"small"}
-                                    id="outlined-basic"
-                                    color={"secondary"}
-                                    variant="outlined"
-                                    value={title ? title : ''}
-                                    onChange={(event) => setTitle(event.target.value)}
-                                />
-                            </FormControl>
+                        <FormControl fullWidth>
+                            <FormHelperText
+                                sx={{
+                                    fontWeight: 500,
+                                    margin: "10px 0",
+                                    fontSize: {xs: 12, sm: 16},
+                                    color: mode === "dark" ? "#fcfcfc" : "#11142D",
+                                }}
+                            >
+                                {translate("home.one")}
+                            </FormHelperText>
+                            <SearchInstitutions
+                                typeSearch={'userInstitutions'} searchInstitution={institutionId}
+                                setSearchInstitution={setInstitutionId}/>
+                        </FormControl>
+                        <FormControl fullWidth>
+                            <FormHelperText
+                                sx={{
+                                    fontWeight: 500,
+                                    margin: "10px 0",
+                                    fontSize: {xs: 12, sm: 16},
+                                    color: mode === "dark" ? "#fcfcfc" : "#11142D",
+                                }}
+                            >
+                                {translate("news.create.title")}
+                            </FormHelperText>
+                            <TextField
+                                fullWidth
+                                required
+                                size={"small"}
+                                id="outlined-basic"
+                                color={"secondary"}
+                                variant="outlined"
+                                value={title ? title : ''}
+                                onChange={(event) => setTitle(event.target.value)}
+                            />
+                        </FormControl>
+                        <FormControl>
+                            <FormHelperText
+                                sx={{
+                                    fontWeight: 500,
+                                    margin: "10px 0",
+                                    fontSize: {xs: 12, sm: 16},
+                                    color: mode === "dark" ? "#fcfcfc" : "#11142D",
+                                }}
+                            >
+                                {translate("posts.fields.category.title")}
+                            </FormHelperText>
                             <Select variant={"outlined"} fullWidth size="small" displayEmpty required
                                     inputProps={{'aria-label': 'Without label'}}
                                     sx={{
@@ -124,19 +150,10 @@ const NewsFormData = ({
                                     ))
                                 }
                             </Select>
-                        </Box>
-                    </Box>
-                    <Box sx={{
-                        display: 'flex',
-                        flexDirection: {xs: 'column', sm: 'row'},
-                        gap: 2,
-                        justifyContent: {sm: 'space-between'}
-                    }}>
+                        </FormControl>
                         {/*<DateTimeList dataLabel={translate("news.create.date.title")} onSubmit={handleAddWorkDays}*/}
                         {/*              elements={workDays} onDelete={handleDeleteWorkDays}/>*/}
-                        <FormControl sx={{
-                            width: {xs: '100%', sm: '50%'}
-                        }}>
+                        <FormControl>
                             <FormHelperText
                                 sx={{
                                     fontWeight: 500,
@@ -168,78 +185,101 @@ const NewsFormData = ({
                                 onChange={(event) => setDescription(event.target.value)}
                             />
                         </FormControl>
-                    </Box>
-                    <FormControl fullWidth>
-                        <FormHelperText
-                            sx={{
-                                fontWeight: 500,
-                                margin: "10px 0",
-                                fontSize: {xs: 12, sm: 16},
-                                color: mode === "dark" ? "#fcfcfc" : "#11142D",
-                            }}
-                        >
-                            {translate("posts.fields.status.title")}
-                        </FormHelperText>
-                        <Select variant={"outlined"} fullWidth size="small" color={"secondary"} displayEmpty required
-                                inputProps={{'aria-label': 'Without label'}}
+                        <FormControl fullWidth>
+                            <FormHelperText
                                 sx={{
-                                    fontSize: {xs: '12px', sm: '16px'}
+                                    fontWeight: 500,
+                                    margin: "10px 0",
+                                    fontSize: {xs: 12, sm: 16},
+                                    color: mode === "dark" ? "#fcfcfc" : "#11142D",
                                 }}
-                                value={status ? status : "published"}
-                                onChange={(e) => {
-                                    setStatus(e.target.value as string)
-                                }}>
-                            <MenuItem value={"published"}>{translate(`posts.fields.status.published`)}</MenuItem>
-                            <MenuItem value={"private"}>{translate(`posts.fields.status.private`)}</MenuItem>
-                        </Select>
-                        {
-                            status === 'published' && (
-                                <Button
+                            >
+                                {translate("posts.fields.status.title")}
+                            </FormHelperText>
+                            <Select variant={"outlined"} fullWidth size="small" color={"secondary"} displayEmpty
+                                    required
+                                    inputProps={{'aria-label': 'Without label'}}
                                     sx={{
-                                        my: 1
+                                        fontSize: {xs: '12px', sm: '16px'}
                                     }}
-                                    fullWidth
-                                    color={isDatePublished ? "error" : "secondary"}
-                                    endIcon={isDatePublished ? '' : <Add/>}
-                                    variant={"outlined"}
-                                    onClick={() => setIsDatePublished(!isDatePublished)}
-                                >
-                                    {translate(isDatePublished ? 'buttons.cancel' : 'news.create.addDate')}
-                                </Button>
-                            )
-                        }
-                        {
-                            status === 'published' && isDatePublished && (
-                                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                    <DemoContainer
-                                        components={['DateTimePicker']}>
-                                        <DateTimePicker
-                                            value={datePublished ? datePublished : ''}
-                                            onChange={(value) => {
-                                                setDatePublished(value)
-                                            }}
-                                            sx={{
-                                                '& .MuiInputBase-input': {
-                                                    color: (theme) => theme.palette.secondary.main,
-                                                },
-                                                '& .MuiInputLabel-root': {
-                                                    color: (theme) => theme.palette.secondary.main,
-                                                },
-                                                '& .MuiOutlinedInput-notchedOutline': {
-                                                    borderColor: (theme) => theme.palette.secondary.main,
-                                                },
-                                                '&:hover .MuiOutlinedInput-notchedOutline': {
-                                                    borderColor: (theme) => theme.palette.secondary.main,
-                                                },
-                                            }}
-                                            label={translate('news.create.publicDate')}
-                                        />
-                                    </DemoContainer>
-                                </LocalizationProvider>
-                            )
-                        }
-                    </FormControl>
-                    <FormControl>
+                                    value={status ? status : "published"}
+                                    onChange={(e) => {
+                                        setStatus(e.target.value as string)
+                                    }}>
+                                {
+                                    [
+                                        {
+                                            value: 'published'
+                                        },
+                                        {
+                                            value: 'private'
+                                        }
+                                    ]?.map((item, index) => (
+                                        <MenuItem
+                                            key={index}
+                                            value={item.value}>{translate(`posts.fields.status.${item.value}`)}</MenuItem>
+                                    ))
+                                }
+                            </Select>
+                            {
+                                status === 'published' && (
+                                    <Button
+                                        sx={{
+                                            my: 1
+                                        }}
+                                        fullWidth
+                                        color={isDatePublished ? "error" : "secondary"}
+                                        endIcon={isDatePublished ? '' : <Add/>}
+                                        variant={"outlined"}
+                                        onClick={() => setIsDatePublished(!isDatePublished)}
+                                    >
+                                        {translate(isDatePublished ? 'buttons.cancel' : 'news.create.addDate')}
+                                    </Button>
+                                )
+                            }
+                            {
+                                status === 'published' && isDatePublished && (
+                                    <TextField
+                                        color={'secondary'}
+                                        type={'datetime-local'}
+                                        value={datePublished ?? ''}
+                                        onChange={(event) => setDatePublished(event.target.value)}
+                                    />
+                                    // <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    //     <DemoContainer
+                                    //         components={['DateTimePicker']}>
+                                    //         <DateTimePicker
+                                    //             value={datePublished ? datePublished : ''}
+                                    //             onChange={(value) => {
+                                    //                 setDatePublished(value)
+                                    //             }}
+                                    //             sx={{
+                                    //                 '& .MuiInputBase-input': {
+                                    //                     color: (theme) => theme.palette.secondary.main,
+                                    //                 },
+                                    //                 '& .MuiInputLabel-root': {
+                                    //                     color: (theme) => theme.palette.secondary.main,
+                                    //                 },
+                                    //                 '& .MuiOutlinedInput-notchedOutline': {
+                                    //                     borderColor: (theme) => theme.palette.secondary.main,
+                                    //                 },
+                                    //                 '&:hover .MuiOutlinedInput-notchedOutline': {
+                                    //                     borderColor: (theme) => theme.palette.secondary.main,
+                                    //                 },
+                                    //             }}
+                                    //             label={translate('news.create.publicDate')}
+                                    //         />
+                                    //     </DemoContainer>
+                                    // </LocalizationProvider>
+                                )
+                            }
+                        </FormControl>
+                    </Box>
+                    <FormControl sx={{
+                        bgcolor: mode === 'dark' ? "#1a1313" : '#f4f4f4',
+                        borderRadius: '10px',
+                        p: '10px'
+                    }}>
                         <FormHelperText
                             sx={{
                                 fontWeight: 500,
@@ -252,7 +292,7 @@ const NewsFormData = ({
                         </FormHelperText>
                         <ImageSelector
                             defaultPictures={defaultPictures}
-                            maxImages={8} images={pictures}
+                            maxImages={maxImages} images={pictures}
                             setPictures={setPictures}
                             handleChange={handlePicturesChange}/>
 

@@ -15,6 +15,7 @@ interface IProps {
 const ListCardChat = ({conversation, setCurrentChat, setOpenDrawer}: IProps) => {
 
     const {role} = useRole();
+
     const [searchParams, setSearchParams] = useSearchParams();
     const [bgColor, setBgColor] = useState("primary.main");
     const [color, setColor] = useState("secondary.contrastText");

@@ -59,7 +59,11 @@ const DetailsNews = () => {
 
     if (isError) return <ErrorComponent/>
     return (
-        <CustomShow isLoading={isLoading} bgColor={'transparent'}>
+        <CustomShow
+            isLoading={isLoading}
+            bgColor={'transparent'}
+            isShowButtons={user?._id === news?.createdBy || user?.status === 'admin'}
+        >
             <Box sx={{
                 display: 'flex',
                 width: '100%',
@@ -397,10 +401,10 @@ const DetailsNews = () => {
                     </Typography>
                     <Box>
                         {
-                            news?.institutionId &&
+                            news?.institutionId?._id &&
                             <OtherNews
                                 newsId={news?._id}
-                                institutionId={news?.institutionId}
+                                institutionId={news?.institutionId?._id}
                             />
                         }
                     </Box>

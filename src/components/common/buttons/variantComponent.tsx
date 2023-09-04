@@ -1,7 +1,7 @@
 import {FormatListBulleted, GridViewOutlined} from "@mui/icons-material";
 import {Button, ButtonGroup} from "@mui/material";
 import React, {useContext, useEffect, useState} from "react";
-import {VariantContext} from "../../settings/variantEstablishment";
+import {VariantContext} from "../../../settings/variantEstablishment";
 
 interface IProps {
     type: "establishment" | "news"

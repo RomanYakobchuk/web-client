@@ -28,7 +28,7 @@ const CreateReservation = () => {
     const {mode} = useContext(ColorModeContext);
     const {open} = useNotification();
 
-    const [searchPlace, setSearchPlace] = useState<string>('');
+    const [searchPlace, setSearchPlace] = useState<{_id: string, title: string}>({} as {_id: string, title: string});
     const [fullName, setFullName] = useState<string>('');
     const [eventType, setEventType] = useState<string>('');
     const [date, setDate] = useState<Date | any>(dayjs(new Date()).format('YYYY-MM-DDThh:mm'));
@@ -66,7 +66,7 @@ const CreateReservation = () => {
     }, [user?.name])
     useEffect(() => {
         if (search) {
-            setSearchPlace(search?.split('=')[1]);
+            setSearchPlace((prevState) => ({...prevState, _id: search?.split('=')[1]}));
         }
     }, [search]);
 
@@ -157,7 +157,7 @@ const CreateReservation = () => {
                         >
                             {translate('home.one')}
                         </FormHelperText>
-                        <SearchInstitutions searchPlace={searchPlace} setSearchPlace={setSearchPlace}
+                        <SearchInstitutions searchInstitution={searchPlace} setSearchInstitution={setSearchPlace}
                                             typeSearch={'all'}/>
                     </FormControl>
                     <FormControl fullWidth>

@@ -1,5 +1,5 @@
 import {Dispatch, FormEventHandler, ReactNode, SetStateAction} from "react";
-import {FieldValues} from "react-hook-form";
+import {FieldValues, UseFormHandleSubmit} from "react-hook-form";
 import {BaseRecord, CreateResponse, UpdateResponse} from "@refinedev/core";
 import {CredentialResponse} from "./google";
 
@@ -203,12 +203,12 @@ export interface NewsProps {
 
 export interface IWorkDay {
     days: {
-        from: string,
-        to: string
+        from: number,
+        to: number
     },
     time: {
-        from: Date | string | any,
-        to: Date | string | any,
+        from: Date | string,
+        to: Date | string,
     }
 }
 
@@ -293,7 +293,7 @@ export interface IOptionGroup {
     value: string;
     label: string | ReactNode;
     userId?: string,
-    title: string,
+    title?: string,
     id?: string,
     key?: string
 }
@@ -301,6 +301,7 @@ export interface IOptionGroup {
 export interface IOptions {
     label: string | ReactNode;
     options: IOptionGroup[];
+    title?: string,
     userId?: string,
     id?: string,
     value?: string,
@@ -355,11 +356,11 @@ export interface IPlaceFormProps {
     onFinish?: (values: FieldValues) => Promise<void | CreateResponse<BaseRecord> | UpdateResponse<BaseRecord>>,
     setSendNotifications: (value: boolean) => void,
     sendNotifications: boolean,
-    defaultPictures: {name: string, url: string}[],
-    handleSubmit: FormEventHandler<HTMLFormElement> | any,
+    defaultPictures: IPicture[],
+    handleSubmit:  UseFormHandleSubmit<FieldValues, undefined>,
     onFinishHandler: (data: FieldValues) => Promise<void> | void,
-    setPictures: (item: [{name: string, url: string}] | Array[]) => void,
-    pictures: any,
+    setPictures: (item: IPicture[] | File[]) => void,
+    pictures: IPicture[] | File[],
     type: string,
     setType: (item: string) => void,
     workScheduleWeekend: PropertyProps["workSchedule"]["weekend"],
@@ -404,11 +405,11 @@ export interface INewsDateEvent {
 export interface INewsDataProps {
     handleSubmit: any,
     onFinishHandler: any,
+    institutionId: {_id: string, title: string},
     defaultPictures: IPicture[],
     pictures: IPicture[] | File[],
     setPictures: Dispatch<SetStateAction<IPicture[] | File[]>>,
-    currentInstitutionId: string,
-    setCurrentInstitutionId: (item: string) => void,
+    setInstitutionId: (item: { _id: string, title: string }) => void,
     userInstitutions?: any,
     title: string,
     setTitle: (value: string) => void,
@@ -424,7 +425,6 @@ export interface INewsDataProps {
     setIsDatePublished: (value: boolean) => void,
     datePublished: any,
     setDatePublished: any,
-    formLoading: boolean
 }
 
 export interface IConv {

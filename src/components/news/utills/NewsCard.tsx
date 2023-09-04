@@ -13,6 +13,7 @@ interface IProps {
     news: INews,
     index: number
 }
+
 const NewsCard = ({
                       news,
                       index
@@ -180,12 +181,16 @@ const NewsCard = ({
                 // zIndex: 5,
                 // position: 'relative',
             }}>
-                <img style={{
-                    borderRadius: width > 600 ? '20px 20px 0 0' : '10px',
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover'
-                }} src={pictures[0].url} alt={"mainPhoto"}/>
+                {
+                    pictures[0] && (
+                        <img style={{
+                            borderRadius: width > 600 ? '20px 20px 0 0' : '10px',
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover'
+                        }} src={pictures[0]?.url} alt={"mainPhoto"}/>
+                    )
+                }
             </Box>
         </Box>
     );

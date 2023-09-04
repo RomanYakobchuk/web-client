@@ -1,9 +1,8 @@
 import {useState} from "react";
-import {Box, Button, StyledEngineProvider, Typography} from "@mui/material";
+import {Box, Button, Typography} from "@mui/material";
 import {useMobile} from "../../../utils";
-import {Close, PermMediaOutlined} from "@mui/icons-material";
+import {PermMediaOutlined} from "@mui/icons-material";
 import {useTranslate} from "@refinedev/core";
-import ScrollLock from 'react-scrolllock';
 import ImageSlider from "../../common/imageSlider";
 
 interface PlaceGalleryProps {

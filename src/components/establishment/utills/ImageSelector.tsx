@@ -1,10 +1,20 @@
-import React, {useContext,} from 'react';
-import {Box, Button, FormControl, Typography} from "@mui/material";
-import {AddCircleOutline, DeleteForeverOutlined, DeleteOutline, Edit} from "@mui/icons-material";
+import React, {useContext, useState,} from 'react';
+import {Box, Button, FormControl, IconButton, Typography} from "@mui/material";
+import {
+    Add,
+    AddCircleOutline,
+    ArrowBackIosNew,
+    ArrowForwardIos,
+    DeleteForeverOutlined,
+    DeleteOutline,
+    Edit
+} from "@mui/icons-material";
 import {useTranslate} from "@refinedev/core";
 
 import {ColorModeContext} from "../../../contexts";
-import {buttonStyle} from "../../../styles";
+import {antdInputStyle, buttonStyle} from "../../../styles";
+import {IPicture} from "../../../interfaces/common";
+import {Input} from "antd";
 
 interface Props {
     images: string[] | any;
@@ -26,16 +36,72 @@ const ImageSelector = ({
     const translate = useTranslate();
     const {mode} = useContext(ColorModeContext);
 
+    const [addUrl, setAddUrl] = useState<string>('');
     const changeItem = (index: number) => {
-        setPictures(items.filter((_: {
-            name: string,
-            url: string
-        } | File, item_index: number) => item_index !== index))
+        setPictures(items.filter((_: IPicture | File, item_index: number) => item_index !== index))
+    }
+
+    const addImageByUrl = async () => {
+        if (addUrl) {
+            if (addUrl.includes('https://')) {
+                if (items.length >= maxImages) return alert(translate("home.create.pictures.max") + maxImages);
+
+                const isImageValid = await isImage(addUrl);
+                if (isImageValid) {
+                    const name = addUrl?.split('/')?.pop();
+                    setPictures((prev: IPicture[] | File[]) => ([...prev, {
+                        url: addUrl,
+                        name: name
+                    } as IPicture] as IPicture | File[]));
+                    setAddUrl('')
+                }
+                return;
+            } else {
+                alert('The URL should contain https://')
+            }
+        }
     }
 
     const getDefaultPictures = () => {
         setPictures(defaultPictures)
     }
+
+    const moveBack = (index: number) => {
+        const newList = [...items];
+        const temp = newList[index];
+        newList[index] = newList[index === 0 ? items?.length - 1 : index - 1];
+        newList[index === 0 ? items?.length - 1 : index - 1] = temp;
+        setPictures(newList)
+    }
+    const moveForward = (index: number) => {
+        const newList = [...items];
+        const temp = newList[index];
+        newList[index] = newList[index === items?.length - 1 ? 0 : index + 1];
+        newList[index === items?.length - 1 ? 0 : index + 1] = temp;
+        setPictures(newList)
+    }
+
+    function isImage(url: string) {
+        const img = new Image();
+        img.src = url;
+        return new Promise((resolve) => {
+            img.onload = () => {
+                const extension = url?.split('.')?.pop()?.toLowerCase() as string;
+                if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(extension) || img?.naturalWidth || img?.complete) {
+                    resolve(true);
+                } else {
+                    alert('It`s not a supported picture format.');
+                    resolve(false);
+                }
+            };
+
+            img.onerror = () => {
+                alert('It`s not a picture!!!.');
+                resolve(false);
+            };
+        });
+    }
+
     return (
         <>
             <FormControl sx={{
@@ -64,16 +130,34 @@ const ImageSelector = ({
                         <Box sx={{
                             display: 'flex',
                             justifyContent: 'center',
-                            gap: 2,
+                            gap: {xs: 1, sm: 2},
                             flexWrap: 'wrap',
+                            maxWidth: '550px',
                             width: '100%',
+                            "& svg": {
+                                fontSize: {xs: '20px', sm: '24px'}
+                            },
                             "& button": {
-                                flex: '1 1 160px',
-                                maxWidth: '300px'
+                                flex: {xs: '1 0 100px', sm: '1 0 160px'},
+                                fontSize: {xs: '10px', sm: '14px'},
+                                p: {xs: '3px 5px', sm: 'unset'},
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 0.5,
+                                borderRadius: '7px',
+                                height: '40px',
+                                textTransform: 'inherit',
                             },
                             "& label": {
-                                maxWidth: '300px',
-                                flex: '1 1 160px'
+                                flex: {xs: '1 0 100px', sm: '1 0 160px'},
+                                fontSize: {xs: '10px', sm: '14px'},
+                                p: {xs: '3px 5px', sm: 'unset'},
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 0.5,
+                                borderRadius: '7px',
+                                height: '40px',
+                                textTransform: 'inherit',
                             }
                         }}>
                             <Button
@@ -81,14 +165,11 @@ const ImageSelector = ({
                                 color={'info'}
                                 variant={'contained'}
                                 sx={{
-                                    ...buttonStyle,
                                     textTransform: 'inherit',
                                     width: 'fit-content',
                                 }}
-                                startIcon={
-                                    <Edit/>
-                                }
                             >
+                                <Edit/>
                                 {translate("buttons.edit") + ' ' + translate('home.sortByType.all')}
                                 <input
                                     hidden
@@ -103,13 +184,10 @@ const ImageSelector = ({
                                 color={'error'}
                                 onClick={() => setPictures([])}
                                 sx={{
-                                    ...buttonStyle,
                                     width: 'fit-content',
                                 }}
-                                startIcon={
-                                    <DeleteForeverOutlined/>
-                                }
                             >
+                                <DeleteForeverOutlined/>
                                 {translate("buttons.delete") + ' ' + translate('home.sortByType.all')}
                             </Button>
                             {
@@ -117,9 +195,6 @@ const ImageSelector = ({
                                     <Button
                                         variant={'contained'}
                                         color={'success'}
-                                        sx={{
-                                            ...buttonStyle
-                                        }}
                                         onClick={getDefaultPictures}
                                     >
                                         {translate('buttons.restore')}
@@ -134,9 +209,34 @@ const ImageSelector = ({
                     width: '100%',
                     borderRadius: "5px",
                 }}>
-                    <Typography>
+                    <Typography sx={{
+                        color: 'common.white'
+                    }}>
                         {translate("home.create.pictures.count")}: {items?.length}
                     </Typography>
+
+                    <Box sx={{
+                        display: 'flex',
+                        width: '100%',
+                        gap: 2,
+                        alignItems: 'center',
+                        mb: '15px',
+                        ...antdInputStyle
+                    }}>
+                        <Input
+                            value={addUrl ?? ''}
+                            placeholder={'Enter image url...'}
+                            onChange={(event) => setAddUrl(event.target.value)}
+                        />
+                        <Button
+                            disabled={items?.length >= maxImages}
+                            variant={'contained'}
+                            color={'info'}
+                            onClick={addImageByUrl}
+                        >
+                            <Add/>
+                        </Button>
+                    </Box>
 
                     <Box sx={{
                         width: '100%',
@@ -144,18 +244,17 @@ const ImageSelector = ({
                         flexDirection: 'row',
                         gap: 2,
                         flexWrap: 'wrap',
-
+                        justifyContent: 'space-evenly'
                     }}>
                         {
-                            items?.map((item: { name: string, url: string } | File, index: number) => (
+                            items?.map((item: IPicture | File, index: number) => (
                                 <Box
                                     sx={{
                                         display: 'flex',
                                         flexDirection: 'column',
                                         maxWidth: {xs: '150px', md: '195px'},
-                                        whiteSpace: '',
-                                        position: 'relative',
                                         gap: 1,
+                                        color: 'common.white',
                                         "& img": {
                                             borderRadius: {xs: '10px', sm: '15px'},
                                             width: {xs: '150px', md: '195px'},
@@ -163,27 +262,57 @@ const ImageSelector = ({
                                         }
                                     }}
                                     key={index}>
-                                    <img
-                                        style={{
-                                            objectFit: 'cover'
-                                        }}
-                                        src={item instanceof File ? URL.createObjectURL(item) : item.url}
-                                        alt={item.name}/>
-                                    {item.name}
-                                    <DeleteOutline
-                                        color={'error'}
-                                        sx={{
-                                            cursor: 'pointer',
-                                            p: '5px',
-                                            bgcolor: 'silver',
-                                            borderRadius: '5px',
+                                    <Box sx={{
+                                        position: 'relative',
+                                    }}>
+                                        <img
+                                            style={{
+                                                objectFit: 'cover'
+                                            }}
+                                            src={item instanceof File ? URL.createObjectURL(item) : item.url}
+                                            alt={item.name}/>
+                                        <DeleteOutline
+                                            color={'error'}
+                                            sx={{
+                                                cursor: 'pointer',
+                                                p: '5px',
+                                                bgcolor: 'silver',
+                                                borderRadius: '5px',
+                                                position: 'absolute',
+                                                top: '10px',
+                                                boxSizing: 'content-box',
+                                                right: '10px'
+                                            }}
+                                            onClick={() => changeItem(index)}
+                                        />
+                                        <Box sx={{
                                             position: 'absolute',
-                                            top: '10px',
-                                            boxSizing: 'content-box',
-                                            right: '10px'
-                                        }}
-                                        onClick={() => changeItem(index)}
-                                    />
+                                            bottom: '5px',
+                                            borderRadius: {xs: '0 0 10px 10px', sm: '0 0 15px 15px'},
+                                            bgcolor: 'rgba(255, 255, 255, 0.5)',
+                                            left: 0,
+                                            right: 0,
+                                            width: '100%',
+                                            display: 'flex',
+                                            justifyContent: 'space-around',
+                                            alignItems: 'center',
+                                            "& button": {
+                                                color: '#000'
+                                            }
+                                        }}>
+                                            <IconButton
+                                                onClick={() => moveBack(index)}
+                                            >
+                                                <ArrowBackIosNew/>
+                                            </IconButton>
+                                            <IconButton
+                                                onClick={() => moveForward(index)}
+                                            >
+                                                <ArrowForwardIos/>
+                                            </IconButton>
+                                        </Box>
+                                    </Box>
+                                    {item.name}
                                 </Box>
                             ))
                         }

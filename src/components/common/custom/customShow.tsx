@@ -13,11 +13,11 @@ import './custom.css';
 interface IProps {
     isLoading: boolean,
     children: ReactNode,
-    showButtons?: boolean,
+    isShowButtons?: boolean,
     bgColor?: string
 }
 
-const CustomShow = ({isLoading, children, showButtons, bgColor}: IProps) => {
+const CustomShow = ({isLoading, children, isShowButtons, bgColor}: IProps) => {
     const {mode} = useContext(ColorModeContext);
     const translate = useTranslate();
 
@@ -30,9 +30,9 @@ const CustomShow = ({isLoading, children, showButtons, bgColor}: IProps) => {
                       padding: '0',
                   },
               }}
-              headerButtons={showButtons ?
+              headerButtons={isShowButtons ?
                   [
-                      <EditButton color={'secondary'} variant={'outlined'} key={'edit'}/>
+                      <EditButton  color={'secondary'} variant={'outlined'} key={'edit'}/>
                   ] : []
               }
               headerProps={{

@@ -3,11 +3,11 @@ import {BookmarkBorderOutlined, BookmarkOutlined} from "@mui/icons-material";
 import React, {useContext, useEffect, useLayoutEffect, useState, MouseEvent} from "react";
 import {useGetIdentity, useNotification, useOne, useTranslate} from "@refinedev/core";
 
-import {axiosInstance} from "../../authProvider";
-import {IGetIdentity, ProfileProps} from "../../interfaces/common";
-import {buttonStyle} from "../../styles";
-import {ColorModeContext} from "../../contexts";
-import {AppContext} from "../../contexts/AppContext";
+import {axiosInstance} from "../../../authProvider";
+import {IGetIdentity, ProfileProps} from "../../../interfaces/common";
+import {buttonStyle} from "../../../styles";
+import {ColorModeContext} from "../../../contexts";
+import {AppContext} from "../../../contexts/AppContext";
 
 interface IProps {
     id: string,
@@ -32,7 +32,7 @@ const BookMarkButton = ({id, color, bgColor, type, showText, style}: IProps) => 
     useEffect(() => {
         const isInclude = favoritePlaces.includes(id);
         isInclude ? setBook(true) : setBook(false)
-    }, [favoritePlaces])
+    }, [favoritePlaces, id])
 
     const toFromBook = async (event: MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();

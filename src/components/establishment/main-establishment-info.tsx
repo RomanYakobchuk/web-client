@@ -126,8 +126,9 @@ const MainEstablishmentInfo = ({establishment, rowHeight, otherProps, subscribe}
                                         alignItems: 'center'
                                     }}>
                                         {
-                                            establishment?._id &&
+                                            establishment?._id && establishment?.sendNotifications &&
                                             <SubscribeButton
+                                                createdBy={establishment?.createdBy}
                                                 showText={width > 600}
                                                 subscribe={subscribe}
                                                 establishmentId={establishment?._id}

@@ -2,16 +2,20 @@ import {useForm, useGetIdentity, useTranslate} from "@refinedev/core";
 import {Button, CircularProgress, SxProps} from "@mui/material";
 import {Star, StarBorder} from "@mui/icons-material";
 
-import {IGetIdentity, ISubscribe, ProfileProps} from "../../interfaces/common";
+import {IGetIdentity, ISubscribe, ProfileProps} from "../../../interfaces/common";
 import React, {useEffect, useState} from "react";
 
 type IProps = {
     establishmentId: string,
     style?: SxProps,
     showText: boolean,
-    subscribe: ISubscribe
+    subscribe: ISubscribe,
+    createdBy: string
 }
-const SubscribeButton = ({establishmentId, style, subscribe, showText}: IProps) => {
+const SubscribeButton = ({establishmentId, style, subscribe, showText, createdBy}: IProps) => {
+    const {data: identity} = useGetIdentity<IGetIdentity>();
+    const user = identity?.user as ProfileProps;
+
     const translate = useTranslate();
 
     const [isSubscribe, setIsSubscribe] = useState(false);
@@ -50,6 +54,7 @@ const SubscribeButton = ({establishmentId, style, subscribe, showText}: IProps) 
 
     return (
         <Button
+            disabled={user?._id === createdBy}
             variant={'contained'}
             sx={{
                 borderRadius: '7px',

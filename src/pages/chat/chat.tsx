@@ -22,7 +22,7 @@ const Chat = () => {
     const translate = useTranslate();
     const {role} = useRole();
 
-    const [currentPlace, setCurrentPlace] = useState<string>('');
+    const [currentPlace, setCurrentPlace] = useState<{_id: string, title: string}>({} as {_id: string, title: string});
 
     const [openDrawer, setOpenDrawer] = useState(false);
     const [currentChat, setCurrentChat] = useState<IConversation>({} as IConversation);
@@ -76,7 +76,7 @@ const Chat = () => {
 
     useEffect(() => {
         if (institutionId) {
-            setCurrentPlace(institutionId)
+            setCurrentPlace((prevState) => ({...prevState, _id: institutionId}))
         }
     }, [institutionId]);
 
@@ -114,8 +114,8 @@ const Chat = () => {
                     <CanAccess resource={'chats'} action={'searchChatsByPlace'}>
                         <Box>
                             <SearchInstitutions
-                                searchPlace={currentPlace}
-                                setSearchPlace={setCurrentPlace}
+                                searchInstitution={currentPlace}
+                                setSearchInstitution={setCurrentPlace}
                                 typeSearch={role === 'admin' ? 'all' : 'userInstitutions'}
                             />
                         </Box>

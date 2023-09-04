@@ -3,7 +3,6 @@ import {parseJwt} from "./utils";
 import {IData, IGetIdentity, ProfileProps} from "./interfaces/common";
 import type {AuthBindings} from "@refinedev/core";
 
-
 export const ACCESS_TOKEN_KEY = "access-refine-auth";
 export const REFRESH_TOKEN_KEY = "refresh-refine-auth";
 
@@ -13,6 +12,7 @@ export const baseURL = `${import.meta.env.VITE_APP_API}/api/v1`;
 export const axiosInstance = axios.create({
     baseURL, headers: {
         'Access-Control-Allow-Origin': `${import.meta.env.VITE_APP_API}`,
+        'Content-Type': 'application/json;charset=UTF-8'
     }
 });
 
@@ -38,7 +38,7 @@ const onTokenRefreshed = () => {
 };
 
 axiosInstance.interceptors.request.use(async (request: AxiosRequestConfig) => {
-        const access_token = await localStorage.getItem(ACCESS_TOKEN_KEY);
+        const access_token = localStorage.getItem(ACCESS_TOKEN_KEY);
         if (access_token && isAccessTokenExpired(access_token)) {
             if (request.headers) {
                 request.headers["Authorization"] = access_token;
@@ -126,7 +126,6 @@ export const authProvider: AuthBindings = {
                     localStorage.setItem(ACCESS_TOKEN_KEY, access_token)
                     localStorage.setItem(REFRESH_TOKEN_KEY, refresh_token)
 
-                    window.location.reload();
                     return {
                         success: true,
                     }
@@ -149,7 +148,6 @@ export const authProvider: AuthBindings = {
             axios.defaults.headers.common = {};
             return {
                 success: true,
-                redirectTo: '/login'
             };
         },
         onError: async (error) => {
@@ -158,7 +156,7 @@ export const authProvider: AuthBindings = {
         check: async () => {
             const access_token = localStorage.getItem(ACCESS_TOKEN_KEY);
             const refresh_token = localStorage.getItem(REFRESH_TOKEN_KEY);
-            if (!access_token || !refresh_token) {
+            if (!access_token && !refresh_token) {
                 return {
                     authenticated: false,
                     error: new Error("Not authenticated"),
@@ -166,7 +164,7 @@ export const authProvider: AuthBindings = {
                     success: false,
                     redirectTo: '/login'
                 }
-            } else if (access_token && refresh_token) {
+            } else if (access_token || refresh_token) {
                 return {
                     authenticated: true
                 }
@@ -179,14 +177,19 @@ export const authProvider: AuthBindings = {
 
         },
         getPermissions: async () => {
-            return null;
+            const userToken = localStorage.getItem('user') as string;
+            const user = userToken ? parseJwt(userToken) : null;
+            if (user) {
+                return user?._doc?.status ?? user?.status
+            }
+            return "user";
         },
         getIdentity: async (): Promise<IGetIdentity | any> => {
             const token = localStorage.getItem(ACCESS_TOKEN_KEY) as string;
             const refresh = localStorage.getItem(REFRESH_TOKEN_KEY) as string;
             const favoritePlaces = JSON.parse(localStorage.getItem('favoritePlaces') as string);
             const user = localStorage.getItem("user") as string;
-            if (!token || (refresh && !isAccessTokenExpired(refresh))) {
+            if (!token && (refresh && !isAccessTokenExpired(refresh))) {
                 return {
                     authenticated: false,
                     error: new Error("Not authenticated"),

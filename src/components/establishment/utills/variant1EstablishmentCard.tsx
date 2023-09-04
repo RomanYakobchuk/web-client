@@ -16,7 +16,7 @@ import React, {useContext, useEffect} from "react";
 
 import {IGetIdentity, ProfileProps, PropertyProps} from "../../../interfaces/common";
 import {ColorModeContext} from "../../../contexts";
-import BookMarkButton from "../../common/BookMarkButton";
+import BookMarkButton from "../../common/buttons/BookMarkButton";
 import 'dayjs/locale/uk';
 import 'dayjs/locale/en';
 import {tagStyle} from "../../../styles";

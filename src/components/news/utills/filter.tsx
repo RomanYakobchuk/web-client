@@ -6,28 +6,23 @@ import {
     TextField
 } from "@mui/material";
 import {CancelOutlined, TuneOutlined} from "@mui/icons-material";
-import {AutoComplete, Input} from "antd";
-import React, {useContext, useEffect, useMemo, useState} from "react";
-import {CrudFilter, CrudSorting, useTranslate} from "@refinedev/core";
-import {DatePicker, LocalizationProvider} from "@mui/x-date-pickers";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import React, {useEffect, useMemo, useState} from "react";
+import {CrudFilter, CrudFilters, CrudSorting, LogicalFilter, useTranslate} from "@refinedev/core";
 
-import {IOptions} from "../../../interfaces/common";
-import {ColorModeContext} from "../../../contexts";
-import dayjs from "dayjs";
-import {useDebounce} from "use-debounce";
-import {buttonStyle, selectStyle, textFieldStyle} from "../../../styles";
+import {buttonStyle, selectStyle} from "../../../styles";
+import SearchCity from "../../search/searchCity";
+import {SetFilterType} from "../../../interfaces/types";
 
 
 interface IProps {
-    setFilters: any,
+    setFilters: SetFilterType,
     sortBy: string,
-    setSortBy: any,
-    setSearchValue: any,
+    setSortBy: (value: string) => void,
+    setSearchValue: (value: string) => void,
     sorters: CrudSorting,
-    setSorters: any,
+    setSorters: (sorter: CrudSorting) => void,
     searchValue: string,
-    filters: any,
+    filters: CrudFilters,
 }
 
 const FilterNews = ({
@@ -42,24 +37,14 @@ const FilterNews = ({
                     }: IProps) => {
 
     const translate = useTranslate();
-    const {mode} = useContext(ColorModeContext);
 
     const [openFilter, setOpenFilter] = useState(false);
-    const [newFilters, setFilters] = useState<any>();
-    const [newSorters, setNewSorters] = useState<any>();
+    const [newFilters, setFilters] = useState<CrudFilters>([{}] as CrudFilters);
+    const [newSorters, setNewSorters] = useState<CrudSorting>([{}] as CrudSorting);
     const [category, setCategory] = useState<string>("");
-    const [dateEventGte, setDateEventGte] = useState<Date | any>("");
-    const [dateEventLte, setDateEventLte] = useState<Date | any>("");
-    const [searchCityInput, setSearchCityInput] = useState<string>("");
-    const [searchInputValue, setSearchInputValue] = useState<string>("");
-    const [options, setOptions] = useState<IOptions[]>([]);
-    const [debounceValue] = useDebounce(searchCityInput, 500);
-
-    const onSearch = (value: string) => {
-        setSearchInputValue(value)
-        setSearchCityInput(value)
-    }
-
+    const [dateEventGte, setDateEventGte] = useState<Date | null>(null);
+    const [dateEventLte, setDateEventLte] = useState<Date | null>(null);
+    const [searchCity, setSearchCity] = useState<string>("");
 
 
     const currentSorterOrders = useMemo(() => {
@@ -75,7 +60,7 @@ const FilterNews = ({
         };
     }, [newSorters]);
     const toggleSort = (field: keyof typeof currentSorterOrders) => {
-        const newOrder = field?.split('_')[1];
+        const newOrder = field?.split('_')[1] as "asc" | "desc";
         setNewSorters([
             {
                 field,
@@ -121,7 +106,7 @@ const FilterNews = ({
                 value: category
             },
         ])
-    }, [dateEventGte, dateEventLte, category, searchCityInput])
+    }, [dateEventGte, dateEventLte, category, searchCity])
 
     useEffect(() => {
         if (sorters) {
@@ -136,18 +121,17 @@ const FilterNews = ({
 
     useEffect(() => {
         if (filters?.length > 0) {
-            for (const filter of filters) {
+            for (const filter of filters as LogicalFilter[]) {
                 if (filter?.field === "date_event" && filter?.operator === 'lte') {
-                    setDateEventLte(dayjs(filter?.value?.$d))
+                    setDateEventLte(filter?.value)
                 } else if (filter?.field === "date_event" && filter?.operator === 'gte') {
-                    setDateEventGte(dayjs(filter?.value?.$d))
+                    setDateEventGte(filter?.value)
                 } else if (filter?.field === "category") {
                     setCategory(filter?.value)
                 } else if (filter?.field === "title" && filter?.value) {
                     setSearchValue(filter?.value)
                 } else if (filter?.field === 'city_like' && filter?.value) {
-                    setSearchCityInput(filter?.value)
-                    setSearchInputValue(filter?.value)
+                    setSearchCity(filter?.value)
                 }
             }
         }
@@ -161,13 +145,12 @@ const FilterNews = ({
 
     const handleReplace = () => {
         setSearchValue("")
-        setSearchInputValue("")
-        setSearchCityInput("")
+        setSearchCity("")
         defaultSetFilters([], "replace")
         defaultSetSorters([{field: "", order: "asc"}])
         setOpenFilter(false)
-        setDateEventGte('')
-        setDateEventLte('')
+        setDateEventGte(null)
+        setDateEventLte(null)
     }
 
 
@@ -244,7 +227,7 @@ const FilterNews = ({
                         <Box
                             sx={{
                                 width: {xs: '320px', sm: '450px'},
-                                bgcolor: (theme) => theme.palette.primary.main,
+                                bgcolor: 'primary.main',
                                 p: '20px',
                                 borderRadius: '10px'
                             }}>
@@ -261,7 +244,7 @@ const FilterNews = ({
                                         sx={{
                                             fontSize: '14px',
                                             mb: 0.5,
-                                            color: (theme) => theme.palette.text.primary
+                                            color: 'text.primary'
                                         }}
                                     >
                                         {translate('posts.fields.category.title')}
@@ -298,40 +281,10 @@ const FilterNews = ({
                                 </FormControl>
                                 <FormControl
                                     sx={{width: '100%',}}>
-                                    <FormHelperText
-                                        sx={{
-                                            fontSize: '14px',
-                                            mb: 0.5,
-                                            color: (theme) => theme.palette.text.primary
-                                        }}
-                                    >
-                                        {translate('home.create.location.title')}
-                                    </FormHelperText>
-                                    <AutoComplete
-                                        style={{
-                                            width: '100%',
-                                            color: mode === "dark" ? "#fcfcfc" : "#000",
-                                        }}
-                                        options={options}
-                                        value={searchCityInput}
-                                        filterOption={false}
-                                        onSearch={onSearch}
-                                        onSelect={(value) => {
-                                            setSearchCityInput(value);
-                                            setSearchInputValue(value);
-                                        }}
-                                    >
-                                        <Input
-                                            value={searchInputValue}
-                                            onChange={(e) => setSearchCityInput(e.target.value)}
-                                            size={"large"}
-                                            style={{
-                                                background: "transparent",
-                                                color: mode === "dark" ? "#fcfcfc" : "#000",
-                                                ...selectStyle
-                                            }}
-                                        />
-                                    </AutoComplete>
+                                    <SearchCity
+                                        searchCity={searchCity}
+                                        setSearchCity={setSearchCity}
+                                    />
                                 </FormControl>
                                 <FormControl
                                     sx={{width: '100%',}}>
@@ -339,7 +292,7 @@ const FilterNews = ({
                                         sx={{
                                             fontSize: '14px',
                                             mb: 0.5,
-                                            color: (theme) => theme.palette.text.primary
+                                            color: 'text.primary'
                                         }}
                                     >
                                         {translate('home.sort')}
@@ -384,11 +337,11 @@ const FilterNews = ({
                                                     value: 'title_desc'
                                                 },
                                                 {
-                                                    title: translate("home.create.averageCheck") + '  ' + '↑',
+                                                    title: translate("news.dateEvent.title") + '  ' + '↑',
                                                     value: 'date_event_asc'
                                                 },
                                                 {
-                                                    title: translate("home.create.averageCheck") + '  ' + '↓',
+                                                    title: translate("news.dateEvent.title") + '  ' + '↓',
                                                     value: 'date_event_desc'
                                                 },
                                             ].map((type) => (
@@ -419,43 +372,43 @@ const FilterNews = ({
                                             alignItems: "center",
                                             gap: 1
                                         }}>
-                                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                <DatePicker
-                                                    sx={{
-                                                        ...textFieldStyle,
-                                                        "> div": {
-                                                            fontSize: '14px'
-                                                        },
-                                                        "> div > input": {
-                                                            p: '7px 10px'
-                                                        }
-                                                    }}
-                                                    views={['year', 'month', 'day']}
-                                                    value={dateEventGte ? dateEventGte : ''}
-                                                    onChange={(value) => {
-                                                        setDateEventGte(value)
-                                                    }}
-                                                />
-                                            </LocalizationProvider>
+                                            {/*<LocalizationProvider dateAdapter={AdapterDayjs}>*/}
+                                            {/*    <DatePicker*/}
+                                            {/*        sx={{*/}
+                                            {/*            ...textFieldStyle,*/}
+                                            {/*            "> div": {*/}
+                                            {/*                fontSize: '14px'*/}
+                                            {/*            },*/}
+                                            {/*            "> div > input": {*/}
+                                            {/*                p: '7px 10px'*/}
+                                            {/*            }*/}
+                                            {/*        }}*/}
+                                            {/*        views={['year', 'month', 'day']}*/}
+                                            {/*        value={dateEventGte ? dateEventGte : ''}*/}
+                                            {/*        onChange={(value) => {*/}
+                                            {/*            setDateEventGte(value)*/}
+                                            {/*        }}*/}
+                                            {/*    />*/}
+                                            {/*</LocalizationProvider>*/}
                                             -
-                                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                <DatePicker
-                                                    sx={{
-                                                        ...textFieldStyle,
-                                                        "> div": {
-                                                            fontSize: '14px'
-                                                        },
-                                                        "> div > input": {
-                                                            p: '7px 10px'
-                                                        }
-                                                    }}
-                                                    views={['year', 'month', 'day']}
-                                                    value={dateEventLte ? dateEventLte : ''}
-                                                    onChange={(value) => {
-                                                        setDateEventLte(value)
-                                                    }}
-                                                />
-                                            </LocalizationProvider>
+                                            {/*<LocalizationProvider dateAdapter={AdapterDayjs}>*/}
+                                            {/*    <DatePicker*/}
+                                            {/*        sx={{*/}
+                                            {/*            ...textFieldStyle,*/}
+                                            {/*            "> div": {*/}
+                                            {/*                fontSize: '14px'*/}
+                                            {/*            },*/}
+                                            {/*            "> div > input": {*/}
+                                            {/*                p: '7px 10px'*/}
+                                            {/*            }*/}
+                                            {/*        }}*/}
+                                            {/*        views={['year', 'month', 'day']}*/}
+                                            {/*        value={dateEventLte ? dateEventLte : ''}*/}
+                                            {/*        onChange={(value) => {*/}
+                                            {/*            setDateEventLte(value)*/}
+                                            {/*        }}*/}
+                                            {/*    />*/}
+                                            {/*</LocalizationProvider>*/}
                                         </Box>
                                     </Box>
                                 </FormControl>

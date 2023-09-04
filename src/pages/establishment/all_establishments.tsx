@@ -3,12 +3,13 @@ import {Box, Button, Stack} from "@mui/material";
 
 import {
     InstitutionsAdminList,
-    InstitutionsUserList,
+    InstitutionsUserList, NewComponentButton,
 } from "../../components";
 import React, {useState} from "react";
 import {useRole} from "../../utils";
 import {Add} from "@mui/icons-material";
 import {useNavigate} from "react-router-dom";
+import {buttonStyle} from "../../styles";
 
 const All_establishments = () => {
     const {role} = useRole();
@@ -33,19 +34,7 @@ const All_establishments = () => {
                             onClick={() => setShowUserList(false)}>AdminList</Button>
                 </Box>
             }
-            <CanAccess resource={"all_institutions"} action={"create"}>
-                <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
-                    <Button
-                        color={"info"} variant={"contained"}
-                        startIcon={<Add/>}
-                        sx={{
-                            height: '100%'
-                        }}
-                        onClick={() => navigate('/all_institutions/create')}>
-                        {translate("home.create.title")}
-                    </Button>
-                </Stack>
-            </CanAccess>
+            <NewComponentButton link={'/all_institutions/create'} title={"home.create.title"}/>
             {
                 role === 'admin' ? (
                     !showUserList ?

@@ -24,6 +24,7 @@ const ListForUsers = ({isLoading, news, data, current, setCurrent, setPageSize, 
             display: 'flex',
             flexDirection: 'column',
             position: 'relative',
+            width: '100%',
             justifyContent: width > 1000 ? 'unset' : 'center',
             alignItems: width > 1000 ? 'unset' : 'start'
         }}>

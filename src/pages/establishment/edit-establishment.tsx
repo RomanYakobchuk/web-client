@@ -1,9 +1,9 @@
-import {useGetIdentity, useTranslate} from "@refinedev/core";
-import {useNavigate, useParams} from "react-router-dom";
+import {useBack, useGetIdentity, useTranslate} from "@refinedev/core";
+import {useParams} from "react-router-dom";
 import {useForm} from "@refinedev/react-hook-form";
 import {useEffect, useState} from "react";
 
-import {ProfileProps, PropertyProps} from "../../interfaces/common";
+import {IPicture, ProfileProps, PropertyProps} from "../../interfaces/common";
 import DataForm from "../../components/establishment/dataForm";
 import {ErrorComponent} from "@refinedev/mui";
 import {CustomEdit} from "../../components";
@@ -11,14 +11,14 @@ import {CustomEdit} from "../../components";
 const EditEstablishment = () => {
     const {data: currentUser} = useGetIdentity<ProfileProps>();
     const {id} = useParams();
-    const navigate = useNavigate();
+    const goBack = useBack();
     const translate = useTranslate();
 
     const {
         refineCore: {onFinish, queryResult},
         handleSubmit,
         saveButtonProps
-    } = useForm({
+    } = useForm<{institution: PropertyProps}>({
         refineCoreProps: {
             resource: `institution/infoById`,
             id: id as string,
@@ -34,7 +34,7 @@ const EditEstablishment = () => {
                     type: "success",
                     message: data?.data?.message
                 }
-            }
+            },
         },
     });
     const {isLoading: isLoadingData, isError: isErrorData,} = queryResult!;
@@ -43,12 +43,12 @@ const EditEstablishment = () => {
 
     useEffect(() => {
         if (queryResult?.data?.data) {
-            setInstitution(queryResult.data.data as PropertyProps)
+            setInstitution(queryResult.data.data?.institution as PropertyProps)
         }
     }, [queryResult]);
 
     const [sendNotifications, setSendNotifications] = useState<boolean>(false)
-    const [pictures, setPictures] = useState<Array<{url: string, name: string} | File>>([]);
+    const [pictures, setPictures] = useState<IPicture[] | File[]>([] as IPicture[] | File[]);
     const [defaultPictures, setDefaultPictures] = useState<any>([]);
     const [type, setType] = useState<string>('');
     const [title, setTitle] = useState<string>('');
@@ -142,7 +142,7 @@ const EditEstablishment = () => {
         //     }
         // }
 
-        navigate(`/all_institutions/show/${id}`)
+        goBack();
     }
 
     if (isErrorData) return <ErrorComponent/>

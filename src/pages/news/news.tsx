@@ -1,14 +1,17 @@
 import {CanAccess} from "@refinedev/core";
-
-import {NewsAdminList, NewsUserList} from "../../components";
 import {Box} from "@mui/material";
+import React from "react";
+
+import {NewComponentButton, NewsAdminList, NewsUserList} from "../../components";
 
 
 const News = () => {
+
     return (
         <Box sx={{
             p: {xs: 1, md: 2}
         }}>
+            <NewComponentButton link={'/news/create'} title={"home.createNews.title"}/>
             <CanAccess
                 resource={'news'}
                 action={'userListNews'}
