@@ -59,7 +59,7 @@ const UserList = () => {
                 <Box sx={{
                     display: 'flex',
                     flexDirection: 'row',
-                    width: '100%',
+                    width: width > 1100 ? '40%' : '100%',
                     alignItems: 'center',
                     maxWidth: '450px'
                 }}>
@@ -74,15 +74,20 @@ const UserList = () => {
                         searchValue={searchValue}
                     />
                 </Box>
-                <ListForUsers
-                    isLoading={isLoading}
-                    news={allNews}
-                    data={data}
-                    current={current}
-                    setCurrent={setCurrent}
-                    pageSize={pageSize}
-                    setPageSize={setPageSize}
-                />
+                <Box sx={{
+                    width: width > 1100 ? '60%' : '100%',
+                    maxWidth: {xs: '700px', lg: '100%'}
+                }}>
+                    <ListForUsers
+                        isLoading={isLoading}
+                        news={allNews}
+                        data={data}
+                        current={current}
+                        setCurrent={setCurrent}
+                        pageSize={pageSize}
+                        setPageSize={setPageSize}
+                    />
+                </Box>
             </Box>
         </Box>
     );

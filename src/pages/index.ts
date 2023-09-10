@@ -23,6 +23,7 @@ import DetailsNews from './news/details-news';
 import EditNews from './news/edit-news';
 
 import Home from "./home/home";
+import UpdateCity from "./home/update-city";
 
 import AllUsers from "./user/all-users";
 import AllReviews from "./review/all-reviews";
@@ -67,5 +68,6 @@ export {
     DetailsNews,
     EditReserve,
     DetailsReserve,
-    CreateReservation
+    CreateReservation,
+    UpdateCity
 }

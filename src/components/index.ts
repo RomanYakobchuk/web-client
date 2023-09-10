@@ -15,6 +15,7 @@ import CommentsList from "./common/comments-list";
 import ImageSlider from "./common/imageSlider";
 import SubscribeButton from "./common/buttons/SubscribeButton";
 import CarouselComponent from "./common/carousel/carouselComponent";
+import ChangeLocation from "./common/changeLocation";
 
 // custom
 import CustomShow from "./common/custom/customShow";
@@ -77,7 +78,6 @@ import ListChats from "./chats/list-chats";
 import SchemaSelector from "./settings/SchemaSelector";
 
 // home
-import UpdateCity from "./home/utils/update-city";
 export {
     GoogleAuth,
     FacebookAuth,
@@ -122,7 +122,6 @@ export {
     NewsAdminList,
     EditUpdateStatus,
     ShowChats,
-    UpdateCity,
     ImageGallery,
     SchemaSelector,
     CustomShow,
@@ -131,5 +130,6 @@ export {
     CarouselComponent,
     VariantComponent,
     SubscribeButton,
-    NewComponentButton
+    NewComponentButton,
+    ChangeLocation
 }

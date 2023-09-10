@@ -1,6 +1,6 @@
 import {useOne} from "@refinedev/core";
 import {IComment, IReviews, ProfileProps} from "../../interfaces/common";
-import {CustomProfile, Loading} from "../../components";
+import {CustomProfile, CustomShow, Loading} from "../../components";
 import {useParams} from "react-router-dom";
 
 const ShowUserInfo = () => {
@@ -29,21 +29,26 @@ const ShowUserInfo = () => {
     if (isError) return <div>error...</div>;
 
     return (
-        <CustomProfile
-            status={myProfile?.status}
-            dOB={myProfile?.dOB}
-            _id={myProfile?._id}
-            phone={myProfile?.phone}
-            name={myProfile.name}
-            user_comments={user_comments}
-            email={myProfile.email}
-            avatar={myProfile.avatar}
-            allInstitutions={myProfile.allInstitutions}
-            isActivated={myProfile.isActivated}
-            phoneVerify={myProfile.phoneVerify}
-            favoritePlaces={myProfile.favoritePlaces}
-            myReviews={user_reviews}
-        />
+        <CustomShow
+            isLoading={isLoading}
+            bgColor={'transparent'}
+        >
+            <CustomProfile
+                status={myProfile?.status}
+                dOB={myProfile?.dOB}
+                _id={myProfile?._id}
+                phone={myProfile?.phone}
+                name={myProfile.name}
+                user_comments={user_comments}
+                email={myProfile.email}
+                avatar={myProfile.avatar}
+                allInstitutions={myProfile.allInstitutions}
+                isActivated={myProfile.isActivated}
+                phoneVerify={myProfile.phoneVerify}
+                favoritePlaces={myProfile.favoritePlaces}
+                myReviews={user_reviews}
+            />
+        </CustomShow>
     );
 };
 export default ShowUserInfo

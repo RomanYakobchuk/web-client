@@ -1,4 +1,4 @@
-import {Box, Typography} from "@mui/material";
+import {Box, SxProps, Typography} from "@mui/material";
 import {ListButton} from "@refinedev/mui";
 import {Breadcrumb, DeleteButton, Edit, SaveButton} from "@refinedev/antd";
 import React, {BaseSyntheticEvent, ReactNode, useContext} from "react";
@@ -13,10 +13,11 @@ interface IProps {
     children: ReactNode,
     isLoading: boolean,
     bgColor?: string,
-    onClick?: () => void
+    onClick?: () => void,
+    style?: SxProps
 }
 
-const CustomEdit = ({saveButtonProps, children, isLoading, bgColor, onClick}: IProps) => {
+const CustomEdit = ({saveButtonProps, children, isLoading, bgColor, onClick, style}: IProps) => {
 
     const {mode} = useContext(ColorModeContext);
     const navigate = useNavigate();
@@ -37,7 +38,8 @@ const CustomEdit = ({saveButtonProps, children, isLoading, bgColor, onClick}: IP
                     width: '100% !important',
                     p: '20px'
                 }
-            }
+            },
+            ...style
         }}>
             <Edit
                 isLoading={isLoading}

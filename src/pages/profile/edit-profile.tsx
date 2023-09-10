@@ -4,20 +4,27 @@ import {
     FormControl,
     FormHelperText,
     TextField,
-    Typography,
-    Avatar, CircularProgress
+    Avatar
 } from "@mui/material";
 import React, {ChangeEvent, useContext, useEffect, useState} from "react";
 import {useForm} from "@refinedev/react-hook-form";
-import {FieldValues} from "react-hook-form";
-import {ArrowBackIosNew, DeleteForeverOutlined, Edit} from "@mui/icons-material";
+import {DeleteForeverOutlined, Edit} from "@mui/icons-material";
 import {ImageField} from "@refinedev/antd";
 import {useNavigate, useParams} from "react-router-dom";
 
-import {CustomButton} from "../../components";
+import {CustomButton, CustomEdit} from "../../components";
 import {ColorModeContext} from "../../contexts";
 import {IGetIdentity, ProfileProps} from "../../interfaces/common";
 import {buttonStyle, textFieldStyle} from "../../styles";
+
+interface INewUserData {
+    avatar: string | File,
+    name: string,
+    phone: string | number,
+    changeAva: boolean | undefined,
+    currentId: string,
+    dOB: Date | string
+}
 
 const EditProfile = () => {
     const {id: _id} = useParams();
@@ -26,6 +33,7 @@ const EditProfile = () => {
     const currentUser = identity?.user as ProfileProps;
     const {mode} = useContext(ColorModeContext);
 
+    const [userData, setUserData] = useState<INewUserData>({} as INewUserData);
     const [propertyImage, setPropertyImage] = useState<any>();
     const [userDOB, setUserDOB] = useState<string>("");
     const [userNewDOB, setUserNewDOB] = useState<Date | any>();
@@ -39,7 +47,6 @@ const EditProfile = () => {
 
     const {
         refineCore: {onFinish, formLoading, queryResult},
-        register,
         handleSubmit,
     } = useForm({
         refineCoreProps: {
@@ -59,9 +66,18 @@ const EditProfile = () => {
 
     useEffect(() => {
         if (queryResult?.data?.data) {
-            setUser(queryResult?.data?.data as ProfileProps)
+            const getUserData = queryResult?.data?.data as ProfileProps;
+            setUserData({
+                avatar: getUserData?.avatar,
+                changeAva: undefined,
+                currentId: getUserData?._id,
+                dOB: new Date(getUserData?.dOB)?.toISOString()?.split('T')[0],
+                name: getUserData?.name,
+                phone: getUserData?.phone
+            })
+            // setUser(queryResult?.data?.data as ProfileProps)
         }
-    }, [queryResult])
+    }, [queryResult?.data?.data])
 
     useEffect(() => {
         if (user?.dOB) {
@@ -79,7 +95,7 @@ const EditProfile = () => {
         setPropertyImage('')
     }
 
-    const onFinishHandler = async (newData: FieldValues) => {
+    const onFinishHandler = async () => {
 
         if ((new Date(userNewDOB)?.getFullYear() || new Date(user?.dOB)?.getFullYear()) > (new Date().getFullYear() - 18)) {
             return alert(translate("profile.edit.alert"))
@@ -87,10 +103,10 @@ const EditProfile = () => {
         const formData = new FormData();
         formData.append("avatar", propertyImage as File ?? user?.avatar);
         formData.append("changeAva", propertyImage && true);
-        formData.append("name", newData?.name);
-        formData.append("phone", newData?.phone);
-        formData.append("dOB", userNewDOB ?? user?.dOB);
-        formData.append("currentId", currentUser?._id)
+        formData.append("name", userData?.name);
+        formData.append("phone", JSON.stringify(userData?.phone));
+        formData.append("dOB", userNewDOB ?? userData?.dOB);
+        formData.append("currentId", userData?.currentId)
 
         const {data}: any = await onFinish(formData);
         if (_id === currentUser?._id) {
@@ -115,28 +131,15 @@ const EditProfile = () => {
 
 
     return (
-
-        <Box>
-            <Box sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: "start",
-                gap: {xs: '10%', sm: '30%', md: '40%'}
-            }}>
-                {/*<CustomButton handleClick={() => navigate(-1)} width={'50px'} title={""} backgroundColor={'blue'}*/}
-                {/*              color={'#fcfcfc'} icon={<ArrowBackIosNew/>}/>*/}
-                <Button
-                    variant={"outlined"}
-                    onClick={() => navigate(-1)}
-                    color={'secondary'}>
-                    <ArrowBackIosNew/>
-                </Button>
-                <Typography fontSize={{xs: '18px', sm: '22px'}} fontWeight={700} textAlign={"center"}>
-                    {translate("profile.edit.title")}
-                </Typography>
-            </Box>
-
+        <CustomEdit
+            isLoading={isLoading}
+            bgColor={'transparent'}
+            style={{
+                maxWidth: '700px',
+                margin: '0 auto'
+            }}
+            onClick={onFinishHandler}
+        >
             <Box
                 sx={{
                     maxWidth: '550px',
@@ -267,9 +270,9 @@ const EditProfile = () => {
                             sx={{
                                 ...textFieldStyle
                             }}
-                            defaultValue={user?.name}
+                            value={userData?.name ?? ''}
                             variant="outlined"
-                            {...register('name', {required: true})}
+                            onChange={(event) => setUserData((prevState) => ({...prevState, name: event.target.value}))}
                         />
                     </FormControl>
                     <FormControl>
@@ -293,7 +296,7 @@ const EditProfile = () => {
                                    }}
                                    value={userNewDOB ? userNewDOB : userDOB}
                                    variant="outlined"
-                                   onChange={(e: ChangeEvent<HTMLInputElement>) => setUserNewDOB(e.target.value)}
+                                   onChange={(e: ChangeEvent<HTMLInputElement>) => setUserData((prevState) => ({...prevState, dOB: e.target.value}))}
                         />
                     </FormControl>
                     <FormControl>
@@ -312,48 +315,48 @@ const EditProfile = () => {
                             required
                             id="outlined-basic"
                             color="info"
-                            defaultValue={user?.phone}
                             type={"text"}
                             sx={{
                                 ...textFieldStyle
                             }}
                             size={"small"}
                             variant="outlined"
-                            {...register('phone', {required: true})}
+                            value={userData?.phone ?? ''}
+                            onChange={(event) => setUserData((prevState) => ({...prevState, phone: event.target.value}))}
                         />
                     </FormControl>
-                    <FormControl sx={{
-                        display: 'flex',
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: 'center'
-                    }}>
-                        <Button
-                            color="error"
-                            variant={'contained'}
-                            sx={{
-                                ...buttonStyle,
-                                width: '38%'
-                            }}
-                            onClick={() => navigate("/profile")}
-                        >
-                            {translate("profile.edit.cancel")}
-                        </Button>
-                        <Button
-                            type="submit"
-                            variant={'contained'}
-                            sx={{
-                                ...buttonStyle,
-                                width: '60%'
-                            }}
-                            color="info"
-                        >
-                            {formLoading ? <CircularProgress size={20}/> : translate("profile.edit.save")}
-                        </Button>
-                    </FormControl>
+                    {/*<FormControl sx={{*/}
+                    {/*    display: 'flex',*/}
+                    {/*    flexDirection: "row",*/}
+                    {/*    justifyContent: "space-between",*/}
+                    {/*    alignItems: 'center'*/}
+                    {/*}}>*/}
+                    {/*    <Button*/}
+                    {/*        color="error"*/}
+                    {/*        variant={'contained'}*/}
+                    {/*        sx={{*/}
+                    {/*            ...buttonStyle,*/}
+                    {/*            width: '38%'*/}
+                    {/*        }}*/}
+                    {/*        onClick={() => navigate("/profile")}*/}
+                    {/*    >*/}
+                    {/*        {translate("profile.edit.cancel")}*/}
+                    {/*    </Button>*/}
+                    {/*    <Button*/}
+                    {/*        type="submit"*/}
+                    {/*        variant={'contained'}*/}
+                    {/*        sx={{*/}
+                    {/*            ...buttonStyle,*/}
+                    {/*            width: '60%'*/}
+                    {/*        }}*/}
+                    {/*        color="info"*/}
+                    {/*    >*/}
+                    {/*        {formLoading ? <CircularProgress size={20}/> : translate("profile.edit.save")}*/}
+                    {/*    </Button>*/}
+                    {/*</FormControl>*/}
                 </form>
             </Box>
-        </Box>
+        </CustomEdit>
     );
 };
 

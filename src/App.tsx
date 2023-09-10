@@ -43,12 +43,13 @@ import {
     CreateReservation,
     DetailsReserve,
     EditReserve,
+    UpdateCity
 } from "./pages";
 import {
     Loading,
     Menu,
     EditMenu,
-    CreateMenu, EditUpdateStatus, ShowChats, UpdateCity
+    CreateMenu, EditUpdateStatus, ShowChats
 } from "./components";
 import {accessControlProvider} from "./accessControlProvider";
 import {Header, Title, Layout, Sider} from "./layout";

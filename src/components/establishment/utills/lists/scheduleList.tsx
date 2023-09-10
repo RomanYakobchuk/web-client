@@ -39,6 +39,8 @@ const ScheduleList = ({
                           workScheduleWeekend
                       }: Props) => {
         const translate = useTranslate();
+        const {mode} = useContext(ColorModeContext);
+
         const [workDay, setWorkDay] = useState<IWorkDay>({
             days: {from: 1, to: 5},
             time: {from: '08:00', to: '21:00'}
@@ -55,8 +57,6 @@ const ScheduleList = ({
                 onSubmitWeekend(weekend)
             }
         }, [weekend])
-        const {mode} = useContext(ColorModeContext);
-        console.log(workDay)
         const handleAddWorkDay = () => {
             if (workDay.days.from && workDay.days.to && workDay.time.from && workDay.time.to) {
                 onSubmit(workDay as IWorkDay);
@@ -107,8 +107,10 @@ const ScheduleList = ({
                                         alignItems: 'center',
                                         flexWrap: "wrap",
                                         gap: "20px",
-                                        width: "80%",
                                         justifyContent: "space-between",
+                                        "& div.css-1u3bzj6-MuiFormControl-root-MuiTextField-root":{
+                                            width: '100%',
+                                        }
                                     }}>
                                         <Box sx={{
                                             display: "flex",

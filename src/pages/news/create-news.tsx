@@ -3,7 +3,14 @@ import React, {useEffect, useState} from "react";
 import {useBack, useGetIdentity, useTranslate} from "@refinedev/core";
 import {useForm} from "@refinedev/react-hook-form";
 
-import {IGetIdentity, INewsDataProps, INewsDateEvent, IPicture, ProfileProps} from "../../interfaces/common";
+import {
+    IGetIdentity,
+    INewsDataProps,
+    INewsDateEvent,
+    IPicture,
+    ProfileProps,
+    PropertyProps
+} from "../../interfaces/common";
 import NewsFormData from "../../components/news/utills/newsFormData";
 import {CustomCreate} from "../../components";
 
@@ -15,7 +22,7 @@ const CreateNews = () => {
     const goBack = useBack();
 
     const [defaultPictures, _] = useState<IPicture[]>([] as IPicture[])
-    const [institutionId, setInstitutionId] = useState<{_id: string, title: string}>({} as {_id: "", title: ''});
+    const [institutionInfo, setInstitutionInfo] = useState<PropertyProps>({} as PropertyProps);
     const [description, setDescription] = useState<string>("");
     const [title, setTitle] = useState<string>("");
     const [pictures, setPictures] = useState<IPicture[] | File[]>([] as IPicture[] | File[]);
@@ -28,7 +35,7 @@ const CreateNews = () => {
 
     useEffect(() => {
         if (search) {
-            setInstitutionId((prevState) => ({...prevState, _id: search?.split('=')[1]}))
+            setInstitutionInfo((prevState) => ({...prevState, _id: search?.split('=')[1]}))
         }
     }, [search]);
 
@@ -46,7 +53,7 @@ const CreateNews = () => {
 
         if (!pictures || pictures?.length <= 0) return alert("");
 
-        if (pictures.length > 8) return alert(translate("home.create.pictures.max"))
+        if (pictures.length > 6) return alert(translate("home.create.pictures.max"))
 
         const currentDate = new Date();
         const desiredDate = new Date(datePublish);
@@ -67,10 +74,10 @@ const CreateNews = () => {
             formData.append('datePublished', JSON.stringify(datePublish));
         }
         formData.append("createdBy", user?._id);
-        formData.append("institutionId", institutionId?._id);
+        formData.append("institutionId", institutionInfo?._id);
         formData.append("dateEvent", JSON.stringify(dateEvent));
 
-        const {data}: any = await onFinish(formData);
+        await onFinish(formData);
 
         // if (data && data?.createdById === user?._id) {
         //     if (data?.user) {
@@ -96,8 +103,8 @@ const CreateNews = () => {
         onFinishHandler,
         pictures,
         setPictures,
-        institutionId,
-        setInstitutionId,
+        institutionInfo,
+        setInstitutionInfo,
         title,
         setTitle,
         setDateEvent,

@@ -1,4 +1,4 @@
-import {Box, Button, Grid, Skeleton, Typography} from "@mui/material";
+import {Box, Button, Grid, IconButton, Skeleton, Typography} from "@mui/material";
 import {CanAccess, useGetLocale, useList, useTranslate} from "@refinedev/core";
 import {Typography as TypographyAntd} from "antd";
 import {Link, useNavigate} from "react-router-dom";
@@ -50,17 +50,16 @@ const CountCities = () => {
                 color: (theme: any) => theme.palette.secondary.main
             }}>
                 {translate("home.sortByType.browseByCity")}
-            </Typography>
-            <ScrollContent>
                 <CanAccess action={'cityWithData'} resource={'cities'}>
-                    <Button
-                        variant={'outlined'}
+                    <IconButton
                         color={'secondary'}
                         onClick={() => navigate('/home/update-city')}
                     >
                         <EditLocationOutlined/>
-                    </Button>
+                    </IconButton>
                 </CanAccess>
+            </Typography>
+            <ScrollContent>
                 {
                     isLoadingCities
                         ? [1, 2, 3, 4]?.map((item: number) => (

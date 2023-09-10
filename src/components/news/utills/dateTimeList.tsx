@@ -1,37 +1,51 @@
-import {useTranslate} from "@refinedev/core";
 import React, {useContext, useState} from "react";
-import {Box, Button, Chip, FormControl, FormHelperText, Grid} from "@mui/material";
+import {Box, Button, Chip, FormControl, FormHelperText, Grid, SxProps, TextField} from "@mui/material";
 import dayjs from "dayjs";
 import {Add} from "@mui/icons-material";
+import {DatePicker} from "antd";
 
 import {ColorModeContext} from "../../../contexts";
 import {INewsDateEvent} from "../../../interfaces/common";
+import {useTranslate} from "@refinedev/core";
+import {antdInputStyle} from "../../../styles";
 
 
 type Props = {
     onSubmit: (item: string | any) => void;
     elements: string[] | any;
     onDelete: (index: number | any) => void;
-    dataLabel: string
+    dataLabel: string,
+    style?: SxProps
 };
-const DateTimeList = ({onSubmit, elements, onDelete, dataLabel}: Props) => {
+const DateTimeList = ({onSubmit, elements, onDelete, dataLabel, style}: Props) => {
+
+    const {mode} = useContext(ColorModeContext);
     const translate = useTranslate();
 
     const [dateEvent, setDateEvent] = useState<INewsDateEvent>({} as INewsDateEvent);
-
-    const {mode} = useContext(ColorModeContext);
 
     const handleAddWorkDay = () => {
         onSubmit(dateEvent);
         setDateEvent({} as INewsDateEvent)
     };
-
+    const size = 'small';
     return (
         <Grid container spacing={2} sx={{
-            width: {xs: '100%', sm: '50%'},
-            maxWidth: '500px'
+            display: 'grid',
+            gridTemplateColumns: {xs: '1fr', sm: 'repeat(2, 1fr)'},
+            gap: 1,
+            p: '10px',
+            m: '10px 0',
+            borderRadius: '10px',
+            bgcolor: mode === 'dark' ? '#1f1f1f' : '#f6f6f6',
+            alignItems: 'start',
+            "& div.MuiGrid-item": {
+                pl: '0',
+                pt: '0'
+            },
+            ...style
         }}>
-            <Grid item xs={12} gap={2} sx={{
+            <Grid item gap={2} sx={{
                 display: 'flex',
                 flexDirection: 'row',
                 alignItems: 'center'
@@ -57,9 +71,10 @@ const DateTimeList = ({onSubmit, elements, onDelete, dataLabel}: Props) => {
                             </FormHelperText>
                             <Box sx={{
                                 display: 'flex',
-                                flexDirection: 'row',
+                                flexDirection: 'column',
                                 justifyContent: 'space-between',
-                                gap: 2
+                                gap: 2,
+                                width: '1005'
                             }}>
                                 <Box sx={{
                                     display: 'flex',
@@ -67,17 +82,57 @@ const DateTimeList = ({onSubmit, elements, onDelete, dataLabel}: Props) => {
                                     alignItems: 'center',
                                     flexWrap: "wrap",
                                     gap: "20px",
-                                    width: "100%",
                                     justifyContent: "space-between",
+                                    "& div.css-1u3bzj6-MuiFormControl-root-MuiTextField-root": {
+                                        width: '100%',
+                                    }
                                 }}>
                                     <Box sx={{
                                         display: "flex",
                                         width: "100%",
                                         justifyContent: "start",
                                         alignItems: "center",
-                                        gap: 1
+                                        gap: 1,
+                                        ...antdInputStyle,
+                                        "& div.ant-picker": {
+                                            bgcolor: 'transparent',
+                                        },
+                                        "& input::placeholder":{
+                                            color: mode === 'dark' ? '#fff !important' : '#000 !important'
+                                        },
+                                        "& span.ant-picker-suffix":{
+                                            color: mode === 'dark' ? '#fff !important' : '#000 !important'
+                                        }
                                     }}>
-                                       Schedule
+                                        <FormControl fullWidth>
+                                            <DatePicker
+                                                value={dateEvent?.schedule?.from ? dayjs(dateEvent?.schedule?.from) : null}
+                                                onChange={(_, dateString) => {
+                                                    setDateEvent((prevState) => ({
+                                                        ...prevState,
+                                                        schedule: {
+                                                            from: dateString,
+                                                            to: dateEvent?.schedule?.to
+                                                        }
+                                                    }))
+                                                }}
+                                            />
+                                        </FormControl>
+                                        -
+                                        <FormControl fullWidth>
+                                            <DatePicker
+                                                value={dateEvent?.schedule?.to ? dayjs(dateEvent?.schedule?.to) : null}
+                                                onChange={(_, dateString) => {
+                                                    setDateEvent((prevState) => ({
+                                                        ...prevState,
+                                                        schedule: {
+                                                            from: dateEvent?.schedule?.from,
+                                                            to: dateString,
+                                                        }
+                                                    }))
+                                                }}
+                                            />
+                                        </FormControl>
                                     </Box>
                                     <Box sx={{
                                         display: "flex",
@@ -86,7 +141,35 @@ const DateTimeList = ({onSubmit, elements, onDelete, dataLabel}: Props) => {
                                         alignItems: "center",
                                         gap: 1
                                     }}>
-                                        Time
+                                        <FormControl fullWidth>
+                                            <TextField
+                                                size={size}
+                                                type={'time'}
+                                                value={dateEvent?.time?.from ?? ''}
+                                                onChange={(event) => setDateEvent((prevState) => ({
+                                                    ...prevState,
+                                                    time: {
+                                                        from: event.target.value,
+                                                        to: dateEvent?.time?.to,
+                                                    }
+                                                }))}
+                                            />
+                                        </FormControl>
+                                        -
+                                        <FormControl fullWidth>
+                                            <TextField
+                                                type={'time'}
+                                                size={size}
+                                                value={dateEvent?.time?.to ?? ''}
+                                                onChange={(event) => setDateEvent((prevState) => ({
+                                                    ...prevState,
+                                                    time: {
+                                                        from: dateEvent?.time?.from,
+                                                        to: event.target.value,
+                                                    }
+                                                }))}
+                                            />
+                                        </FormControl>
                                     </Box>
                                 </Box>
                                 <Button variant="contained" color={"info"} onClick={handleAddWorkDay}>
@@ -97,14 +180,25 @@ const DateTimeList = ({onSubmit, elements, onDelete, dataLabel}: Props) => {
                     </Box>
                 </FormControl>
             </Grid>
-            <Grid item xs={12}>
+            <Grid item>
+                <FormHelperText
+                    sx={{
+                        fontWeight: 400,
+                        textTransform: 'lowercase',
+                        margin: "10px 0",
+                        fontSize: {xs: 12, sm: 16},
+                        color: mode === "dark" ? "#fcfcfc" : "#11142D",
+                    }}
+                >
+                    {translate('actions.list')}
+                </FormHelperText>
                 {elements?.map((element: any, index: any) => (
                     <Chip
                         key={index}
                         label={
-                            `${element?.schedule?.from ? dayjs(element?.schedule?.from).format("DD/MM/YYYY") : ''}${element?.schedule?.to ? `-` + dayjs(element?.schedule?.to).format("DD/MM/YYYY") : ''}`
+                            `${element?.schedule?.from ? dayjs(element?.schedule?.from).format('YYYY-MM-DD') : ''}${(element?.schedule?.from && element?.schedule?.to ? '-' : '') + (element?.schedule?.to ? dayjs(element?.schedule?.to).format('YYYY-MM-DD') : '')}`
                             + '   ' +
-                            `${element?.time?.from ? dayjs(element?.time?.from).format("HH:mm") : ''}${element.time.to ? `-` + dayjs(element?.time?.to).format("HH:mm") : ''}`
+                            `${element?.time?.from ?? ''}${(element?.time?.from && element?.time?.to ? '-' : '') + (element?.time?.to ? element?.time?.to : '')}`
                         }
                         onDelete={() => onDelete(index)}
                         size={"small"}

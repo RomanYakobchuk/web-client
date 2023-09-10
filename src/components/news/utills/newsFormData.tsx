@@ -4,26 +4,24 @@ import {
     FormControl,
     FormHelperText,
     MenuItem,
-    Select, TextareaAutosize, TextField,
+    Select, TextField,
 } from "@mui/material";
 import {Add} from "@mui/icons-material";
 import React, {ChangeEvent, useContext} from "react";
-import {DateTimePicker, LocalizationProvider} from "@mui/x-date-pickers";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import {DemoContainer} from "@mui/x-date-pickers/internals/demo";
 import {useTranslate} from "@refinedev/core";
+import MDEditor from "@uiw/react-md-editor";
 
 import ImageSelector from "../../establishment/utills/ImageSelector";
 import {ColorModeContext} from "../../../contexts";
-import {INewsDataProps, IPicture} from "interfaces/common";
+import {IMDEditor, INewsDataProps, INewsDateEvent, IPicture} from "interfaces/common";
 import SearchInstitutions from "../../search/searchInstitutions";
 import DateTimeList from "./dateTimeList";
-import dayjs from "dayjs";
+import {AppContext} from "../../../contexts/AppContext";
 
 const NewsFormData = (props: INewsDataProps) => {
     const {
         title,
-        setInstitutionId,
+        setInstitutionInfo,
         setStatus,
         onFinishHandler,
         status,
@@ -37,7 +35,7 @@ const NewsFormData = (props: INewsDataProps) => {
         dateEvent,
         category,
         setCategory,
-        institutionId,
+        institutionInfo,
         setTitle,
         setDateEvent,
         datePublished, setDatePublished,
@@ -45,6 +43,7 @@ const NewsFormData = (props: INewsDataProps) => {
     } = props;
     const translate = useTranslate();
     const {mode} = useContext(ColorModeContext);
+    const {favoritePlaces} = useContext(AppContext);
     const maxImages = 6;
     const handlePicturesChange = (e: ChangeEvent<HTMLInputElement> | any) => {
         if (pictures.length > maxImages || e.target.files?.length > maxImages) return alert(translate("home.create.pictures.max") + "6")
@@ -59,12 +58,20 @@ const NewsFormData = (props: INewsDataProps) => {
         }
         setPictures((prevState) => ([...prevState, ...arr] as IPicture[] | File[]))
     }
-    const handleAddWorkDays = (workSchedule: any) => {
-        setDateEvent((prevState) => ([...prevState, workSchedule]))
+    const handleAddWorkDays = (workSchedule: INewsDateEvent) => {
+        if (workSchedule?.schedule?.from || workSchedule?.schedule?.to || workSchedule?.time?.from || workSchedule?.time?.to) {
+            if (workSchedule?.schedule?.to && !workSchedule?.schedule?.from) {
+                workSchedule.schedule.from = workSchedule.schedule.to
+                delete workSchedule['schedule']['to']
+            }
+            setDateEvent((prevState) => ([...prevState, workSchedule]))
+        }
     }
     const handleDeleteWorkDays = (index: number | any) => {
         setDateEvent(dateEvent.filter((_: any, i: any) => i !== index))
     }
+
+    const gridColumn = {xs: 'span 1', sm: 'span 2'};
 
     return (
         <Box>
@@ -81,7 +88,7 @@ const NewsFormData = (props: INewsDataProps) => {
                 >
                     <Box sx={{
                         display: 'grid',
-                        gridTemplateColumns: {xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)'},
+                        gridTemplateColumns: {xs: '1fr', sm: 'repeat(2, 1fr)'},
                         gap: 2,
                         alignItems: 'start'
                     }}>
@@ -97,8 +104,28 @@ const NewsFormData = (props: INewsDataProps) => {
                                 {translate("home.one")}
                             </FormHelperText>
                             <SearchInstitutions
-                                typeSearch={'userInstitutions'} searchInstitution={institutionId}
-                                setSearchInstitution={setInstitutionId}/>
+                                typeSearch={'userInstitutions'} searchInstitution={institutionInfo}
+                                setSearchInstitution={setInstitutionInfo}/>
+                            {
+                                favoritePlaces?.length > 0 && (
+                                    <Box>
+                                        Change from favorite establishments
+                                    </Box>
+                                )
+                            }
+                        </FormControl>
+                        <FormControl>
+                            <FormHelperText
+                                sx={{
+                                    fontWeight: 500,
+                                    margin: "10px 0",
+                                    fontSize: {xs: 12, sm: 16},
+                                    color: mode === "dark" ? "#fcfcfc" : "#11142D",
+                                }}
+                            >
+                                {translate("buttons.details")}
+                            </FormHelperText>
+                            Establishment info
                         </FormControl>
                         <FormControl fullWidth>
                             <FormHelperText
@@ -151,9 +178,18 @@ const NewsFormData = (props: INewsDataProps) => {
                                 }
                             </Select>
                         </FormControl>
-                        {/*<DateTimeList dataLabel={translate("news.create.date.title")} onSubmit={handleAddWorkDays}*/}
-                        {/*              elements={workDays} onDelete={handleDeleteWorkDays}/>*/}
-                        <FormControl>
+                        <DateTimeList
+                            style={{
+                                gridColumn: gridColumn
+                            }}
+                            dataLabel={translate("news.create.date.title")}
+                            onSubmit={handleAddWorkDays}
+                            elements={dateEvent}
+                            onDelete={handleDeleteWorkDays}
+                        />
+                        <FormControl sx={{
+                            gridColumn: gridColumn
+                        }}>
                             <FormHelperText
                                 sx={{
                                     fontWeight: 500,
@@ -164,25 +200,9 @@ const NewsFormData = (props: INewsDataProps) => {
                             >
                                 {translate("news.create.description")}
                             </FormHelperText>
-                            <TextareaAutosize
-                                minRows={5}
-                                required
-                                style={{
-                                    width: "100%",
-                                    background: "transparent",
-                                    fontSize: "16px",
-                                    resize: 'vertical',
-                                    minHeight: '100px',
-                                    maxHeight: '200px',
-                                    height: '100px',
-                                    borderRadius: 6,
-                                    padding: 10,
-                                    color: mode === "dark" ? "#fcfcfc" : "#000",
-                                }}
-                                id="outlined-basic"
-                                color={"secondary"}
-                                value={description ? description : ''}
-                                onChange={(event) => setDescription(event.target.value)}
+                            <MDEditor data-color-mode={mode === "dark" ? 'dark' : 'light'}
+                                      value={description ? description : ''}
+                                      onChange={setDescription as IMDEditor['set']}
                             />
                         </FormControl>
                         <FormControl fullWidth>

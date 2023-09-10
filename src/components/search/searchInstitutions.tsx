@@ -4,7 +4,7 @@ import {AutoComplete, Input, Typography as TypographyAntd} from "antd";
 import {Box, FormControl} from "@mui/material";
 import {useDebounce} from "use-debounce";
 
-import {IOptions} from "../../interfaces/common";
+import {IOptions, PropertyProps} from "../../interfaces/common";
 import {ColorModeContext} from "../../contexts";
 
 const {Text} = TypographyAntd;
@@ -57,7 +57,7 @@ const renderItem = (title: string, street: string, photo: string, _id: string) =
 
 interface IProps {
     searchInstitution: { _id: string, title: string },
-    setSearchInstitution: (value: { _id: string, title: string }) => void,
+    setSearchInstitution: (value: PropertyProps) => void,
     typeSearch: string
 }
 

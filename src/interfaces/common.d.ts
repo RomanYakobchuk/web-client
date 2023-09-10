@@ -1,7 +1,8 @@
-import {Dispatch, FormEventHandler, ReactNode, SetStateAction} from "react";
+import {ChangeEvent, Dispatch, FormEventHandler, ReactNode, SetStateAction} from "react";
 import {FieldValues, UseFormHandleSubmit} from "react-hook-form";
 import {BaseRecord, CreateResponse, UpdateResponse} from "@refinedev/core";
 import {CredentialResponse} from "./google";
+import {ContextStore} from "@uiw/react-md-editor";
 
 export interface IUserLoginProps {
     email: string,
@@ -207,8 +208,8 @@ export interface IWorkDay {
         to: number
     },
     time: {
-        from: Date | string,
-        to: Date | string,
+        from: string,
+        to: string,
     }
 }
 
@@ -366,7 +367,7 @@ export interface IPlaceFormProps {
     workScheduleWeekend: PropertyProps["workSchedule"]["weekend"],
     setWorkScheduleWeekend: (item: setWorkScheduleWeekend) => void,
     location: google.maps.LatLngLiteral | any,
-    setLocation: any,
+    setLocation: (item: {lat: number, lng: number}) => void,
     tags: Array<any> | any,
     setTags: (item: any) => void,
     place: { address: string, city: string },
@@ -393,32 +394,32 @@ export interface IPlaceFormProps {
     setAverageCheck: (value: string) => void,
 }
 export interface INewsDateEvent {
-    schedule: {
-        from: Date | string,
-        to: Date | string
+    schedule?: {
+        from?: Date | string | null,
+        to?: Date | string | null
     },
-    time: {
-        from: Date | string,
-        to: Date | string
+    time?: {
+        from?: Date | string | null,
+        to?: Date | string | null
     }
 }
 export interface INewsDataProps {
-    handleSubmit: any,
-    onFinishHandler: any,
-    institutionId: {_id: string, title: string},
+    handleSubmit:  UseFormHandleSubmit<FieldValues, undefined>,
+    onFinishHandler: (data: FieldValues) => Promise<void> | void,
+    institutionInfo: PropertyProps,
     defaultPictures: IPicture[],
     pictures: IPicture[] | File[],
     setPictures: Dispatch<SetStateAction<IPicture[] | File[]>>,
-    setInstitutionId: (item: { _id: string, title: string }) => void,
+    setInstitutionInfo: (item: PropertyProps) => void,
     userInstitutions?: any,
     title: string,
     setTitle: (value: string) => void,
     category: string,
     setCategory: (value: string) => void,
-    dateEvent: any,
+    dateEvent: INewsDateEvent[],
     setDateEvent: Dispatch<SetStateAction<INewsDateEvent[]>>,
     description: string,
-    setDescription: (value: string) => void,
+    setDescription: IMDEditor['set'] | ((value: string) => void),
     status: string,
     setStatus: (value: string) => void,
     isDatePublished: boolean,
@@ -426,7 +427,9 @@ export interface INewsDataProps {
     datePublished: any,
     setDatePublished: any,
 }
-
+export interface IMDEditor {
+    set: ((value?: string, event?: ChangeEvent<HTMLTextAreaElement> | undefined, state?: ContextStore | undefined) => void) | undefined
+}
 export interface IConv {
     _id: string,
     members: string[],

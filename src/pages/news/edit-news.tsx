@@ -20,6 +20,7 @@ const EditNews = () => {
         refineCoreProps: {
             resource: `news/infoById`,
             id: id as string,
+            redirect: false,
             errorNotification: (data: any) => {
                 return {
                     type: 'error',
@@ -93,7 +94,7 @@ const EditNews = () => {
         formData.append("institutionId", institutionId?._id);
         formData.append("dateEvent", JSON.stringify(dateEvent));
 
-        const {data}: any = await onFinish(formData);
+        await onFinish(formData);
 
         // if (data && data?.createdById === user?._id) {
         //     if (data?.user) {
