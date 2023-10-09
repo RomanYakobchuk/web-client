@@ -1,17 +1,20 @@
 import {
-    Box,
-    Button, FormControl, FormHelperText,
-    MenuItem,
-    Select,
-    TextField
+    Box, FormControl, FormHelperText,
 } from "@mui/material";
-import {CancelOutlined, TuneOutlined} from "@mui/icons-material";
-import React, {useEffect, useMemo, useState} from "react";
-import {CrudFilter, CrudFilters, CrudSorting, LogicalFilter, useTranslate} from "@refinedev/core";
+import React, {Dispatch, ReactNode, useContext, useEffect, useState} from "react";
+import {CrudFilters, CrudSorting, LogicalFilter, useTranslate} from "@refinedev/core";
 
-import {buttonStyle, selectStyle} from "../../../styles";
 import SearchCity from "../../search/searchCity";
 import {SetFilterType} from "../../../interfaces/types";
+import {
+    SearchButtonFilterComponent, SearchByTypeComponent,
+    SearchInputComponent,
+    SortNewsComponent
+} from "../../common/search";
+import {useMobile} from "../../../hook";
+import ModalWindow from "../../window/modalWindow";
+import {FilterBtn} from "../../index";
+import {ColorModeContext} from "../../../contexts";
 
 
 interface IProps {
@@ -23,7 +26,27 @@ interface IProps {
     setSorters: (sorter: CrudSorting) => void,
     searchValue: string,
     filters: CrudFilters,
+    setCurrent: Dispatch<React.SetStateAction<number>>,
 }
+
+const arrayType = [
+    {
+        title: "all",
+        value: ""
+    },
+    {
+        title: "general",
+        value: "general"
+    },
+    {
+        title: "promotions",
+        value: "promotions"
+    },
+    {
+        title: "events",
+        value: "events"
+    },
+]
 
 const FilterNews = ({
                         setFilters: defaultSetFilters,
@@ -34,10 +57,14 @@ const FilterNews = ({
                         setSearchValue,
                         searchValue,
                         filters,
+                        setCurrent
                     }: IProps) => {
 
     const translate = useTranslate();
+    const {width, height} = useMobile();
+    const {mode} = useContext(ColorModeContext);
 
+    const [filterLength, setFilterLength] = useState<number>(0);
     const [openFilter, setOpenFilter] = useState(false);
     const [newFilters, setFilters] = useState<CrudFilters>([{}] as CrudFilters);
     const [newSorters, setNewSorters] = useState<CrudSorting>([{}] as CrudSorting);
@@ -47,42 +74,19 @@ const FilterNews = ({
     const [searchCity, setSearchCity] = useState<string>("");
 
 
-    const currentSorterOrders = useMemo(() => {
-        return {
-            createdAt_asc:
-                newSorters?.find((item: any) => item.field === "createdAt_asc")?.order || "asc",
-            createdAt_desc:
-                newSorters?.find((item: any) => item.field === "createdAt_desc")?.order || "desc",
-            title_asc:
-                newSorters?.find((item: any) => item.field === "title_asc")?.order || "asc",
-            title_desc:
-                newSorters?.find((item: any) => item.field === "title_desc")?.order || "desc",
-        };
-    }, [newSorters]);
-    const toggleSort = (field: keyof typeof currentSorterOrders) => {
-        const newOrder = field?.split('_')[1] as "asc" | "desc";
-        setNewSorters([
-            {
-                field,
-                order: newOrder,
-            },
-        ]);
-    };
-
-    const currentFilterValues = useMemo(() => {
-        const logicalFilters = newFilters!?.flatMap((item: CrudFilter) =>
-            "field" in item ? item : [],
-        );
-        return {
-            title:
-                logicalFilters?.find((item: any) => item.field === "title")?.value || "",
-            category:
-                logicalFilters?.find((item: any) => item.field === "category")?.value || "",
-            city:
-                logicalFilters?.find((item: any) => item.field === "city")?.value || ""
-
-        };
-    }, [newFilters]);
+    // const currentFilterValues = useMemo(() => {
+    //     const logicalFilters = newFilters!?.flatMap((item: CrudFilter) =>
+    //         "field" in item ? item : [],
+    //     );
+    //     return {
+    //         title:
+    //             logicalFilters?.find((item: LogicalFilter) => item.field === "title")?.value || "",
+    //         category:
+    //             logicalFilters?.find((item: LogicalFilter) => item.field === "category")?.value || "",
+    //         city:
+    //             logicalFilters?.find((item: LogicalFilter) => item.field === "city")?.value || ""
+    //     };
+    // }, [newFilters]);
     useEffect(() => {
         setFilters([
             {
@@ -121,19 +125,23 @@ const FilterNews = ({
 
     useEffect(() => {
         if (filters?.length > 0) {
+            let length = 1;
             for (const filter of filters as LogicalFilter[]) {
                 if (filter?.field === "date_event" && filter?.operator === 'lte') {
                     setDateEventLte(filter?.value)
                 } else if (filter?.field === "date_event" && filter?.operator === 'gte') {
                     setDateEventGte(filter?.value)
+                    length++;
                 } else if (filter?.field === "category") {
                     setCategory(filter?.value)
                 } else if (filter?.field === "title" && filter?.value) {
                     setSearchValue(filter?.value)
                 } else if (filter?.field === 'city_like' && filter?.value) {
                     setSearchCity(filter?.value)
+                    length++;
                 }
             }
+            setFilterLength(length)
         }
     }, [filters])
 
@@ -150,9 +158,27 @@ const FilterNews = ({
         defaultSetSorters([{field: "", order: "asc"}])
         setOpenFilter(false)
         setDateEventGte(null)
+        setCategory('')
         setDateEventLte(null)
     }
 
+    const SearchByCityComponent: ReactNode = (
+        <FormControl
+            sx={{
+                height: '100%',
+                width: '100%',
+                "& input::placeholder": {
+                    color: 'common.white'
+                }
+            }}>
+            <SearchCity searchCity={searchCity} setSearchCity={setSearchCity}/>
+        </FormControl>
+    )
+
+    const isShowAllFilters = width > 600;
+    const isHorizontalContent = width > 1100;
+
+    const isFilterBtnAbsolute = height - 100 >= 400;
 
     return (
         <Box sx={{
@@ -161,196 +187,151 @@ const FilterNews = ({
             display: 'flex',
             flexDirection: 'row',
             alignItems: 'center',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            "& input": {
+                border: `1px solid ${mode === 'dark' ? '#fff' : '#000'}`
+            },
         }}>
             <Box sx={{
                 width: '100%',
                 position: 'relative',
-            }}>
-                <TextField fullWidth variant={"outlined"} color={"info"}
-                           sx={{
-                               fontSize: {xs: '10px', sm: '16px'},
-                               "> div": {
-                                   borderRadius: '50px',
-                               },
-                               "& div input": {
-                                   pr: '30px'
-                               }
-                           }}
-                           size="small"
-                           placeholder={translate("home.search")}
-                           value={searchValue ? searchValue : ""}
-                           onChange={(e) => {
-                               setSearchValue(e.target.value)
-                               setFilters([{
-                                   field: 'title',
-                                   operator: 'contains',
-                                   value: e.currentTarget.value ? e.currentTarget.value : undefined
-                               }])
-                           }}/>
-                <CancelOutlined onClick={() => {
-                    setSearchValue("")
-                }} sx={{
-                    position: 'absolute',
-                    right: '5px',
-                    top: "8px",
-                    cursor: 'pointer'
-                }}/>
-            </Box>
-            <Box sx={{
                 display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center'
+                flexDirection: 'column',
+                gap: isHorizontalContent ? 2 : 1
             }}>
-                <TuneOutlined
-                    sx={{
-                        cursor: 'pointer'
+                {
+                    isShowAllFilters && (
+                        <Box sx={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            width: '100%',
+                            height: '40px'
+                        }}>
+                            <Box sx={{
+                                height: '100%',
+                                minWidth: '30%',
+                                maxWidth: isHorizontalContent ? '100%' : '350px',
+                                width: '100%'
+                            }}>
+                                {
+                                    SearchByCityComponent
+                                }
+                            </Box>
+                            {
+                                !isHorizontalContent && (
+                                    <FilterBtn
+                                        setOpenFilter={setOpenFilter}
+                                        filterLength={filterLength}
+                                        isShowAllFilters={isShowAllFilters}
+                                    />
+                                )
+                            }
+                        </Box>
+                    )
+                }
+                <SearchInputComponent
+                    styleSx={{
+                        margin: '0'
                     }}
-                    onClick={() => setOpenFilter(true)}
+                    isButton={false}
+                    searchValue={searchValue}
+                    setSearchValue={setSearchValue}
+                    defaultSetFilters={defaultSetFilters}
                 />
                 {
+                    !isShowAllFilters && (
+                        <FilterBtn
+                            btnStyle={{
+                                width: '100%'
+                            }}
+                            setOpenFilter={setOpenFilter}
+                            filterLength={filterLength}
+                            isShowAllFilters={isShowAllFilters}
+                        />
+                    )
+                }
+                <Box sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: isHorizontalContent ? 'start' : 'center',
+                    flexDirection: isHorizontalContent ? 'column' : 'row',
+                    gap: isHorizontalContent ? 2 : 0
+                }}>
+                    {
+                        isShowAllFilters && (
+                            <SearchByTypeComponent
+                                arrayType={arrayType}
+                                fieldName={'category'}
+                                sortTranslatePath={'news.sortByCategory'}
+                                defaultSetFilters={defaultSetFilters}
+                                setFilters={setFilters}
+                                type={category}
+                                isShowAllFilters={isShowAllFilters}
+                                setType={setCategory}
+                                setCurrent={setCurrent}
+                            />
+                        )
+                    }
+                    <SortNewsComponent
+                        styles={{
+                            maxWidth: '280px'
+                        }}
+                        newSorters={newSorters}
+                        setSortBy={setSortBy}
+                        defaultSetSorters={defaultSetSorters}
+                        sortBy={sortBy}
+                    />
+                </Box>
+            </Box>
+            <ModalWindow
+                open={openFilter}
+                setOpen={setOpenFilter}
+                title={
+                    <Box sx={{
+                        fontSize: {xs: '20px', md: '24px'},
+                        fontWeight: 600,
+                        width: '100%',
+                        textAlign: 'center'
+                    }}>
+                        {translate('buttons.filter')}
+                    </Box>
+                }
+            >
+                {
                     openFilter &&
-                    (<Box
-                        sx={{
-                            position: 'fixed',
-                            minHeight: '100vh',
-                            top: 0,
-                            right: 0,
-                            left: {xs: 0, md: 'auto'},
-                            width: '100%',
+                    (
+                        <Box sx={{
                             display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            zIndex: 100,
-                            bgcolor: 'rgba(47,37,37,0.5)'
+                            flexDirection: 'column',
+                            justifyContent: 'space-between',
+                            height: '100%',
+                            pt: 2
                         }}>
-                        <Box
-                            sx={{
-                                width: {xs: '320px', sm: '450px'},
-                                bgcolor: 'primary.main',
-                                p: '20px',
-                                borderRadius: '10px'
-                            }}>
                             <Box sx={{
                                 display: 'flex',
                                 flexDirection: 'column',
-                                alignItems: 'center',
-                                width: '100%',
-                                justifyContent: {xs: 'space-between', sm: 'start', md: 'end'},
-                                gap: 2
+                                gap: 3,
                             }}>
-                                <FormControl sx={{width: '100%',}}>
-                                    <FormHelperText
-                                        sx={{
-                                            fontSize: '14px',
-                                            mb: 0.5,
-                                            color: 'text.primary'
-                                        }}
-                                    >
-                                        {translate('posts.fields.category.title')}
-                                    </FormHelperText>
-                                    <Select
-                                        variant={"outlined"}
-                                        size="small"
-                                        color={"info"}
-                                        displayEmpty
-                                        fullWidth
-                                        required
-                                        inputProps={{'aria-label': 'Without label'}}
-                                        sx={{
-                                            fontSize: {xs: '12px', sm: '16px'},
-                                            ...selectStyle
-                                        }}
-                                        value={category ?? currentFilterValues.category}
-                                        onChange={(e) => {
-                                            setCategory(e.target.value)
-                                            setFilters([{
-                                                field: 'category',
-                                                operator: 'eq',
-                                                value: e.target.value ? e.target.value : undefined
-                                            }])
-                                        }}>
-                                        <MenuItem value={""}>{translate("home.sortByType.all")}</MenuItem>
-                                        {
-                                            ["general", "promotions", "events"].map((type) => (
-                                                <MenuItem key={type}
-                                                          value={type}>{translate(`news.sortByCategory.${type}`)}</MenuItem>
-                                            ))
-                                        }
-                                    </Select>
-                                </FormControl>
-                                <FormControl
-                                    sx={{width: '100%',}}>
-                                    <SearchCity
-                                        searchCity={searchCity}
-                                        setSearchCity={setSearchCity}
-                                    />
-                                </FormControl>
-                                <FormControl
-                                    sx={{width: '100%',}}>
-                                    <FormHelperText
-                                        sx={{
-                                            fontSize: '14px',
-                                            mb: 0.5,
-                                            color: 'text.primary'
-                                        }}
-                                    >
-                                        {translate('home.sort')}
-                                    </FormHelperText>
-                                    <Select
-                                        variant={"outlined"}
-                                        size="small"
-                                        color={"info"}
-                                        fullWidth
-                                        displayEmpty
-                                        required
-                                        inputProps={{'aria-label': 'Without label'}}
-                                        value={newSorters[0]?.field ? newSorters[0]?.field : sortBy ? sortBy : ""}
-                                        sx={{
-                                            fontSize: {xs: '12px', sm: '16px'},
-                                            ...selectStyle
-                                        }}
-                                        onChange={
-                                            (e: any) => {
-                                                setSortBy(e.target.value)
-                                                toggleSort(e.target.value)
-                                            }
-                                        }
-                                    >
-                                        <MenuItem value={""}>{translate("home.default")}</MenuItem>
-                                        {
-                                            [
-                                                {
-                                                    title: 'Найстаріші',
-                                                    value: 'createdAt_asc',
-                                                },
-                                                {
-                                                    title: 'Найновіші',
-                                                    value: 'createdAt_desc',
-                                                },
-                                                {
-                                                    title: translate("home.sortByABC.title") + ' ' + translate("home.sortByABC.a-z"),
-                                                    value: 'title_asc'
-                                                },
-                                                {
-                                                    title: translate("home.sortByABC.title") + ' ' + translate("home.sortByABC.z-a"),
-                                                    value: 'title_desc'
-                                                },
-                                                {
-                                                    title: translate("news.dateEvent.title") + '  ' + '↑',
-                                                    value: 'date_event_asc'
-                                                },
-                                                {
-                                                    title: translate("news.dateEvent.title") + '  ' + '↓',
-                                                    value: 'date_event_desc'
-                                                },
-                                            ].map((type) => (
-                                                <MenuItem key={type.value}
-                                                          value={type.value}>{type.title}</MenuItem>
-                                            ))
-                                        }
-                                    </Select>
-                                </FormControl>
+                                {
+                                    !isShowAllFilters && (
+                                        <>
+                                            {SearchByCityComponent}
+                                            <SearchByTypeComponent
+                                                arrayType={arrayType}
+                                                fieldName={'category'}
+                                                sortTranslatePath={'news.sortByCategory'}
+                                                defaultSetFilters={defaultSetFilters}
+                                                setFilters={setFilters}
+                                                type={category}
+                                                isShowAllFilters={isShowAllFilters}
+                                                setType={setCategory}
+                                                setCurrent={setCurrent}
+                                            />
+                                        </>
+                                    )
+                                }
                                 <FormControl
                                     sx={{width: '100%',}}>
                                     <FormHelperText
@@ -412,49 +393,22 @@ const FilterNews = ({
                                         </Box>
                                     </Box>
                                 </FormControl>
-                                <Button
-                                    onClick={handleReplace}
-                                    color={"inherit"}
-                                    variant={"outlined"}
-                                >
-                                    {
-                                        translate("home.reset")
-                                    }
-                                </Button>
-                                <Box sx={{
-                                    width: '100%',
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                    justifyContent: 'space-between'
-                                }}>
-                                    <Button
-                                        sx={{
-                                            width: '35%',
-                                            ...buttonStyle
-                                        }}
-                                        color={"error"}
-                                        variant={"contained"}
-                                        onClick={() => setOpenFilter(false)}
-                                    >
-                                        {translate("buttons.cancel")}
-                                    </Button>
-                                    <Button
-                                        variant={"contained"}
-                                        color={"info"}
-                                        sx={{
-                                            width: '60%',
-                                            ...buttonStyle
-                                        }}
-                                        onClick={handleSearch}>
-                                        {translate("buttons.search")}
-                                    </Button>
-                                </Box>
+                            </Box>
+                            <Box sx={{
+                                width: '90%',
+                                margin: '0 auto',
+                                position: isFilterBtnAbsolute ? 'absolute' : 'unset',
+                                bottom: '20px'
+                            }}>
+                                <SearchButtonFilterComponent
+                                    setOpenFilter={setOpenFilter}
+                                    handleReplace={handleReplace}
+                                    handleSearch={handleSearch}/>
                             </Box>
                         </Box>
-                    </Box>)
+                    )
                 }
-            </Box>
+            </ModalWindow>
         </Box>
     );
 };

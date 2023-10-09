@@ -2,7 +2,7 @@ import {Box, Button, Typography} from "@mui/material";
 import {buttonStyle} from "../../styles";
 import {useContext} from "react";
 import {ColorModeContext} from "../../contexts";
-import {useMobile} from "../../utils";
+import {useMobile} from "../../hook";
 import {useTranslate} from "@refinedev/core";
 import {useNavigate} from "react-router-dom";
 
@@ -24,7 +24,7 @@ const WelcomePart = () => {
     return (
         <Box sx={{
             width: '100%',
-            height: {xs: 'fit-content', sm: '350px', md: '400px'},
+            height: {xs: 'fit-content', sm: '415px', md: '470px'},
             position: 'relative',
             display: 'flex',
             justifyContent: 'center',

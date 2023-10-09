@@ -1,10 +1,10 @@
-import {Box, CssBaseline, StyledEngineProvider, SwipeableDrawer} from "@mui/material";
+import {Box, CssBaseline, IconButton, StyledEngineProvider, SwipeableDrawer} from "@mui/material";
 import {Global} from "@emotion/react";
-import React from "react";
+import React, {Dispatch, ReactNode, SetStateAction, useEffect, useState} from "react";
 import {styled} from "@mui/material/styles";
 import {grey} from "@mui/material/colors";
-import {CloseOutlined} from "@mui/icons-material";
-import {useMobile} from "../../../utils";
+import {Close, CloseOutlined} from "@mui/icons-material";
+import {useMobile} from "../../../hook";
 
 const Root = styled('div')(({theme}) => ({
     height: '100%',
@@ -31,13 +31,12 @@ const drawerBleeding = 56;
 
 interface IProps {
     window?: () => Window,
-    children: any,
-    otherProps?: any,
+    children: ReactNode,
     anchor: "left" | "bottom" | "right" | "top",
-    open?: boolean,
-    toggleDrawer: (value: boolean) => void,
+    open: boolean,
+    toggleDrawer: Dispatch<SetStateAction<boolean>>,
     title: string | any,
-    button?: any,
+    button?: ReactNode,
     closeWithOtherData?: any
 }
 
@@ -45,8 +44,23 @@ const CustomDrawer = ({children, anchor, toggleDrawer, title, button, open, clos
 
     const {device} = useMobile();
 
+    const [isVisible, setIsVisible] = useState<boolean>(false);
+
     const iOS = typeof navigator !== 'undefined' && /iPad|iPhone|iPod/i.test(navigator.userAgent) && true;
     const height = device ? `calc(100% - ${drawerBleeding}px)` : "100%";
+
+    useEffect(() => {
+        if (open) {
+            setIsVisible(true)
+        } else {
+            const timeoutId = setTimeout(() => {
+                setIsVisible(false)
+            }, 1000);
+            return () => clearTimeout(timeoutId);
+        }
+    }, [open]);
+
+
     return (
         <StyledEngineProvider injectFirst>
             <Root>
@@ -54,28 +68,29 @@ const CustomDrawer = ({children, anchor, toggleDrawer, title, button, open, clos
                 <Global styles={{
                     '.MuiDrawer-root > .MuiPaper-root': {
                         height: height,
-                        overflow: 'visible',
+                        overflow: device ? 'visible' : 'hidden',
                         zIndex: 150,
                     },
                 }}
                 />
                 <SwipeableDrawer
-                    anchor={anchor}
-                    open={open}
+                    anchor={anchor as IProps['anchor']}
+                    open={open as boolean}
                     hysteresis={0.52}
                     minFlingVelocity={450}
                     onOpen={() => toggleDrawer(true)}
                     disableBackdropTransition={!iOS}
                     disableDiscovery={iOS}
                     swipeAreaWidth={drawerBleeding}
-                    disableSwipeToOpen={false}
+                    disableSwipeToOpen={true}
                     ModalProps={{
                         keepMounted: true,
                     }}
-                    onClose={closeWithOtherData ? closeWithOtherData : () => toggleDrawer(false)}
+                    onClose={() => toggleDrawer(false)}
                     PaperProps={{
                         sx: {
                             width: "100%",
+                            maxWidth: device ? '100%' : '725px',
                             p: 1,
                         },
                     }}
@@ -109,10 +124,31 @@ const CustomDrawer = ({children, anchor, toggleDrawer, title, button, open, clos
                                 gap: 2
                             }}>
                                 {button}
-                                <CloseOutlined onClick={closeWithOtherData ? closeWithOtherData : () => toggleDrawer(false)}/>
+                                <CloseOutlined
+                                    onClick={closeWithOtherData ? closeWithOtherData : () => toggleDrawer(false)}/>
                             </Box>
                         </Box>
                     </StyledBox>
+                    <Box sx={{
+                        visibility: !device ? 'inherit' : 'hidden',
+                        position: 'relative',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                    }}>
+                        <span>
+                        {title}
+                        </span>
+                        <IconButton
+                            sx={{
+                                position: 'absolute',
+                                top: '0',
+                                left: '0'
+                            }}
+                            onClick={() => toggleDrawer(false)}>
+                            <Close/>
+                        </IconButton>
+                    </Box>
                     <StyledBox
                         sx={{
                             p: {xs: 1, sm: 2},

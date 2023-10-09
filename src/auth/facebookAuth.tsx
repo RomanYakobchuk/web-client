@@ -4,42 +4,45 @@ import {Box, Button} from "@mui/material";
 import {Facebook} from '@mui/icons-material';
 import {useLogin, useNotification, useTranslate} from "@refinedev/core";
 import {axiosInstance} from "../authProvider";
-import {useMobile} from "../utils";
+import {useMobile} from "../hook";
 import {useEffect} from "react";
+import {useNavigate} from "react-router-dom";
 
 type IProps = {
     text: "signin_with" | "signup_with" | "continue_with" | undefined,
     type: "login" | "register"
 }
 
-
 const appId = `${import.meta.env.VITE_APP_FACEBOOK_APP_ID}`;
-const FacebookAuth = ({type, text}: IProps) => {
+if (FB) {
+    FB?.init({
+        appId: appId,
+        status: true,
+        xfbml: true,
+        version: 'v17.0'
+    })
+}
 
-    useEffect(() => {
-        FB?.init({
-            appId: appId,
-            status: true,
-            xfbml: true,
-            version: 'v17.0'
-        })
-    }, [FB]);
+const FacebookAuth = ({type, text}: IProps) => {
 
     const {mutate: login} = useLogin<CredentialResponse>();
     const translate = useTranslate();
+    const navigate = useNavigate();
     const {width} = useMobile();
     const {open} = useNotification();
 
     const facebookAuth = async (userInfo: ReactFacebookLoginInfo) => {
-        if (userInfo.id) {
+        if (userInfo?.id) {
             try {
                 const res = await axiosInstance.post(`/auth/${type}`, {
                     registerBy: 'Facebook',
-                    userId: userInfo?.userID,
+                    userId: userInfo?.userID ? userInfo?.userID : '',
                     access_token: userInfo?.accessToken
                 });
                 if (type === 'login') {
                     login(res.data)
+                } else {
+                    navigate('/login')
                 }
             } catch (e: any) {
                 open?.({

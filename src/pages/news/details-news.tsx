@@ -20,8 +20,8 @@ import {useJsApiLoader} from "@react-google-maps/api";
 import dayjs from "dayjs";
 import React, {useContext} from "react";
 
-import {IGetIdentity, INews, ProfileProps} from "../../interfaces/common";
-import {useMobile} from "../../utils";
+import {IGetIdentity, INews, ProfileProps, PropertyProps} from "../../interfaces/common";
+import {useMobile} from "../../hook";
 import {ColorModeContext} from "../../contexts";
 import OtherNews from "../../components/news/utills/otherNews";
 import {CustomShow} from "../../components";
@@ -56,6 +56,7 @@ const DetailsNews = () => {
     });
 
     const news: INews = data?.data ?? {} as INews;
+    const establishmentInfo = news?.institutionId as PropertyProps;
 
     if (isError) return <ErrorComponent/>
     return (
@@ -70,88 +71,23 @@ const DetailsNews = () => {
                 justifyContent: 'space-between',
                 alignItems: 'center',
             }}>
-                <Typography sx={{
-                    fontSize: {xs: '16px', sm: '24px'}
-                }} fontWeight={700} color={mode === "dark" ? "#fcfcfc" : "#11142D"}>
-                    {translate('home.show.title')}
-                </Typography>
-                <Box sx={{
-                    display: 'flex',
-                    gap: 2
-                }}>
-                    {
-                        (news?.createdBy === user?._id) || user?.status === 'admin'
-                            ? <Box sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 1
-                            }}>
-                                {
-                                    device || width < 600
-                                        ? <IconButton
-                                            size={"large"}
-                                            onClick={() => navigate(`/news/edit/${news?._id}`)}
-                                        >
-                                            <Edit fontSize="inherit"/>
-                                        </IconButton>
-                                        : <Button
-                                            variant={"contained"}
-                                            startIcon={<Edit sx={{
-                                                fontSize: {xs: '18px', sm: '24px'},
-                                            }}/>}
-                                            onClick={() => navigate(`/news/edit/${news?._id}`)}
-                                            sx={{
-                                                bgcolor: 'blue',
-                                            }}
-                                        >
-                                            {translate('profile.edit.title')}
-                                        </Button>
-                                }
-                            </Box>
-                            : <Button
-                                startIcon={<WineBarOutlined sx={{
-                                    fontSize: {xs: '18px', sm: '24px'},
-                                }}/>}
-                                sx={{
-                                    bgcolor: 'blue',
-                                    transition: '300ms linear',
-                                    borderRadius: '25px',
-                                    minWidth: '100px',
-                                    "&:hover": {
-                                        bgcolor: 'info.main',
-                                    }
-                                }}
-                                onClick={() => navigate(`/capl/create?institution=${news?.institutionId}`)}
-                            >
-                                Capl
-                            </Button>
-                    }
-                    {
-                        device || width < 600
-                            ? <IconButton
-                                size={"large"}
-                                onClick={() => navigate(`/all_institutions/show/${news?.institutionId}`)}
-                            >
-                                <LocationCity fontSize="inherit"/>
-                            </IconButton>
-                            : <Button
-                                onClick={() => navigate(`/all_institutions/show/${news?.institutionId}`)}
-                                startIcon={<LocationCity/>}
-                                sx={{
-                                    bgcolor: 'blue',
-                                    transition: '300ms linear',
-                                    borderRadius: '25px',
-                                    p: '5px 15px',
-                                    minWidth: '100px',
-                                    "&:hover": {
-                                        bgcolor: 'info.main',
-                                    }
-                                }}
-                            >
-                                {translate("home.one")}
-                            </Button>
-                    }
-                </Box>
+                <Button
+                    startIcon={<WineBarOutlined sx={{
+                        fontSize: {xs: '18px', sm: '24px'},
+                    }}/>}
+                    sx={{
+                        bgcolor: 'blue',
+                        transition: '300ms linear',
+                        borderRadius: '25px',
+                        minWidth: '100px',
+                        "&:hover": {
+                            bgcolor: 'info.main',
+                        }
+                    }}
+                    onClick={() => navigate(`/capl/create?establishment=${JSON.stringify(establishmentInfo)}`)}
+                >
+                    Capl
+                </Button>
             </Box>
             <Box sx={{
                 display: 'flex',
@@ -292,12 +228,12 @@ const DetailsNews = () => {
                                                 <Typography sx={{
                                                     fontSize: {xs: '14px', sm: "16px"}
                                                 }}>
-                                                    {news?.place?.city}
+                                                    {news?.place?.place?.city}
                                                 </Typography>
                                                 <Typography sx={{
                                                     fontSize: {xs: '14px', sm: "16px"}
                                                 }}>
-                                                    {news?.place?.address}
+                                                    {news?.place?.place?.address}
                                                 </Typography>
                                             </Box>
                                         </Box>
@@ -401,10 +337,10 @@ const DetailsNews = () => {
                     </Typography>
                     <Box>
                         {
-                            news?.institutionId?._id &&
+                            establishmentInfo?._id &&
                             <OtherNews
                                 newsId={news?._id}
-                                institutionId={news?.institutionId?._id}
+                                institutionId={establishmentInfo?._id}
                             />
                         }
                     </Box>

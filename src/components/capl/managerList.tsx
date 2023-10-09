@@ -26,7 +26,7 @@ import {useNavigate} from "react-router-dom";
 
 import {IReserve, IReserveFilterVariables, PropertyProps} from "../../interfaces/common";
 import {CustomAccordion} from "../index";
-import {useMobile} from "../../utils";
+import {useMobile} from "../../hook";
 
 
 const ManagerList = () => {

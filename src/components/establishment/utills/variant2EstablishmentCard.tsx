@@ -104,26 +104,22 @@ const Variant2EstablishmentCard = ({establishment}: IProps) => {
                                     {translate(`home.create.type.${type}`)}
                                 </Typography>
                             </Box>
-                            {
-                                createdBy !== user?._id && (
-                                    <BookMarkButton
-                                        id={_id}
-                                        bgColor={'transparent'}
-                                        color={'common.white'}
-                                        type={'favoritePlaces'}
-                                        showText={false}
-                                        style={{
-                                            p: '5px',
-                                            borderRadius: '5px',
-                                            minWidth: '20px',
-                                            bgcolor: mode === 'dark' ? '#86a8cf' : '#e6f2ff',
-                                            "& svg": {
-                                                fontSize: {xs: '26px', sm: '30px'}
-                                            }
-                                        }}
-                                    />
-                                )
-                            }
+                            <BookMarkButton
+                                id={_id}
+                                bgColor={'transparent'}
+                                color={'common.white'}
+                                type={'favoritePlaces'}
+                                showText={false}
+                                style={{
+                                    p: '5px',
+                                    borderRadius: '5px',
+                                    minWidth: '20px',
+                                    bgcolor: mode === 'dark' ? '#86a8cf' : '#e6f2ff',
+                                    "& svg": {
+                                        fontSize: {xs: '26px', sm: '30px'}
+                                    }
+                                }}
+                            />
                         </Box>
                         <Box>
                             <Box sx={{

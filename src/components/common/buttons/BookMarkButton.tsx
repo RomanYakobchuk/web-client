@@ -1,18 +1,16 @@
 import {Button, CircularProgress, SxProps} from "@mui/material";
 import {BookmarkBorderOutlined, BookmarkOutlined} from "@mui/icons-material";
-import React, {useContext, useEffect, useLayoutEffect, useState, MouseEvent} from "react";
-import {useGetIdentity, useNotification, useOne, useTranslate} from "@refinedev/core";
+import React, {useContext, useEffect, useState, MouseEvent} from "react";
+import {useNotification, useTranslate} from "@refinedev/core";
 
 import {axiosInstance} from "../../../authProvider";
-import {IGetIdentity, ProfileProps} from "../../../interfaces/common";
-import {buttonStyle} from "../../../styles";
 import {ColorModeContext} from "../../../contexts";
 import {AppContext} from "../../../contexts/AppContext";
 
 interface IProps {
     id: string,
     color?: string | any,
-    type: 'favoritePlaces' | string,
+    type: 'favoritePlaces' | 'favoriteNews' | string,
     showText: boolean,
     bgColor?: string | any,
     style?: SxProps

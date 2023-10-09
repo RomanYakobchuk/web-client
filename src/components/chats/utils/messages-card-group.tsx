@@ -6,7 +6,7 @@ import {useGetIdentity, useTranslate} from "@refinedev/core";
 
 import {IGetIdentity, IMessage, ProfileProps} from "../../../interfaces/common";
 import dayjs from "dayjs";
-import useLongPress from "../../../utils/useLongPress";
+import useLongPress from "../../../hook/useLongPress";
 import {socket} from "../../../socketClient";
 
 interface IProps {

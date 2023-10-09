@@ -1,7 +1,6 @@
 import {
     Box,
     Chip,
-    CircularProgress,
     ListItem,
     Rating,
     Stack,
@@ -12,28 +11,24 @@ import {
     Place,
 } from "@mui/icons-material";
 import MDEditor from "@uiw/react-md-editor";
-import {GoogleMap, MarkerF, useJsApiLoader} from "@react-google-maps/api";
 import React, {useContext, useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import {useGetIdentity, useTranslate} from "@refinedev/core";
 
-import {BookMarkButton, ImageGallery, SubscribeButton} from "../index";
-import {containerStyle} from "./utills/mapsOptrions";
+import {BookMarkButton, ImageGallery, ShowMap, SubscribeButton} from "../index";
 import {IGetIdentity, ISubscribe, ProfileProps, PropertyProps} from "../../interfaces/common";
 import {ColorModeContext} from "../../contexts";
-import dayjs from "dayjs";
 import {buttonStyle} from "../../styles";
-import {useMobile} from "../../utils";
+import {useMobile} from "../../hook";
+import {useStore} from "../../store";
 
 
 interface IProps {
     establishment: PropertyProps,
-    rowHeight: number,
-    otherProps?: any,
     subscribe: ISubscribe
 }
 
-const MainEstablishmentInfo = ({establishment, rowHeight, otherProps, subscribe}: IProps) => {
+const MainEstablishmentInfo = ({establishment, subscribe}: IProps) => {
 
     const {data: identity} = useGetIdentity<IGetIdentity>();
     const user: ProfileProps = identity?.user as ProfileProps;
@@ -41,24 +36,25 @@ const MainEstablishmentInfo = ({establishment, rowHeight, otherProps, subscribe}
     const {mode} = useContext(ColorModeContext);
     const navigate = useNavigate();
     const {width} = useMobile();
+    const {addEstablishment, establishmentInfo} = useStore(state => {
+        return {
+            establishmentInfo: state.establishmentInfo, addEstablishment: state.addEstablishment
+        }
+    });
 
     const [postRating, setPostRating] = useState(0);
-    const [postRatings, setPostRatings] = useState([]);
 
     useEffect(() => {
         setPostRating(establishment?.rating)
     }, [establishment?.rating])
 
     useEffect(() => {
-        setPostRatings(establishment?.ratings);
-    }, [establishment?.ratings])
+        if (establishment?._id) {
+            addEstablishment({...establishment})
+        }
+    }, [establishment?._id]);
 
-
-    const {isLoaded} = useJsApiLoader({
-        id: 'google-map-script',
-        googleMapsApiKey: import.meta.env.VITE_APP_GOOGLE_MAPS_KEY!
-    });
-    const location: PropertyProps["location"] | any = typeof establishment?.location?.lat !== undefined && establishment?.location;
+    const location: PropertyProps["location"] | google.maps.LatLngLiteral = typeof establishment?.location?.lat !== undefined ? establishment?.location : {} as PropertyProps['location'];
     return (
         <Box
             sx={{
@@ -118,46 +114,43 @@ const MainEstablishmentInfo = ({establishment, rowHeight, otherProps, subscribe}
                                     }
                                 </Link>
                             </Box>
-                            {
-                                establishment?.createdBy !== user?._id && (
-                                    <Box sx={{
-                                        display: 'flex',
-                                        gap: 2,
-                                        alignItems: 'center'
-                                    }}>
-                                        {
-                                            establishment?._id && establishment?.sendNotifications &&
-                                            <SubscribeButton
-                                                createdBy={establishment?.createdBy}
-                                                showText={width > 600}
-                                                subscribe={subscribe}
-                                                establishmentId={establishment?._id}
-                                                style={{
-                                                    p: '5px',
-                                                    "& svg": {
-                                                        fontSize: {xs: '26px', sm: '30px'}
-                                                    }
-                                                }}
-                                            />
+                            <Box sx={{
+                                display: 'flex',
+                                gap: 2,
+                                alignItems: 'center'
+                            }}>
+                                {
+                                    (establishment?.createdBy !== user?._id
+                                        && establishment?._id && establishment?.sendNotifications) &&
+                                    <SubscribeButton
+                                        createdBy={establishment?.createdBy}
+                                        showText={width > 600}
+                                        subscribe={subscribe}
+                                        establishmentId={establishment?._id}
+                                        style={{
+                                            p: '5px',
+                                            "& svg": {
+                                                fontSize: {xs: '26px', sm: '30px'}
+                                            }
+                                        }}
+                                    />
+                                }
+                                <BookMarkButton
+                                    showText={false}
+                                    color={'common.white'}
+                                    bgColor={'transparent'}
+                                    style={{
+                                        p: '5px',
+                                        borderRadius: '5px',
+                                        minWidth: '20px',
+                                        bgcolor: mode === 'dark' ? '#86a8cf' : '#e6f2ff',
+                                        "& svg": {
+                                            fontSize: {xs: '26px', sm: '30px'}
                                         }
-                                        <BookMarkButton
-                                            showText={false}
-                                            color={'common.white'}
-                                            bgColor={'transparent'}
-                                            style={{
-                                                p: '5px',
-                                                borderRadius: '5px',
-                                                minWidth: '20px',
-                                                bgcolor: mode === 'dark' ? '#86a8cf' : '#e6f2ff',
-                                                "& svg": {
-                                                    fontSize: {xs: '26px', sm: '30px'}
-                                                }
-                                            }}
-                                            type={'favoritePlaces'} id={establishment?._id}
-                                        />
-                                    </Box>
-                                )
-                            }
+                                    }}
+                                    type={'favoritePlaces'} id={establishment?._id}
+                                />
+                            </Box>
                         </Box>
                         <Box sx={{
                             display: 'flex',
@@ -193,31 +186,65 @@ const MainEstablishmentInfo = ({establishment, rowHeight, otherProps, subscribe}
                     </Box>
                     <Box sx={{
                         display: 'flex',
-                        flexDirection: 'row',
-                        gap: 1,
-                        alignItems: 'center',
-                        mb: 0.5
+                        flexDirection: {xs: 'column', sm: 'row'},
+                        justifyContent: 'space-between',
+                        gap: {xs: 2, sm: 0},
+                        alignItems: {xs: 'start', sm: 'center'},
+                        width: '100%',
+                        mb: 2
                     }}>
-                        {
-                            establishment?._id && postRating !== undefined && <>
-                                <Rating precision={0.5} name="read-only" value={postRating} readOnly/>
-                                <Box sx={{
-                                    color: 'common.white'
-                                }}>
-                                    {postRating > 0 ? postRating?.toFixed(2) : postRating}
-                                </Box>
-                                <Box
-                                    component={'span'}
-                                    sx={{
-                                        margin: '0 5px',
-                                        fontSize: {xs: '12px', sm: '14px'},
-                                        color: 'silver'
-                                    }}
-                                >
-                                    ({establishment?.reviewsLength})
-                                </Box>
-                            </>
-                        }
+                        <Box sx={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            gap: 1,
+                            alignItems: 'center',
+                        }}>
+                            {
+                                establishment?._id && postRating !== undefined && <>
+                                    <Rating precision={0.5} name="read-only" value={postRating} readOnly/>
+                                    <Box sx={{
+                                        color: 'common.white'
+                                    }}>
+                                        {postRating > 0 ? postRating?.toFixed(2) : postRating}
+                                    </Box>
+                                    <Box
+                                        component={'span'}
+                                        sx={{
+                                            margin: '0 5px',
+                                            fontSize: {xs: '12px', sm: '14px'},
+                                            color: 'silver'
+                                        }}
+                                    >
+                                        ({establishment?.reviewsLength})
+                                    </Box>
+                                </>
+                            }
+                        </Box>
+                        <Box sx={{
+                            display: 'flex',
+                            gap: 1,
+                            bgcolor: 'common.white',
+                            color: 'common.black',
+                            p: '0px 15px',
+                            borderRadius: '20px',
+                            alignItems: 'center',
+                            "& span:nth-of-type(2)": {
+                                fontSize: {xs: '18px', sm: '20px', md: '22px', lg: '24px'},
+                                fontWeight: {xs: 600, md: 800}
+                            }
+                        }}>
+                            <Box
+                                component={'span'}
+                            >
+                                {translate('home.create.averageCheck')}
+                            </Box>
+                            ~
+                            <Box
+                                component={'span'}
+                            >
+                                {establishment?.averageCheck} ₴
+                            </Box>
+                        </Box>
                     </Box>
                 </Box>
                 <Box sx={{
@@ -234,36 +261,6 @@ const MainEstablishmentInfo = ({establishment, rowHeight, otherProps, subscribe}
                         p: 0,
                         width: {xs: '100%', xl: '40%'}
                     }}>
-                        {/*<Box sx={{*/}
-                        {/*    display: 'flex',*/}
-                        {/*    flexDirection: 'row',*/}
-                        {/*    justifyContent: 'space-between',*/}
-                        {/*    alignItems: 'center'*/}
-                        {/*}}>*/}
-
-                        {/*    {*/}
-                        {/*        device && width < 900*/}
-                        {/*            ? <Box sx={{*/}
-                        {/*                display: 'grid',*/}
-                        {/*                gridTemplateColumns: '1fr 1fr 1fr',*/}
-                        {/*                alignItems: 'center',*/}
-                        {/*                gap: 1.5*/}
-                        {/*            }}>*/}
-                        {/*                <ReviewsOutlined onClick={() => {*/}
-                        {/*                    setOpenDrawer(true)*/}
-                        {/*                    setDataForDrawer("reviews")*/}
-                        {/*                }}/>*/}
-                        {/*                <NewspaperOutlined onClick={() => {*/}
-                        {/*                    setOpenDrawer(true)*/}
-                        {/*                    setDataForDrawer("news")*/}
-                        {/*                }}/>*/}
-                        {/*                <MessageOutlined onClick={() => {*/}
-                        {/*                    setOpenDrawer(true)*/}
-                        {/*                    setDataForDrawer("comments")*/}
-                        {/*                }}/>*/}
-                        {/*            </Box> : ''*/}
-                        {/*    }*/}
-                        {/*</Box>*/}
                         <Box sx={{
                             borderRadius: '15px',
                             p: '15px',
@@ -357,37 +354,22 @@ const MainEstablishmentInfo = ({establishment, rowHeight, otherProps, subscribe}
                 width: '100%'
             }}>
                 {
-                    isLoaded && establishment?._id ?
-                        <Box sx={{
-                            width: {xs: '100%', sm: '350px', md: '100%', lg: '50%'},
-                            height: '350px',
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            "& > div": {
-                                borderRadius: '15px !important'
-                            }
-                        }}>
-                            <GoogleMap
-                                mapContainerStyle={containerStyle}
-                                center={new google.maps.LatLng(location?.lat, location?.lng)}
-                                zoom={10}
-                            >
-                                {
-                                    location ?
-                                        <MarkerF position={new google.maps.LatLng(location?.lat, location?.lng)}/>
-                                        : null
-                                }
-                            </GoogleMap>
-                        </Box> : <Box sx={{
-                            width: {xs: '100%', sm: '350px', md: '100%', lg: '50%'},
-                            height: "350px",
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center'
-                        }}>
-                            <CircularProgress/>
-                        </Box>
+                    establishment?._id && location?.lng &&
+                    <Box sx={{
+                        width: {xs: '100%', sm: '350px', md: '100%', lg: '50%'},
+                        height: '350px',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        "& > div": {
+                            borderRadius: '15px !important'
+                        }
+                    }}>
+                        <ShowMap
+                            location={location}
+                            showRoute={true}
+                        />
+                    </Box>
                 }
                 <Box sx={{
                     display: 'flex',
@@ -468,4 +450,4 @@ const MainEstablishmentInfo = ({establishment, rowHeight, otherProps, subscribe}
         </Box>
     );
 };
-export default MainEstablishmentInfo
+export default MainEstablishmentInfo;

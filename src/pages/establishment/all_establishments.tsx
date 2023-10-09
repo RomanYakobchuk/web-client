@@ -1,20 +1,15 @@
-import {CanAccess, useTranslate} from "@refinedev/core";
-import {Box, Button, Stack} from "@mui/material";
+import {CanAccess} from "@refinedev/core";
+import {Box, Button} from "@mui/material";
 
 import {
     InstitutionsAdminList,
     InstitutionsUserList, NewComponentButton,
 } from "../../components";
 import React, {useState} from "react";
-import {useRole} from "../../utils";
-import {Add} from "@mui/icons-material";
-import {useNavigate} from "react-router-dom";
-import {buttonStyle} from "../../styles";
+import {useRole} from "../../hook";
 
 const All_establishments = () => {
     const {role} = useRole();
-    const navigate = useNavigate();
-    const translate = useTranslate();
     const [showUserList, setShowUserList] = useState(true);
     return (
         <Box sx={{

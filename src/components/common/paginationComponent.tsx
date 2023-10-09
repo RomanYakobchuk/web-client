@@ -5,7 +5,7 @@ import {useTranslate} from "@refinedev/core";
 import {Pagination} from "antd";
 import type {PaginationProps} from "antd";
 
-import {useMobile} from "../../utils";
+import {useMobile} from "../../hook";
 import {selectStyle} from "../../styles";
 import {ColorModeContext} from "../../contexts";
 
@@ -31,9 +31,9 @@ const PaginationComponent = ({current, setCurrent, pageCount, setPageSize, count
                 width: '100%',
                 justifyContent: 'center',
                 alignItems: 'center',
-                bgcolor: mode === 'dark' ? "#242539" : '#8a91c7',
+                bgcolor: mode === 'dark' ? "#323349" : '#6e76b3',
                 p: "10px",
-                borderRadius: '20px',
+                borderRadius: '10px',
                 mt: 3,
                 "& ul.ant-pagination": {
                     display: 'flex',

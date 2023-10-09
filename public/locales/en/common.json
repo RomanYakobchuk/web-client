@@ -92,6 +92,7 @@
   },
   "buttons": {
     "copy": "Copy",
+    "add": "Add",
     "create": "Create",
     "details": "Details",
     "save": "Save",
@@ -108,6 +109,7 @@
     "moreFilter": "More filters",
     "clear": "Clear",
     "reset": "Reset",
+    "more": "More",
     "refresh": "Refresh",
     "restore": "Restore",
     "show": "Show",
@@ -122,9 +124,11 @@
     "isRejected": "Rejected",
     "reply": "Reply",
     "nearby": "Establishments nearby",
+    "hide": "Hide",
     "google": {
       "signin_with": "Sign in with Google",
-      "signup_with": "Sign up with Google"
+      "signup_with": "Sign up with Google",
+      "viewRoute": "View route"
     },
     "facebook": {
       "signin_with": "Sign in with Facebook",
@@ -193,10 +197,10 @@
   },
   "home": {
     "home": "Home",
-    "title": "All Institutions",
-    "one": "Institution",
+    "title": "All Establishments",
+    "one": "Establishment",
     "owner": "Owner",
-    "notHave": "There are no institutions",
+    "notHave": "There are no establishments",
     "search": "Search by title, description, city, features",
     "searchByTag": "Search by #tag",
     "sortByType": {
@@ -226,11 +230,11 @@
     "tags": "Tags",
     "default": "Default",
     "create": {
-      "title": "Add institution",
+      "title": "Add establishment",
       "confirmTitle": "Confirm the addition",
-      "message": "If the data is entered correctly, you can add an institution. \nThe institution will be publicly available after verification by an administrator",
+      "message": "If the data is entered correctly, you can add an establishment. \nThe establishment will be publicly available after verification by an administrator",
       "mainPhoto": "Add a main photo",
-      "name": "Name of the institution",
+      "name": "Name of the establishment",
       "description": "Description",
       "pictures": {
         "title": "Add photos",
@@ -245,7 +249,7 @@
       "city": "Inhabited locality",
       "address": "Street",
       "type": {
-        "title": "Type of institution",
+        "title": "Type of establishment",
         "bar": "Bar",
         "cafe": "Cafe",
         "restaurant": "Restaurant"
@@ -324,11 +328,24 @@
       "title": "Add news"
     },
     "edit": {
-      "title": "Edit institution"
+      "title": "Edit establishment"
     }
   },
   "all_institutions": {
-    "all_institutions": "Institutions"
+    "all_institutions": "Establishments",
+    "freeSeats": {
+      "title": "Free seats",
+      "create": "Add free seats",
+      "isCombine": "Possibility to combine seats",
+      "tableNumber": "Table number",
+      "numberOfSeats": "Number of seats",
+      "statusOfSeats": {
+        "title": "Status of seats",
+        "free": "Free",
+        "reserved": "Reserved",
+        "all": "All"
+      }
+    }
   },
   "news": {
     "news": "News",
@@ -337,6 +354,7 @@
     "button": "Add news",
     "searchByTitle": "Search by title, description",
     "sortByCategory": {
+      "all": "All",
       "general": "General",
       "promotions": "Promotions",
       "events": "Events"
@@ -345,7 +363,7 @@
       "title": "The date of the event"
     },
     "show": {
-      "otherPlaceNews": "Other news of the institution"
+      "otherPlaceNews": "Other news of the establishment"
     },
     "create": {
       "title": "Title",
@@ -359,8 +377,8 @@
     }
   },
   "top-institutions": {
-    "top-institutions": "Top institutions",
-    "title": "Top institutions"
+    "top-institutions": "Top establishments",
+    "title": "Top establishments"
   },
   "capl": {
     "capl": "Capl",
@@ -381,7 +399,7 @@
     },
     "status": {
       "userStatus": "Client status",
-      "institutionStatus": "Institution status",
+      "institutionStatus": "Establishment status",
       "accepted": "Accepted",
       "draft": "Is waiting",
       "rejected": "Rejected"
@@ -394,12 +412,12 @@
     }
   },
   "all-places": {
-    "all-places": "All institutions",
-    "title": "All institutions"
+    "all-places": "All establishments",
+    "title": "All establishments"
   },
   "my-institution": {
-    "my-institution": "My institutions",
-    "title": "My institutions",
+    "my-institution": "My establishments",
+    "title": "My establishments",
     "verify": {
       "published": "Published",
       "await": "Awaiting verification"
@@ -431,8 +449,8 @@
     "profile": "Profile",
     "title": "Profile",
     "my_comments": "My comments: {{length}}",
-    "my_places": "My institutions: {{length}}",
-    "my_fav_places": "Favorite institutions: {{length}}",
+    "my_places": "My establishments: {{length}}",
+    "my_fav_places": "Favorite establishments: {{length}}",
     "my_reviews": "My reviews: {{length}}",
     "email": "Email: ",
     "edit": {
@@ -507,12 +525,12 @@
       "searchPlace1": "Looking for a relaxing place to have ",
       "searchPlace2": "a drink with friends?",
       "byPlace": "Welcome to our platform, where your time will always have a special place. We understand the importance of finding the perfect spot for relaxation and a casual atmosphere.",
-      "findYourSelf": "Choose an institution specifically for you and find the ideal place yourself.",
+      "findYourSelf": "Choose an establishment specifically for you and find the ideal place yourself.",
       "byType": "We offer a variety of atmospheres and types of entertainment. Do you enjoy upscale restaurants with gastronomic masterpieces, or are you looking to treat yourself and friends in cozy cafes? Perhaps you're seeking nightlife at vibrant bars, where the rhythm of the night comes alive."
     }
   },
   "list": {
-    "institution": "List of institutions",
+    "institution": "List of establishments",
     "capl": "List of reservations",
     "news": "News list",
     "users": "List of users"
@@ -554,5 +572,11 @@
       "true": "Subscribed",
       "false": "Subscribe"
     }
+  },
+  "travelMode": {
+    "BICYCLING": "Bicycling",
+    "DRIVING": "Driving",
+    "TRANSIT": "Transit",
+    "WALKING":  "Walking"
   }
 }

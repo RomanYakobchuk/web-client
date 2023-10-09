@@ -1,4 +1,4 @@
-import {useLocation, useNavigate} from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 import {
     Box,
     Button,
@@ -16,19 +16,20 @@ import {useForm} from "@refinedev/react-hook-form";
 import dayjs from "dayjs";
 
 import {ColorModeContext} from "../../contexts";
-import {IGetIdentity, ProfileProps} from "../../interfaces/common";
+import {IGetIdentity, ProfileProps, PropertyProps} from "../../interfaces/common";
 import {ModalWindow, SearchInstitutions} from "../../components";
 
 const CreateReservation = () => {
-    const {search} = useLocation();
     const {data: identity} = useGetIdentity<IGetIdentity>();
     const user: ProfileProps = identity?.user as ProfileProps;
     const translate = useTranslate();
     const navigate = useNavigate();
     const {mode} = useContext(ColorModeContext);
     const {open} = useNotification();
+    const [searchParams] = useSearchParams();
 
-    const [searchPlace, setSearchPlace] = useState<{_id: string, title: string}>({} as {_id: string, title: string});
+    const search = searchParams.get('establishment') ? JSON.parse(searchParams.get('establishment') as string) as PropertyProps : {} as PropertyProps;
+    const [searchPlace, setSearchPlace] = useState<PropertyProps>({} as PropertyProps);
     const [fullName, setFullName] = useState<string>('');
     const [eventType, setEventType] = useState<string>('');
     const [date, setDate] = useState<Date | any>(dayjs(new Date()).format('YYYY-MM-DDThh:mm'));
@@ -66,7 +67,8 @@ const CreateReservation = () => {
     }, [user?.name])
     useEffect(() => {
         if (search) {
-            setSearchPlace((prevState) => ({...prevState, _id: search?.split('=')[1]}));
+            console.log(search)
+            setSearchPlace((prevState) => ({...prevState, ...search}));
         }
     }, [search]);
 
@@ -157,7 +159,8 @@ const CreateReservation = () => {
                         >
                             {translate('home.one')}
                         </FormHelperText>
-                        <SearchInstitutions searchInstitution={searchPlace} setSearchInstitution={setSearchPlace}
+                        <SearchInstitutions searchInstitution={searchPlace as PropertyProps}
+                                            setSearchInstitution={setSearchPlace}
                                             typeSearch={'all'}/>
                     </FormControl>
                     <FormControl fullWidth>

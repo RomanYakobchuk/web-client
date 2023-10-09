@@ -1,5 +1,5 @@
 import {useList} from "@refinedev/core";
-import {useContext, useEffect, useState} from "react";
+import {Dispatch, SetStateAction, useContext, useEffect, useState} from "react";
 import {AutoComplete, Input, Typography as TypographyAntd} from "antd";
 import {Box, FormControl} from "@mui/material";
 import {useDebounce} from "use-debounce";
@@ -16,9 +16,10 @@ const renderTitle = (title: string) => {
     );
 };
 
-const renderItem = (title: string, street: string, photo: string, _id: string) => {
+const renderItem = (title: string, street: string, photo: string, _id: string, allInfo: PropertyProps) => {
     return {
         value: title,
+        allInfo,
         id: _id,
         label: (
             <Box sx={{
@@ -56,8 +57,8 @@ const renderItem = (title: string, street: string, photo: string, _id: string) =
 };
 
 interface IProps {
-    searchInstitution: { _id: string, title: string },
-    setSearchInstitution: (value: PropertyProps) => void,
+    searchInstitution: PropertyProps,
+    setSearchInstitution: Dispatch<SetStateAction<PropertyProps>>,
     typeSearch: string
 }
 
@@ -66,6 +67,7 @@ const SearchInstitutions = ({typeSearch, searchInstitution, setSearchInstitution
     const {mode} = useContext(ColorModeContext);
 
     const [searchPlaceInput, setSearchPlaceInput] = useState<string>('');
+    const [data, setData] = useState<PropertyProps[]>([] as PropertyProps[]);
     const [searchInputValue, setSearchInputValue] = useState<string>('');
     const [options, setOptions] = useState<IOptions[]>([]);
     const [currentInstitution, setCurrentInstitution] = useState({title: '', _id: ''});
@@ -76,20 +78,20 @@ const SearchInstitutions = ({typeSearch, searchInstitution, setSearchInstitution
         setSearchPlaceInput(value)
     }
     useEffect(() => {
-        if (searchInstitution?._id) {
-            setCurrentInstitution({title: searchInstitution?.title, _id: searchInstitution?._id})
+        if (searchInstitution?._id !== currentInstitution?._id) {
+            setCurrentInstitution(searchInstitution)
         }
     }, [searchInstitution]);
-
-    const {refetch, isLoading, isError} = useList({
+    const {refetch, isLoading, isError} = useList<PropertyProps>({
         resource: `institution/${typeSearch}`,
         filters: [{field: 'title', operator: 'contains', value: value}],
         queryOptions: {
             enabled: false,
             onSuccess: (data) => {
-                const institutionsOptionGroup = data.data.map((item: any) => {
+                const institutionsOptionGroup = data.data.map((item) => {
+                        setData(data?.data)
                         return (
-                            renderItem(item.title, item.place.address, item.pictures[0].url, item._id)
+                            renderItem(item.title, item.place.address, item.pictures[0].url, item._id, item)
                         )
                     }
                 )
@@ -105,6 +107,15 @@ const SearchInstitutions = ({typeSearch, searchInstitution, setSearchInstitution
             }
         }
     });
+    useEffect(() => {
+        if (data?.length > 0) {
+            for (const item of data) {
+                if (item?._id === searchInstitution?._id) {
+                    setSearchInstitution(item)
+                }
+            }
+        }
+    }, [data, searchInstitution]);
 
     useEffect(() => {
         setOptions([]);
@@ -119,7 +130,7 @@ const SearchInstitutions = ({typeSearch, searchInstitution, setSearchInstitution
             setSearchInputValue(currentInstitution.title);
             setSearchPlaceInput(currentInstitution.title)
         }
-    }, [currentInstitution]);
+    }, [currentInstitution?.title]);
 
     return (
         <Box sx={{
@@ -136,8 +147,8 @@ const SearchInstitutions = ({typeSearch, searchInstitution, setSearchInstitution
                     filterOption={false}
                     onSearch={onSearch}
                     onSelect={(selectValue, option) => {
-                        const {id, value} = option;
-                        setSearchInstitution({title: value as string, _id: id as string})
+                        const {allInfo} = option;
+                        setSearchInstitution((prev) => ({...prev, ...allInfo}))
                         setSearchPlaceInput(selectValue);
                         setSearchInputValue(selectValue)
                     }}

@@ -3,9 +3,12 @@ import {useBack, useTranslate} from "@refinedev/core";
 import React, {useEffect, useState} from "react";
 import {useForm} from "@refinedev/react-hook-form";
 
-import {INews, INewsDataProps, INewsDateEvent, IPicture} from "../../interfaces/common";
+import {INews, INewsDateEvent, IPicture, PropertyProps} from "../../interfaces/common";
 import NewsFormData from "../../components/news/utills/newsFormData";
 import {CustomEdit} from "../../components";
+import {INewsDataProps} from "../../interfaces/formData";
+import {Button} from "antd";
+import {RestartAlt} from "@mui/icons-material";
 
 const EditNews = () => {
     const translate = useTranslate();
@@ -47,28 +50,35 @@ const EditNews = () => {
         }
     }, [queryResult])
 
-    const [institutionId, setInstitutionId] = useState<{_id: string, title: string}>({} as {_id: string, title: string});
+    const [institutionInfo, setInstitutionInfo] = useState<PropertyProps>({} as PropertyProps);
     const [defaultPictures, _] = useState<IPicture[]>([] as IPicture[])
     const [description, setDescription] = useState<string>("");
     const [title, setTitle] = useState<string>("");
     const [pictures, setPictures] = useState<IPicture[] | File[]>([] as IPicture[] | File[]);
+    const [location, setLocation] = useState<INewsDataProps['location']>({} as INewsDataProps['location']);
+    const [place, setPlace] = useState<INewsDataProps['place']>({} as INewsDataProps['place']);
     const [category, setCategory] = useState<any>('general');
     const [dateEvent, setDateEvent] = useState<INewsDateEvent[]>([] as INewsDateEvent[]);
     const [status, setStatus] = useState<any>('published');
     const [datePublish, setDatePublish] = useState<Date | any>();
     const [isDatePublish, setIsDatePublish] = useState<boolean | any>(false);
 
+    const loadData = () => {
+        setTitle(news?.title)
+        setCategory(news?.category)
+        setDescription(news?.description)
+        setStatus(news?.status)
+        setDatePublish(news?.publishAt?.datePublish)
+        setIsDatePublish(news?.publishAt?.isPublish)
+        setPictures(news?.pictures)
+        setDateEvent(news?.dateEvent)
+        setInstitutionInfo(news?.institutionId as PropertyProps)
+        setLocation(news?.place?.location)
+        setPlace(news?.place?.place)
+    }
     useEffect(() => {
         if (news) {
-            setTitle(news?.title)
-            setCategory(news?.category)
-            setDescription(news?.description)
-            setStatus(news?.status)
-            setDatePublish(news?.publishAt?.datePublish)
-            setIsDatePublish(news?.publishAt?.isPublish)
-            setPictures(news?.pictures)
-            setDateEvent(news?.dateEvent)
-            setInstitutionId(news?.institutionId)
+            loadData();
         }
     }, [news]);
 
@@ -91,7 +101,7 @@ const EditNews = () => {
         formData.append("title", title);
         formData.append("category", category);
         // formData.append("createdBy", JSON.stringify(user?._id));
-        formData.append("institutionId", institutionId?._id);
+        formData.append("institutionId", institutionInfo?._id);
         formData.append("dateEvent", JSON.stringify(dateEvent));
 
         await onFinish(formData);
@@ -125,9 +135,9 @@ const EditNews = () => {
         title,
         setTitle,
         setDateEvent,
-        institutionId,
+        institutionInfo,
         category,
-        setInstitutionId,
+        setInstitutionInfo,
         setCategory,
         dateEvent,
         description,
@@ -138,6 +148,10 @@ const EditNews = () => {
         setIsDatePublished: setIsDatePublish,
         datePublished: datePublish,
         setDatePublished: setDatePublish,
+        place,
+        location,
+        setPlace,
+        setLocation
     }
 
     return (
@@ -147,6 +161,16 @@ const EditNews = () => {
             isLoading={isLoadingData}
             saveButtonProps={saveButtonProps}
         >
+            <Button
+                icon={<RestartAlt/>}
+                onClick={loadData}
+                style={{
+                    display: 'flex',
+                    alignItems: 'center'
+                }}
+            >
+                {translate('buttons.restore')}
+            </Button>
             <NewsFormData
                 {...props}
             />

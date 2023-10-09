@@ -29,7 +29,7 @@ import {
     ProfileProps,
 } from "../../interfaces/common";
 import {CustomAccordion} from "../../components";
-import {useMobile} from "../../utils";
+import {useMobile} from "../../hook";
 
 const AllUsers = () => {
     const translate = useTranslate();

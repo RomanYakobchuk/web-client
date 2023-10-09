@@ -6,7 +6,7 @@ import {useTranslation} from "react-i18next";
 
 import CommentCard from "../establishment/utills/commentCard";
 import {IComment} from "../../interfaces/common";
-import {useMobile} from "../../utils";
+import {useMobile} from "../../hook";
 import Loading from "../loading/loading";
 import {ColorModeContext} from "../../contexts";
 

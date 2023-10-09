@@ -6,7 +6,7 @@ import {Box, Typography} from "@mui/material";
 import {INews} from "../../interfaces/common";
 import {FilterNews} from "../index";
 import ListForUsers from "./lists/listForUsers";
-import {useMobile} from "../../utils";
+import {useMobile} from "../../hook";
 
 const UserList = () => {
 
@@ -18,7 +18,7 @@ const UserList = () => {
 
 
     const {
-        tableQueryResult: {data, isLoading, isError,},
+        tableQueryResult: {data, isLoading, isError},
         current,
         setCurrent,
         setPageSize,
@@ -54,19 +54,22 @@ const UserList = () => {
                 display: 'flex',
                 flexDirection: width > 1100 ? 'row' : 'column',
                 gap: 2,
-                alignItems: 'center',
+                alignItems: width > 1100 ? 'start' : 'center',
             }}>
                 <Box sx={{
                     display: 'flex',
                     flexDirection: 'row',
                     width: width > 1100 ? '40%' : '100%',
                     alignItems: 'center',
-                    maxWidth: '450px'
+                    position: width > 1100 ? 'sticky' : 'unset',
+                    top: '75px',
+                    maxWidth: {xs: '90%', sm: '700px'}
                 }}>
                     <FilterNews
                         filters={filters}
                         setFilters={setFilters}
                         sortBy={sortBy}
+                        setCurrent={setCurrent}
                         setSortBy={setSortBy}
                         setSearchValue={setSearchValue}
                         sorters={sorters}

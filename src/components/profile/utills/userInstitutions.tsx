@@ -5,7 +5,7 @@ import Variant1EstablishmentCard from "../../establishment/utills/variant1Establ
 import React, {useState} from "react";
 import {useInfiniteList, useTranslate} from "@refinedev/core";
 import Loading from "../../loading/loading";
-import {useMobile} from "../../../utils";
+import {useMobile} from "../../../hook";
 
 interface IProps {
     id: string

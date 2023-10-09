@@ -116,23 +116,20 @@ const Variant1EstablishmentCard = ({
                                 "{title}"
                             </Typography>
                         </Box>
-                        {
-                            createdBy !== user?._id &&
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    position: 'absolute',
-                                    right: '-1px',
-                                    top: '-1px',
-                                    zIndex: 20,
-                                }}
-                            >
-                                <BookMarkButton showText={false} bgColor={mode === "dark" ? '#000' : '#fff'}
-                                                color={'common.white'} id={_id} type={'favoritePlaces'}/>
-                            </Box>
-                        }
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                position: 'absolute',
+                                right: '-1px',
+                                top: '-1px',
+                                zIndex: 20,
+                            }}
+                        >
+                            <BookMarkButton showText={false} bgColor={mode === "dark" ? '#000' : '#fff'}
+                                            color={'common.white'} id={_id} type={'favoritePlaces'}/>
+                        </Box>
                         <Box color={"default"} sx={{
                             display: 'flex',
                             textDecoration: 'none',

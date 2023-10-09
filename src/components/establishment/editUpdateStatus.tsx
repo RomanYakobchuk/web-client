@@ -3,11 +3,10 @@ import {useForm} from "@refinedev/react-hook-form";
 import {Box, Button, FormControl, MenuItem, Select, Typography} from "@mui/material";
 import {useEffect, useState} from "react";
 import {useTranslate} from "@refinedev/core";
+import {BrandingWatermark, Category, Place, Title} from "@mui/icons-material";
 
 import {Loading} from "../index";
 import {PropertyProps} from "../../interfaces/common";
-import {axiosInstance} from "../../authProvider";
-import {BrandingWatermark, Category, Place, Title} from "@mui/icons-material";
 
 
 const EditUpdateStatus = () => {

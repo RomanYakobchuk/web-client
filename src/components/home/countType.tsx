@@ -3,7 +3,7 @@ import {useList, useTranslate} from "@refinedev/core";
 import {Link, useNavigate} from "react-router-dom";
 import {Typography as TypographyAntd} from "antd";
 import ScrollContent from "../common/scrollContent";
-import {useMobile} from "../../utils";
+import {useMobile} from "../../hook";
 import {color} from "three/examples/jsm/nodes/shadernode/ShaderNodeBaseElements";
 import {useContext} from "react";
 import {ColorModeContext} from "../../contexts";

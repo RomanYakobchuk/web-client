@@ -1,13 +1,17 @@
-import SearchInputComponent from "./searchInputComponent";
-import SearchByTypeComponent from "./establishment/searchByTypeComponent";
-import SearchNewsByCategory from "./news/searchNewsByCategory";
-import SearchButtonFilterComponent from "./searchButtonFilterComponent";
+import SearchByTypeComponent from "./searchByTypeComponent";
 import SearchByAverageCheckComponent from "./establishment/searchByAverageCheckComponent";
+import SearchByFreeSeats from "./establishment/searchByFreeSeats";
+
+import SortNewsComponent from "./news/sortNewsComponent";
+
+import SearchButtonFilterComponent from "./searchButtonFilterComponent";
+import SearchInputComponent from "./searchInputComponent";
 
 export {
     SearchInputComponent,
     SearchByTypeComponent,
-    SearchNewsByCategory,
     SearchButtonFilterComponent,
-    SearchByAverageCheckComponent
+    SearchByAverageCheckComponent,
+    SearchByFreeSeats,
+    SortNewsComponent
 }

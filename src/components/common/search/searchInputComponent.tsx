@@ -5,7 +5,7 @@ import React, {useContext} from "react";
 import {useTranslate} from "@refinedev/core";
 
 import {antdInputStyle} from "../../../styles";
-import {useMobile} from "../../../utils";
+import {useMobile} from "../../../hook";
 import {ColorModeContext} from "../../../contexts";
 import {SetFilterType} from "../../../interfaces/types";
 
@@ -13,9 +13,10 @@ interface IProps {
     searchValue: string,
     setSearchValue: (value: string) => void,
     defaultSetFilters: SetFilterType,
+    isButton?: boolean,
     styleSx?: SxProps
 }
-const SearchInputComponent = ({setSearchValue, searchValue, defaultSetFilters, styleSx}: IProps) => {
+const SearchInputComponent = ({setSearchValue, searchValue, defaultSetFilters, styleSx, isButton = true}: IProps) => {
     const translate = useTranslate();
     const {width} = useMobile();
     const {mode} = useContext(ColorModeContext);
@@ -70,7 +71,7 @@ const SearchInputComponent = ({setSearchValue, searchValue, defaultSetFilters, s
                     }}>
                         <SearchOutlined/>
                         {
-                            width < 500 && searchValue?.length > 0 && (
+                            (width < 500 || !isButton) && searchValue?.length > 0 && (
                                 <IconButton size={"small"} onClick={() => setSearchValue('')}>
                                     <ClearOutlined/>
                                 </IconButton>
@@ -82,7 +83,7 @@ const SearchInputComponent = ({setSearchValue, searchValue, defaultSetFilters, s
                 placeholder={`${translate('buttons.search')}...`}
             />
             {
-                width > 500 &&
+                (width > 500 && isButton) &&
                 <Button
                     onClick={() => {
                         setSearchValue('');
@@ -110,7 +111,7 @@ const SearchInputComponent = ({setSearchValue, searchValue, defaultSetFilters, s
                 </Button>
             }
             {
-                width > 500 &&
+                (width > 500 && isButton) &&
                 <Button
                     onClick={search}
                     variant={'contained'}

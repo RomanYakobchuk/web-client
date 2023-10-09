@@ -6,7 +6,7 @@ import {EastOutlined, Place} from "@mui/icons-material";
 import dayjs from "dayjs";
 import React, {useContext} from "react";
 import {ColorModeContext} from "../../../contexts";
-import {useMobile} from "../../../utils";
+import {useMobile} from "../../../hook";
 import {useNavigate} from "react-router-dom";
 
 interface IProps {
@@ -77,7 +77,7 @@ const NewsCard = ({
                     </Typography>
                 </Box>
                 {
-                    place?.address &&
+                    place?.place?.address &&
                     <Stack direction="row" gap={0.5} justifyContent={"start"} alignItems="center">
                         <Place
                             sx={{
@@ -92,7 +92,7 @@ const NewsCard = ({
                             alignItems: 'center'
                         }} color="main">
                             {
-                                place?.address
+                                place?.place?.address
                             }
                         </Typography>
                     </Stack>

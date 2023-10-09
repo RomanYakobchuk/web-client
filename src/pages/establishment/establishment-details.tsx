@@ -3,8 +3,8 @@ import {
     Box,
     Button,
 } from "@mui/material";
-import {useParams} from "react-router-dom";
-import {useGetIdentity, useShow, useTranslate} from "@refinedev/core";
+import {useParams, Link, Outlet, useNavigate} from "react-router-dom";
+import {CanAccess, useGetIdentity, useShow, useTranslate} from "@refinedev/core";
 import {ErrorComponent} from "@refinedev/mui";
 import {
     MessageOutlined,
@@ -16,9 +16,9 @@ import {IGetIdentity, ISubscribe, ProfileProps, PropertyProps} from "../../inter
 import {ColorModeContext} from "../../contexts";
 import MainEstablishmentInfo from "../../components/establishment/main-establishment-info";
 import InstitutionNews from "../../components/establishment/institution-news";
-import {CustomShow} from "../../components";
+import {CustomShow, NearbyEstablishmentBtn} from "../../components";
 import InstitutionReviews from "../../components/establishment/institution-reviews";
-import {useMobile} from "../../utils";
+import {useMobile} from "../../hook";
 import InstitutionComments from "../../components/establishment/institution-comments";
 
 
@@ -43,9 +43,10 @@ const EstablishmentDetails: FC = () => {
     const user: ProfileProps = identity?.user as ProfileProps;
     const {mode} = useContext(ColorModeContext);
     const translate = useTranslate();
+    const navigate = useNavigate();
     const {device, width} = useMobile();
 
-    const {queryResult} = useShow<{institution: PropertyProps, subscribe: ISubscribe }>({
+    const {queryResult} = useShow<{ institution: PropertyProps, subscribe: ISubscribe }>({
         resource: 'institution/infoById',
         id: id as string,
         errorNotification: (data: any) => {
@@ -63,6 +64,9 @@ const EstablishmentDetails: FC = () => {
 
     const [dataForBody, setDataForBody] = useState("news");
 
+    const handleNavigate = (route: string) => {
+        navigate(route)
+    }
     if (isError) return <ErrorComponent/>
 
     return (
@@ -79,10 +83,27 @@ const EstablishmentDetails: FC = () => {
                 alignItems: 'start',
                 mt: '10px'
             }}>
+                <CanAccess
+                    action={'add_free_places'}
+                    resource={'all_institutions'}
+                >
+                    <Link
+                        to={'add_free_places'}
+                    >
+                        add_free_places
+                    </Link>
+                </CanAccess>
                 <MainEstablishmentInfo
-                    rowHeight={device && width < 600 ? 120 : 200}
                     subscribe={subscribe}
                     establishment={institution}/>
+                <NearbyEstablishmentBtn
+                    establishment={institution}
+                    location={institution.location}
+                    style={{
+                        width: '100%',
+                        mb: 0
+                    }}
+                />
                 <Box sx={{
                     display: 'flex',
                     flexDirection: 'column',
@@ -139,7 +160,8 @@ const EstablishmentDetails: FC = () => {
                                                     ? 'white'
                                                     : '#000',
                                         }}
-                                        onClick={() => setDataForBody(label)}
+                                        // onClick={() => setDataForBody(label)}
+                                        onClick={() => handleNavigate(label)}
                                         // endIcon={icon}
                                     >
                                         {translate(`home.show.${label}.title`)}
@@ -153,13 +175,14 @@ const EstablishmentDetails: FC = () => {
                         width: '100%',
                         height: 'fit-content'
                     }}>
-                        {
-                            dataForBody === "reviews" ?
-                                <InstitutionReviews id={institution?._id}/>
-                                : dataForBody === 'news' ?
-                                    <InstitutionNews institution={institution}/> :
-                                    <InstitutionComments institutionId={institution?._id}/>
-                        }
+                        {/*{*/}
+                        {/*    dataForBody === "reviews" ?*/}
+                        {/*        <InstitutionReviews id={institution?._id}/>*/}
+                        {/*        : dataForBody === 'news' ?*/}
+                        {/*            <InstitutionNews institution={institution}/> :*/}
+                        {/*            <InstitutionComments institutionId={institution?._id}/>*/}
+                        {/*}*/}
+                        <Outlet/>
                     </Box>
                 </Box>
                 {/*}*/}

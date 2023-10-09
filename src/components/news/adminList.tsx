@@ -38,9 +38,8 @@ import {
     PropertyProps
 } from "../../interfaces/common";
 import {CustomAccordion} from "../index";
-import {ColorModeContext} from "../../contexts";
 import dayjs from "dayjs";
-import {useMobile} from "../../utils";
+import {useMobile} from "../../hook";
 
 const AdminList = () => {
     const translate = useTranslate();

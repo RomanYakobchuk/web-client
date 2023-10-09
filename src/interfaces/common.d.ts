@@ -1,6 +1,4 @@
-import {ChangeEvent, Dispatch, FormEventHandler, ReactNode, SetStateAction} from "react";
-import {FieldValues, UseFormHandleSubmit} from "react-hook-form";
-import {BaseRecord, CreateResponse, UpdateResponse} from "@refinedev/core";
+import {ChangeEvent, ReactNode} from "react";
 import {CredentialResponse} from "./google";
 import {ContextStore} from "@uiw/react-md-editor";
 
@@ -77,6 +75,7 @@ export interface ProfileProps {
         isBlocked?: boolean,
         whyBlock?: string
     },
+
     [key: string]: any
 }
 
@@ -120,16 +119,41 @@ export interface PropertyProps {
     ratings?: Array<string> | Array<object> | any,
     reviews?: Array<String> | any,
     averageCheck: string,
-    features: [{ value: string }],
+    features: [{
+        value: string
+    }],
     createdBy?: string | any,
     variantForDisplay?: string | any,
     news?: any,
     createdAt?: Date | any,
     views?: {
         viewsNumber?: number
-    }
+    },
+    freeSeats: string | IFreeSeats
 }
 
+export interface IFreeSeats {
+    _id: string,
+    establishmentId: string | PropertyProps,
+    list: IFreeSeatsList[],
+    allFreeSeats: number,
+    isCombineTheSeats: boolean,
+    createdAt?: Date,
+    updatedAt?: Date,
+}
+
+export interface IFreeSeatsList {
+    table: number,
+    numberOfSeats: number,
+    status: "free" | "reserved" | "",
+    description?: string
+}
+export interface IFreeSeatsProps {
+    isCombineTheSeats: boolean,
+    table: number,
+    numberOfSeats: number,
+    status: IFreeSeatsList['status']
+}
 export interface IPropertyPropsFilterVariables {
     averageCheck_gte: number,
     averageCheck_lte: number,
@@ -218,18 +242,6 @@ export interface ICity {
     _id: string;
 }
 
-export interface FormProps {
-    type: string,
-    register: any,
-    onFinish: (values: FieldValues) => Promise<void | CreateResponse<BaseRecord> | UpdateResponse<BaseRecord>>,
-    formLoading: boolean,
-    handleSubmit: FormEventHandler<HTMLFormElement> | undefined,
-    handleImageChange: (file) => void,
-    onFinishHandler: (data: FieldValues) => Promise<void> | void,
-    propertyImage: { name: string, url: string },
-}
-
-
 export interface IConv {
     _id?: string,
     members?: string[],
@@ -254,7 +266,7 @@ export interface IStar {
 
 export interface INews {
     _id: string,
-    institutionId?: string | any,
+    institutionId?: string | PropertyProps,
     title: string,
     index?: number,
     createdAt: Date | any,
@@ -269,13 +281,15 @@ export interface INews {
         isPublish: boolean,
         datePublish: Date | any
     },
-    place?: {
-        city?: string,
-        address?: string,
+    place: {
+        place: {
+            city: string,
+            address: string,
+        },
         isPlace?: boolean,
         location: {
-            lat: number | any,
-            lng: number | any
+            lat: number,
+            lng: number
         }
     }
 }
@@ -296,6 +310,7 @@ export interface IOptionGroup {
     userId?: string,
     title?: string,
     id?: string,
+    allInfo?: PropertyProps,
     key?: string
 }
 
@@ -304,6 +319,7 @@ export interface IOptions {
     options: IOptionGroup[];
     title?: string,
     userId?: string,
+    allInfo?: PropertyProps,
     id?: string,
     value?: string,
     key?: string
@@ -320,7 +336,9 @@ export interface IPost {
     title: string;
     content: string;
     status: "published" | "draft" | "rejected";
-    category: { id: number };
+    category: {
+        id: number
+    };
 }
 
 export interface IPostFilterVariables {
@@ -353,46 +371,6 @@ export interface IMenu {
     }
 }
 
-export interface IPlaceFormProps {
-    onFinish?: (values: FieldValues) => Promise<void | CreateResponse<BaseRecord> | UpdateResponse<BaseRecord>>,
-    setSendNotifications: (value: boolean) => void,
-    sendNotifications: boolean,
-    defaultPictures: IPicture[],
-    handleSubmit:  UseFormHandleSubmit<FieldValues, undefined>,
-    onFinishHandler: (data: FieldValues) => Promise<void> | void,
-    setPictures: (item: IPicture[] | File[]) => void,
-    pictures: IPicture[] | File[],
-    type: string,
-    setType: (item: string) => void,
-    workScheduleWeekend: PropertyProps["workSchedule"]["weekend"],
-    setWorkScheduleWeekend: (item: setWorkScheduleWeekend) => void,
-    location: google.maps.LatLngLiteral | any,
-    setLocation: (item: {lat: number, lng: number}) => void,
-    tags: Array<any> | any,
-    setTags: (item: any) => void,
-    place: { address: string, city: string },
-    setPlace: ({ address: string, city: string }) => void,
-    features: Array<any> | any,
-    setFeatures: (item: any) => void,
-    contacts: Array<any> | any,
-    setContacts: (item: any) => void,
-    workSchedule?: PropertyProps["workSchedule"] | any,
-    setWorkSchedule?: (item: PropertyProps["workSchedule"] | any) => void,
-    workDays: IWorkDay[],
-    setWorkDays: (item: PropertyProps["workSchedule"]["workDays"]) => void,
-    description: string,
-    setDescription: (value?: string, event?: any, state?: any) => void,
-    createdBy: string,
-    setCreatedBy: (item: string) => void,
-    searchManagerInput?: string,
-    setSearchManagerInput?: (item: string) => void,
-    searchInputValue?: string,
-    setSearchInputValue?: (item: string) => void,
-    title: string,
-    setTitle: (value: string) => void,
-    averageCheck: string,
-    setAverageCheck: (value: string) => void,
-}
 export interface INewsDateEvent {
     schedule?: {
         from?: Date | string | null,
@@ -403,33 +381,11 @@ export interface INewsDateEvent {
         to?: Date | string | null
     }
 }
-export interface INewsDataProps {
-    handleSubmit:  UseFormHandleSubmit<FieldValues, undefined>,
-    onFinishHandler: (data: FieldValues) => Promise<void> | void,
-    institutionInfo: PropertyProps,
-    defaultPictures: IPicture[],
-    pictures: IPicture[] | File[],
-    setPictures: Dispatch<SetStateAction<IPicture[] | File[]>>,
-    setInstitutionInfo: (item: PropertyProps) => void,
-    userInstitutions?: any,
-    title: string,
-    setTitle: (value: string) => void,
-    category: string,
-    setCategory: (value: string) => void,
-    dateEvent: INewsDateEvent[],
-    setDateEvent: Dispatch<SetStateAction<INewsDateEvent[]>>,
-    description: string,
-    setDescription: IMDEditor['set'] | ((value: string) => void),
-    status: string,
-    setStatus: (value: string) => void,
-    isDatePublished: boolean,
-    setIsDatePublished: (value: boolean) => void,
-    datePublished: any,
-    setDatePublished: any,
-}
+
 export interface IMDEditor {
     set: ((value?: string, event?: ChangeEvent<HTMLTextAreaElement> | undefined, state?: ContextStore | undefined) => void) | undefined
 }
+
 export interface IConv {
     _id: string,
     members: string[],
@@ -516,7 +472,7 @@ export interface ISubscribe {
     updatedAt?: Date,
 }
 
-export interface INotification  {
+export interface INotification {
     _id: string,
     subscribeId: string,
     newsId: string,

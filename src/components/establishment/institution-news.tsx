@@ -3,7 +3,7 @@ import {useTranslate} from "@refinedev/core";
 
 import {INews, PropertyProps} from "../../interfaces/common";
 import {NewsCard} from "../index";
-import {useMobile} from "../../utils";
+import {useMobile} from "../../hook";
 
 interface IProps {
     institution: PropertyProps

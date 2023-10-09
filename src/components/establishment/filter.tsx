@@ -1,25 +1,31 @@
 import {
     Box,
-    Button,
     FormControl
 } from "@mui/material";
-import {FilterList} from "@mui/icons-material";
-import React, {ReactNode, useContext, useEffect, useState} from "react";
+import React, {Dispatch, ReactNode, useContext, useEffect, useState} from "react";
 import {CrudFilters, CrudSorting, LogicalFilter, useTranslate} from "@refinedev/core";
 import {useLocation} from "react-router-dom";
 import {useDebounce} from "use-debounce";
 
 import {ColorModeContext} from "../../contexts";
-import {ModalWindow, SearchCity, VariantComponent} from "../index";
-import {useMobile} from "../../utils";
+import {
+    CustomOpenContentBtn,
+    FilterBtn,
+    ModalWindow,
+    NearbyEstablishmentBtn,
+    SearchCity,
+    VariantComponent
+} from "../index";
+import {useMobile, usePosition} from "../../hook";
 import {EstablishmentType, SetFilterType} from "../../interfaces/types";
 import {
     SearchButtonFilterComponent,
-    SearchByAverageCheckComponent,
+    SearchByAverageCheckComponent, SearchByFreeSeats,
     SearchByTypeComponent,
     SearchInputComponent
 } from "../common/search";
 import SortEstablishmentComponent from "../common/search/establishment/sortEstablishmentComponent";
+import {IFreeSeatsProps, PropertyProps} from "../../interfaces/common";
 
 
 interface IProps {
@@ -31,6 +37,7 @@ interface IProps {
     setSorters: (sorter: CrudSorting) => void,
     searchValue: string,
     filters: CrudFilters,
+    setCurrent: Dispatch<React.SetStateAction<number>>,
 }
 
 const FilterInstitutions = ({
@@ -42,13 +49,16 @@ const FilterInstitutions = ({
                                 setSearchValue,
                                 searchValue,
                                 filters,
+                                setCurrent
                             }: IProps) => {
 
     const translate = useTranslate();
     const {state: locationState} = useLocation();
+    const {position, error} = usePosition();
     const {mode} = useContext(ColorModeContext);
-    const {width} = useMobile();
+    const {width, height} = useMobile();
 
+    const [freeSeats, setFreeSeats] = useState({} as IFreeSeatsProps);
     const [filterLength, setFilterLength] = useState<number>(0);
     const [openFilter, setOpenFilter] = useState(false);
     const [newFilters, setFilters] = useState<CrudFilters>([{}] as CrudFilters);
@@ -62,8 +72,6 @@ const FilterInstitutions = ({
     const [debouncedSearchCity] = useDebounce(searchCity, 500);
 
     const isShowAllFilters = width > 600;
-
-    const bRButtonFilter = '7px';
 
     // const currentFilterValues = useMemo(() => {
     //     const logicalFilters = newFilters!?.flatMap((item: CrudFilter) =>
@@ -208,42 +216,7 @@ const FilterInstitutions = ({
         </FormControl>
     )
 
-    const filterButton: ReactNode = (
-        <Button
-            variant={'contained'}
-            sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: 1,
-                color: 'common.black',
-                bgcolor: 'common.white',
-                "&:hover": {
-                    color: 'common.black',
-                    bgcolor: 'common.white'
-                },
-                height: '40px',
-                textTransform: 'unset',
-                fontSize: '14px',
-                fontWeight: 600,
-                borderRadius: bRButtonFilter
-            }}
-            onClick={() => setOpenFilter(true)}
-            size={'small'}
-        >
-            <FilterList sx={{
-                width: '25px',
-                height: '25px'
-            }}/>
-            {
-                isShowAllFilters ? (
-                    translate('buttons.moreFilter')
-                ) : (
-                    `${filterLength} ${translate('buttons.filtersApplied')}`
-                )
-            }
-        </Button>
-    )
+    const isFilterBtnAbsolute = height - 100 >= 400;
 
     return (
         <Box sx={{
@@ -276,7 +249,11 @@ const FilterInstitutions = ({
                                 SearchByCityComponent
                             }
                         </Box>
-                        {filterButton}
+                        <FilterBtn
+                            setOpenFilter={setOpenFilter}
+                            filterLength={filterLength}
+                            isShowAllFilters={isShowAllFilters}
+                        />
                     </Box>
                 )
             }
@@ -305,12 +282,13 @@ const FilterInstitutions = ({
                                 display: 'flex',
                                 flexDirection: 'row',
                                 alignItems: 'center',
-                                gap: 2,
+                                gap: {xs: 2, sm: 1, md: 2},
                             }}>
                                 <SearchByTypeComponent
                                     defaultSetFilters={defaultSetFilters}
                                     setFilters={setFilters}
                                     type={type}
+                                    setCurrent={setCurrent}
                                     isShowAllFilters={isShowAllFilters}
                                     setType={setType}
                                 />
@@ -333,7 +311,11 @@ const FilterInstitutions = ({
                             flexDirection: 'column',
                             gap: 1
                         }}>
-                            {filterButton}
+                            <FilterBtn
+                                setOpenFilter={setOpenFilter}
+                                filterLength={filterLength}
+                                isShowAllFilters={isShowAllFilters}
+                            />
                             <Box sx={{
                                 display: 'flex',
                                 width: '100%',
@@ -355,69 +337,83 @@ const FilterInstitutions = ({
                     )
                 }
             </Box>
-            <Box sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                flexDirection: 'column',
-                width: '100%',
-            }}>
-                <ModalWindow open={openFilter} setOpen={setOpenFilter} title={
-                    <Box sx={{
-                        fontSize: {xs: '20px', md: '24px'},
-                        fontWeight: 600,
-                        width: '100%',
-                        textAlign: 'center'
-                    }}>
-                        {translate('buttons.filter')}
-                    </Box>
-                }>
-                    {
-                        openFilter && (
+            <NearbyEstablishmentBtn
+                error={error}
+                location={position as PropertyProps['location']}/>
+            <ModalWindow open={openFilter} setOpen={setOpenFilter} title={
+                <Box sx={{
+                    fontSize: {xs: '20px', md: '24px'},
+                    fontWeight: 600,
+                    width: '100%',
+                    textAlign: 'center'
+                }}>
+                    {translate('buttons.filter')}
+                </Box>
+            }>
+                {
+                    openFilter && (
+                        <Box sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'space-between',
+                            height: '100%',
+                            pt: 2
+                        }}>
                             <Box sx={{
                                 display: 'flex',
                                 flexDirection: 'column',
-                                justifyContent: 'space-between',
-                                height: '100%',
-                                pt: 2
+                                gap: 3,
                             }}>
-                                <Box sx={{
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    gap: 3,
-                                }}>
-                                    {
-                                        !isShowAllFilters && (
-                                            <>
-                                                {SearchByCityComponent}
-                                                <SearchByTypeComponent
-                                                    defaultSetFilters={defaultSetFilters}
-                                                    setFilters={setFilters}
-                                                    type={type}
-                                                    isShowAllFilters={isShowAllFilters}
-                                                    setType={setType}
-                                                />
-                                            </>
-                                        )
-                                    }
-                                    <SearchByAverageCheckComponent
-                                        valueGte={valueGte}
-                                        setValueGte={setValueGte}
-                                        valueLte={valueLte}
-                                        setValueLte={setValueLte}
-                                        setFilters={setFilters}
-                                    />
-                                </Box>
+                                {
+                                    !isShowAllFilters && (
+                                        <>
+                                            {SearchByCityComponent}
+                                            <SearchByTypeComponent
+                                                defaultSetFilters={defaultSetFilters}
+                                                setFilters={setFilters}
+                                                type={type}
+                                                setCurrent={setCurrent}
+                                                isShowAllFilters={isShowAllFilters}
+                                                setType={setType}
+                                            />
+                                        </>
+                                    )
+                                }
+                                <CustomOpenContentBtn
+                                    style={{
+                                        bgcolor: mode === 'dark' ? '#000' : '#fff',
+                                        p: '10px'
+                                    }}
+                                    openText={translate('')}
+                                >
+                                    <SearchByFreeSeats freeSeats={freeSeats} setFreeSeats={setFreeSeats}/>
+                                </CustomOpenContentBtn>
+                                <SearchByAverageCheckComponent
+                                    valueGte={valueGte}
+                                    setValueGte={setValueGte}
+                                    valueLte={valueLte}
+                                    setValueLte={setValueLte}
+                                    setFilters={setFilters}
+                                />
+                            </Box>
+                            <Box sx={{
+                                position: isFilterBtnAbsolute ? 'absolute' : 'unset',
+                                bottom: '15px',
+                                left: 0,
+                                right: 0,
+                                width: '90%',
+                                margin: '0 auto'
+                            }}>
                                 <SearchButtonFilterComponent
                                     setOpenFilter={setOpenFilter}
                                     handleReplace={handleReplace}
                                     handleSearch={handleSearch}
                                 />
                             </Box>
-                        )
-                    }
-                </ModalWindow>
-            </Box>
+                        </Box>
+                    )
+                }
+            </ModalWindow>
         </Box>
     );
 };

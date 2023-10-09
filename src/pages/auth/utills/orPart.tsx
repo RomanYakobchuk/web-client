@@ -69,7 +69,7 @@ const OrPart = ({googleType, googleText, facebookType, facebookText, githubType}
             }}>
                 <GoogleAuth type={googleType} text={googleText}/>
                 <FacebookAuth type={facebookType} text={facebookText}/>
-                <GithubAuth type={githubType}/>
+                {/*<GithubAuth type={githubType}/>*/}
             </Box>
         </Box>
     );

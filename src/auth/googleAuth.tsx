@@ -7,7 +7,8 @@ import {axiosInstance} from "../authProvider";
 import {Google} from "@mui/icons-material";
 import {buttonStyle} from "../styles";
 import {ColorModeContext} from "../contexts";
-import {useMobile} from "../utils";
+import {useMobile} from "../hook";
+import {useNavigate} from "react-router-dom";
 
 
 type IProps = {
@@ -20,6 +21,7 @@ const GoogleButton = ({type, text = "signin_with"}: IProps): JSX.Element => {
     const translate = useTranslate();
     const {mode} = useContext(ColorModeContext);
     const {width} = useMobile();
+    const navigate = useNavigate();
     const {mutate: login} = useLogin<CredentialResponse>();
 
     const onSuccess = async (tokenResponse: TokenResponse) => {
@@ -30,6 +32,8 @@ const GoogleButton = ({type, text = "signin_with"}: IProps): JSX.Element => {
             });
             if (type === 'login') {
                 login(res.data)
+            } else {
+                navigate('/login')
             }
         } catch (e: any) {
             open?.({

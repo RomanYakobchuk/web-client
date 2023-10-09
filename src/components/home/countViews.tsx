@@ -4,7 +4,7 @@ import {Link, useNavigate} from "react-router-dom";
 import {Typography as TypographyAntd} from "antd";
 import {PlaceOutlined} from "@mui/icons-material";
 import ScrollContent from "../common/scrollContent";
-import {useMobile} from "../../utils";
+import {useMobile} from "../../hook";
 import {CarouselComponent} from "../index";
 import {IPicture} from "../../interfaces/common";
 

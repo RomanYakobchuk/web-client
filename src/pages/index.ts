@@ -2,6 +2,9 @@ import AllEstablishments from "./establishment/all_establishments";
 import CreateEstablishment from "./establishment/create-establishment";
 import EditEstablishment from "./establishment/edit-establishment";
 import EstablishmentDetails from "./establishment/establishment-details";
+import AddFreeSeats from "./establishment/addFreeSeats";
+import ShowFreeSeats from "./establishment/showFreeSeats";
+import UpdateFreeSeats from "./establishment/updateFreeSeats";
 
 import TopInstitutions from "./other/topInstitutions";
 
@@ -69,5 +72,8 @@ export {
     EditReserve,
     DetailsReserve,
     CreateReservation,
-    UpdateCity
+    UpdateCity,
+    ShowFreeSeats,
+    AddFreeSeats,
+    UpdateFreeSeats
 }

@@ -3,7 +3,7 @@ import {ReactNode, MouseEvent, useState, useEffect} from "react";
 import {CloseOutlined} from "@mui/icons-material";
 import ReactDOM from "react-dom";
 
-import {useMobile} from "../../utils";
+import {useMobile} from "../../hook";
 import './modalWindow.css';
 
 interface IProps {
@@ -22,7 +22,7 @@ const ModalWindow = ({children, open, setOpen, title, titleStyle, bodyProps, con
 
     const {width, device} = useMobile();
 
-    const someStyle = !device ? {
+    const someStyle = (!device || width < 600) ? {
         '&::-webkit-scrollbar': {
             width: '10px',
             bgcolor: 'transparent',
@@ -59,39 +59,39 @@ const ModalWindow = ({children, open, setOpen, title, titleStyle, bodyProps, con
     }
 
     return ReactDOM.createPortal(
-            <Box
-                role={'presentation'}
-                sx={{
-                    position: 'fixed',
-                    inset: 0,
+        <Box
+            role={'presentation'}
+            sx={{
+                position: 'fixed',
+                inset: 0,
+                opacity: 1,
+                zIndex: 30,
+                width: '100%',
+                top: open ? 0 : '100%',
+                height: '100vh',
+                transition: 'top 1s linear',
+                animation: `${open ? 'OpenModalWindow' : 'CloseModalWindow'} 1s linear forwards`,
+                bgcolor: 'rgba(107, 122, 144, 0.2)',
+                backdropFilter: 'blur(4px)',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                "& .ReactModal__Overlay": {
+                    opacity: 0,
+                    transform: " translateX(-100px)",
+                    transition: " all 500ms ease-in-out"
+                },
+                "& .ReactModal__Overlay--after-open": {
                     opacity: 1,
-                    zIndex: 30,
-                    width: '100%',
-                    top: open ? 0 : '100%',
-                    height: '100vh',
-                    transition: 'top 1s linear',
-                    animation: `${open ? 'OpenModalWindow' : 'CloseModalWindow'} 1s linear forwards`,
-                    bgcolor: 'rgba(107, 122, 144, 0.2)',
-                    backdropFilter: 'blur(4px)',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    "& .ReactModal__Overlay": {
-                        opacity: 0,
-                        transform: " translateX(-100px)",
-                        transition: " all 500ms ease-in-out"
-                    },
-                                "& .ReactModal__Overlay--after-open": {
-                        opacity: 1,
-                        transform: 'translateX(0px)'
-                    },
-                    ".ReactModal__Overlay--before-close ": {
-                        opacity: 0,
-                        transform: 'translateX(-100px)'
-                    }
-                }}
-                onClick={() => setOpen(false)}
-            >
+                    transform: 'translateX(0px)'
+                },
+                ".ReactModal__Overlay--before-close ": {
+                    opacity: 0,
+                    transform: 'translateX(-100px)'
+                }
+            }}
+            onClick={() => setOpen(false)}
+        >
             <Box
                 onClick={handleModalClick}
                 sx={{
@@ -107,51 +107,56 @@ const ModalWindow = ({children, open, setOpen, title, titleStyle, bodyProps, con
                     bgcolor: 'common.black',
                     ...contentProps
                 }}>
-                <header style={{
-                    borderBottom: title ? '1px solid rgb(218, 226, 237)' : '1px solid transparent',
-                    borderTopColor: 'rgb(218, 226, 237)',
-                    borderRightColor: 'rgb(218, 226, 237)',
-                    borderLeftColor: 'rgb(218, 226, 237)',
-                    padding: width > 600 ? '14px' : '8px',
-                    display: 'flex',
-                    justifyContent: 'center',
+                <Box sx={{
                     position: 'relative',
+                    width: '100%',
+                    height: '100%'
                 }}>
-                    <Box sx={{
-                        width: '100%',
-                        ...titleStyle
+                    <header style={{
+                        borderBottom: title ? '1px solid rgb(218, 226, 237)' : '1px solid transparent',
+                        borderTopColor: 'rgb(218, 226, 237)',
+                        borderRightColor: 'rgb(218, 226, 237)',
+                        borderLeftColor: 'rgb(218, 226, 237)',
+                        padding: width > 600 ? '14px' : '8px',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        position: 'relative',
                     }}>
-                        {title}
-                    </Box>
-                    <IconButton
+                        <Box sx={{
+                            width: '100%',
+                            ...titleStyle
+                        }}>
+                            {title}
+                        </Box>
+                        <IconButton
+                            sx={{
+                                position: 'absolute',
+                                top: '50%',
+                                transform: 'translateY(-50%)',
+                                right: '10px'
+                            }}
+                            onClick={() => setOpen(false)}
+                        >
+                            <CloseOutlined/>
+                        </IconButton>
+                    </header>
+                    <Box
                         sx={{
-                            position: 'absolute',
-                            top: '50%',
-                            transform: 'translateY(-50%)',
-                            right: '10px'
+                            height: '100%',
+                            maxWidth: '90%',
+                            margin: '0 auto',
+                            maxHeight: 'calc(100% - 80px)',
+                            overflowX: 'hidden',
+                            overflowY: 'auto',
+                            ...someStyle,
+                            ...bodyProps,
                         }}
-                        onClick={() => setOpen(false)}
                     >
-                        <CloseOutlined/>
-                    </IconButton>
-                </header>
-                <Box
-                    sx={{
-                        height: '100%',
-                        minHeight: '384px',
-                        maxWidth: '90%',
-                        margin: '0 auto',
-                        maxHeight: '80%',
-                        overflowX: 'hidden',
-                        overflowY: 'auto',
-                        ...someStyle,
-                        ...bodyProps,
-                    }}
-                >
-                    {children}
+                        {children}
+                    </Box>
                 </Box>
             </Box>
-            </Box>, document.body
+        </Box>, document.body
         // </Modal>
     );
 };

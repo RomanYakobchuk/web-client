@@ -1,7 +1,7 @@
 import {Box} from "@mui/material";
 
 import {IConversation} from "../../../interfaces/common";
-import {useRole} from "../../../utils";
+import {useRole} from "../../../hook";
 import {useSearchParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {socket} from "../../../socketClient";

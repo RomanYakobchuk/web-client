@@ -5,7 +5,7 @@ import {Link, useNavigate} from "react-router-dom";
 import {EditLocationOutlined} from "@mui/icons-material";
 
 import ScrollContent from "../common/scrollContent";
-import {useMobile} from "../../utils";
+import {useMobile} from "../../hook";
 
 interface ICity {
     name_ua: string,

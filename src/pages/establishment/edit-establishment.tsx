@@ -1,12 +1,15 @@
 import {useBack, useGetIdentity, useTranslate} from "@refinedev/core";
 import {useParams} from "react-router-dom";
 import {useForm} from "@refinedev/react-hook-form";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 
 import {IPicture, ProfileProps, PropertyProps} from "../../interfaces/common";
 import DataForm from "../../components/establishment/dataForm";
 import {ErrorComponent} from "@refinedev/mui";
 import {CustomEdit} from "../../components";
+import {IEstablishmentFormProps} from "../../interfaces/formData";
+import {RestartAlt} from "@mui/icons-material";
+import {Button} from "antd";
 
 const EditEstablishment = () => {
     const {data: currentUser} = useGetIdentity<ProfileProps>();
@@ -64,24 +67,27 @@ const EditEstablishment = () => {
     const [description, setDescription] = useState<string | any>('');
     const [createdBy, setCreatedBy] = useState<string>('');
 
+    const loadData = () => {
+        setContacts(institution?.contacts)
+        setTags(institution?.tags)
+        setType(institution?.type)
+        setFeatures(institution?.features)
+        setAverageCheck(institution?.averageCheck)
+        setCreatedBy(institution?.createdBy)
+        setDescription(institution?.description)
+        setTitle(institution?.title)
+        setWorkSchedule(institution?.workSchedule)
+        setWorkDays(institution?.workSchedule?.workDays?.length > 0 ? institution?.workSchedule?.workDays : [institution?.workSchedule?.workDays])
+        setWorkScheduleWeekend(institution?.workSchedule?.weekend)
+        setLocation(institution?.location)
+        setPlace(institution?.place)
+        setPictures(institution?.pictures)
+        setDefaultPictures(institution?.pictures)
+        setSendNotifications(institution?.sendNotifications)
+    }
     useEffect(() => {
         if (institution) {
-            setContacts(institution?.contacts)
-            setTags(institution?.tags)
-            setType(institution?.type)
-            setFeatures(institution?.features)
-            setAverageCheck(institution?.averageCheck)
-            setCreatedBy(institution?.createdBy)
-            setDescription(institution?.description)
-            setTitle(institution?.title)
-            setWorkSchedule(institution?.workSchedule)
-            setWorkDays(institution?.workSchedule?.workDays?.length > 0 ? institution?.workSchedule?.workDays : [institution?.workSchedule?.workDays])
-            setWorkScheduleWeekend(institution?.workSchedule?.weekend)
-            setLocation(institution?.location)
-            setPlace(institution?.place)
-            setPictures(institution?.pictures)
-            setDefaultPictures(institution?.pictures)
-            setSendNotifications(institution?.sendNotifications)
+            loadData();
         }
     }, [institution]);
 
@@ -147,7 +153,7 @@ const EditEstablishment = () => {
 
     if (isErrorData) return <ErrorComponent/>
 
-    const props = {
+    const props: IEstablishmentFormProps = {
         defaultPictures,
         setPictures,
         pictures,
@@ -187,6 +193,16 @@ const EditEstablishment = () => {
             onClick={onFinishHandler}
             saveButtonProps={saveButtonProps}
         >
+            <Button
+                icon={<RestartAlt/>}
+                onClick={loadData}
+                style={{
+                    display: 'flex',
+                    alignItems: 'center'
+                }}
+            >
+                {translate('buttons.restore')}
+            </Button>
             <DataForm
                 {...props}
             />

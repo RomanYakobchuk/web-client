@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {parseJwt} from "./parse-jwt";
+import {parseJwt} from "../utils";
 import {ProfileProps, PropertyProps} from "../interfaces/common";
 import {axiosInstance} from "../authProvider";
 

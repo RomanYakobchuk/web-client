@@ -8,7 +8,7 @@ export const buttonStyle = {
     borderRadius: '7px',
     height: '40px',
     textTransform: 'capitalize',
-    "&:hover":{
+    "&:hover": {
         bgcolor: 'unset',
         color: 'unset'
     }
@@ -36,5 +36,22 @@ export const antdInputStyle = {
         "&::placeholder": {
             color: 'common.white'
         }
+    }
+}
+
+export const scrollBarStyle = {
+    '&::-webkit-scrollbar': {
+        width: '7px',
+        bgcolor: 'transparent',
+        borderRadius: '5px'
+    },
+    '&::-webkit-scrollbar-track': {
+        'webkitBoxShadow': 'inset 0 0 6px rgba(0,0,0,0.00)'
+    },
+    '&::-webkit-scrollbar-thumb': {
+        backgroundColor: 'rgba(0,0,0,.1)',
+        outline: '1px solid slategrey',
+        bgcolor: 'steelblue',
+        borderRadius: '5px',
     }
 }

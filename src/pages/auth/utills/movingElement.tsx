@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {useMobile} from "../../../utils";
+import {useMobile} from "../../../hook";
 
 interface MovingElementProps {
     index: number;

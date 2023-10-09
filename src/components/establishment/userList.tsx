@@ -38,6 +38,7 @@ const UserList = () => {
                     operator: 'contains'
                 }
             ])
+            setSearchValue('#' + state.value)
         }
     }, [state]);
 
@@ -70,6 +71,7 @@ const UserList = () => {
                             setFilters={setFilters}
                             sortBy={sortBy}
                             setSortBy={setSortBy}
+                            setCurrent={setCurrent}
                             setSearchValue={setSearchValue}
                             sorters={sorters}
                             setSorters={setSorters}
@@ -85,6 +87,7 @@ const UserList = () => {
                 current={current}
                 setCurrent={setCurrent}
                 pageSize={pageSize}
+                total={data?.total as number}
                 setPageSize={setPageSize}
             />
         </Box>

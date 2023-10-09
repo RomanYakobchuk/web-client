@@ -24,6 +24,7 @@ p, admin, home, (show)|(edit)|(delete)
 p, admin, all_institutions, (list)|(create)
 p, admin, all_institutions, (show)|(edit)|(delete)
 p, admin, all_institutions, update_status
+p, admin, all_institutions, add_free_places
 
 p, admin, chats, (list)|(create)
 p, admin, chats, (show)|(edit)|(delete)
@@ -89,6 +90,7 @@ p, manager, home, (list)|(create)
 p, manager, news, (list)|(create)
 p, manager, news, (edit)|(delete)|(show)
 p, manager, all_institutions, (list)|(create)
+p, manager, all_institutions, add_free_places
 p, manager, all_institutions, (show)|(edit)|(delete)
 
 p, manager, top_institutions, (list)|(create)

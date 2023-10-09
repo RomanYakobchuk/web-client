@@ -2,7 +2,7 @@ import {Box} from "@mui/material";
 import {useContext} from "react";
 
 import {ColorModeContext} from "../../contexts";
-import {useMobile} from "../../utils";
+import {useMobile} from "../../hook";
 
 interface IProps {
     children: any,

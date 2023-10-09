@@ -5,18 +5,19 @@ import React, {Dispatch} from "react";
 import {Loading, PaginationComponent} from "../../../index";
 import PropertiesList from "./propertiesList";
 import {PropertyProps} from "../../../../interfaces/common";
-import {useMobile} from "../../../../utils";
+import {useMobile} from "../../../../hook";
 
 type IProps = {
     isLoading: boolean,
-    allInstitutions: PropertyProps[]
+    allInstitutions: PropertyProps[],
+    total: number,
     data: GetListResponse<BaseRecord> | undefined,
     current: number,
     setCurrent: Dispatch<React.SetStateAction<number>>,
     pageSize: number,
     setPageSize: Dispatch<React.SetStateAction<number>>
 }
-const ListForUsers = ({isLoading, allInstitutions, data, current, setCurrent, setPageSize, pageSize}: IProps) => {
+const ListForUsers = ({isLoading, allInstitutions, data, current, setCurrent, setPageSize, pageSize, total}: IProps) => {
     const translate = useTranslate();
     const {width} = useMobile();
 
@@ -43,8 +44,8 @@ const ListForUsers = ({isLoading, allInstitutions, data, current, setCurrent, se
                         </Box>
             }
             {
-                allInstitutions.length > 1 && (
-                    <PaginationComponent count={data?.total as number} current={current} setCurrent={setCurrent}
+                total > 1 && (
+                    <PaginationComponent count={total as number} current={current} setCurrent={setCurrent}
                                          pageCount={pageSize} setPageSize={setPageSize}/>
                 )
             }

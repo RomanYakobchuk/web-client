@@ -7,7 +7,7 @@ import dayjs from "dayjs";
 
 import ReviewInput from "../establishment/utills/review-input";
 import Loading from "../loading/loading";
-import {useMobile} from "../../utils";
+import {useMobile} from "../../hook";
 import {IConversation, IGetIdentity, IMessage, ProfileProps,} from "../../interfaces/common";
 import {socket} from "../../socketClient";
 import ChatBox from "./utils/chat-box";

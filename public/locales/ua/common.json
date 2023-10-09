@@ -92,6 +92,7 @@
   },
   "buttons": {
     "copy": "Копіювати",
+    "add": "Додати",
     "create": "Створити",
     "details": "Деталі",
     "save": "Зберегти",
@@ -108,6 +109,7 @@
     "moreFilter": "Більше фільтрів",
     "clear": "Очистити",
     "reset": "Скинути",
+    "more": "Більше",
     "refresh": "Оновити",
     "restore": "Відновити",
     "show": "Показати",
@@ -122,9 +124,11 @@
     "isRejected": "Відхилено",
     "reply": "Відповісти",
     "nearby": "Заклади поблизу",
+    "hide": "Сховати",
     "google": {
       "signin_with": "Увійти з Google",
-      "signup_with": "Зареєструватися з Google"
+      "signup_with": "Зареєструватися з Google",
+      "viewRoute": "Переглянути маршрут"
     },
     "facebook": {
       "signin_with": "Увійти з Facebook",
@@ -328,7 +332,20 @@
     }
   },
   "all_institutions": {
-    "all_institutions": "Заклади"
+    "all_institutions": "Заклади",
+    "freeSeats": {
+      "title": "Вільні місця",
+      "create": "Додати вільні місця",
+      "isCombine": "Можливість об'єднання місць",
+      "tableNumber": "Номер столика",
+      "numberOfSeats": "Кількість місць",
+      "statusOfSeats": {
+        "title": "Статус місця",
+        "free": "Вільно",
+        "reserved": "Зарезервовано",
+        "all": "Усі"
+      }
+    }
   },
   "news": {
     "news": "Новини",
@@ -337,6 +354,7 @@
     "button": "Додати новину",
     "searchByTitle": "Пошук за назвою, описом",
     "sortByCategory": {
+      "all": "Усі",
       "general": "Загальні",
       "promotions": "Акції",
       "events": "Події"
@@ -554,5 +572,11 @@
       "true": "Підписаний",
       "false": "Підписатися"
     }
+  },
+  "travelMode": {
+    "BICYCLING": "На велосипеді",
+    "DRIVING": "На машині",
+    "TRANSIT": "Транзит",
+    "WALKING":  "Пішки"
   }
 }

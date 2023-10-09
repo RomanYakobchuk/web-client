@@ -1,10 +1,12 @@
 import React, {ReactNode, useContext} from "react";
-import {Breadcrumb, Create, SaveButton} from "@refinedev/antd";
+import {Create, SaveButton} from "@refinedev/antd";
+import {Breadcrumb} from "antd";
 import {useTranslate} from "@refinedev/core";
 import {Box, Typography as MuiTypography} from "@mui/material";
 import {ArrowBackOutlined, Close} from "@mui/icons-material";
 import {Button} from "antd";
 import {useNavigate} from "react-router-dom";
+import {ItemType} from "antd/es/breadcrumb/Breadcrumb";
 
 import './custom.css';
 import {ColorModeContext} from "../../../contexts";
@@ -13,11 +15,12 @@ interface IProps {
     isLoading: boolean,
     children: ReactNode,
     showButtons?: boolean,
-    bgColor?: string,
-    onClick?: () => void
+    bgColor?: 'transparent' | string,
+    onClick?: () => void,
+    breadCrumbItems?: ItemType[]
 }
 
-const CustomCreate = ({isLoading, children, bgColor, onClick}: IProps) => {
+const CustomCreate = ({isLoading, children, bgColor, onClick, breadCrumbItems}: IProps) => {
     const {mode} = useContext(ColorModeContext);
     const translate = useTranslate();
     const navigate = useNavigate();
@@ -105,13 +108,16 @@ const CustomCreate = ({isLoading, children, bgColor, onClick}: IProps) => {
                         },
                         "& nav ol li.ant-breadcrumb-separator": {
                             color: mode === 'dark' ? '#fcfcfc' : '#000'
-                        }
+                        },
                     }}>
-                        <Breadcrumb breadcrumbProps={{
-                            style: {
-                                color: mode === 'dark' ? '#fcfcfc' : '#000'
-                            }
-                        }}/>
+                        <Breadcrumb
+                            items={breadCrumbItems}
+                        //     // breadcrumbProps={{
+                        //     // style: {
+                        //     //     color: mode === 'dark' ? '#fcfcfc' : '#000'
+                        //     // }
+                        // {/*}}*/}
+                        />
                     </Box>
                 }
             >

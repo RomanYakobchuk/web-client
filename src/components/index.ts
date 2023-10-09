@@ -1,5 +1,7 @@
 // common
 import BookMarkButton from "./common/buttons/BookMarkButton";
+import NearbyEstablishmentBtn from "./common/buttons/NearbyEstablishmentBtn";
+
 import CustomButton from "./common/custom/CustomButton";
 import CustomProfile from "./common/custom/CustomProfile";
 import VariantComponent from "./common/buttons/variantComponent";
@@ -13,15 +15,23 @@ import TitleTextItem from "./common/TitleTextItem";
 import ReviewsList from "./common/reviews-list";
 import CommentsList from "./common/comments-list";
 import ImageSlider from "./common/imageSlider";
-import SubscribeButton from "./common/buttons/SubscribeButton";
 import CarouselComponent from "./common/carousel/carouselComponent";
-import ChangeLocation from "./common/changeLocation";
+
+// buttons
+import SubscribeButton from "./common/buttons/SubscribeButton";
+import FilterBtn from "./common/buttons/FilterBtn"
+
+// google
+import ChangeLocation from "./common/google/changeLocation";
+import ShowMap from "./common/google/showMap";
+import {openGoogleMaps} from "./common/google/openGoogleMaps";
 
 // custom
 import CustomShow from "./common/custom/customShow";
 import CustomEdit from "./common/custom/customEdit";
 import CustomCreate from "./common/custom/customCreate";
 import NewComponentButton from "./common/custom/newComponentButton";
+import CustomOpenContentBtn from "./common/custom/CustomOpenContentBtn";
 
 // google
 import {GoogleAuth} from "../auth";
@@ -34,10 +44,7 @@ import Loading from "./loading/loading";
 import ModalWindow from "./window/modalWindow";
 
 // profile
-import UserReviews from "./profile/utills/userReviews"
-import UserInstitutions from "./profile/utills/userInstitutions"
-import FavoritePlaces from "./profile/favoritePlaces"
-import UserComments from "./profile/utills/userComments";
+import {FavoritePlaces, UserReviews, UserComments, UserInstitutions} from "./profile"
 
 // institution
 import FilterInstitutions from "./establishment/filter";
@@ -48,6 +55,7 @@ import InstitutionsUserList from "./establishment/userList";
 import InstitutionsAdminList from "./establishment/adminList";
 import EditUpdateStatus from "./establishment/editUpdateStatus";
 import ImageGallery from "./establishment/utills/imageGallery";
+import {FormDataSeats} from "./establishment/seats";
 
 // capl
 import Messenger from "./capl/messenger";
@@ -131,5 +139,11 @@ export {
     VariantComponent,
     SubscribeButton,
     NewComponentButton,
-    ChangeLocation
+    ChangeLocation,
+    FormDataSeats,
+    CustomOpenContentBtn,
+    ShowMap,
+    openGoogleMaps,
+    NearbyEstablishmentBtn,
+    FilterBtn
 }

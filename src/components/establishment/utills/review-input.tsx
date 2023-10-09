@@ -3,7 +3,7 @@ import {EmojiEmotions, SendOutlined} from "@mui/icons-material";
 import {useContext, useState} from "react";
 import {ColorModeContext} from "../../../contexts";
 import Picker, {EmojiStyle} from "emoji-picker-react";
-import {useMobile} from "../../../utils";
+import {useMobile} from "../../../hook";
 
 
 interface IProps {

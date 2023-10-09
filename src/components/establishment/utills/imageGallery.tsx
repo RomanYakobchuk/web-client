@@ -1,20 +1,18 @@
 import {useState} from "react";
-import {Box, Button, Typography} from "@mui/material";
-import {useMobile} from "../../../utils";
-import {PermMediaOutlined} from "@mui/icons-material";
-import {useTranslate} from "@refinedev/core";
-import ImageSlider from "../../common/imageSlider";
+import {Box} from "@mui/material";
+import {Image} from "antd";
+import {IPicture} from "interfaces/common";
+
+import {useMobile} from "../../../hook";
 
 interface PlaceGalleryProps {
-    photos: any
+    photos: IPicture[]
 }
 
 const PlaceGallery = ({photos}: PlaceGalleryProps) => {
-    const {width, device} = useMobile();
-    const translate = useTranslate();
+    const {width} = useMobile();
 
     const [selectedSlideNumber, setSelectedSlideNumber] = useState(0);
-    const [showAllPhotos, setShowAllPhotos] = useState(false);
 
     const height = width < 600 ? '208px' : width < 900 ? '308px' : width < 1200 ? '408px' : '458px';
     const height1 = '100%';
@@ -23,26 +21,37 @@ const PlaceGallery = ({photos}: PlaceGalleryProps) => {
 
     const handleOpen = (i: number) => {
         setSelectedSlideNumber(i)
-        setShowAllPhotos(true)
     }
     return (
-        <Box sx={{position: "relative", width: '100%', height}}>
-            <Box
-                sx={{
-                    display: "grid",
-                    gap: 1,
-                    gridTemplateColumns: "2fr 1fr",
-                    borderRadius: "20px",
-                    overflow: "hidden",
-                    height
+        <Box sx={{
+            position: "relative",
+            width: '100%',
+            transition: 'all 300ms linear',
+            height,
+            display: "grid",
+            gap: 1,
+            gridTemplateColumns: "2fr 1fr",
+            borderRadius: "20px",
+            overflow: "hidden",
+            // height
+        }}>
+            <Image.PreviewGroup
+                items={photos?.map((photo) => (photo.url))}
+                preview={{
+                    onChange: (current) => setSelectedSlideNumber(current),
+                    current: selectedSlideNumber
                 }}
             >
                 <Box>
                     {photos[0] && (
                         <Box sx={{
-                            height
+                            height,
+                            "& div.ant-image": {
+                                height: height1,
+                                width: '100%'
+                            }
                         }}>
-                            <img
+                            <Image
                                 onClick={() => handleOpen(0)}
                                 style={{
                                     cursor: "pointer",
@@ -66,7 +75,7 @@ const PlaceGallery = ({photos}: PlaceGalleryProps) => {
                     }}
                 >
                     {photos[1] && (
-                        <img
+                        <Image
                             onClick={() => handleOpen(1)}
                             style={{
                                 cursor: "pointer",
@@ -79,7 +88,7 @@ const PlaceGallery = ({photos}: PlaceGalleryProps) => {
                         />
                     )}
                     {photos[2] && (
-                        <img
+                        <Image
                             onClick={() => handleOpen(2)}
                             style={{
                                 cursor: "pointer",
@@ -94,40 +103,7 @@ const PlaceGallery = ({photos}: PlaceGalleryProps) => {
                         />
                     )}
                 </Box>
-            </Box>
-            <Button
-                onClick={() => setShowAllPhotos(true)}
-                sx={{
-                    position: "absolute",
-                    bottom: 2,
-                    right: 2,
-                    borderRadius: "10px",
-                    boxShadow: "0 2px 4px gray",
-                    bgcolor: "white",
-                    "&:hover": {
-                        bgcolor: '#fbf6f6'
-                    }
-                }}
-            >
-                <PermMediaOutlined sx={{
-                    color: 'black'
-                }}/>
-            </Button>
-            {
-                showAllPhotos && (
-                    <ImageSlider
-                        selectedSlideNumber={selectedSlideNumber}
-                        images={photos}
-                        open={showAllPhotos}
-                        setOpen={setShowAllPhotos}
-                        modalTitle={
-                            <Typography variant="h5" sx={{mb: 2}}>
-                                {translate('pictures.pictures')}
-                            </Typography>
-                        }
-                    />
-                )
-            }
+            </Image.PreviewGroup>
         </Box>
     );
 }

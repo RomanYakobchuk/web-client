@@ -1,19 +1,22 @@
 import React, {ChangeEvent, useEffect, useRef} from "react";
-import {GoogleMap, MarkerF, useJsApiLoader} from "@react-google-maps/api";
-import {Box, CircularProgress, TextField} from "@mui/material";
+import { GoogleMap, MarkerF, useJsApiLoader} from "@react-google-maps/api";
+import {Box, TextField} from "@mui/material";
 import {useTranslate} from "@refinedev/core";
 
-import {center, containerStyle, options} from "../establishment/utills/mapsOptrions";
-import {textFieldStyle} from "../../styles";
-
+import {center, containerStyle, options} from "../../establishment/utills/mapsOptrions";
+import {textFieldStyle} from "../../../styles";
+import {Loading} from "../../index";
+import {useLocationData} from "../../../hook";
 
 interface IProps {
-    location: google.maps.LatLngLiteral | any,
-    setLocation: (value: {lat: number, lng: number}) => void,
+    location: google.maps.LatLngLiteral | { lat: number, lng: number },
+    setLocation: (value: { lat: number, lng: number }) => void,
     setPlace: (item: { address: string, city: string }) => void,
     place: { address: string, city: string },
+    isReadOnly?: boolean
 }
-const ChangeLocation = ({setLocation, location, setPlace, place}: IProps) => {
+
+const ChangeLocation = ({setLocation, location, setPlace, place, isReadOnly = false}: IProps) => {
 
     const translate = useTranslate();
 
@@ -21,41 +24,30 @@ const ChangeLocation = ({setLocation, location, setPlace, place}: IProps) => {
         id: 'google-map-script',
         googleMapsApiKey: import.meta.env.VITE_APP_GOOGLE_MAPS_KEY!
     });
+
     const mapRef = useRef<google.maps.Map | null>(null);
+
     const onLoad = (map: google.maps.Map): void => {
         mapRef.current = map
     }
     const onUnmount = (): void => {
         mapRef.current = null
     }
-    useEffect(() => {
-        if (location?.lat && location?.lng) {
-            const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${location.lat}&lon=${location.lng}`;
+    const {locationData} = useLocationData(location);
 
-            fetch(url).then(data => data.json()).then((data) => {
-                console.log(data)
-                setPlace({
-                    address: data?.address?.road + ' ' + data?.address?.house_number,
-                    city: data?.address?.city
-                })
+    useEffect(() => {
+        if (locationData) {
+            setPlace({
+                address: (locationData?.address?.road ? locationData?.address?.road : '' + ' ' + locationData?.address?.house_number ? locationData?.address?.house_number : '') as string,
+                city: locationData?.address?.city ? locationData?.address?.city : locationData?.address?.town ? locationData?.address?.town : locationData?.address?.village ? locationData?.address?.village : locationData?.address?.municipality ? locationData?.address?.municipality : ''
             })
-            // fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.lat},${location.lng}&key=${GOOGLE_MAPS_KEY}`)
-            //     .then((data) => data.json())
-            //     .then((data) => {
-            //         if (!place.address || !place.city) {
-            //             setPlace({
-            //                 address: data.results[0]?.formatted_address?.split(',')?.splice(0, 2)?.join(','),
-            //                 city: `${data.results[0]?.address_components[4].long_name}, ${data.results[0]?.address_components[3]?.long_name}, ${data.results[0]?.address_components[2]?.long_name}`
-            //             })
-            //         }
-            //     })
-            //     .catch((error) => console.log(error))
         }
-    }, [location])
+    }, [locationData]);
 
     const onMapClick = (e: google.maps.MapMouseEvent) => {
         setLocation({lat: e.latLng?.lat() as number, lng: e.latLng?.lng() as number})
     }
+
     return (
         <>
             {
@@ -69,7 +61,7 @@ const ChangeLocation = ({setLocation, location, setPlace, place}: IProps) => {
                     }}>
                         <GoogleMap
                             mapContainerStyle={containerStyle}
-                            center={center}
+                            center={location?.lat ? location : center}
                             options={options as google.maps.MapOptions}
                             zoom={10}
                             onLoad={onLoad}
@@ -87,7 +79,7 @@ const ChangeLocation = ({setLocation, location, setPlace, place}: IProps) => {
                         justifyContent: 'center',
                         alignItems: 'center'
                     }}>
-                        <CircularProgress/>
+                        <Loading height={'100%'}/>
                     </Box>
             }
             {
@@ -122,6 +114,7 @@ const ChangeLocation = ({setLocation, location, setPlace, place}: IProps) => {
                                     mt: 2,
                                     ...textFieldStyle
                                 }}
+                                disabled={isReadOnly}
                                 id="outlined-basic3"
                                 color={"secondary"}
                                 size={"small"}
@@ -142,6 +135,7 @@ const ChangeLocation = ({setLocation, location, setPlace, place}: IProps) => {
                                     mt: 2,
                                     ...textFieldStyle
                                 }}
+                                disabled={isReadOnly}
                                 label={translate("home.create.address")}
                                 size={"small"}
                                 value={place.address ? place.address : ''}

@@ -18,7 +18,7 @@ import {useForm} from "@refinedev/react-hook-form";
 import {ColorModeContext} from "../../contexts";
 import Loading from "../loading/loading";
 import {IReviews} from "../../interfaces/common";
-import {useMobile} from "../../utils";
+import {useMobile} from "../../hook";
 
 const {Title, Text} = Typography;
 

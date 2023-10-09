@@ -17,7 +17,8 @@ import {FieldValues} from "react-hook-form";
 
 import {Header} from "../../layout";
 import {ColorModeContext} from "../../contexts";
-import {parseJwt, useMobile} from "../../utils";
+import {useMobile} from "../../hook";
+import {parseJwt} from "../../utils";
 import Copyright from "./utills/copyright";
 import {buttonStyle} from "../../styles";
 

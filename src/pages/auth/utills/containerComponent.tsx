@@ -3,7 +3,7 @@ import {Box, Container, CssBaseline, SxProps} from "@mui/material";
 import React, {ReactNode, useContext} from "react";
 import {ColorModeContext} from "../../../contexts";
 import Copyright from "./copyright";
-import {useMobile} from "../../../utils";
+import {useMobile} from "../../../hook";
 
 import "./containerStyles.css";
 import MovingElement from "./movingElement";

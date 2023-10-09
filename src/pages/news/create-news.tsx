@@ -1,11 +1,10 @@
-import {useLocation} from "react-router-dom";
+import {Link, useLocation} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import {useBack, useGetIdentity, useTranslate} from "@refinedev/core";
 import {useForm} from "@refinedev/react-hook-form";
 
 import {
     IGetIdentity,
-    INewsDataProps,
     INewsDateEvent,
     IPicture,
     ProfileProps,
@@ -13,6 +12,7 @@ import {
 } from "../../interfaces/common";
 import NewsFormData from "../../components/news/utills/newsFormData";
 import {CustomCreate} from "../../components";
+import {INewsDataProps} from "../../interfaces/formData";
 
 const CreateNews = () => {
     const {search} = useLocation();
@@ -25,6 +25,8 @@ const CreateNews = () => {
     const [institutionInfo, setInstitutionInfo] = useState<PropertyProps>({} as PropertyProps);
     const [description, setDescription] = useState<string>("");
     const [title, setTitle] = useState<string>("");
+    const [location, setLocation] = useState<INewsDataProps['location']>({} as INewsDataProps['location']);
+    const [place, setPlace] = useState<INewsDataProps['place']>({} as INewsDataProps['place']);
     const [pictures, setPictures] = useState<IPicture[] | File[]>([] as IPicture[] | File[]);
     const [category, setCategory] = useState('general');
     const [dateEvent, setDateEvent] = useState<INewsDateEvent[]>([] as INewsDateEvent[]);
@@ -73,6 +75,7 @@ const CreateNews = () => {
         if (datePublish) {
             formData.append('datePublished', JSON.stringify(datePublish));
         }
+
         formData.append("createdBy", user?._id);
         formData.append("institutionId", institutionInfo?._id);
         formData.append("dateEvent", JSON.stringify(dateEvent));
@@ -119,11 +122,27 @@ const CreateNews = () => {
         setIsDatePublished: setIsDatePublish,
         datePublished: datePublish,
         setDatePublished: setDatePublish,
+        place,
+        location,
+        setPlace,
+        setLocation
     }
     return (
         <CustomCreate
             bgColor={'transparent'}
             onClick={onFinishHandler}
+            breadCrumbItems={[
+                {
+                    title: <Link
+                        style={{
+                            color: 'silver'
+                        }}
+                        to={'/news'}>{translate('news.news')}</Link>
+                },
+                {
+                    title: translate('home.createNews.title')
+                }
+            ]}
             isLoading={formLoading}>
             <NewsFormData
                 {...props}

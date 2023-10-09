@@ -5,7 +5,7 @@ import {Box} from "@mui/material";
 import {INews} from "../../../interfaces/common";
 import {Loading, PaginationComponent} from "../../index";
 import NewsList from "../lists/newsList";
-import {useMobile} from "../../../utils";
+import {useMobile} from "../../../hook";
 
 type IProps = {
     isLoading: boolean,
@@ -29,7 +29,9 @@ const ListForUsers = ({isLoading, news, data, current, setCurrent, setPageSize, 
             alignItems: width > 1000 ? 'unset' : 'start'
         }}>
             {
-                isLoading ? <Loading height={'40vh'}/> :
+                isLoading ?
+                    <Loading height={'40vh'}/>
+                :
                     news?.length > 0 ?
                         <NewsList news={news}/>
                         : <Box sx={{

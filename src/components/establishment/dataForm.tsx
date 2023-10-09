@@ -7,19 +7,20 @@ import {
     SelectChangeEvent, TextField, Typography,
 } from "@mui/material";
 import MDEditor from "@uiw/react-md-editor";
+import {Switch} from "antd";
 
-import {IGetIdentity, IPlaceFormProps, IWorkDay, ProfileProps} from "../../interfaces/common";
+import {IGetIdentity, IWorkDay, ProfileProps} from "../../interfaces/common";
 import {SearchManager} from "../index";
 import {ColorModeContext} from "../../contexts";
 import ImageSelector from "./utills/ImageSelector";
 import ScheduleList from "./utills/lists/scheduleList";
 import ItemsList from "./utills/lists/dataPropertyList";
 import {selectStyle, textFieldStyle} from "../../styles";
-import {Switch} from "antd";
-import ChangeLocation from "../common/changeLocation";
+import ChangeLocation from "../common/google/changeLocation";
+import {IEstablishmentFormProps} from "../../interfaces/formData";
 
 
-const DataForm = (props: IPlaceFormProps) => {
+const DataForm = (props: IEstablishmentFormProps) => {
     const {
         handleSubmit,
         onFinishHandler,

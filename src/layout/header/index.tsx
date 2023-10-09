@@ -31,7 +31,7 @@ import {useLocation, useNavigate} from "react-router-dom";
 import {ColorModeContext} from "../../contexts";
 import {IGetIdentity, INews, IOptions, ProfileProps, PropertyProps} from "../../interfaces/common";
 import {useSchema} from "../../settings";
-import {useMobile} from "../../utils";
+import {useMobile} from "../../hook";
 import {Loading, ModalWindow} from "../../components";
 import {searchRender} from "../../components/render"
 import {antdInputStyle} from "../../styles";

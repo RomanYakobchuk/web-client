@@ -3,13 +3,15 @@ import {ColorModeContext} from "../contexts";
 
 interface IMobile {
     width: number,
-    device: any,
-    layoutWidth: number
+    device: boolean,
+    layoutWidth: number,
+    height: number
 }
 export const useMobile = (): IMobile => {
     const {collapsed} = useContext(ColorModeContext);
     const [device, setDevice] = useState(false);
     const [width, setWidth] = useState(window.innerWidth);
+    const [height, setHeight] = useState(window.innerHeight);
     const [layoutWidth, setLayoutWidth] = useState<number>(collapsed ? width - 64 : width - 200);
 
     const checkDevice = () => {
@@ -22,18 +24,19 @@ export const useMobile = (): IMobile => {
         }
     };
 
-    function handleWidth() {
-        setWidth(window.innerWidth)
+    function handleSet() {
+        setWidth(window.innerWidth);
+        setHeight(window.innerHeight);
         checkDevice();
     }
 
     useEffect(() => {
-        handleWidth();
-        window.addEventListener('load', handleWidth);
-        window.addEventListener('resize', handleWidth);
+        handleSet();
+        window.addEventListener('load', handleSet);
+        window.addEventListener('resize', handleSet);
         return () => {
-            window.removeEventListener("load", handleWidth);
-            window.removeEventListener("resize", handleWidth);
+            window.removeEventListener("load", handleSet);
+            window.removeEventListener("resize", handleSet);
         }
     }, []);
 
@@ -45,6 +48,6 @@ export const useMobile = (): IMobile => {
 
 
     return {
-        device, width, layoutWidth
+        device, width, layoutWidth, height
     }
 }

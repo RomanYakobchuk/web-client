@@ -6,7 +6,7 @@ import {Clear} from "@mui/icons-material";
 import {ColorModeContext} from "../../contexts";
 import {axiosInstance} from "../../authProvider";
 import ReviewInput from "./utills/review-input";
-import {useMobile} from "../../utils";
+import {useMobile} from "../../hook";
 import {CommentsList} from "../index";
 import {IComment, IGetIdentity, ProfileProps} from "../../interfaces/common";
 

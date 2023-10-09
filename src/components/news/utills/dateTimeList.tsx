@@ -30,14 +30,14 @@ const DateTimeList = ({onSubmit, elements, onDelete, dataLabel, style}: Props) =
     };
     const size = 'small';
     return (
-        <Grid container spacing={2} sx={{
+        <Grid sx={{
             display: 'grid',
             gridTemplateColumns: {xs: '1fr', sm: 'repeat(2, 1fr)'},
             gap: 1,
             p: '10px',
             m: '10px 0',
             borderRadius: '10px',
-            bgcolor: mode === 'dark' ? '#1f1f1f' : '#f6f6f6',
+            // bgcolor: mode === 'dark' ? '#1f1f1f' : '#f6f6f6',
             alignItems: 'start',
             "& div.MuiGrid-item": {
                 pl: '0',
@@ -97,10 +97,10 @@ const DateTimeList = ({onSubmit, elements, onDelete, dataLabel, style}: Props) =
                                         "& div.ant-picker": {
                                             bgcolor: 'transparent',
                                         },
-                                        "& input::placeholder":{
+                                        "& input::placeholder": {
                                             color: mode === 'dark' ? '#fff !important' : '#000 !important'
                                         },
-                                        "& span.ant-picker-suffix":{
+                                        "& span.ant-picker-suffix": {
                                             color: mode === 'dark' ? '#fff !important' : '#000 !important'
                                         }
                                     }}>
@@ -172,7 +172,9 @@ const DateTimeList = ({onSubmit, elements, onDelete, dataLabel, style}: Props) =
                                         </FormControl>
                                     </Box>
                                 </Box>
-                                <Button variant="contained" color={"info"} onClick={handleAddWorkDay}>
+                                <Button
+                                    variant="contained"
+                                    color={"info"} onClick={handleAddWorkDay}>
                                     <Add/>
                                 </Button>
                             </Box>

@@ -5,7 +5,7 @@ import {CanAccess, useTranslate} from "@refinedev/core";
 import {EastOutlined} from "@mui/icons-material";
 
 import {axiosInstance} from "../../authProvider";
-import {useMobile, useRole} from "../../utils";
+import {useMobile, useRole} from "../../hook";
 import {CurrentChatContainer, CustomDrawer, ListChats, SearchInstitutions} from "../../components";
 import {IConversation} from "../../interfaces/common";
 import dayjs from "dayjs";
@@ -113,11 +113,11 @@ const Chat = () => {
                 }}>
                     <CanAccess resource={'chats'} action={'searchChatsByPlace'}>
                         <Box>
-                            <SearchInstitutions
-                                searchInstitution={currentPlace}
-                                setSearchInstitution={setCurrentPlace}
-                                typeSearch={role === 'admin' ? 'all' : 'userInstitutions'}
-                            />
+                            {/*<SearchInstitutions*/}
+                            {/*    searchInstitution={currentPlace}*/}
+                            {/*    setSearchInstitution={setCurrentPlace}*/}
+                            {/*    typeSearch={role === 'admin' ? 'all' : 'userInstitutions'}*/}
+                            {/*/>*/}
                         </Box>
                     </CanAccess>
                     <ListChats setOpenDrawer={setOpenDrawer} setCurrentChat={setCurrentChat}/>

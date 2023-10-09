@@ -312,7 +312,7 @@ const ImageSelector = ({
                                             </IconButton>
                                         </Box>
                                     </Box>
-                                    {item.name}
+                                    {item.name?.substring(0, 15) + (item?.name?.length > 15 ? '...' : '')}
                                 </Box>
                             ))
                         }

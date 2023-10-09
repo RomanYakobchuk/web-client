@@ -149,7 +149,7 @@ export const ColorModeContextProvider: React.FC<PropsWithChildren> = ({
                 contrastText: "#fff",
             },
             background: {
-                default: "#948888",
+                default: "#050217",
                 paper: "#333450",
             },
             success: {

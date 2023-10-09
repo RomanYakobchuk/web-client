@@ -10,7 +10,7 @@ import React, {useContext, useEffect, useState} from "react";
 import {useNotification, useTranslate} from "@refinedev/core";
 import {FieldValues} from "react-hook-form";
 import {useForm} from "@refinedev/react-hook-form";
-import {useNavigate, useParams} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {VisibilityOffOutlined, VisibilityOutlined} from "@mui/icons-material";
 
 import {parseJwt} from "../../utils";
@@ -24,12 +24,12 @@ const UpdatePassword = () => {
     const {mode} = useContext(ColorModeContext);
     const navigate = useNavigate();
     const {open} = useNotification();
-    const {token}: any = useParams();
+    const {search} = useLocation();
     const [showPass, setShowPass] = useState(false);
     const [showConfirmPass, setShowConfirmPass] = useState(false);
 
     const dateNow = new Date();
-    const data_token = parseJwt(token);
+    const data_token = parseJwt(search?.split('=')[1]);
     useEffect(() => {
         if (data_token?.exp * 1000 < dateNow.getTime()) {
             open?.({
@@ -52,10 +52,10 @@ const UpdatePassword = () => {
     },);
 
     useEffect(() => {
-        if (!token) {
+        if (!search?.split('=')[1]) {
             navigate("/")
         }
-    }, [token])
+    }, [search?.split('=')[1]])
 
     const onFinishHandler = async (date: FieldValues) => {
         if (date?.password !== date?.confirmPassword) return alert(translate("pages.updatePassword.errors.confirmPasswordNotMatch"))
@@ -63,7 +63,7 @@ const UpdatePassword = () => {
             const data = await onFinish({
                 email: data_token?.email,
                 password: date?.password,
-                token
+                token: search?.split('=')[1] as string
             });
             if (data?.data?.message) {
                 open?.({

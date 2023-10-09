@@ -8,7 +8,7 @@ import {CustomButton, Loading} from "../../../index";
 import {IGetIdentity, IMenu, IMenuItem, ProfileProps} from "../../../../interfaces/common";
 import React, {useContext, useEffect, useState} from "react";
 import {ColorModeContext} from "../../../../contexts";
-import {useMobile} from "../../../../utils";
+import {useMobile} from "../../../../hook";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 const Menu = () => {
