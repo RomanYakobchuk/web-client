@@ -25,7 +25,6 @@ const CreateNews = () => {
     const [institutionInfo, setInstitutionInfo] = useState<PropertyProps>({} as PropertyProps);
     const [description, setDescription] = useState<string>("");
     const [title, setTitle] = useState<string>("");
-    const [location, setLocation] = useState<INewsDataProps['location']>({} as INewsDataProps['location']);
     const [place, setPlace] = useState<INewsDataProps['place']>({} as INewsDataProps['place']);
     const [pictures, setPictures] = useState<IPicture[] | File[]>([] as IPicture[] | File[]);
     const [category, setCategory] = useState('general');
@@ -69,6 +68,7 @@ const CreateNews = () => {
         }
         formData.append("description", description);
         formData.append("title", title);
+        formData.append('place', JSON.stringify(place));
         formData.append("status", status);
         formData.append("category", category);
         formData.append('isDatePublished', JSON.stringify(isDatePublish));
@@ -123,9 +123,7 @@ const CreateNews = () => {
         datePublished: datePublish,
         setDatePublished: setDatePublish,
         place,
-        location,
         setPlace,
-        setLocation
     }
     return (
         <CustomCreate

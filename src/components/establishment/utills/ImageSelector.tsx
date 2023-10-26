@@ -12,11 +12,11 @@ import {
 import {useTranslate} from "@refinedev/core";
 
 import {ColorModeContext} from "../../../contexts";
-import {antdInputStyle, buttonStyle} from "../../../styles";
+import {antdInputStyle} from "../../../styles";
 import {IPicture} from "../../../interfaces/common";
 import {Input} from "antd";
 
-interface Props {
+type Props = {
     images: string[] | any;
     defaultPictures: any;
     setPictures: any;
@@ -240,11 +240,9 @@ const ImageSelector = ({
 
                     <Box sx={{
                         width: '100%',
-                        display: 'flex',
-                        flexDirection: 'row',
+                        display: 'grid',
                         gap: 2,
-                        flexWrap: 'wrap',
-                        justifyContent: 'space-evenly'
+                        gridTemplateColumns: {xs: 'repeat(2, 1fr)', sm: 'repeat(3, 1fr)', md: 'repeat(4, 1fr)', lg: 'repeat(5, 1fr)'}
                     }}>
                         {
                             items?.map((item: IPicture | File, index: number) => (
@@ -252,13 +250,14 @@ const ImageSelector = ({
                                     sx={{
                                         display: 'flex',
                                         flexDirection: 'column',
-                                        maxWidth: {xs: '150px', md: '195px'},
+                                        width: '100%',
                                         gap: 1,
                                         color: 'common.white',
                                         "& img": {
                                             borderRadius: {xs: '10px', sm: '15px'},
-                                            width: {xs: '150px', md: '195px'},
-                                            height: {xs: '150px', md: '195px'},
+                                            height: {xs: '150px', sm: '195px', md: '150px', lg: '195px'},
+                                            objectFit: 'cover',
+                                            width: '100%'
                                         }
                                     }}
                                     key={index}>
@@ -294,7 +293,8 @@ const ImageSelector = ({
                                             right: 0,
                                             width: '100%',
                                             display: 'flex',
-                                            justifyContent: 'space-around',
+                                            justifyContent: 'space-between',
+                                            p: '0px 10px',
                                             alignItems: 'center',
                                             "& button": {
                                                 color: '#000'

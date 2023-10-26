@@ -5,7 +5,7 @@ import {useTranslate} from "@refinedev/core";
 import {ColorModeContext} from "../../../contexts";
 import {SetFilterType} from "../../../interfaces/types";
 
-interface IArrayType {
+type TArrayType = {
     title: string,
     value: string
 }
@@ -20,7 +20,7 @@ interface IProps<T> {
     fieldName?: string,
     setCurrent: Dispatch<React.SetStateAction<number>>,
     sortTranslatePath?: string,
-    arrayType?: IArrayType[]
+    arrayType?: TArrayType[]
 }
 
 const establishmentType = [

@@ -3,13 +3,13 @@ import React from "react";
 import {useTranslate} from "@refinedev/core";
 
 
-interface IProps {
+type TProps = {
     setOpenFilter: (value: boolean) => void,
     handleReplace: () => void,
     handleSearch: () => void,
     styleSx?: SxProps
 }
-const SearchButtonFilterComponent = ({setOpenFilter, handleReplace, handleSearch, styleSx}: IProps) => {
+const SearchButtonFilterComponent = ({setOpenFilter, handleReplace, handleSearch, styleSx}: TProps) => {
 
     const translate = useTranslate();
 

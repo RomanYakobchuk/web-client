@@ -1,28 +1,21 @@
-import {Box, Button, MenuItem, Select} from "@mui/material";
-import {ArrowBackIosNew, ArrowForwardIos} from "@mui/icons-material";
-import React, {useContext, useState} from "react";
-import {useTranslate} from "@refinedev/core";
+import {Box} from "@mui/material";
+import React, {Dispatch, SetStateAction, useContext} from "react";
 import {Pagination} from "antd";
-import type {PaginationProps} from "antd";
 
-import {useMobile} from "../../hook";
-import {selectStyle} from "../../styles";
 import {ColorModeContext} from "../../contexts";
 
 
 interface IProps {
     current: number,
-    setCurrent: any,
+    setCurrent: Dispatch<SetStateAction<number>>,
     pageCount: number,
-    setPageSize: any,
+    setPageSize: Dispatch<SetStateAction<number>>,
     count: number
 }
 
 const PaginationComponent = ({current, setCurrent, pageCount, setPageSize, count}: IProps) => {
 
-    const {width} = useMobile();
     const {mode} = useContext(ColorModeContext)
-    const translate = useTranslate();
 
     return (
         <Box
@@ -43,7 +36,7 @@ const PaginationComponent = ({current, setCurrent, pageCount, setPageSize, count
                     justifyContent: 'center'
                 },
                 "& ul.ant-pagination .ant-pagination-options": {
-                    display: 'inline-block'
+                    display: 'inline-table',
                 },
                 "& li.ant-pagination-options > div > div.ant-select-selector span, & li.ant-pagination-options > div > span": {
                     color: mode === 'dark' ? "#fcfcfc" : "#000",
@@ -95,8 +88,8 @@ const PaginationComponent = ({current, setCurrent, pageCount, setPageSize, count
                 current={current}
                 pageSize={pageCount}
                 total={count}
-                style={{}}
-
+                style={{
+                }}
             />
             {/*<Button*/}
             {/*    disabled={!(current > 1)}*/}

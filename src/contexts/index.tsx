@@ -4,8 +4,7 @@ import React, {
     useEffect,
     useState,
 } from "react";
-import {ThemeProvider} from "@mui/material/styles";
-import {createTheme} from "@mui/material";
+import {ThemeProvider, createTheme} from "@mui/material/styles";
 
 type ColorModeContextType = {
     mode: string;
@@ -15,6 +14,28 @@ type ColorModeContextType = {
     setCollapsed: () => void,
     collapsed: boolean
 };
+
+declare module '@mui/material/styles' {
+    interface Palette {
+        modern: {
+            [key: string]: {
+                main: string,
+                second: string
+            }
+        },
+        salmon: Palette['primary'];
+    }
+
+    interface PaletteOptions {
+        modern: {
+            [key: string]: {
+                main: string,
+                second: string
+            }
+        },
+        salmon?: PaletteOptions['primary'];
+    }
+}
 
 
 export const ColorModeContext = createContext<ColorModeContextType>(
@@ -106,6 +127,20 @@ export const ColorModeContextProvider: React.FC<PropsWithChildren> = ({
                 secondary: "#9f9f9f",
                 disabled: "#c1c1c1",
             },
+            modern: {
+                modern_1: {
+                    main: '#f5f5fa',
+                    second: '#f9f4f4'
+                },
+                modern_2: {
+                    main: '#e3e8ec',
+                    second: '#d1efed'
+                },
+                modern_3: {
+                    main: '#e3e8ec',
+                    second: '#c2c9d3'
+                }
+            },
         },
         components: {
             MuiAppBar: {
@@ -138,7 +173,7 @@ export const ColorModeContextProvider: React.FC<PropsWithChildren> = ({
             mode: 'dark',
             common: {
                 white: '#fff',
-                black: '#2A132E'
+                black: '#14171c'
             },
             primary: {
                 main: "#244d61",
@@ -173,6 +208,20 @@ export const ColorModeContextProvider: React.FC<PropsWithChildren> = ({
                 primary: "#fff",
                 secondary: "rgba(255,255,255,0.7)",
                 disabled: "#d1d1d1",
+            },
+            modern: {
+                modern_1: {
+                    main: '#0b0a0a',
+                    second: '#17171f'
+                },
+                modern_2: {
+                    main: '#050217',
+                    second: '#2f2d3d'
+                },
+                modern_3: {
+                    main: '#050217',
+                    second: '#14171c'
+                }
             },
         },
         components: {

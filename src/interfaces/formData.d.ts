@@ -5,14 +5,14 @@ import {BaseRecord, CreateResponse, UpdateResponse} from "@refinedev/core";
 
 export interface IFormDataSeats {
     onFinishHandler: (data: FieldValues) => Promise<void> | void,
-    handleSubmit:  UseFormHandleSubmit<FieldValues, undefined>,
+    handleSubmit: UseFormHandleSubmit<FieldValues, undefined>,
     establishmentId: string | PropertyProps,
     list: IFreeSeatsList[],
     setList: Dispatch<SetStateAction<IFreeSeatsList[]>>
 }
 
 export interface INewsDataProps {
-    handleSubmit:  UseFormHandleSubmit<FieldValues, undefined>,
+    handleSubmit: UseFormHandleSubmit<FieldValues, undefined>,
     onFinishHandler: (data: FieldValues) => Promise<void> | void,
     institutionInfo: PropertyProps,
     defaultPictures: IPicture[],
@@ -33,18 +33,20 @@ export interface INewsDataProps {
     setIsDatePublished: (value: boolean) => void,
     datePublished: any,
     setDatePublished: any,
-    location: google.maps.LatLngLiteral | {lat: number, lng: number},
-    setLocation: (item: {lat: number, lng: number}) => void,
-    place: { address: string, city: string },
-    setPlace: ({ address: string, city: string }) => void,
+    place: INewsDataFormPlace,
+    setPlace: Dispatch<SetStateAction<INewsDataFormPlace>>
 }
-
+export interface INewsDataFormPlace {
+    isPlace: boolean,
+    place: { address: string, city: string },
+    location: google.maps.LatLngLiteral | { lat: number, lng: number },
+}
 export interface IEstablishmentFormProps {
     onFinish?: (values: FieldValues) => Promise<void | CreateResponse<BaseRecord> | UpdateResponse<BaseRecord>>,
     setSendNotifications: (value: boolean) => void,
     sendNotifications: boolean,
     defaultPictures: IPicture[],
-    handleSubmit:  UseFormHandleSubmit<FieldValues, undefined>,
+    handleSubmit: UseFormHandleSubmit<FieldValues, undefined>,
     onFinishHandler: (data: FieldValues) => Promise<void> | void,
     setPictures: (item: IPicture[] | File[]) => void,
     pictures: IPicture[] | File[],
@@ -52,12 +54,12 @@ export interface IEstablishmentFormProps {
     setType: (item: string) => void,
     workScheduleWeekend: PropertyProps["workSchedule"]["weekend"],
     setWorkScheduleWeekend: (item: setWorkScheduleWeekend) => void,
-    location: google.maps.LatLngLiteral | {lat: number, lng: number},
-    setLocation: (item: {lat: number, lng: number}) => void,
+    location: google.maps.LatLngLiteral | { lat: number, lng: number },
+    setLocation: (item: { lat: number, lng: number }) => void,
     tags: Array<any> | any,
     setTags: (item: any) => void,
     place: { address: string, city: string },
-    setPlace: ({ address: string, city: string }) => void,
+    setPlace: ({address: string, city: string}) => void,
     features: Array<any> | any,
     setFeatures: (item: any) => void,
     contacts: Array<any> | any,

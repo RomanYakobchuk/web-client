@@ -1,15 +1,14 @@
 import {Box, Button, SxProps} from "@mui/material";
 import {useTranslate} from "@refinedev/core";
-import {Dispatch, ReactNode, SetStateAction, useEffect, useState} from "react";
+import {ReactNode, useState} from "react";
 import {Radar} from "@mui/icons-material";
-import {useNavigate, useSearchParams} from "react-router-dom";
 
 import CustomDrawer from "../custom/customDrawer";
 import {useMobile} from "../../../hook";
-import FindNearbyPlaces, {INearbyF} from "../places/findNearbyPlaces";
+import FindNearbyPlaces from "../places/findNearbyPlaces";
 import {PropertyProps} from "../../../interfaces/common";
 
-interface IProps {
+type TProps = {
     style?: SxProps,
     showIcon?: boolean
     text?: string,
@@ -21,7 +20,8 @@ interface IProps {
     establishment?: PropertyProps
 }
 
-export const OPEN_NEARBY = 'open_nearby_establishment';
+// export const OpenDrawer = 'openDrawer';
+// export const OPEN_NEARBY = 'open_nearby_establishment';
 const NearbyEstablishmentBtn = ({
                                     showIcon = true,
                                     style,
@@ -32,66 +32,71 @@ const NearbyEstablishmentBtn = ({
                                     location,
                                     error,
                                     establishment
-                                }: IProps) => {
+                                }: TProps) => {
     const translate = useTranslate();
     const {device} = useMobile();
-    const navigate = useNavigate();
-    const [searchParams, setSearchParams] = useSearchParams();
-
-    const [nearbyParsed, setNearbyParsed] = useState<INearbyF>({} as INearbyF);
+    // const go = useGo();
+    // const {params} = useParsed();
     const [openDrawer, setOpenDrawer] = useState<boolean>(false);
 
-    useEffect(() => {
-        const s = searchParams.get(OPEN_NEARBY);
-        if (s) {
-            setNearbyParsed(JSON.parse(s as string) as INearbyF)
-        } else {
-            setNearbyParsed({} as INearbyF)
-        }
-    }, [searchParams.get(OPEN_NEARBY)]);
-    const onClick = (value: boolean) => {
-        const prevSearch = searchParams.toString();
-        setOpenDrawer(value);
-        if (value) {
-            console.log('set true nearby')
-            searchParams.set(OPEN_NEARBY, JSON.stringify({
-                openDrawer: value
-            } as INearbyF))
-        } else {
-            navigate(-1)
-        }
-        if (prevSearch !== searchParams.toString()) {
-            setSearchParams(searchParams)
-        }
+    const onClick = () => {
+        setOpenDrawer((prevState) => !prevState);
     }
 
-    useEffect(() => {
-        const prevSearchParams = searchParams.toString();
+    // useEffect(() => {
+    //     console.log(searchParams.entries())
+    //     console.log(searchParams.keys())
+    //     navigate(`?${new URLSearchParams({
+    //         openDrawer: JSON.stringify(openDrawer)
+    //     })}`)
+    // }, [openDrawer, searchParams]);
 
-        if (!nearbyParsed?.openDrawer) {
-            console.log('delete nearby in btn')
-            setOpenDrawer(false)
-            navigate(-1)
-        } else {
-            console.log('set open true')
-            setOpenDrawer(true)
-            searchParams.set(OPEN_NEARBY, JSON.stringify({
-                ...nearbyParsed,
-                openDrawer: true
-            } as INearbyF))
-        }
+    // useEffect(() => {
+    //     if (searchParams.get(OpenDrawer)) {
+    //         const v = !!JSON.parse(searchParams.get(OpenDrawer) as string) as boolean;
+    //         setOpenDrawer(v)
+    //     }
+    // }, [searchParams.get(OpenDrawer)]);
 
-        if (prevSearchParams !== searchParams.toString()) {
-            setSearchParams(searchParams)
-        }
-    }, [nearbyParsed]);
+    // useEffect(() => {
+    //     console.log(params)
+    //     if (params?.openDrawer !== undefined) {
+    //         if (typeof params?.openDrawer !== 'boolean' && (params?.openDrawer === 'true' || params?.openDrawer === 'false')) {
+    //             const v = params?.openDrawer === 'true';
+    //             setOpenDrawer(v)
+    //         }
+    //     }
+        // for (const filter of params?.filters as LogicalFilter[]) {
+        //     if (filter?.field === OpenDrawer && filter?.value !== undefined) {
+        //         console.log(filter?.value)
+        //         if (typeof filter?.value !== 'boolean' && filter?.value === ('true' || 'false')) {
+        //             setOpenDrawer(Boolean(filter?.value))
+        //         }
+        //     }
+        // }
+    // }, [params?.openDrawer]);
 
-
+    // useEffect(() => {
+    //     go({
+    //         query: {
+    //             openDrawer: openDrawer,
+    //             filters: params?.filters
+    //             // filters: [
+    //             //     {
+    //             //         field: OpenDrawer,
+    //             //         value: openDrawer,
+    //             //         operator: 'eq'
+    //             //     }
+    //             // ]
+    //         },
+    //         type: 'push'
+    //     })
+    // }, [openDrawer]);
     return (
         <>
             <Button
                 variant={variant}
-                onClick={() => onClick(true)}
+                onClick={onClick}
                 sx={{
                     display: 'flex',
                     alignItems: 'center',
@@ -105,26 +110,26 @@ const NearbyEstablishmentBtn = ({
                 {showIcon ? (icon ? icon : <Radar/>) : ''}
                 {showText ? (text ? text : translate('buttons.nearby')) : ''}
             </Button>
-            {
-                openDrawer && (
-                    <></>
-                )
-            }
             <CustomDrawer
                 open={openDrawer as boolean}
                 anchor={device ? "bottom" : "right"}
                 title={<Box sx={{
                     display: 'flex',
                     fontSize: {xs: '18px', sm: '22px'},
-                    fontWeight: {xs: 600, sm: 700}
+                    fontWeight: {xs: 600, sm: 700},
+                    p: 1
                 }}>
                     {translate('buttons.nearby')}
                 </Box>}
-                toggleDrawer={onClick as Dispatch<SetStateAction<boolean>>}
+                contentStyle={{
+                    mt: '20px'
+                }}
+                toggleDrawer={setOpenDrawer}
             >
                 {
                     !error ? (openDrawer && location?.lng && location?.lat && (
                             <FindNearbyPlaces
+                                setOpenDrawer={setOpenDrawer}
                                 establishment={establishment}
                                 location={location}
                             />

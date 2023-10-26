@@ -1,23 +1,28 @@
-import { PropertyProps} from "../../../../interfaces/common";
+import {PropertyProps} from "../../../../interfaces/common";
 import {Box, Grid, SxProps} from "@mui/material";
 import {Variant1EstablishmentCard} from "../../../index";
-import React, {useContext} from "react";
+import React, {Dispatch, SetStateAction, useContext} from "react";
 import {VariantContext} from "../../../../settings/variantEstablishment";
-import Variant2EstablishmentCard from "../variant2EstablishmentCard";
+import Variant2EstablishmentCard from "../../cards/variant2EstablishmentCard";
+import {useMobile} from "../../../../hook";
 
 interface IProps {
-    items: PropertyProps[]
+    items: PropertyProps[],
+    setIsOpen?: Dispatch<SetStateAction<boolean>>
 }
 
-const PropertiesList = ({items}: IProps) => {
+const PropertiesList = ({items, setIsOpen}: IProps) => {
 
+    const {width} = useMobile();
     const {variant} = useContext(VariantContext);
+
+    const numberOfColumnsByWidth = width < 700 ? 2 : width < 1100 ? 3 : 4;
 
     const style: SxProps = variant === 'variant_2'
         ? {
             display: 'grid',
-            gridTemplateColumns: {xs: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)', lg: 'repeat(4, 1fr)'},
-            gap: 2,
+            gridTemplateColumns: `repeat(${numberOfColumnsByWidth}, 1fr)`,
+            gap: 1,
             width: '100%',
             margin: '0 auto',
             justifyItems: 'center'
@@ -25,7 +30,7 @@ const PropertiesList = ({items}: IProps) => {
             ? {
                 display: 'flex',
                 flexDirection: 'column',
-                gap: 2,
+                gap: {sm: 2},
                 justifyContent: 'start',
                 alignItems: 'start'
             } : {}
@@ -41,7 +46,37 @@ const PropertiesList = ({items}: IProps) => {
                     items.map((institution: PropertyProps | any) => {
                             if (variant === 'variant_1') {
                                 return (
-                                    <Variant2EstablishmentCard establishment={institution} key={institution._id}/>
+                                    <Box
+                                        key={institution._id}
+                                        onClick={() => {
+                                            if (setIsOpen) {
+                                                setIsOpen(false)
+                                            }
+                                        }}
+                                        sx={{
+                                            width: '100%',
+                                            position: 'relative',
+                                            "&:not(:last-of-type)": {
+                                                position: 'relative',
+                                                borderRight: 'unset !important',
+                                                "&::after": {
+                                                    content: "''",
+                                                    display: {xs: 'block', sm: 'none'},
+                                                    position: 'absolute',
+                                                    bottom: '0',
+                                                    left: 0,
+                                                    right: 0,
+                                                    margin: '0 auto',
+                                                    height: '1px',
+                                                    width: '95%',
+                                                    bgcolor: 'silver',
+                                                    zIndex: 10
+                                                }
+                                            }
+                                        }}
+                                    >
+                                        <Variant2EstablishmentCard establishment={institution}/>
+                                    </Box>
                                 )
                             }
 
@@ -60,6 +95,11 @@ const PropertiesList = ({items}: IProps) => {
                                     md={4}
                                     lg={3}
                                     xl={3}
+                                    onClick={() => {
+                                        if (setIsOpen) {
+                                            setIsOpen(false)
+                                        }
+                                    }}
                                 >
                                     <Variant1EstablishmentCard
                                         institution={institution}

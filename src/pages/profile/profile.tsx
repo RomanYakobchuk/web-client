@@ -3,15 +3,14 @@ import {useGetIdentity, useList, useOne} from "@refinedev/core";
 import {CustomProfile, Loading} from "../../components";
 import {IComment, IGetIdentity, IReviews, ProfileProps, PropertyProps} from "../../interfaces/common";
 import {useEffect, useState} from "react";
+import {useUserInfo} from "../../hook";
 
 
 const Profile = () => {
-    const {data: identity} = useGetIdentity<IGetIdentity>();
-    const user: ProfileProps = identity?.user as ProfileProps;
+    const {user} = useUserInfo();
 
     const [favoritePlaces, setFavoritePlaces] = useState<PropertyProps[]>([] as PropertyProps[]);
 
-    const myProfile: ProfileProps = user as ProfileProps;
 
     const {data} = useList<PropertyProps>({
         resource: 'users/getUserFavPlaces'
@@ -25,15 +24,15 @@ const Profile = () => {
 
     return (
         <CustomProfile
-            status={myProfile?.status}
-            dOB={myProfile?.dOB}
-            _id={myProfile?._id}
-            phone={myProfile?.phone}
-            name={myProfile.name}
-            email={myProfile.email}
-            avatar={myProfile.avatar}
-            isActivated={myProfile.isActivated}
-            phoneVerify={myProfile.phoneVerify}
+            status={user?.status}
+            dOB={user?.dOB}
+            _id={user?._id}
+            phone={user?.phone}
+            name={user?.name}
+            email={user?.email}
+            avatar={user?.avatar}
+            isActivated={user?.isActivated}
+            phoneVerify={user?.phoneVerify}
             favoritePlaces={favoritePlaces}
         />
     );

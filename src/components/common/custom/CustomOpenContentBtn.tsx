@@ -4,7 +4,7 @@ import {Add, Remove} from "@mui/icons-material";
 import {useTranslate} from "@refinedev/core";
 import {ColorModeContext} from "../../../contexts";
 
-interface IProps {
+type TProps = {
     children: ReactNode,
     openEndIcon?: ReactNode,
     openText?: string | ReactNode,
@@ -14,7 +14,7 @@ interface IProps {
     style?: SxProps
 }
 
-const CustomOpenContentBtn = ({children, openEndIcon, closeEndIcon, openText, closeText, style, openComponent}: IProps) => {
+const CustomOpenContentBtn = ({children, openEndIcon, closeEndIcon, openText, closeText, style, openComponent}: TProps) => {
     const translate = useTranslate();
     const {mode} = useContext(ColorModeContext);
 

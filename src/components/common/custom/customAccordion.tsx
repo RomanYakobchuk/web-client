@@ -3,16 +3,15 @@ import {ExpandMore} from "@mui/icons-material";
 import React, {SyntheticEvent, useState} from "react";
 
 
-interface IProps {
+type TProps = {
     title: string,
     children: any,
     id: string,
-    otherProps?: any
 }
-const CustomAccordion = ({title, children, id, otherProps}: IProps) => {
+const CustomAccordion = ({title, children, id}: TProps) => {
     const [expanded, setExpanded] = useState<string | false>(false);
     const handleChange =
-        (panel: string) => (event: SyntheticEvent, isExpanded: boolean) => {
+        (panel: string) => (_: SyntheticEvent, isExpanded: boolean) => {
             setExpanded(isExpanded ? panel : false);
         };
 

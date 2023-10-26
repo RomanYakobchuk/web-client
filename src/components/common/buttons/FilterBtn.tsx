@@ -3,13 +3,13 @@ import {Button, SxProps} from "@mui/material";
 import React from "react";
 import {useTranslate} from "@refinedev/core";
 
-interface IProps {
+type TProps = {
     setOpenFilter: (value: boolean) => void,
     filterLength: number,
     isShowAllFilters: boolean,
     btnStyle?: SxProps
 }
-const FilterBtn = ({setOpenFilter, filterLength, isShowAllFilters, btnStyle}: IProps) => {
+const FilterBtn = ({setOpenFilter, filterLength, isShowAllFilters, btnStyle}: TProps) => {
     const translate = useTranslate();
 
     const bRButtonFilter = '7px';

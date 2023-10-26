@@ -191,7 +191,6 @@ const EditEstablishment = () => {
             bgColor={'transparent'}
             isLoading={isLoadingData}
             onClick={onFinishHandler}
-            saveButtonProps={saveButtonProps}
         >
             <Button
                 icon={<RestartAlt/>}

@@ -5,22 +5,24 @@ import {
     Rating,
     Stack,
     List,
-    Typography, Button
+    Typography
 } from "@mui/material";
 import {
     Place,
 } from "@mui/icons-material";
-import MDEditor from "@uiw/react-md-editor";
 import React, {useContext, useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import {useGetIdentity, useTranslate} from "@refinedev/core";
 
-import {BookMarkButton, ImageGallery, ShowMap, SubscribeButton} from "../index";
+import {BookMarkButton, ShowMap, SubscribeButton} from "../index";
+import {ImageGalleryV1} from "../gallery"
 import {IGetIdentity, ISubscribe, ProfileProps, PropertyProps} from "../../interfaces/common";
 import {ColorModeContext} from "../../contexts";
-import {buttonStyle} from "../../styles";
 import {useMobile} from "../../hook";
 import {useStore} from "../../store";
+import SharedComponent from "../common/shared/sharedComponent";
+import ObserverComponent from "./utills/observerComponent";
+import MDEditor from "@uiw/react-md-editor";
 
 
 interface IProps {
@@ -36,7 +38,9 @@ const MainEstablishmentInfo = ({establishment, subscribe}: IProps) => {
     const {mode} = useContext(ColorModeContext);
     const navigate = useNavigate();
     const {width} = useMobile();
-    const {addEstablishment, establishmentInfo} = useStore(state => {
+
+
+    const {addEstablishment} = useStore(state => {
         return {
             establishmentInfo: state.establishmentInfo, addEstablishment: state.addEstablishment
         }
@@ -55,6 +59,8 @@ const MainEstablishmentInfo = ({establishment, subscribe}: IProps) => {
     }, [establishment?._id]);
 
     const location: PropertyProps["location"] | google.maps.LatLngLiteral = typeof establishment?.location?.lat !== undefined ? establishment?.location : {} as PropertyProps['location'];
+
+
     return (
         <Box
             sx={{
@@ -66,77 +72,84 @@ const MainEstablishmentInfo = ({establishment, subscribe}: IProps) => {
                 p: 0
             }}
         >
-            <Box>
-                <Box sx={{
-                    display: 'flex',
-                    flexDirection: {xs: 'column',},
-                    justifyContent: {xs: 'start', sm: 'space-between'}
-                }}>
-                    <Box>
+            <Box sx={{
+                display: 'flex',
+                flexDirection: {xs: 'column',},
+                justifyContent: {xs: 'start', sm: 'space-between'}
+            }}>
+                <Box>
+                    <Box sx={{
+                        display: 'flex',
+                        width: '100%',
+                        alignItems: (width < 800 && width >= 600) ? 'start' : 'center',
+                        justifyContent: 'space-between',
+                        flexWrap: 'wrap',
+                        gap: 1
+                    }}>
                         <Box sx={{
                             display: 'flex',
-                            width: '100%',
+                            flexDirection: 'row',
+                            gap: {xs: 3, sm: 6},
                             alignItems: 'center',
-                            justifyContent: 'space-between'
+                            "& a": {
+                                fontSize: {xs: 14, sm: 16},
+                            }
                         }}>
-                            <Box sx={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                gap: {xs: 3, sm: 6},
-                                alignItems: 'center',
-                                "& a": {
-                                    fontSize: {xs: 14, sm: 16},
-                                }
-                            }}>
-                                <Typography
-                                    sx={{
-                                        color: 'common.white',
-                                        textTransform: 'capitalize',
-                                        fontSize: {xs: '24px', sm: '30px'},
-                                        fontWeight: 700,
-                                    }}>
-                                    {establishment.title}
-                                </Typography>
-                                <Link
-                                    to={`/all_institutions?pageSize=10&current=1&sorters[0][field]=createdAt_asc&sorters[0][order]=desc&filters[0][field]=propertyType&filters[0][operator]=eq&filters[0][value]=${establishment.type}`}
-                                    style={{
-                                        textDecoration: 'none',
-                                        display: 'flex',
-                                        justifyContent: 'start',
-                                        alignItems: 'center',
-                                        color: '#fff',
-                                        padding: '5px',
-                                        backgroundColor: '#5e49c3',
-                                        borderRadius: '5px',
-                                    }}>
-                                    {
-                                        translate(`home.create.type.${establishment.type}`)
-                                    }
-                                </Link>
-                            </Box>
-                            <Box sx={{
-                                display: 'flex',
-                                gap: 2,
-                                alignItems: 'center'
-                            }}>
+                            <Typography
+                                sx={{
+                                    color: 'common.white',
+                                    textTransform: 'capitalize',
+                                    fontSize: {xs: '24px', sm: '30px'},
+                                    fontWeight: 700,
+                                }}>
+                                {establishment.title}
+                            </Typography>
+                            <Link
+                                to={`/all_institutions?pageSize=10&current=1&sorters[0][field]=createdAt_asc&sorters[0][order]=desc&filters[0][field]=propertyType&filters[0][operator]=eq&filters[0][value]=${establishment.type}`}
+                                style={{
+                                    textDecoration: 'none',
+                                    display: 'flex',
+                                    justifyContent: 'start',
+                                    alignItems: 'center',
+                                    color: '#fff',
+                                    padding: '5px',
+                                    backgroundColor: '#5e49c3',
+                                    borderRadius: '5px',
+                                }}>
                                 {
-                                    (establishment?.createdBy !== user?._id
-                                        && establishment?._id && establishment?.sendNotifications) &&
-                                    <SubscribeButton
-                                        createdBy={establishment?.createdBy}
-                                        showText={width > 600}
-                                        subscribe={subscribe}
-                                        establishmentId={establishment?._id}
-                                        style={{
-                                            p: '5px',
-                                            "& svg": {
-                                                fontSize: {xs: '26px', sm: '30px'}
-                                            }
-                                        }}
-                                    />
+                                    translate(`home.create.type.${establishment.type}`)
                                 }
+                            </Link>
+                        </Box>
+                        <Box sx={{
+                            display: 'flex',
+                            gap: 2,
+                            alignItems: 'start'
+                        }}>
+                            {
+                                (establishment?.createdBy !== user?._id
+                                    && establishment?._id && establishment?.sendNotifications) &&
+                                <SubscribeButton
+                                    createdBy={establishment?.createdBy}
+                                    showText={width > 600}
+                                    subscribe={subscribe}
+                                    establishmentId={establishment?._id}
+                                    style={{
+                                        p: '5px',
+                                        "& svg": {
+                                            fontSize: {xs: '26px', sm: '30px'}
+                                        }
+                                    }}
+                                />
+                            }
+                            <Box sx={{
+                                display: 'flex',
+                                alignItems: (width < 800 && width >= 600) ? 'end' : 'center',
+                                gap: 1,
+                                flexDirection: (width < 800 && width >= 600) ? 'column' : 'row',
+                            }}>
                                 <BookMarkButton
-                                    showText={false}
+                                    showText={width > 600}
                                     color={'common.white'}
                                     bgColor={'transparent'}
                                     style={{
@@ -145,220 +158,262 @@ const MainEstablishmentInfo = ({establishment, subscribe}: IProps) => {
                                         minWidth: '20px',
                                         bgcolor: mode === 'dark' ? '#86a8cf' : '#e6f2ff',
                                         "& svg": {
-                                            fontSize: {xs: '26px', sm: '30px'}
+                                            fontSize: {xs: '26px', sm: '30px'},
+                                            order: -1
                                         }
                                     }}
-                                    type={'favoritePlaces'} id={establishment?._id}
+                                    type={'institution'} id={establishment?._id}
                                 />
-                            </Box>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            gap: 1,
-                            alignItems: 'center'
-                        }}>
-                            <Place color={'secondary'} sx={{
-                                fontSize: '24px'
-                            }}/>
-                            <Box sx={{
-                                display: 'flex',
-                                flexDirection: 'column'
-                            }}>
-                                <Link
-                                    to={`/all_institutions?pageSize=10&current=1&sorters[0][field]=&sorters[0][order]=asc&filters[0][field]=averageCheck&filters[0][operator]=lte&filters[0][value]=100000&filters[1][field]=averageCheck&filters[1][operator]=gte&filters[1][value]=20&filters[2][field]=tag&filters[2][value]=&filters[2][operator]=contains&filters[3][field]=title&filters[3][value]=&filters[3][operator]=contains&filters[4][field]=propertyType&filters[4][operator]=eq&filters[4][value]=&filters[5][field]=city&filters[5][operator]=contains&filters[5][value]=${establishment?.place?.city}`}
-                                    style={{
-                                        fontSize: '14px',
-                                        width: 'fit-content',
-                                        color: mode === 'dark' ? 'silver' : 'blueviolet',
-                                        borderBottom: `1px solid ${mode === 'dark' ? 'silver' : 'blueviolet'}`
-                                    }}>
-                                    {establishment?.place?.city}
-                                </Link>
-                                <Typography sx={{
-                                    fontSize: '13px',
-                                    color: 'common.white',
+                                <Box sx={{
+                                    backdropFilter: 'blur(7px)',
+                                    bgcolor: mode === 'dark' ? 'rgba(255,255,255,0.7)' : 'rgba(0, 0, 0, 0.4)',
+                                    borderRadius: '5px'
                                 }}>
-                                    {establishment?.place?.address}
-                                </Typography>
+                                    <SharedComponent
+                                        type={'institution'}
+                                        color={'common.white'}
+                                        url={window.location.href}
+                                        isShowSharedText={width > 600}
+                                        title={translate('buttons.share')}
+                                        isOnlyShared={true}
+                                    />
+                                </Box>
                             </Box>
                         </Box>
                     </Box>
                     <Box sx={{
                         display: 'flex',
-                        flexDirection: {xs: 'column', sm: 'row'},
-                        justifyContent: 'space-between',
-                        gap: {xs: 2, sm: 0},
-                        alignItems: {xs: 'start', sm: 'center'},
-                        width: '100%',
-                        mb: 2
+                        flexDirection: 'row',
+                        gap: 1,
+                        alignItems: 'center',
+                        m: '10px 0'
                     }}>
+                        <Place color={'secondary'} sx={{
+                            fontSize: '24px'
+                        }}/>
                         <Box sx={{
                             display: 'flex',
-                            flexDirection: 'row',
-                            gap: 1,
-                            alignItems: 'center',
+                            flexDirection: 'column'
                         }}>
-                            {
-                                establishment?._id && postRating !== undefined && <>
-                                    <Rating precision={0.5} name="read-only" value={postRating} readOnly/>
-                                    <Box sx={{
-                                        color: 'common.white'
-                                    }}>
-                                        {postRating > 0 ? postRating?.toFixed(2) : postRating}
-                                    </Box>
-                                    <Box
-                                        component={'span'}
-                                        sx={{
-                                            margin: '0 5px',
-                                            fontSize: {xs: '12px', sm: '14px'},
-                                            color: 'silver'
-                                        }}
-                                    >
-                                        ({establishment?.reviewsLength})
-                                    </Box>
-                                </>
-                            }
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            gap: 1,
-                            bgcolor: 'common.white',
-                            color: 'common.black',
-                            p: '0px 15px',
-                            borderRadius: '20px',
-                            alignItems: 'center',
-                            "& span:nth-of-type(2)": {
-                                fontSize: {xs: '18px', sm: '20px', md: '22px', lg: '24px'},
-                                fontWeight: {xs: 600, md: 800}
-                            }
-                        }}>
-                            <Box
-                                component={'span'}
-                            >
-                                {translate('home.create.averageCheck')}
-                            </Box>
-                            ~
-                            <Box
-                                component={'span'}
-                            >
-                                {establishment?.averageCheck} ₴
-                            </Box>
+                            <Link
+                                to={`/all_institutions?pageSize=10&current=1&sorters[0][field]=&sorters[0][order]=asc&filters[0][field]=averageCheck&filters[0][operator]=lte&filters[0][value]=100000&filters[1][field]=averageCheck&filters[1][operator]=gte&filters[1][value]=20&filters[2][field]=tag&filters[2][value]=&filters[2][operator]=contains&filters[3][field]=title&filters[3][value]=&filters[3][operator]=contains&filters[4][field]=propertyType&filters[4][operator]=eq&filters[4][value]=&filters[5][field]=city&filters[5][operator]=contains&filters[5][value]=${establishment?.place?.city}`}
+                                style={{
+                                    fontSize: '14px',
+                                    width: 'fit-content',
+                                    color: mode === 'dark' ? 'silver' : 'blueviolet',
+                                    borderBottom: `1px solid ${mode === 'dark' ? 'silver' : 'blueviolet'}`
+                                }}>
+                                {establishment?.place?.city}
+                            </Link>
+                            <Typography sx={{
+                                fontSize: '13px',
+                                color: 'common.white',
+                            }}>
+                                {establishment?.place?.address}
+                            </Typography>
                         </Box>
                     </Box>
                 </Box>
                 <Box sx={{
                     display: 'flex',
-                    flexDirection: {xs: 'column', xl: 'row'},
+                    flexDirection: {xs: 'column', sm: 'row'},
+                    justifyContent: 'space-between',
+                    gap: {xs: 2, sm: 0},
+                    alignItems: {xs: 'start', sm: 'center'},
                     width: '100%',
-                    gap: 2
+                    mb: 2
                 }}>
-                    {
-                        establishment?.pictures?.length > 0 &&
-                        <ImageGallery photos={establishment?.pictures}/>
-                    }
                     <Box sx={{
-                        p: 0,
-                        width: {xs: '100%', xl: '40%'}
+                        display: 'flex',
+                        flexDirection: 'row',
+                        gap: 1,
+                        alignItems: 'center',
                     }}>
-                        <Box sx={{
-                            borderRadius: '15px',
-                            p: '15px',
-                            bgcolor: mode === 'dark' ? '#3b93a7' : '#f39c7d',
-                        }}>
-                            <MDEditor.Markdown source={establishment?.description}
-                                               style={{
-                                                   whiteSpace: 'pre-wrap',
-                                                   fontSize: "14px",
-                                                   padding: "5px 0",
-                                                   background: 'transparent',
-                                                   color: '#fff'
-                                               }}/>
-                        </Box>
-                        <Box sx={{
-                            mt: 1,
-                            display: 'flex',
-                            width: '100%',
-                            flexDirection: {xs: 'column', sm: 'row', lg: 'column'},
-                            justifyContent: {xs: 'start', sm: 'space-between', lg: 'start'},
-                            alignItems: {sx: 'start', sm: 'center', lg: 'start'},
-                            gap: {xs: 2, sm: 0, lg: 2},
-                            borderRadius: '15px',
-                            p: '15px',
-                            bgcolor: mode === 'dark' ? '#3c6687' : '#f36429',
-                            color: '#fff'
-                        }}>
-                            <Stack>
-                                <Typography>
-                                    {translate("home.create.workSchedule.title")}
-                                </Typography>
-                                <>
-                                    {
-                                        establishment?.workSchedule?.workDays?.map((workDay, index) => (
-                                            <Box key={index} sx={{
-                                                display: 'flex',
-                                                flexDirection: 'row',
-                                                justifyContent: "start",
-                                                alignItems: 'center',
-                                                gap: 2,
-                                                ml: 1
-                                            }}>
-                                                <span>
-                                                    {translate(`home.create.workSchedule.dayName.${workDay?.days?.from}`)} - {translate(`home.create.workSchedule.dayName.${workDay?.days?.to}`)}
-                                                </span>
-                                                <span>
-                                                    {workDay?.time?.from} - {workDay?.time?.to}
-                                                </span>
-                                            </Box>
-                                        ))
-                                    }
-                                </>
-                                <Typography sx={{
-                                    mt: 1
-                                }}>
-                                    {translate("home.create.workSchedule.weekend.title")}
-                                </Typography>
+                        {
+                            establishment?._id && postRating !== undefined && <>
+                                <Rating precision={0.5} name="read-only" value={postRating} readOnly/>
                                 <Box sx={{
-                                    ml: 1
+                                    color: 'common.white'
                                 }}>
-                                    {establishment?.workSchedule?.weekend}
+                                    {postRating > 0 ? postRating?.toFixed(2) : postRating}
                                 </Box>
-                            </Stack>
-                            <Box sx={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                            }}>
-                                {
-                                    establishment?.createdBy !== user?._id &&
-                                    <Button
-                                        variant={'contained'}
-                                        color={'info'}
-                                        sx={{
-                                            ...buttonStyle,
-                                            textTransform: 'inherit',
-                                        }}
-                                        onClick={() => navigate(`/capl/create?institution=${establishment?._id}`)}
-                                    >
-                                        {translate('capl.title')}
-                                    </Button>
-                                }
-                            </Box>
+                                <Box
+                                    component={'span'}
+                                    sx={{
+                                        margin: '0 5px',
+                                        fontSize: {xs: '12px', sm: '14px'},
+                                        color: 'silver'
+                                    }}
+                                >
+                                    ({establishment?.reviewsLength})
+                                </Box>
+                            </>
+                        }
+                    </Box>
+                    <Box sx={{
+                        display: 'flex',
+                        gap: 1,
+                        bgcolor: 'common.white',
+                        color: 'common.black',
+                        p: '0px 15px',
+                        borderRadius: '20px',
+                        alignItems: 'center',
+                        "& span:nth-of-type(2)": {
+                            fontSize: {xs: '18px', sm: '20px', md: '22px', lg: '24px'},
+                            fontWeight: {xs: 600, md: 800}
+                        }
+                    }}>
+                        <Box
+                            component={'span'}
+                        >
+                            {translate('home.create.averageCheck')}
+                        </Box>
+                        ~
+                        <Box
+                            component={'span'}
+                        >
+                            {establishment?.averageCheck} ₴
                         </Box>
                     </Box>
                 </Box>
             </Box>
             <Box sx={{
-                display: 'flex',
-                flexDirection: {xs: 'column', sm: 'row', md: 'column', lg: 'row'},
-                gap: 2,
-                width: '100%'
+                display: 'grid',
+                gridTemplateColumns: {xs: '1fr', sm: 'repeat(3, 1fr)', md: 'repeat(6, 1fr)', lg: 'repeat(8, 1fr)'},
+                gridAutoRows: 'auto',
+                width: '100%',
+                gap: {xs: 2, md: 3},
+                "& > div:nth-of-type(1)": {
+                    order: 1,
+                    gridColumn: {sm: 'span 3', md: 'span 6', lg: 'span 5'}
+                },
+                "& > div:nth-of-type(2)": {
+                    order: {xs: 3, lg: 4},
+                    gridColumn: {sm: 'span 2', md: 'span 4', lg: 'span 8'}
+                },
+                "& > div:nth-of-type(3)": {
+                    order: {xs: 2, lg: 3},
+                    gridColumn: {sm: 'span 1', md: 'span 2', lg: 'span 5'}
+                },
+                "& > div:nth-of-type(4)": {
+                    order: {xs: 4, lg: 2},
+                    height: {xs: '300px', sm: '350px', md: '400px', lg: '100%'},
+                    gridRow: {lg: 'span 2'},
+                    gridColumn: {sm: 'span 3', md: 'span 6', lg: 'span 3'}
+                },
+                "& > div:nth-of-type(5)": {
+                    order: {xs: 5, lg: 7},
+                    gridColumn: {sm: 'span 3', lg: 'span 3'}
+                },
+                "& > div:nth-of-type(6)": {
+                    order: {xs: 6, lg: 6},
+                    gridColumn: {sm: 'span 3', lg: 'span 5'}
+                },
+
             }}>
+                {
+                    establishment?.pictures?.length > 0 &&
+                    <ImageGalleryV1 photos={establishment?.pictures}/>
+                }
+                <Box sx={{
+                    bgcolor: 'modern.modern_2.main',
+                    p: '10px',
+                    borderRadius: '15px',
+                }}>
+                    {/*<ObserverComponent*/}
+                    {/*    defaultHeight={width < 600 ? '100%' : '295px'}*/}
+                    {/*    style={{*/}
+                    {/*        bgcolor: 'modern.modern_2.main'*/}
+                    {/*    }}*/}
+                    {/*    maxWindowWidth={600}*/}
+                    {/*    isShowFull={true}*/}
+                    {/*>*/}
+                    <Typography variant={'h5'} sx={{
+                        color: 'common.white'
+                    }}>
+                        {translate('home.create.description')}
+                    </Typography>
+                    <Box sx={{
+                        width: '100%',
+                    }}>
+                        <MDEditor.Markdown source={establishment?.description}
+                                           style={{
+                                               whiteSpace: 'break-spaces',
+                                               fontSize: "14px",
+                                               padding: "5px 0",
+                                               background: 'transparent',
+                                               color: mode === 'dark' ? '#fff' : '#000'
+                                           }}/>
+                    </Box>
+                    {/*</ObserverComponent>*/}
+                </Box>
+                {/*<ObserverComponent*/}
+                {/*    defaultHeight={width < 600 ? '100%' : '295px'}*/}
+                {/*    style={{*/}
+                {/*        bgcolor: 'modern.modern_1.main'*/}
+                {/*    }}*/}
+                {/*    maxWindowWidth={600}*/}
+                {/*    isShowFull={true}*/}
+                {/*>*/}
+                <Box sx={{
+                    display: 'flex',
+                    width: '100%',
+                    flexDirection: 'column',
+                    p: '10px',
+                    borderRadius: '15px',
+                    justifyContent: 'start',
+                    bgcolor: 'modern.modern_1.main',
+                    alignItems: 'start',
+                    color: 'common.white'
+                }}>
+                    <Typography sx={{
+                        fontWeight: 600,
+                        fontSize: '1.1rem'
+                    }}>
+                        {translate("home.create.workSchedule.title")}
+                    </Typography>
+                    <Stack sx={{
+                        gap: 1
+                    }}>
+                        {
+                            establishment?.workSchedule?.workDays?.map((workDay, index) => (
+                                <Box key={index} sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    justifyContent: "start",
+                                    alignItems: 'start',
+                                    ml: 1
+                                }}>
+                                                <span>
+                                                    {translate(`home.create.workSchedule.dayName.${workDay?.days?.from}`)} - {translate(`home.create.workSchedule.dayName.${workDay?.days?.to}`)}
+                                                </span>
+                                    <span>
+                                                    {workDay?.time?.from} - {workDay?.time?.to}
+                                                </span>
+                                </Box>
+                            ))
+                        }
+                    </Stack>
+                    <Typography sx={{
+                        mt: 1,
+                        fontWeight: 600
+                    }}>
+                        {translate("home.create.workSchedule.weekend.title")}
+                    </Typography>
+                    <Box sx={{
+                        ml: 1
+                    }}>
+                        {establishment?.workSchedule?.weekend}
+                    </Box>
+                </Box>
+                {/*</ObserverComponent>*/}
                 {
                     establishment?._id && location?.lng &&
                     <Box sx={{
-                        width: {xs: '100%', sm: '350px', md: '100%', lg: '50%'},
-                        height: '350px',
+                        width: '100%',
+                        height: '100%',
                         display: 'flex',
+                        minHeight: '300px',
                         justifyContent: 'center',
                         alignItems: 'center',
                         "& > div": {
@@ -376,10 +431,10 @@ const MainEstablishmentInfo = ({establishment, subscribe}: IProps) => {
                     flexDirection: 'column',
                     gap: 3,
                     p: '15px',
-                    color: '#fff',
+                    color: 'common.white',
                     borderRadius: '15px',
-                    bgcolor: mode === 'dark' ? '#404567' : '#e18c5e',
-                    width: {xs: '100%', sm: 'calc( 100% - 350px )', md: '100%', lg: '50%'}
+                    bgcolor: 'modern.modern_1.second',
+                    width: '100%'
                 }}>
                     <Box sx={{
                         width: '100%',
@@ -419,7 +474,6 @@ const MainEstablishmentInfo = ({establishment, subscribe}: IProps) => {
                                         onClick={() => navigate(`/all_institutions?pageSize=10&current=1&sorters[0][field]=createdAt_desc&sorters[0][order]=desc&filters[0][field]=title&filters[0][value]=${'#' + tag.value}&filters[0][operator]=contains`,
                                             {state: {value: tag.value, isTag: true}})} key={index} label={tag.value}
                                         sx={{
-                                            color: '#fff',
                                             cursor: 'pointer'
                                         }}/>
                                 ))
@@ -427,25 +481,25 @@ const MainEstablishmentInfo = ({establishment, subscribe}: IProps) => {
                         </Box>
                     </>
                 </Box>
-            </Box>
-            <Box sx={{
-                p: '15px',
-                borderRadius: '15px',
-                color: '#fff',
-                bgcolor: mode === 'dark' ? '#2a578b' : '#d6773b'
-            }}>
-                <Typography>
-                    {translate('home.create.features')}
-                </Typography>
-                <List>
-                    {
-                        establishment?.features?.map((feature, index) => (
-                            <ListItem key={index}>
-                                {feature?.value}
-                            </ListItem>
-                        ))
-                    }
-                </List>
+                <Box sx={{
+                    p: '15px',
+                    borderRadius: '15px',
+                    color: 'common.white',
+                    bgcolor: 'modern.modern_2.main'
+                }}>
+                    <Typography>
+                        {translate('home.create.features')}
+                    </Typography>
+                    <List>
+                        {
+                            establishment?.features?.map((feature, index) => (
+                                <ListItem key={index}>
+                                    {feature?.value}
+                                </ListItem>
+                            ))
+                        }
+                    </List>
+                </Box>
             </Box>
         </Box>
     );

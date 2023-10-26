@@ -72,6 +72,9 @@ p, admin, top_institutions, show
 p, admin, profile, (list)|(create)
 p, admin, profile, (edit)|(show)|(delete) 
 
+p, admin, profileUser, (list)|(create)
+p, admin, profileUser, (edit)|(show)|(delete) 
+
 p, admin, all-places, (list)|(create)
 p, admin, all-places, (show)|(edit)|(delete)
 

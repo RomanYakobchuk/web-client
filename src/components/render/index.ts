@@ -1,5 +1,6 @@
-import * as searchRender from "./searchRender";
+import {renderItem, renderTitle} from "./searchRender";
 
 export {
-    searchRender
+    renderTitle,
+    renderItem
 };

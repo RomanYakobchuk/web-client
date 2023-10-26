@@ -5,7 +5,7 @@ import {Clear} from "@mui/icons-material";
 import {Box, IconButton} from "@mui/material";
 import dayjs from "dayjs";
 
-import ReviewInput from "../establishment/utills/review-input";
+import CommentInput from "../establishment/utills/comment-input";
 import Loading from "../loading/loading";
 import {useMobile} from "../../hook";
 import {IConversation, IGetIdentity, IMessage, ProfileProps,} from "../../interfaces/common";
@@ -266,14 +266,13 @@ const CurrentChatContainer = ({conversation, setCurrentChat, setOpenDrawer}: IPr
                 )
             }
             <Box>
-                {
-                    conversation?._id &&
-                    <ReviewInput
-                        value={messageText}
-                        setValue={setMessageText}
-                        handleSend={sendMessage}
-                    />
-                }
+                {/*{*/}
+                {/*    conversation?._id &&*/}
+                {/*    <CommentInput*/}
+                {/*        setValue={setMessageText}*/}
+                {/*        handleSend={sendMessage}*/}
+                {/*    />*/}
+                {/*}*/}
             </Box>
         </Box>
     );

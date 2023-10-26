@@ -10,14 +10,15 @@ import {ColorModeContext} from "../../../contexts";
 
 import './custom.css';
 
-interface IProps {
+type TProps = {
     isLoading: boolean,
     children: ReactNode,
     isShowButtons?: boolean,
-    bgColor?: string
+    bgColor?: string,
+    maxWidth?: string
 }
 
-const CustomShow = ({isLoading, children, isShowButtons, bgColor}: IProps) => {
+const CustomShow = ({isLoading, children, isShowButtons, bgColor, maxWidth = '1100px'}: TProps) => {
     const {mode} = useContext(ColorModeContext);
     const translate = useTranslate();
 
@@ -28,6 +29,7 @@ const CustomShow = ({isLoading, children, isShowButtons, bgColor}: IProps) => {
                   style: {
                       background: bgColor ? bgColor : mode === 'dark' ? "#3e3e36" : '#fff',
                       padding: '0',
+                      boxShadow: 'unset'
                   },
               }}
               headerButtons={isShowButtons ?
@@ -45,7 +47,7 @@ const CustomShow = ({isLoading, children, isShowButtons, bgColor}: IProps) => {
                   style: {
                       color: mode === 'dark' ? '#fcfcfc' : '#000',
                       padding: '10px',
-                      maxWidth: '1100px',
+                      maxWidth: maxWidth,
                       margin: '0 auto'
                   },
                   backIcon: <ArrowBackOutlined sx={{

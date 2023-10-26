@@ -1,15 +1,14 @@
 import {Box, SxProps, Typography} from "@mui/material";
-import {ListButton} from "@refinedev/mui";
 import {Breadcrumb, DeleteButton, Edit, SaveButton} from "@refinedev/antd";
-import React, {BaseSyntheticEvent, ReactNode, useContext} from "react";
-import {Button, ButtonProps} from "antd";
-import {ColorModeContext} from "../../../contexts";
+import React, {ReactNode, useContext} from "react";
+import {Button} from "antd";
 import {useTranslate} from "@refinedev/core";
 import {ArrowBackOutlined, Close} from "@mui/icons-material";
 import {useNavigate} from "react-router-dom";
 
-interface IProps {
-    saveButtonProps?: ButtonProps & { onClick: () => void } | { disabled: boolean; onClick: (e: BaseSyntheticEvent<object, any, any>) => void },
+import {ColorModeContext} from "../../../contexts";
+
+type TProps = {
     children: ReactNode,
     isLoading: boolean,
     bgColor?: string,
@@ -17,7 +16,7 @@ interface IProps {
     style?: SxProps
 }
 
-const CustomEdit = ({saveButtonProps, children, isLoading, bgColor, onClick, style}: IProps) => {
+const CustomEdit = ({children, isLoading, bgColor, onClick, style}: TProps) => {
 
     const {mode} = useContext(ColorModeContext);
     const navigate = useNavigate();
@@ -47,6 +46,7 @@ const CustomEdit = ({saveButtonProps, children, isLoading, bgColor, onClick, sty
                     style: {
                         background: bgColor ? bgColor : mode === 'dark' ? "#4d4d44" : '#fff',
                         padding: '0',
+                        boxShadow: 'unset'
                     },
                 }}
                 headerProps={{

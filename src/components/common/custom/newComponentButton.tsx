@@ -4,11 +4,11 @@ import {CanAccess, useTranslate} from "@refinedev/core";
 import React from "react";
 import {useNavigate} from "react-router-dom";
 
-interface IProps {
+type TProps = {
     link: string,
     title: string
 }
-const NewComponentButton = ({link, title}: IProps) => {
+const NewComponentButton = ({link, title}: TProps) => {
 
     const translate = useTranslate();
     const navigate = useNavigate();

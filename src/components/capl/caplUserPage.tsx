@@ -7,7 +7,7 @@ import {useNavigate} from "react-router-dom";
 import {ColorModeContext} from "../../contexts";
 import {Edit} from "@mui/icons-material";
 
-const UserList = () => {
+const CaplUserPage = () => {
     const {data: identity} = useGetIdentity<IGetIdentity>();
     const user: ProfileProps = identity?.user as ProfileProps;
     const translate = useTranslate();
@@ -77,4 +77,4 @@ const UserList = () => {
     )
         ;
 };
-export default UserList;
+export default CaplUserPage;

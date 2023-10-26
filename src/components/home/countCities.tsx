@@ -1,10 +1,10 @@
-import {Box, Button, Grid, IconButton, Skeleton, Typography} from "@mui/material";
+import {Box, IconButton, Skeleton, Typography} from "@mui/material";
 import {CanAccess, useGetLocale, useList, useTranslate} from "@refinedev/core";
 import {Typography as TypographyAntd} from "antd";
 import {Link, useNavigate} from "react-router-dom";
-import {EditLocationOutlined} from "@mui/icons-material";
+import {Apartment, EditLocationOutlined} from "@mui/icons-material";
 
-import ScrollContent from "../common/scrollContent";
+import ScrollContent from "../common/scroll/scrollContent";
 import {useMobile} from "../../hook";
 
 interface ICity {
@@ -19,7 +19,7 @@ const {Text} = TypographyAntd;
 const CountCities = () => {
     const translate = useTranslate();
     const navigate = useNavigate();
-    const {width} = useMobile();
+    const {width, layoutWidth} = useMobile();
 
     const {data: dataCities, isLoading: isLoadingCities} = useList<any>({
         resource: "institution/countByCity",
@@ -31,9 +31,12 @@ const CountCities = () => {
     return (
         <Box sx={{
             display: "flex",
-            flexDirection: 'column',
+            flexDirection: {xs: 'column', md: 'row'},
             gap: 2,
             width: '100%',
+            bgcolor: 'modern.modern_1.main',
+            borderRadius: '15px',
+            p: '20px',
             "& a": {
                 textDecoration: 'none',
                 width: {xs: '300px', sm: '400px'},
@@ -44,22 +47,32 @@ const CountCities = () => {
                 }
             }
         }}>
-            <Typography sx={{
-                fontSize: {xs: '18px', sm: '22px'},
-                fontWeight: 900,
-                color: (theme: any) => theme.palette.secondary.main
+            <Box sx={{
+
             }}>
-                {translate("home.sortByType.browseByCity")}
-                <CanAccess action={'cityWithData'} resource={'cities'}>
-                    <IconButton
-                        color={'secondary'}
-                        onClick={() => navigate('/home/update-city')}
-                    >
-                        <EditLocationOutlined/>
-                    </IconButton>
-                </CanAccess>
-            </Typography>
-            <ScrollContent>
+                <Typography sx={{
+                    fontSize: {xs: '18px', sm: '22px'},
+                    fontWeight: 900,
+                    color: (theme: any) => theme.palette.secondary.main
+                }}>
+                    {translate("home.sortByType.browseByCity")}
+                    <CanAccess action={'cityWithData'} resource={'cities'}>
+                        <IconButton
+                            color={'secondary'}
+                            onClick={() => navigate('/home/update-city')}
+                        >
+                            <EditLocationOutlined/>
+                        </IconButton>
+                    </CanAccess>
+                </Typography>
+                <Box>
+                    SOME TEXT
+                </Box>
+            </Box>
+            <ScrollContent
+
+                parentWidth={`calc(${layoutWidth}px - 10vw - 40px)`}
+            >
                 {
                     isLoadingCities
                         ? [1, 2, 3, 4]?.map((item: number) => (
@@ -89,12 +102,34 @@ const CountCities = () => {
                                     display: 'flex',
                                     backgroundPosition: 'center',
                                     flexDirection: 'column',
-                                    justifyContent: 'end',
+                                    justifyContent: 'space-between',
                                 }}>
                                 <Box sx={{
-                                    width: '100%',
-                                    padding: '10px',
-                                    borderRadius: '0 0 10px 10px',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    width: 'fit-content',
+                                    bgcolor: 'rgba(0, 0, 0, 0.2)',
+                                    backdropFilter: 'blur(4px)',
+                                    borderRadius: '20px',
+                                    p: '5px 15px',
+                                    m: '10px'
+                                }}>
+                                    <Text style={{
+                                        fontSize: width < 600 ? '16px' : '20px',
+                                        fontWeight: 900,
+                                        color: '#fff',
+                                    }}>
+                                        {
+                                            currentLocale === 'ua' ? city.name_ua : city.name_en
+                                        }
+                                    </Text>
+                                </Box>
+                                <Box sx={{
+                                    width: 'fit-content',
+                                    padding: '7px 20px 7px 10px',
+                                    m: '10px',
+                                    borderRadius: '20px',
                                     bgcolor: 'rgba(0, 0, 0, 0.2)',
                                     backdropFilter: 'blur(4px)',
                                     display: 'flex',
@@ -103,20 +138,16 @@ const CountCities = () => {
                                     alignItems: 'baseline'
                                 }}>
                                     <Text style={{
-                                        fontSize: width < 600 ? '18px' : '22px',
-                                        fontWeight: 900,
-                                        color: '#fff',
-                                    }}>
-                                        {
-                                            currentLocale === 'ua' ? city.name_ua : city.name_en
-                                        }
-                                    </Text>
-                                    <Text style={{
                                         fontSize: width < 600 ? '16px' : '18px',
                                         fontWeight: 600,
                                         color: '#fff',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '16px'
                                     }}>
-                                        {translate("cities.institutions", {"number": city.institutionCount})}
+                                        <Apartment/>
+                                        {city.institutionCount}
+                                        {/*{translate("cities.institutions", {"number": city.institutionCount})}*/}
                                     </Text>
                                 </Box>
                             </Link>

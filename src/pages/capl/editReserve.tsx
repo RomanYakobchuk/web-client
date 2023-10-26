@@ -54,8 +54,6 @@ const EditReserve = () => {
     return (
         <CustomEdit
             isLoading={isLoading}
-            saveButtonProps={saveButtonProps}
-
         >
             <Form
                 {...formProps}

@@ -34,7 +34,8 @@ import AllComments from "./comment/all-comments";
 
 import Profile from "./profile/profile";
 import ShowUserInfo from './profile/show-user-info';
-import EditProfile from './profile/edit-profile';
+import EditUserInfo from './profile/edit-user-info';
+import EditProfile from './profile/editProfile';
 
 import Chat from "./chat/chat";
 
@@ -55,7 +56,7 @@ export {
     News,
     Register,
     Settings,
-    EditProfile,
+    EditUserInfo,
     ShowUserInfo,
     TopInstitutions,
     VerifyNumber,
@@ -75,5 +76,6 @@ export {
     UpdateCity,
     ShowFreeSeats,
     AddFreeSeats,
-    UpdateFreeSeats
+    UpdateFreeSeats,
+    EditProfile
 }

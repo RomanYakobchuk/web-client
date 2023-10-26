@@ -1,5 +1,5 @@
 import {HttpError, useTable} from "@refinedev/core";
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {useDebounce} from "use-debounce";
 import {Box, Typography} from "@mui/material";
 
@@ -7,11 +7,14 @@ import {INews} from "../../interfaces/common";
 import {FilterNews} from "../index";
 import ListForUsers from "./lists/listForUsers";
 import {useMobile} from "../../hook";
+import {SchemaContext} from "../../settings/schema";
 
 const UserList = () => {
 
     const {width} = useMobile();
+    const {schema} = useContext(SchemaContext);
 
+    const [isShowAdversiting, setIsShowAdversiting] = useState<boolean>(false);
     const [sortBy, setSortBy] = useState("");
     const [searchValue, setSearchValue] = useState<any>();
     const [debouncedSearchText] = useDebounce(searchValue, 500)
@@ -43,6 +46,7 @@ const UserList = () => {
         ])
     }, [debouncedSearchText]);
 
+    const isLarge =  width > 1100;
     if (isError) return <Typography>Error...</Typography>;
 
     return (
@@ -58,12 +62,16 @@ const UserList = () => {
             }}>
                 <Box sx={{
                     display: 'flex',
-                    flexDirection: 'row',
-                    width: width > 1100 ? '40%' : '100%',
+                    flexDirection: 'column',
+                    width: isLarge ? '40%' : '100%',
                     alignItems: 'center',
-                    position: width > 1100 ? 'sticky' : 'unset',
-                    top: '75px',
-                    maxWidth: {xs: '90%', sm: '700px'}
+                    position: isLarge ? 'sticky' : 'unset',
+                    top: schema === 'schema_2' ? '20px' : '80px',
+                    maxWidth: {xs: '90%', sm: '700px'},
+                    gap: 2,
+                    p: isLarge ? '20px': '0',
+                    bgcolor: isLarge ? 'modern.modern_1.main' : 'transparent',
+                    borderRadius: '15px'
                 }}>
                     <FilterNews
                         filters={filters}
@@ -76,6 +84,22 @@ const UserList = () => {
                         setSorters={setSorters}
                         searchValue={searchValue}
                     />
+                    {
+                        isShowAdversiting && (
+                            <Box sx={{
+                                width: '100%',
+                                height: {xs: '300px', md: '500px'},
+                                bgcolor: 'modern.modern_1.second',
+                                p: '20px',
+                                display: 'flex',
+                                borderRadius: '15px',
+                                justifyContent: 'center',
+                                alignItems: 'center'
+                            }}>
+                                ADVERTISING
+                            </Box>
+                        )
+                    }
                 </Box>
                 <Box sx={{
                     width: width > 1100 ? '60%' : '100%',

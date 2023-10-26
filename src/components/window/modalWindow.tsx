@@ -22,7 +22,7 @@ const ModalWindow = ({children, open, setOpen, title, titleStyle, bodyProps, con
 
     const {width, device} = useMobile();
 
-    const someStyle = (!device || width < 600) ? {
+    const someStyle = (!device || width > 600) ? {
         '&::-webkit-scrollbar': {
             width: '10px',
             bgcolor: 'transparent',
@@ -58,17 +58,21 @@ const ModalWindow = ({children, open, setOpen, title, titleStyle, bodyProps, con
         return null;
     }
 
+
     return ReactDOM.createPortal(
         <Box
             role={'presentation'}
+            id={'modal_content_window'}
             sx={{
                 position: 'fixed',
                 inset: 0,
                 opacity: 1,
                 zIndex: 30,
+                height: '100% !important',
                 width: '100%',
                 top: open ? 0 : '100%',
-                height: '100vh',
+                p: 0,
+                m: 0,
                 transition: 'top 1s linear',
                 animation: `${open ? 'OpenModalWindow' : 'CloseModalWindow'} 1s linear forwards`,
                 bgcolor: 'rgba(107, 122, 144, 0.2)',
@@ -97,13 +101,14 @@ const ModalWindow = ({children, open, setOpen, title, titleStyle, bodyProps, con
                 sx={{
                     width: '100%',
                     position: 'absolute',
+                    overflow: 'hidden',
                     top: '50%',
                     left: '50%',
                     transform: 'translate(-50%, -50%)',
                     maxWidth: '700px',
                     boxShadow: 'rgba(67, 77, 91, 0.2) 0px 4px 20px',
                     borderRadius: 'clamp(0px, (100vw - 750px) * 9999, 12px)',
-                    height: width < 700 ? '100vh' : '70vh',
+                    height: width < 700 ? '100%' : '70vh',
                     bgcolor: 'common.black',
                     ...contentProps
                 }}>
@@ -157,7 +162,6 @@ const ModalWindow = ({children, open, setOpen, title, titleStyle, bodyProps, con
                 </Box>
             </Box>
         </Box>, document.body
-        // </Modal>
     );
 };
 

@@ -1,4 +1,4 @@
-import {useNavigate, useSearchParams} from "react-router-dom";
+import {Link, useLocation, useNavigate, useSearchParams} from "react-router-dom";
 import {
     Box,
     Button,
@@ -17,7 +17,8 @@ import dayjs from "dayjs";
 
 import {ColorModeContext} from "../../contexts";
 import {IGetIdentity, ProfileProps, PropertyProps} from "../../interfaces/common";
-import {ModalWindow, SearchInstitutions} from "../../components";
+import {CustomCreate, ModalWindow, SearchInstitutions} from "../../components";
+import {isJsonString} from "../../utils";
 
 const CreateReservation = () => {
     const {data: identity} = useGetIdentity<IGetIdentity>();
@@ -26,9 +27,9 @@ const CreateReservation = () => {
     const navigate = useNavigate();
     const {mode} = useContext(ColorModeContext);
     const {open} = useNotification();
-    const [searchParams] = useSearchParams();
+    const {search: searchEstablishment} = useLocation();
 
-    const search = searchParams.get('establishment') ? JSON.parse(searchParams.get('establishment') as string) as PropertyProps : {} as PropertyProps;
+    const [search, setSearch] = useState<PropertyProps>({} as PropertyProps);
     const [searchPlace, setSearchPlace] = useState<PropertyProps>({} as PropertyProps);
     const [fullName, setFullName] = useState<string>('');
     const [eventType, setEventType] = useState<string>('');
@@ -40,6 +41,17 @@ const CreateReservation = () => {
     const [numberPeople, setNumberPeople] = useState<number | any>(0);
     const [whoPay, setWhoPay] = useState<string>('');
 
+    const establishmentParam = new URLSearchParams(searchEstablishment).get('establishment');
+
+    useEffect(() => {
+        if (searchEstablishment) {
+            // const jsonString = decodeURIComponent(establishmentParam);
+            // if (isJsonString(jsonString)) {
+            //     setSearchPlace(JSON.parse(jsonString))
+            // }
+            console.log(searchEstablishment)
+        }
+    }, [searchEstablishment]);
 
     const {refineCore: {onFinish, formLoading, queryResult}, handleSubmit} = useForm({
         refineCoreProps: {
@@ -65,12 +77,6 @@ const CreateReservation = () => {
             setWhoPay(user?.name)
         }
     }, [user?.name])
-    useEffect(() => {
-        if (search) {
-            console.log(search)
-            setSearchPlace((prevState) => ({...prevState, ...search}));
-        }
-    }, [search]);
 
 
     const onFinishHandler = async () => {
@@ -110,55 +116,44 @@ const CreateReservation = () => {
     }
 
     return (
-        <Box>
-            <Box sx={{
-                display: "flex",
-                width: '100%',
-                justifyContent: 'start',
-                alignItems: 'center',
-                gap: {xs: 2, md: 6}
-            }}>
-                <Button
-                    variant={"outlined"}
-                    onClick={() => navigate(-1)}
-                    color={'secondary'}>
-                    <ArrowBackIosNew/>
-                </Button>
-                <Typography sx={{
-                    fontSize: {xs: '16px', sm: '24px'}
-                }} fontWeight={700} color={mode === "dark" ? "#fcfcfc" : "#11142D"}>
-                    {translate('capl.title')}
-                </Typography>
-            </Box>
+        <CustomCreate
+            isLoading={formLoading}
+            breadCrumbItems={
+                [
+                    {
+                        title: <Link
+                            style={{
+                                color: 'silver'
+                            }}
+                            to={'/capl'}>{translate('capl.capl')}</Link>
+                    },
+                    {
+                        title: translate('capl.reservation')
+                    }
+                ]
+            }
+            headerTitle={translate('capl.title')}
+            saveButtonText={translate('buttons.confirm')}
+            maxWidth={'900px'}
+            onClick={onFinishHandler}
+        >
             <Box
                 sx={{
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    bgcolor: mode === "dark" ? "#2e424d" : "#fcfcfc",
-                    mt: {xs: '10px', sm: '20px'},
                     borderRadius: '15px',
-                    p: '40px 10px',
+                    p: '10px',
                 }}
             >
                 <Box sx={{
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: 2,
+                    gap: 4,
                     width: '100%',
-                    maxWidth: '550px'
                 }}>
                     <FormControl fullWidth>
-                        <FormHelperText
-                            sx={{
-                                fontSize: '14px',
-                                mb: 0.5,
-                                color: (theme) => theme.palette.text.primary
-                            }}
-                        >
-                            {translate('home.one')}
-                        </FormHelperText>
                         <SearchInstitutions searchInstitution={searchPlace as PropertyProps}
                                             setSearchInstitution={setSearchPlace}
                                             typeSearch={'all'}/>
@@ -297,42 +292,9 @@ const CreateReservation = () => {
                             {translate("capl.create.writeMe")}
                         </Typography>
                     </FormControl>
-                    <FormControl fullWidth sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        flexDirection: 'row'
-                    }}>
-                        <Button
-                            onClick={() => navigate(-1)}
-                            variant={'contained'}
-                            sx={{
-                                width: '37%'
-                            }}
-                            color={"error"}
-                            endIcon={<Clear/>}
-                        >
-                            {translate('buttons.cancel')}
-                        </Button>
-                        <Button
-                            variant={'contained'}
-                            sx={{
-                                width: '60%'
-                            }}
-                            color={"info"}
-                            endIcon={<Check/>}
-                            onClick={() => setOpenModal(true)}
-                        >
-                            {translate('buttons.confirm')}
-                        </Button>
-                        {/*<ModalWindow textButtonConfirm={translate('buttons.send')}*/}
-                        {/*             textButtonCancel={translate('buttons.cancel')} textTitle={'Confirm'}*/}
-                        {/*             message={'Save reservation'} handleSubmit={handleSubmit(onFinishHandler)}*/}
-                        {/*             open={openModal} close={setOpenModal}/>*/}
-                    </FormControl>
                 </Box>
             </Box>
-        </Box>
+        </CustomCreate>
 
     );
 };

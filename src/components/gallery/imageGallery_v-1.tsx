@@ -1,22 +1,22 @@
 import {useState} from "react";
 import {Box} from "@mui/material";
 import {Image} from "antd";
-import {IPicture} from "interfaces/common";
+import {IPicture} from "../../interfaces/common";
 
-import {useMobile} from "../../../hook";
+import {useMobile} from "../../hook";
 
 interface PlaceGalleryProps {
     photos: IPicture[]
 }
 
-const PlaceGallery = ({photos}: PlaceGalleryProps) => {
+const ImageGalleryV1 = ({photos}: PlaceGalleryProps) => {
     const {width} = useMobile();
 
     const [selectedSlideNumber, setSelectedSlideNumber] = useState(0);
 
-    const height = width < 600 ? '208px' : width < 900 ? '308px' : width < 1200 ? '408px' : '458px';
+    const height = width < 600 ? '208px' : width < 900 ? '308px' : width < 1200 ? '408px' : '388px';
     const height1 = '100%';
-    const height2 = width < 600 ? '100px' : width < 900 ? '150px' : width < 1200 ? '200px' : '225px';
+    const height2 = width < 600 ? '100px' : width < 900 ? '150px' : width < 1200 ? '200px' : '195px';
 
 
     const handleOpen = (i: number) => {
@@ -107,4 +107,4 @@ const PlaceGallery = ({photos}: PlaceGalleryProps) => {
         </Box>
     );
 }
-export default PlaceGallery;
+export default ImageGalleryV1;

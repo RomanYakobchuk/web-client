@@ -44,6 +44,7 @@ const Login = () => {
     } = useForm({
         refineCoreProps: {
             resource: 'auth/login',
+            action: 'create',
             onMutationError: (data) => {
                 setError(data?.response?.data)
             },

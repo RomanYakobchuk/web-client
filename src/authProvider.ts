@@ -1,15 +1,18 @@
-import axios, {AxiosRequestConfig} from "axios";
-import {parseJwt} from "./utils";
-import {IData, IGetIdentity, ProfileProps} from "./interfaces/common";
+import axios, {AxiosInstance, AxiosRequestConfig} from "axios";
 import type {AuthBindings} from "@refinedev/core";
 
-export const ACCESS_TOKEN_KEY = "access-refine-auth";
-export const REFRESH_TOKEN_KEY = "refresh-refine-auth";
+import {parseJwt} from "./utils";
+import {IData, IGetIdentity, ProfileProps} from "./interfaces/common";
+import {
+    ACCESS_TOKEN_KEY,
+    localFavPlacesKey,
+    localKeyEstablishment,
+    localKeyLeaveCommentAs, localSubscribedEstablishmentKey,
+    REFRESH_TOKEN_KEY
+} from "./config/const";
 
 export const baseURL = `${import.meta.env.VITE_APP_API}/api/v1`;
-// export const baseURL = ``;
-
-export const axiosInstance = axios.create({
+export const axiosInstance: AxiosInstance = axios.create({
     baseURL, headers: {
         'Access-Control-Allow-Origin': `${import.meta.env.VITE_APP_API}`,
         'Content-Type': 'application/json;charset=UTF-8'
@@ -80,6 +83,7 @@ axiosInstance.interceptors.response.use(
                         localStorage.setItem(ACCESS_TOKEN_KEY, response?.data?.access_token);
                         localStorage.setItem(REFRESH_TOKEN_KEY, response?.data?.refresh_token);
                         localStorage.setItem("user", response?.data?.user);
+                        localStorage.setItem(localFavPlacesKey, JSON.stringify(response?.data?.favoritePlaces));
 
                         onTokenRefreshed();
                         config._retry = true;
@@ -92,7 +96,10 @@ axiosInstance.interceptors.response.use(
                         ) {
                             localStorage.removeItem(ACCESS_TOKEN_KEY);
                             localStorage.removeItem(REFRESH_TOKEN_KEY);
+                            localStorage.removeItem(localKeyLeaveCommentAs);
+                            localStorage.removeItem(localKeyEstablishment);
                             localStorage.removeItem("user");
+                            localStorage.removeItem(localFavPlacesKey);
                             return window.location.reload();
                         }
                         return {};
@@ -100,12 +107,11 @@ axiosInstance.interceptors.response.use(
                         _isRefreshing = false;
                     }
                 } else {
-                    const retryOriginalRequest = new Promise((resolve) => {
+                    return new Promise((resolve) => {
                         subscribeTokenRefresh(() => {
                             resolve(axios.request(config));
                         });
                     });
-                    return retryOriginalRequest;
                 }
             }
         }
@@ -122,7 +128,7 @@ export const authProvider: AuthBindings = {
                         "user",
                         JSON.stringify(user)
                     );
-                    localStorage.setItem('favoritePlaces', JSON.stringify(favoritePlaces));
+                    localStorage.setItem(localFavPlacesKey, JSON.stringify(favoritePlaces ?? []));
                     localStorage.setItem(ACCESS_TOKEN_KEY, access_token)
                     localStorage.setItem(REFRESH_TOKEN_KEY, refresh_token)
 
@@ -143,8 +149,10 @@ export const authProvider: AuthBindings = {
             await axiosInstance.get('/auth/logout')
             localStorage.removeItem(ACCESS_TOKEN_KEY);
             localStorage.removeItem(REFRESH_TOKEN_KEY);
+            localStorage.removeItem(localKeyLeaveCommentAs);
+            localStorage.removeItem(localKeyEstablishment);
             localStorage.removeItem("user");
-            localStorage.removeItem("favoritePlaces");
+            localStorage.removeItem(localFavPlacesKey);
             axios.defaults.headers.common = {};
             return {
                 success: true,
@@ -187,7 +195,7 @@ export const authProvider: AuthBindings = {
         getIdentity: async (): Promise<IGetIdentity | any> => {
             const token = localStorage.getItem(ACCESS_TOKEN_KEY) as string;
             const refresh = localStorage.getItem(REFRESH_TOKEN_KEY) as string;
-            const favoritePlaces = JSON.parse(localStorage.getItem('favoritePlaces') as string);
+            const favoritePlaces = JSON.parse(localStorage.getItem(localFavPlacesKey) as string);
             const user = localStorage.getItem("user") as string;
             if (!token && (refresh && !isAccessTokenExpired(refresh))) {
                 return {

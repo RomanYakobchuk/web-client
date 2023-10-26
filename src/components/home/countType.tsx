@@ -1,39 +1,74 @@
-import {Box, Grid, Skeleton, Typography} from "@mui/material";
+import {Box, Skeleton} from "@mui/material";
 import {useList, useTranslate} from "@refinedev/core";
-import {Link, useNavigate} from "react-router-dom";
+import {Link} from "react-router-dom";
 import {Typography as TypographyAntd} from "antd";
-import ScrollContent from "../common/scrollContent";
 import {useMobile} from "../../hook";
-import {color} from "three/examples/jsm/nodes/shadernode/ShaderNodeBaseElements";
 import {useContext} from "react";
 import {ColorModeContext} from "../../contexts";
+import {LocalCafe, Restaurant, WineBar} from "@mui/icons-material";
+import {useTranslation} from "react-i18next";
 
 const {Text} = TypographyAntd;
 const CountType = () => {
 
     const translate = useTranslate();
-    const navigate = useNavigate();
     const {mode} = useContext(ColorModeContext);
+    const {i18n} = useTranslation();
     const {width} = useMobile();
 
     const {data: dataTypes, isLoading: isLoadingTypes} = useList<any>({
         resource: "institution/countByType",
     });
-    return (
-        <Box sx={{
-            display: "flex",
-            flexDirection: {xs: 'column', sm: 'row'},
-            gap: {xs: 3, sm: 5, md: 3, lg: 5},
-            width: '100%',
-            "& a": {
-                textDecoration: 'none',
-                height: {xs: "120px", md: '180px', lg: '220px'},
-                bgcolor: 'primary.main',
-                "&:hover": {
-                    boxShadow: `0px 0px 10px 3px ${mode === 'dark' ? '#fcfcfc' : '#000'}`,
-                }
+    const items = [
+        {
+            title: 'restaurant',
+            icon: <Restaurant/>
+        },
+        {
+            title: 'bar',
+            icon: <WineBar/>
+        },
+        {
+            title: 'cafe',
+            icon: <LocalCafe/>
+        }
+    ];
+
+    const mergeData = dataTypes?.data?.map((res) => {
+        const item = items?.find((item) => item?.title === res?.type);
+        if (item) {
+            return {
+                ...res,
+                ...item
             }
-        }}>
+        }
+        return res;
+    })
+    return (
+        <Box
+            sx={{
+                display: "flex",
+                flexWrap: 'wrap',
+                maxWidth: {xs: '100%', lg: i18n?.language === 'ua' ? '260px' : '310px'},
+                gap: 3,
+                width: {xs: '100%'},
+                margin: {xs: '0 auto', lg: 'unset'},
+                color: 'color.black',
+                bgcolor: 'modern.modern_1.main',
+                p: '20px',
+                borderRadius: '15px',
+                transition: '300ms linear',
+                "& a": {
+                    textDecoration: 'none',
+                    bgcolor: mode === 'dark' ? '#000' : '#fff',
+                    "&:hover": {
+                        bgcolor: 'info.main',
+                        "& div.countType_open_btn": {
+                            bgcolor: 'common.black'
+                        }
+                    }
+                }
+            }}>
             {
                 isLoadingTypes
                     ? [1, 2, 3]?.map((item: number) => (
@@ -41,54 +76,80 @@ const CountType = () => {
                             key={item}
                             sx={{
                                 width: '100%',
-                                height: {xs: "120px", md: '180px', lg: '220px'},
-                                borderRadius: '10px'
+                                height: '75px',
+                                borderRadius: '10px',
+                                flex: '1 0 200px',
+                                padding: '10px',
+                                paddingRight: '20px',
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent: 'center',
+                                gap: '32px',
+                                alignItems: 'center',
                             }}
                             animation={"wave"}
                             variant={"rectangular"}
                         />
                     ))
-                    : ['restaurant', 'bar', 'cafe']?.map((type: string, index) => (
+                    : mergeData?.sort((a, b) => a?.count > b?.count ? -1 : 1)?.map((item, index) => (
                         <Link
-                            to={`/all_institutions?pageSize=10&current=1&sorters[0][field]=createdAt_asc&sorters[0][order]=desc&filters[0][field]=propertyType&filters[0][operator]=eq&filters[0][value]=${type}`}
+                            to={`/all_institutions?pageSize=10&current=1&sorters[0][field]=createdAt_asc&sorters[0][order]=desc&filters[0][field]=propertyType&filters[0][operator]=eq&filters[0][value]=${item?.title}`}
                             key={index}
                             style={{
                                 cursor: 'pointer',
                                 width: '100%',
+                                flex: '1 0 200px',
                                 borderRadius: '10px',
-                                backgroundImage: `url(images/${type}.jpg)`,
-                                backgroundSize: 'cover',
-                                backgroundPosition: 'center',
+                                padding: '10px',
+                                paddingRight: '20px',
+                                // backgroundImage: `url(images/${type}.jpg)`,
+                                // backgroundSize: 'cover',
+                                // backgroundPosition: 'center',
                                 display: 'flex',
-                                flexDirection: 'column',
+                                flexDirection: 'row',
                                 justifyContent: 'center',
+                                gap: '32px',
                                 alignItems: 'center',
                                 transition: '300ms linear',
                             }}>
+                            <Box
+                                className={'countType_open_btn'}
+                                sx={{
+                                    color: 'common.white',
+                                    p: '10px',
+                                    bgcolor: 'info.main',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    borderRadius: '10px',
+                                    "& svg": {
+                                        width: '30px',
+                                        height: '30px',
+                                    },
+                                }}>
+                                {item?.icon}
+                            </Box>
                             <Box sx={{
-                                width: '100%',
-                                padding: '10px 0',
-                                bgcolor: 'rgba(0, 0, 0, 0.3)',
-                                backdropFilter: 'blur(2px)',
                                 display: 'flex',
                                 flexDirection: 'column',
-                                gap: {xs: 1, md: 2},
+                                // gap: 1,
                                 justifyContent: 'center',
-                                alignItems: 'center'
+                                alignItems: 'start',
+                                "& span": {
+                                    color: 'common.white'
+                                }
                             }}>
                                 <Text style={{
-                                    color: '#fff',
-                                    fontSize: width < 600 ? '16px' : '20px',
+                                    fontSize: width < 600 ? '14px' : '18px',
                                     fontWeight: 900
                                 }}>
-                                    {translate(`home.sortByType.${type}`)}
+                                    {translate(`home.sortByType.${item?.title}`)}
                                 </Text>
                                 <Text style={{
-                                    color: '#fff',
-                                    fontSize: width < 600 ? '14px' : '16px',
+                                    fontSize: width < 600 ? '12px' : '16px',
                                     fontWeight: 600
                                 }}>
-                                    {translate("cities.institutions", {"number": dataTypes?.data[index]?.count})}
+                                    {translate("cities.institutions", {"number": item?.count})}
                                 </Text>
                             </Box>
                         </Link>

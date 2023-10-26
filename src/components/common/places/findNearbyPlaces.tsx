@@ -1,40 +1,39 @@
 import {Box, Button, Typography} from "@mui/material";
-import {useEffect, useState} from "react";
-import {useTranslate} from "@refinedev/core";
+import React, {Dispatch, SetStateAction, useEffect, useState} from "react";
+import {useInfiniteList, useTranslate} from "@refinedev/core";
 import {useDebounce} from "use-debounce";
-import {useInView} from "react-intersection-observer";
 import {Input, Select, Space} from "antd";
 import {Close, Delete, Edit} from "@mui/icons-material";
-import {useNavigate, useSearchParams} from "react-router-dom";
 
 import {PropertyProps} from "../../../interfaces/common";
-import {Variant2EstablishmentCard} from "../../index";
 import {useMobile} from "../../../hook";
 import Loading from "../../loading/loading";
 import {scrollBarStyle} from "../../../styles";
-import {useLazyScrollLoading} from "../../../hook/useLazyScrollLoading";
 import CustomOpenContentBtn from "../custom/CustomOpenContentBtn";
 import ChangeLocation from "../google/changeLocation";
-import {OPEN_NEARBY} from "../buttons/NearbyEstablishmentBtn";
+import PropertiesList from "../../establishment/utills/lists/propertiesList";
+import MoreButton from "../buttons/MoreButton";
+import VariantComponent from "../buttons/variantComponent";
 
-interface IProps {
+type TProps = {
     location: {
         lat: number,
         lng: number
     },
-    establishment?: PropertyProps
+    establishment?: PropertyProps,
+    setOpenDrawer: Dispatch<SetStateAction<boolean>>
 }
 
-interface IAddress {
+type TAddress = {
     address: string,
     city: string
 }
 
 type Unit = "km" | "m";
 
-export interface INearbyF {
+export type TNearbyF = {
     openDrawer: boolean,
-    location: IProps['location'],
+    location: TProps['location'],
     maxDistance: {
         value: number,
         unit: Unit
@@ -51,85 +50,69 @@ const options = [
         label: 'M'
     }
 ];
-const FindNearbyPlaces = ({location, establishment}: IProps) => {
+const FindNearbyPlaces = ({location, establishment, setOpenDrawer}: TProps) => {
 
     const translate = useTranslate();
     const {device} = useMobile();
-    const navigate = useNavigate();
-    const [searchParams, setSearchParams] = useSearchParams();
 
-    const [nearbyParsed, setNearbyParsed] = useState<INearbyF>({} as INearbyF);
-    const [locationData, setLocationData] = useState<IAddress>({} as IAddress);
-    const [currentLocation, setCurrentLocation] = useState<IProps['location']>(nearbyParsed?.location?.lat ? nearbyParsed?.location as IProps['location'] : location);
+    const [locationData, setLocationData] = useState<TAddress>({} as TAddress);
+    const [currentLocation, setCurrentLocation] = useState<TProps['location']>(location);
     const [currentEstablishment, setCurrentEstablishment] = useState<PropertyProps>({} as PropertyProps);
-    const [data, setData] = useState<PropertyProps[]>([]);
-    const [page, setPage] = useState<number>(1);
-    const [maxDistance, setMaxDistance] = useState<INearbyF['maxDistance']>({
-        value: nearbyParsed?.maxDistance?.value ? nearbyParsed?.maxDistance?.value : 5000,
-        unit: nearbyParsed?.maxDistance?.unit ? nearbyParsed?.maxDistance?.unit as Unit : 'm'
+    const [establishmentList, setEstablishmentList] = useState<PropertyProps[]>([]);
+    const [maxDistance, setMaxDistance] = useState<TNearbyF['maxDistance']>({
+        value: 5000,
+        unit: 'm'
     });
     const [debounceMaxDistance] = useDebounce(maxDistance, 500);
-    const {
-        data: resData,
-        isFetching,
-        isError,
-        isLoading,
-        count,
-        updateOtherParams
-    } = useLazyScrollLoading<PropertyProps>(
-        '/institution/nearby',
-        page,
-        {
-            maxDistance: debounceMaxDistance?.value,
-            locationLng: currentLocation?.lng,
-            locationLat: currentLocation?.lat,
-            establishmentId: establishment?._id ?? ''
+
+    const {data, isLoading, isError, isFetching, fetchNextPage, isFetchingNextPage, hasNextPage} = useInfiniteList({
+        resource: 'institution/nearby',
+        filters: [
+            {
+                value: maxDistance?.unit === 'km' ? debounceMaxDistance?.value * 1000 : debounceMaxDistance?.value,
+                field: 'maxDistance',
+                operator: 'eq'
+            },
+            {
+                value: currentLocation?.lng,
+                field: 'locationLng',
+                operator: 'eq'
+            },
+            {
+                value: currentLocation?.lat,
+                field: 'locationLat',
+                operator: 'eq'
+            },
+            {
+                value: currentEstablishment?._id ?? '',
+                field: 'establishmentId',
+                operator: 'eq'
+            },
+        ],
+        pagination: {
+            pageSize: 10
         }
-    );
+    });
+    const total = data?.pages?.length && data?.pages?.length > 0 ? data?.pages[0]?.total : 0;
 
     useEffect(() => {
-        const s = searchParams.get(OPEN_NEARBY);
-        if (s) {
-            setNearbyParsed(JSON.parse(s as string) as INearbyF)
-        } else {
-            setNearbyParsed({} as INearbyF)
-        }
-    }, [searchParams.get(OPEN_NEARBY)]);
-    useEffect(() => {
-        let searchLoc = {} as IProps['location'];
-        if (nearbyParsed?.location) {
-            searchLoc = nearbyParsed.location as IProps['location'];
-        }
-        if (!searchLoc?.lng && location?.lng && location?.lat) {
+        if (location?.lng && location?.lat) {
             setCurrentLocation(location)
         }
-    }, [location?.lat, location?.lng, nearbyParsed?.location]);
+    }, [location?.lat, location?.lng]);
 
+    // const {inView, ref} = useInView({
+    //     threshold: 0.5
+    // });
     useEffect(() => {
-        if ((debounceMaxDistance?.value && maxDistance?.unit) || (currentLocation?.lng && currentLocation?.lat)) {
-            setPage(1)
-            setData((_) => ([] as PropertyProps[]));
-            updateOtherParams({
-                maxDistance: maxDistance?.unit === 'km' ? maxDistance?.value * 1000 : maxDistance?.value,
-                locationLng: currentLocation?.lng,
-                locationLat: currentLocation?.lat,
-                establishmentId: currentEstablishment?._id ?? ''
-            })
+        if (data?.pages) {
+            const list = [].concat(...((data?.pages as any ?? [])?.map((page: {
+                data: PropertyProps[],
+                total: number
+            }) => page?.data ?? [])));
+            setEstablishmentList(list);
         }
-    }, [debounceMaxDistance?.value, currentLocation?.lat, currentLocation?.lng, maxDistance?.unit, setPage, setData, currentEstablishment?._id]);
-    const {inView, ref} = useInView({
-        threshold: 0.5
-    });
-    useEffect(() => {
-        if (resData?.length > 0 && count > 0) {
-            setData((prevState) => {
-                return [...new Set([...prevState, ...resData]?.map((value) => JSON.stringify(value)))]?.map((value) => JSON.parse(value));
-            })
-        }
-        if (count <= 0) {
-            setData((_) => ([]))
-        }
-    }, [resData, isFetching, count]);
+    }, [data]);
 
     useEffect(() => {
         if (establishment?._id) {
@@ -137,53 +120,7 @@ const FindNearbyPlaces = ({location, establishment}: IProps) => {
         }
     }, [establishment?._id]);
 
-    useEffect(() => {
-
-        const prevSearchParams = searchParams.toString();
-        console.log("all: ", nearbyParsed)
-        console.log('nearbyF_P?.openDrawer: ', nearbyParsed?.openDrawer)
-        if ((maxDistance?.unit || maxDistance?.value || currentLocation?.lat || currentLocation?.lng) && nearbyParsed?.openDrawer) {
-            console.log('set nearby')
-            searchParams.set(OPEN_NEARBY, JSON.stringify({
-                ...nearbyParsed,
-                maxDistance: {
-                    value: maxDistance?.value,
-                    unit: maxDistance?.unit
-                },
-                location: currentLocation as IProps['location']
-            } as INearbyF))
-        }
-        if (!nearbyParsed?.openDrawer) {
-            navigate(-1)
-        }
-        if (prevSearchParams !== searchParams.toString()) {
-            setSearchParams(searchParams)
-        }
-    }, [maxDistance, currentLocation, nearbyParsed]);
-    useEffect(() => {
-        if (data.length > 0 && inView && isFetching) {
-            setPage((prevState) => prevState += 1);
-        }
-    }, [inView, data.length, isFetching]);
-
     const barStyle = !device ? scrollBarStyle : {};
-
-    useEffect(() => {
-
-        console.log('before set value')
-        if (nearbyParsed?.openDrawer) {
-            const searchMaxD_V = nearbyParsed?.maxDistance?.value as number;
-            const searchMaxD_U = nearbyParsed?.maxDistance?.unit as Unit;
-            const searchLoc = nearbyParsed?.location as IProps['location'];
-            if (searchLoc?.lng && searchLoc?.lng) {
-                setCurrentLocation(searchLoc);
-            }
-            if (searchMaxD_U && searchMaxD_V) {
-                setMaxDistance({unit: searchMaxD_U, value: searchMaxD_V});
-            }
-            console.log('after set value')
-        }
-    }, [nearbyParsed]);
 
     const handleReset = () => {
         setCurrentLocation(location)
@@ -197,6 +134,8 @@ const FindNearbyPlaces = ({location, establishment}: IProps) => {
     }
 
     const disabled = currentLocation?.lng !== location?.lng || currentLocation?.lat !== location?.lat || maxDistance?.unit !== 'm' || maxDistance?.value !== 5000 || (establishment?._id !== currentEstablishment?._id);
+
+
     return (
         <Box sx={{
             width: '100%',
@@ -225,10 +164,10 @@ const FindNearbyPlaces = ({location, establishment}: IProps) => {
                                 ...prevState,
                                 value: Number(event.target.value)
                             }))}
-                            value={maxDistance.value ? maxDistance.value : 0}
+                            value={maxDistance?.value ? maxDistance?.value : 0}
                         />
                         <Select
-                            value={maxDistance.unit ? maxDistance.unit : 'm'}
+                            value={maxDistance?.unit ? maxDistance?.unit : 'm'}
                             onChange={(value) => setMaxDistance((prevState) => ({...prevState, unit: value}))}
                             dropdownStyle={{
                                 zIndex: 2000
@@ -365,6 +304,13 @@ const FindNearbyPlaces = ({location, establishment}: IProps) => {
             </Box>
             <Box sx={{
                 width: '100%',
+                display: 'flex',
+                justifyContent: 'end'
+            }}>
+                <VariantComponent type={"establishment"}/>
+            </Box>
+            <Box sx={{
+                width: '100%',
                 paddingRight: '5px',
                 marginRight: '-5px',
                 display: 'flex',
@@ -372,34 +318,22 @@ const FindNearbyPlaces = ({location, establishment}: IProps) => {
                 gap: {xs: 0, sm: 1}
             }}>
                 {
-                    isError ? <div>Error</div> :
-                        data?.map((value) => (
-                            <Variant2EstablishmentCard
-                                key={value._id}
-                                establishment={value}
+                    (isLoading || isFetching)
+                        ? <Loading height={'200px'}/>
+                        : isError ? <div>Something went wrong (((</div>
+                            : establishmentList?.length > 0 && (
+                            <PropertiesList
+                                items={establishmentList}
+                                setIsOpen={setOpenDrawer}
                             />
-                        ))
+                        )
                 }
-                {
-                    isLoading && <Loading height={'50px'}/>
-                }
-                {
-                    data &&
-                    <Box sx={{
-                        width: '100%',
-                    }}
-                         ref={ref}
-                    />
-                }
-                {/*{*/}
-                {/*    isRefetching ? <Loading height={'300px'}/> : (*/}
-                {/*        items.map((item, index) => (*/}
-                {/*            <Box key={index}>*/}
-
-                {/*            </Box>*/}
-                {/*        ))*/}
-                {/*    )*/}
-                {/*}*/}
+                <MoreButton
+                    hasNextPage={hasNextPage}
+                    isFetchingNextPage={isFetchingNextPage}
+                    fetchNextPage={fetchNextPage}
+                    total={total}
+                />
             </Box>
         </Box>
     );

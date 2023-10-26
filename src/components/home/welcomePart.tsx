@@ -4,14 +4,12 @@ import {useContext} from "react";
 import {ColorModeContext} from "../../contexts";
 import {useMobile} from "../../hook";
 import {useTranslate} from "@refinedev/core";
-import {useNavigate} from "react-router-dom";
 
 const WelcomePart = () => {
 
     const {mode} = useContext(ColorModeContext);
     const {width} = useMobile();
     const translate = useTranslate();
-    const navigate = useNavigate();
 
     const backgroundImage = mode === 'dark' ? 'linear-gradient(to top, #5c8399 20%, #343487 80%)' : `linear-gradient(to top, #376a86 20%, #6565de 80%)`;
 
@@ -49,8 +47,8 @@ const WelcomePart = () => {
                             "& img": {
                                 width: '100%',
                                 height: '100%',
-                                WebkitMaskImage: 'url("images/home/shape4.png")',
-                                maskImage: 'url("images/home/shape4.png")',
+                                WebkitMaskImage: 'url("/images/home/shape4.png")',
+                                maskImage: 'url("/images/home/shape4.png")',
                                 WebkitMaskRepeat: 'no-repeat',
                                 maskRepeat: 'no-repeat',
                                 WebkitMaskSize: 'contain',
@@ -108,18 +106,19 @@ const WelcomePart = () => {
                         }}>
                             {translate('text.home.findYourSelf')}
                         </Typography>
-                        <Button variant={'contained'}
-                                onClick={() => navigate('/all_institutions')}
-                                sx={{
-                                    ...buttonStyle,
+                        <Button
+                            href={'/all_institutions'}
+                            variant={'contained'}
+                            sx={{
+                                ...buttonStyle,
+                                bgcolor: mode === 'dark' ? 'common.black' : 'info.main',
+                                textTransform: 'capitalize',
+                                color: '#fff',
+                                width: '30%',
+                                "&:hover": {
                                     bgcolor: mode === 'dark' ? 'common.black' : 'info.main',
-                                    textTransform: 'capitalize',
-                                    color: '#fff',
-                                    width: '30%',
-                                    "&:hover": {
-                                        bgcolor: mode === 'dark' ? 'common.black' : 'info.main',
-                                    }
-                                }}
+                                }
+                            }}
                         >
                             {translate('buttons.show')}
                         </Button>
@@ -152,7 +151,7 @@ const WelcomePart = () => {
                      }}>
                     <Box className="wave waveTop"
                          sx={{
-                             backgroundImage: "url('http://front-end-noobs.com/jecko/img/wave-top.png')",
+                             backgroundImage: "url('images/home/wave/wave-1.png')",
                              filter: mode === 'dark' ? filter1 : 'unset'
                          }}></Box>
                 </Box>
@@ -163,7 +162,7 @@ const WelcomePart = () => {
                 >
                     <Box className="wave waveMiddle"
                          sx={{
-                             backgroundImage: "url('http://front-end-noobs.com/jecko/img/wave-mid.png')",
+                             backgroundImage: "url('images/home/wave/wave-2.png')",
                              filter: mode === 'dark' ? filter2 : 'unset'
                          }}></Box>
                 </Box>
@@ -174,7 +173,7 @@ const WelcomePart = () => {
                 >
                     <Box className="wave waveBottom"
                          sx={{
-                             backgroundImage: "url('http://front-end-noobs.com/jecko/img/wave-bot.png')",
+                             backgroundImage: "url('images/home/wave/wave-3.png')",
                              filter: mode === 'dark' ? filter3 : 'unset'
                          }}></Box>
                 </Box>

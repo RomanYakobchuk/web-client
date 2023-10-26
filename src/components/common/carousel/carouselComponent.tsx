@@ -1,15 +1,14 @@
-
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
 
 import './carousel.css';
 import {ReactNode} from "react";
-interface IProps {
+type TProps = {
     children: ReactNode
 }
 
 
-const CarouselComponent = ({children}: IProps) => {
+const CarouselComponent = ({children}: TProps) => {
 
     const responsive = {
         superLargeDesktop: {

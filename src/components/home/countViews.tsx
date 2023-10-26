@@ -2,8 +2,8 @@ import {Box, Grid, Skeleton, Typography} from "@mui/material";
 import {useList, useTranslate} from "@refinedev/core";
 import {Link, useNavigate} from "react-router-dom";
 import {Typography as TypographyAntd} from "antd";
-import {PlaceOutlined} from "@mui/icons-material";
-import ScrollContent from "../common/scrollContent";
+import {CallMade, PlaceOutlined} from "@mui/icons-material";
+import ScrollContent from "../common/scroll/scrollContent";
 import {useMobile} from "../../hook";
 import {CarouselComponent} from "../index";
 import {IPicture} from "../../interfaces/common";
@@ -43,7 +43,7 @@ const CountViews = () => {
                 </Typography>
             }
             <Box sx={{
-                width: {xs: '80vw', md: layoutWidth - 200},
+                width: {xs: '80vw', md: layoutWidth - 160},
                 margin: '0 auto',
                 position: 'relative'
             }}>
@@ -52,71 +52,96 @@ const CountViews = () => {
                         dataViews?.data?.map((item, index, array) => (
                             <Box key={index} sx={{
                                 width: '100%',
-                                height: {xs: '150px', md: '200px'},
+                                height: {xs: '180px', lg: '220px'},
                                 padding: '0 10px',
                                 display: 'flex',
+                                position: 'relative'
                             }}>
                                 <Box
                                     sx={{
                                         width: '100%',
                                         height: '100%',
-                                        borderRadius: '20px',
+                                        borderRadius: '10px',
                                         backgroundImage: `url("${item.url}")`,
                                         backgroundPosition: 'center',
                                         backgroundSize: 'cover',
                                         display: 'flex',
                                         flexDirection: 'column',
-                                        justifyContent: 'end',
-                                        "& a":{
-                                            maxHeight: {xs: '60%', md: '45%'},
-                                            height: {xs: '60%', md: '45%'},
-                                        }
+                                        justifyContent: 'space-between',
+                                        // "& a":{
+                                        //     maxHeight: {xs: '60%', md: '45%'},
+                                        //     height: {xs: '60%', md: '45%'},
+                                        // }
                                     }}>
+                                    <Box sx={{
+                                        display: 'flex',
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        gap: 0.5,
+                                        margin: '5px',
+                                        borderRadius: "15px",
+                                        p: '5px 10px',
+                                        width: 'fit-content',
+                                        background: "rgba(0, 0, 0, 0.2)",
+                                        backdropFilter: "blur(4px)",
+                                    }}>
+                                        <PlaceOutlined sx={{
+                                            color: '#fff'
+                                        }}/>
+                                        <Text style={{
+                                            color: '#fff',
+                                            fontSize: '14px',
+                                            fontWeight: 500
+                                        }}>
+                                            {item?.viewsWith?.place?.city}
+                                        </Text>
+                                    </Box>
                                     <Link
                                         to={`/all_institutions/show/${item?.viewsWith?._id}`}
                                         style={{
                                             textDecoration: 'none',
                                             cursor: 'pointer',
                                             padding: "10px",
-                                            borderRadius: "0 0 20px 20px",
+                                            margin: '10px 5px',
+                                            borderRadius: "25px",
                                             background: "rgba(0, 0, 0, 0.2)",
-                                            display: "flex",
-                                            flexDirection: "column",
                                             backdropFilter: "blur(4px)",
+                                            display: "flex",
+                                            width: 'fit-content',
+                                            flexDirection: "row",
+                                            gap: '16px',
+                                            alignItems: 'center'
                                         }}>
                                         <Text style={{
                                             color: '#fff',
-                                            fontSize: width < 600 ? '16px' : '18px',
+                                            fontSize: width < 600 ? '14px' : '16px',
                                             fontWeight: 900,
                                             textTransform: 'capitalize'
                                         }}>
                                             {item?.viewsWith?.title}
                                         </Text>
+                                        <CallMade sx={{
+                                            color: '#fff'
+                                        }}/>
+                                    </Link>
+                                    <Box sx={{
+                                        position: 'absolute',
+                                        right: '9px',
+                                        bottom: '10px',
+                                        p: '5px 10px',
+                                        bgcolor: 'common.black',
+                                        borderRadius: '15px 0 0 15px',
+                                        "& span": {
+                                            color: 'common.white',
+                                        }
+                                    }}>
                                         <Text style={{
-                                            color: '#fff',
                                             fontSize: width < 600 ? '12px' : '14px',
                                             fontWeight: 600
                                         }}>
                                             {translate(`home.sortByType.${item?.viewsWith?.type}`)}
                                         </Text>
-                                        <Box sx={{
-                                            display: 'flex',
-                                            flexDirection: 'row',
-                                            alignItems: 'center',
-                                            gap: 0.5
-                                        }}>
-                                            <PlaceOutlined sx={{
-                                                color: '#fff'
-                                            }}/>
-                                            <Text style={{
-                                                color: '#fff',
-                                                fontSize: '12px',
-                                                fontWeight: 500
-                                            }}>
-                                                {item?.viewsWith?.place?.city}
-                                            </Text>
-                                        </Box>
-                                    </Link>
+                                    </Box>
                                 </Box>
                             </Box>
                         ))

@@ -4,7 +4,7 @@ import React, {useContext} from "react";
 import {CanAccess} from "@refinedev/core";
 
 import {ColorModeContext} from "../../contexts";
-import {CaplUserList, CaplManagerList} from "../../components";
+import {CaplUserPage, CaplManagerPage} from "../../components";
 
 const Capl = () => {
     const {mode} = useContext(ColorModeContext);
@@ -14,10 +14,10 @@ const Capl = () => {
              // bgcolor={mode === "dark" ? "#2e424d" : "#fcfcfc"}
         >
             <CanAccess resource={'capl'} action={'userListReserve'}>
-                <CaplUserList/>
+                <CaplUserPage/>
             </CanAccess>
             <CanAccess resource={'capl'} action={'managerListReserve'}>
-                <CaplManagerList/>
+                <CaplManagerPage/>
             </CanAccess>
         </Box>
     );

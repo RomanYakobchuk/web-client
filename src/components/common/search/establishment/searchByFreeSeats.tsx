@@ -14,12 +14,12 @@ import {ChangeEvent, Dispatch, SetStateAction, useEffect, useState} from "react"
 import {IFreeSeatsProps} from "../../../../interfaces/common";
 
 
-interface IProps {
+type TProps = {
     freeSeats: IFreeSeatsProps,
     setFreeSeats: Dispatch<SetStateAction<IFreeSeatsProps>>
 }
 
-const SearchByFreeSeats = ({setFreeSeats, freeSeats}: IProps) => {
+const SearchByFreeSeats = ({setFreeSeats, freeSeats}: TProps) => {
 
     const translate = useTranslate();
 

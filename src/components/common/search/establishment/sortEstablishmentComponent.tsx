@@ -2,13 +2,13 @@ import {FormControl, MenuItem, Select} from "@mui/material";
 import {CrudSorting, useTranslate} from "@refinedev/core";
 import React, {useMemo} from "react";
 
-interface IProps {
+type TProps = {
     newSorters: CrudSorting,
     setSortBy: (value: string) => void,
     defaultSetSorters: (sorter: CrudSorting) => void,
     sortBy: string
 }
-const SortEstablishmentComponent = ({newSorters, setSortBy, defaultSetSorters, sortBy}: IProps) => {
+const SortEstablishmentComponent = ({newSorters, setSortBy, defaultSetSorters, sortBy}: TProps) => {
 
     const translate = useTranslate();
 

@@ -1,8 +1,15 @@
-import {createContext, FC, PropsWithChildren, ReactNode, useEffect, useState} from "react";
+import {createContext, Dispatch, FC, PropsWithChildren, SetStateAction, useEffect, useState} from "react";
 
-type ModalContextType = {
-    modalCaplContext: ReactNode[],
-    updateModalCaplContext: (items: ReactNode[]) => void
+type ModalItem = {
+    name: string,
+    link: string,
+    variant: "outlined" | "contained" | "text",
+    color: "info" | "success" | "error" | "warning" | "primary" | "secondary"
+}
+export type ModalContextType = {
+    modalCaplContext: ModalItem[],
+    setModalCaplContext: Dispatch<SetStateAction<ModalContextType['modalCaplContext']>>,
+    updateModalCaplContext: (items: ModalContextType['modalCaplContext']) => void
 }
 export const ModalContext = createContext<ModalContextType>(
     {} as ModalContextType
@@ -12,13 +19,13 @@ export const ModalCaplContextProvider: FC<PropsWithChildren> = ({children}) => {
 
     const items = JSON.parse(localStorage.getItem('modal_list') as string);
 
-    const [modalCaplContext, setModalCaplContext] = useState<ReactNode[]>(items || []);
+    const [modalCaplContext, setModalCaplContext] = useState<ModalContextType['modalCaplContext']>(items || [] as ModalContextType['modalCaplContext']);
 
     useEffect(() => {
         window.localStorage.setItem('modal_list', JSON.stringify(modalCaplContext))
-    }, [items]);
+    }, [modalCaplContext]);
 
-    const updateModalCaplContext = (newContent: ReactNode[]) => {
+    const updateModalCaplContext = (newContent: ModalContextType['modalCaplContext']) => {
         setModalCaplContext(newContent)
     }
 
@@ -26,7 +33,8 @@ export const ModalCaplContextProvider: FC<PropsWithChildren> = ({children}) => {
         <ModalContext.Provider
             value={{
                 modalCaplContext,
-                updateModalCaplContext
+                updateModalCaplContext,
+                setModalCaplContext
             }}
         >
             {children}

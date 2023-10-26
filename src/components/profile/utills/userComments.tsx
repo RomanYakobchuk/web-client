@@ -25,52 +25,7 @@ const UserComments = ({user_comments}: IProps) => {
                 user_comments?.sort((a: any, b: any) => {
                     return a?.createdAt > b?.createdAt ? -1 : 1
                 })?.map((comment: IComment, index: number) => (
-                    <Box key={index}
-                         sx={{
-                             width: '100%',
-                             display: 'grid',
-                             gridTemplateColumns: '2fr 1fr',
-                             gap: 1.5,
-                             borderBottom: '1px solid silver',
-                         }}
-                    >
-                        <CommentCard
-                            comment={comment}
-                            setIsAnswer={() => {
-                            }}
-                            setParent={() => {
-                            }}
-                        />
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                justifyContent: 'space-between',
-                                gap: 1,
-                                cursor: 'pointer'
-                            }}
-                            onClick={() => navigate(`/all_institutions/show/${comment?.institutionId?._id}`)}
-                        >
-                            <img
-                                src={comment?.institutionId?.pictures[0].url}
-                                alt={comment?.institutionId?.title}
-                                style={{
-                                    width: '60px',
-                                    height: '50px',
-                                    borderRadius: '10px',
-                                    objectFit: 'cover'
-                                }}
-                            />
-                            <Box>
-                                <Typography fontSize={'16px'}>
-                                    {comment?.institutionId?.title}
-                                </Typography>
-                                <Typography fontSize={'14px'}>
-                                    {translate(`home.sortByType.${comment?.institutionId?.type}`)}
-                                </Typography>
-                            </Box>
-                        </Box>
-                    </Box>
+                   <></>
                 ))
             }
         </Box>

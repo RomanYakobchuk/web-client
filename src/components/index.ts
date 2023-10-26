@@ -5,15 +5,15 @@ import NearbyEstablishmentBtn from "./common/buttons/NearbyEstablishmentBtn";
 import CustomButton from "./common/custom/CustomButton";
 import CustomProfile from "./common/custom/CustomProfile";
 import VariantComponent from "./common/buttons/variantComponent";
-import Variant1EstablishmentCard from "./establishment/utills/variant1EstablishmentCard";
-import Variant2EstablishmentCard from "./establishment/utills/variant2EstablishmentCard";
+import Variant1EstablishmentCard from "./establishment/cards/variant1EstablishmentCard";
+import Variant2EstablishmentCard from "./establishment/cards/variant2EstablishmentCard";
 import CustomAccordion from "./common/custom/customAccordion";
 import CustomDrawer from "./common/custom/customDrawer";
-import ScrollContent from "./common/scrollContent";
+import ScrollContent from "./common/scroll/scrollContent";
 import PaginationComponent from "./common/paginationComponent";
 import TitleTextItem from "./common/TitleTextItem";
 import ReviewsList from "./common/reviews-list";
-import CommentsList from "./common/comments-list";
+import CommentsList from "./common/lists/comments-list";
 import ImageSlider from "./common/imageSlider";
 import CarouselComponent from "./common/carousel/carouselComponent";
 
@@ -42,26 +42,24 @@ import Loading from "./loading/loading";
 
 // modal
 import ModalWindow from "./window/modalWindow";
+import ModalShowContent from "./window/modalShowContent";
 
 // profile
 import {FavoritePlaces, UserReviews, UserComments, UserInstitutions} from "./profile"
 
 // institution
 import FilterInstitutions from "./establishment/filter";
-import Menu from "./establishment/utills/menu/menu";
-import EditMenu from "./establishment/utills/menu/edit-menu";
-import CreateMenu from "./establishment/utills/menu/create-menu";
 import InstitutionsUserList from "./establishment/userList";
 import InstitutionsAdminList from "./establishment/adminList";
 import EditUpdateStatus from "./establishment/editUpdateStatus";
-import ImageGallery from "./establishment/utills/imageGallery";
 import {FormDataSeats} from "./establishment/seats";
 
 // capl
 import Messenger from "./capl/messenger";
 import ReservedCard from "./capl/reservedCard";
-import CaplUserList from "./capl/userList";
-import CaplManagerList from "./capl/managerList";
+import CaplUserPage from "./capl/caplUserPage";
+import CaplManagerPage from "./capl/caplManagerPage";
+import CaplForm from "./capl/caplForm";
 
 // news
 import NewsCard from "./news/utills/NewsCard";
@@ -91,7 +89,6 @@ export {
     FacebookAuth,
     BookMarkButton,
     Loading,
-    CreateMenu,
     UserInstitutions,
     Variant1EstablishmentCard,
     Variant2EstablishmentCard,
@@ -112,16 +109,14 @@ export {
     NewsCard,
     FilterInstitutions,
     FilterNews,
-    Menu,
-    EditMenu,
     SearchManager,
     UserComments,
     Messenger,
     PaginationComponent,
     SearchInstitutions,
     ReservedCard,
-    CaplUserList,
-    CaplManagerList,
+    CaplUserPage,
+    CaplManagerPage,
     InstitutionsUserList,
     InstitutionsAdminList,
     ImageSlider,
@@ -130,7 +125,6 @@ export {
     NewsAdminList,
     EditUpdateStatus,
     ShowChats,
-    ImageGallery,
     SchemaSelector,
     CustomShow,
     CustomEdit,
@@ -145,5 +139,7 @@ export {
     ShowMap,
     openGoogleMaps,
     NearbyEstablishmentBtn,
-    FilterBtn
+    FilterBtn,
+    CaplForm,
+    ModalShowContent
 }

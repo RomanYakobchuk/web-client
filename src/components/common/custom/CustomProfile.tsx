@@ -7,13 +7,14 @@ import {Image} from "antd";
 
 
 import {ProfileProps, PropertyProps} from "../../../interfaces/common";
-import Variant1EstablishmentCard from "../../establishment/utills/variant1EstablishmentCard";
+import Variant1EstablishmentCard from "../../establishment/cards/variant1EstablishmentCard";
 import {UserInstitutions, UserReviews} from "../../index";
 import {ColorModeContext} from "../../../contexts";
 import CustomAccordion from "./customAccordion";
 import dayjs from "dayjs";
 import TitleTextItem from "../TitleTextItem";
-import CommentsList from "../comments-list";
+import CommentsList from "../lists/comments-list";
+import {useUserInfo} from "../../../hook";
 
 
 const CustomProfile = ({
@@ -29,6 +30,7 @@ const CustomProfile = ({
                            favoritePlaces,
                        }: ProfileProps) => {
 
+    const {user} = useUserInfo();
     const navigate = useNavigate();
     const {mode} = useContext(ColorModeContext);
     const translate = useTranslate();
@@ -204,8 +206,7 @@ const CustomProfile = ({
                                                     </Box>,
                                                     bgColor: '#f36429',
                                                     onClick: () => {
-                                                        navigate(
-                                                            `/profile/edit/${_id}`
+                                                        navigate(user?.status === 'admin' ? `/profile/edit/${_id}` : '/profile/edit'
                                                         )
                                                     }
                                                 }
@@ -236,13 +237,13 @@ const CustomProfile = ({
 
             <UserInstitutions id={_id}/>
             <UserReviews id={_id}/>
-            <CommentsList
-                id={_id} type={"allByUserId"}
-                setParent={() => {
-                }}
-                setIsAnswer={() => {
-                }}
-            />
+            {/*<CommentsList*/}
+            {/*    id={_id} type={"allByUserId"}*/}
+            {/*    setParent={() => {*/}
+            {/*    }}*/}
+            {/*    setIsAnswer={() => {*/}
+            {/*    }}*/}
+            {/*/>*/}
             {
                 favoritePlaces?.length > 0 && (
                     <CustomAccordion title={translate("profile.my_fav_places", {"length": favoritePlaces?.length})}

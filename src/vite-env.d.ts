@@ -8,6 +8,7 @@ interface ImportMetaEnv {
     readonly VITE_APP_GOOGLE_CLIENT_ID: string
     readonly VITE_APP_GOOGLE_CLIENT_SECRET: string
     readonly VITE_APP_API: string
+    readonly VITE_APP_CLIENT_API: string
     readonly VITE_APP_SOCKET_API: string
     readonly VITE_APP_STATISTIC_API: string
     readonly VITE_APP_GOOGLE_MAPS_KEY: string

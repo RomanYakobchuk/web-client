@@ -1,19 +1,21 @@
-import {IGetIdentity, ProfileProps, PropertyProps} from "../../../interfaces/common";
 import {Box, CardMedia, Typography} from "@mui/material";
 import React, {useContext} from "react";
 import {Link} from "react-router-dom";
-import {BookMarkButton} from "../../index";
-import {ColorModeContext} from "../../../contexts";
-import {useGetIdentity, useTranslate} from "@refinedev/core";
+import {useTranslate} from "@refinedev/core";
 import {Place, Star} from "@mui/icons-material";
+
+import {BookMarkButton} from "../../index";
+import {PropertyProps} from "../../../interfaces/common";
+import {ColorModeContext} from "../../../contexts";
+import SharedComponent from "../../common/shared/sharedComponent";
 
 interface IProps {
     establishment: PropertyProps
 }
 
+const CLIENT_URL = import.meta.env.VITE_APP_CLIENT_API;
+
 const Variant2EstablishmentCard = ({establishment}: IProps) => {
-    const {data: identity} = useGetIdentity<IGetIdentity>();
-    const user = identity?.user as ProfileProps;
 
     const {_id, type, place, pictures, rating, title, averageCheck, createdBy} = establishment;
 
@@ -23,22 +25,6 @@ const Variant2EstablishmentCard = ({establishment}: IProps) => {
     return (
         <Box sx={{
             width: '100%',
-            "&:not(:last-of-type)": {
-                position: 'relative',
-                borderRight: 'unset !important',
-                "&::after": {
-                    content: "''",
-                    display: {sm: 'none'},
-                    position: 'absolute',
-                    bottom: '0',
-                    left: 0,
-                    right: 0,
-                    margin: '0 auto',
-                    height: '1px',
-                    width: '95%',
-                    bgcolor: 'silver'
-                }
-            }
         }}>
             <Link
                 style={{
@@ -104,22 +90,41 @@ const Variant2EstablishmentCard = ({establishment}: IProps) => {
                                     {translate(`home.create.type.${type}`)}
                                 </Typography>
                             </Box>
-                            <BookMarkButton
-                                id={_id}
-                                bgColor={'transparent'}
-                                color={'common.white'}
-                                type={'favoritePlaces'}
-                                showText={false}
-                                style={{
-                                    p: '5px',
-                                    borderRadius: '5px',
-                                    minWidth: '20px',
-                                    bgcolor: mode === 'dark' ? '#86a8cf' : '#e6f2ff',
-                                    "& svg": {
-                                        fontSize: {xs: '26px', sm: '30px'}
-                                    }
-                                }}
-                            />
+                            <Box sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 1
+                            }}>
+                                <BookMarkButton
+                                    id={_id}
+                                    bgColor={'transparent'}
+                                    color={'common.white'}
+                                    type={'institution'}
+                                    showText={false}
+                                    style={{
+                                        p: '5px',
+                                        borderRadius: '5px',
+                                        minWidth: '20px',
+                                        bgcolor: mode === 'dark' ? '#86a8cf' : '#e6f2ff',
+                                        "& svg": {
+                                            fontSize: {xs: '26px', sm: '30px'}
+                                        }
+                                    }}
+                                />
+                                <Box sx={{
+                                    backdropFilter: 'blur(20px)',
+                                    bgcolor: mode === 'dark' ? 'rgba(255,255,255,0.7)' : 'rgba(0, 0, 0, 0.5)',
+                                    borderRadius: '10px'
+                                }}>
+                                    <SharedComponent
+                                        type={'institution'}
+                                        color={mode === 'dark' ? '#000' : '#fff'}
+                                        url={`${CLIENT_URL}/all_institutions/show/${_id}`}
+                                        title={translate('buttons.share')}
+                                        isOnlyShared={true}
+                                    />
+                                </Box>
+                            </Box>
                         </Box>
                         <Box>
                             <Box sx={{
@@ -159,7 +164,7 @@ const Variant2EstablishmentCard = ({establishment}: IProps) => {
                                 <Place
                                     sx={{
                                         fontSize: 24,
-                                        color: "secondary",
+                                        color: "secondary.main",
                                     }}
                                 />
                                 <Box sx={{

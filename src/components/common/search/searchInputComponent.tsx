@@ -9,14 +9,14 @@ import {useMobile} from "../../../hook";
 import {ColorModeContext} from "../../../contexts";
 import {SetFilterType} from "../../../interfaces/types";
 
-interface IProps {
+type TProps = {
     searchValue: string,
     setSearchValue: (value: string) => void,
     defaultSetFilters: SetFilterType,
     isButton?: boolean,
     styleSx?: SxProps
 }
-const SearchInputComponent = ({setSearchValue, searchValue, defaultSetFilters, styleSx, isButton = true}: IProps) => {
+const SearchInputComponent = ({setSearchValue, searchValue, defaultSetFilters, styleSx, isButton = true}: TProps) => {
     const translate = useTranslate();
     const {width} = useMobile();
     const {mode} = useContext(ColorModeContext);

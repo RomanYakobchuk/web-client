@@ -1,8 +1,8 @@
 import {Box} from "@mui/material";
-import {FacebookAuth, GoogleAuth} from "../../../components";
+import { GoogleAuth} from "../../../components";
 import React from "react";
 import {useTranslate} from "@refinedev/core";
-import {GithubAuth} from "../../../auth";
+import {FacebookAuth, GithubAuth} from "../../../auth";
 
 type IProps = {
     googleType: "login" | "register",
@@ -11,6 +11,7 @@ type IProps = {
     githubType: "login_github" | "register_github",
     facebookText?: "signin_with" | "signup_with" | "continue_with" | undefined,
 }
+
 const OrPart = ({googleType, googleText, facebookType, facebookText, githubType}: IProps) => {
     const translate = useTranslate();
     return (

@@ -1,7 +1,7 @@
 import {Box, Button, CircularProgress, MenuItem, Select} from "@mui/material";
 import {HourglassBottom, Public, ThumbDownAltOutlined} from "@mui/icons-material";
 import {PropertyProps} from "../../../interfaces/common";
-import Variant1EstablishmentCard from "../../establishment/utills/variant1EstablishmentCard";
+import Variant1EstablishmentCard from "../../establishment/cards/variant1EstablishmentCard";
 import React, {useState} from "react";
 import {useInfiniteList, useTranslate} from "@refinedev/core";
 import Loading from "../../loading/loading";

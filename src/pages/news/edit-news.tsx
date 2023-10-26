@@ -18,7 +18,6 @@ const EditNews = () => {
     const {
         refineCore: {onFinish, queryResult},
         handleSubmit,
-        saveButtonProps
     } = useForm({
         refineCoreProps: {
             resource: `news/infoById`,
@@ -55,7 +54,6 @@ const EditNews = () => {
     const [description, setDescription] = useState<string>("");
     const [title, setTitle] = useState<string>("");
     const [pictures, setPictures] = useState<IPicture[] | File[]>([] as IPicture[] | File[]);
-    const [location, setLocation] = useState<INewsDataProps['location']>({} as INewsDataProps['location']);
     const [place, setPlace] = useState<INewsDataProps['place']>({} as INewsDataProps['place']);
     const [category, setCategory] = useState<any>('general');
     const [dateEvent, setDateEvent] = useState<INewsDateEvent[]>([] as INewsDateEvent[]);
@@ -73,8 +71,7 @@ const EditNews = () => {
         setPictures(news?.pictures)
         setDateEvent(news?.dateEvent)
         setInstitutionInfo(news?.institutionId as PropertyProps)
-        setLocation(news?.place?.location)
-        setPlace(news?.place?.place)
+        setPlace(news?.place)
     }
     useEffect(() => {
         if (news) {
@@ -99,6 +96,7 @@ const EditNews = () => {
         }
         formData.append("description", description);
         formData.append("title", title);
+        formData.append('place', JSON.stringify(place));
         formData.append("category", category);
         // formData.append("createdBy", JSON.stringify(user?._id));
         formData.append("institutionId", institutionInfo?._id);
@@ -123,6 +121,7 @@ const EditNews = () => {
 
         goBack();
     };
+    console.log(place)
 
     if (isErrorData) return <div>Error</div>
 
@@ -149,9 +148,7 @@ const EditNews = () => {
         datePublished: datePublish,
         setDatePublished: setDatePublish,
         place,
-        location,
         setPlace,
-        setLocation
     }
 
     return (
@@ -159,7 +156,6 @@ const EditNews = () => {
             bgColor={'transparent'}
             onClick={onFinishHandler}
             isLoading={isLoadingData}
-            saveButtonProps={saveButtonProps}
         >
             <Button
                 icon={<RestartAlt/>}

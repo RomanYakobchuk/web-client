@@ -36,11 +36,13 @@ const ContainerComponent = ({children, isPicture = true, childrenProps, pictureP
                 bgcolor: 'transparent',
                 width: '100vw',
                 position: 'relative',
-                height: 'calc(100vh - 60px)',
+                height: '100%',
                 zIndex: 0,
                 p: '0 !important',
-                overflow: 'hidden',
-                maxWidth: '100% !important'
+                // mt: 2,
+                overflowX: 'hidden',
+                maxWidth: '100% !important',
+                overflowY: 'auto',
             }}>
                 <CssBaseline/>
                 <Box sx={{
@@ -108,7 +110,6 @@ const ContainerComponent = ({children, isPicture = true, childrenProps, pictureP
                         width: '100%',
                         height: '100%',
                         maxHeight: '100%',
-                        overflowY: 'auto',
                         display: 'flex'
                     }}>
                         <Box sx={{

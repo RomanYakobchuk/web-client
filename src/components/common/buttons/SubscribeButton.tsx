@@ -1,9 +1,10 @@
-import {useForm, useGetIdentity, useTranslate} from "@refinedev/core";
-import {Button, CircularProgress, SxProps} from "@mui/material";
+import {useForm, useTranslate} from "@refinedev/core";
+import {Button, SxProps} from "@mui/material";
 import {Star, StarBorder} from "@mui/icons-material";
 
-import {IGetIdentity, ISubscribe, ProfileProps} from "../../../interfaces/common";
+import {ISubscribe} from "../../../interfaces/common";
 import React, {useEffect, useState} from "react";
+import {useUserInfo} from "../../../hook";
 
 type IProps = {
     establishmentId: string,
@@ -13,12 +14,11 @@ type IProps = {
     createdBy: string
 }
 const SubscribeButton = ({establishmentId, style, subscribe, showText, createdBy}: IProps) => {
-    const {data: identity} = useGetIdentity<IGetIdentity>();
-    const user = identity?.user as ProfileProps;
+    const {user} = useUserInfo();
 
     const translate = useTranslate();
 
-    const [isSubscribe, setIsSubscribe] = useState(false);
+    const [isSubscribe, setIsSubscribe] = useState<boolean>(subscribe?.institutionId === establishmentId);
 
     const {onFinish} = useForm({
         resource: `subscribe/updateOne/${establishmentId}`,
@@ -41,16 +41,20 @@ const SubscribeButton = ({establishmentId, style, subscribe, showText, createdBy
         if (subscribe) {
             setIsSubscribe(subscribe?.institutionId === establishmentId);
         }
-    }, [subscribe, establishmentId]);
+    }, [subscribe?.institutionId]);
 
-    const updateSubscribe = async () => {
+    const updateSubscribe = async (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
         try {
-            setIsSubscribe((prevState) => (!prevState));
-            await onFinish({});
+            const res = await onFinish({});
+            if (res?.data) {
+                setIsSubscribe(res?.data?.isSubscribe);
+            }
         } catch (e) {
             setIsSubscribe((prevState) => (!prevState));
         }
     }
+    console.log(isSubscribe)
 
     return (
         <Button
@@ -77,7 +81,7 @@ const SubscribeButton = ({establishmentId, style, subscribe, showText, createdBy
             onClick={updateSubscribe}
         >
             {
-                isSubscribe ? <Star/> : <StarBorder/>
+                isSubscribe ? <Star className={''}/> : <StarBorder/>
             }
             {
                 showText && (

@@ -4,13 +4,12 @@ import {
     FormControl,
     FormHelperText,
     MenuItem,
-    Select, TextField, Typography,
+    Select, Switch, TextField
 } from "@mui/material";
-import {Add, PlaceOutlined} from "@mui/icons-material";
-import React, {ChangeEvent, useContext} from "react";
+import {Add} from "@mui/icons-material";
+import React, {ChangeEvent, useContext, useEffect, useState} from "react";
 import {useTranslate} from "@refinedev/core";
 import MDEditor from "@uiw/react-md-editor";
-import {Image} from "antd";
 
 import ImageSelector from "../../establishment/utills/ImageSelector";
 import {ColorModeContext} from "../../../contexts";
@@ -42,14 +41,27 @@ const NewsFormData = (props: INewsDataProps) => {
         setDateEvent,
         datePublished, setDatePublished,
         defaultPictures,
-        location,
-        setPlace,
-        place,
-        setLocation
+        setPlace: setDataPlace,
+        place: dataPlace,
     } = props;
     const translate = useTranslate();
     const {mode} = useContext(ColorModeContext);
     const maxImages = 6;
+
+    const [isEstablishmentLocPlace, setIsEstablishmentLocPlace] = useState<boolean>(!!dataPlace?.location?.lng ?? false);
+    const [location, setLocation] = useState<INewsDataProps['place']['location']>(dataPlace?.location);
+    const [place, setPlace] = useState<INewsDataProps['place']['place']>(dataPlace?.place);
+
+    useEffect(() => {
+        if (location?.lng && location?.lng && place?.address && place?.city) {
+            setDataPlace((prevState) => ({...prevState, location, place}))
+        }
+
+        if (location?.lng !== institutionInfo?.location?.lng || location?.lat !== institutionInfo?.location?.lat || place?.city !== institutionInfo?.place?.city || place?.address !== institutionInfo?.place?.address) {
+            setIsEstablishmentLocPlace(false);
+        }
+    }, [location?.lng, location?.lat, place?.address, place?.city, institutionInfo]);
+
 
     const handlePicturesChange = (e: ChangeEvent<HTMLInputElement> | any) => {
         if (pictures.length > maxImages || e.target.files?.length > maxImages) return alert(translate("home.create.pictures.max") + "6")
@@ -78,6 +90,33 @@ const NewsFormData = (props: INewsDataProps) => {
     }
 
     const gridColumn = {xs: 'span 1', sm: 'span 2'};
+
+    const formHelperStyle = {
+        fontWeight: 500,
+        margin: "10px 0",
+        fontSize: {xs: 14, sm: 16},
+        color: 'common.white',
+    }
+
+
+    const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const checked = event.target.checked;
+        setIsEstablishmentLocPlace(checked);
+        if (checked) {
+            setLocation(institutionInfo?.location)
+            setPlace(institutionInfo?.place)
+        } else {
+            setLocation({} as INewsDataProps['place']['location']);
+            setPlace({} as INewsDataProps['place']['place'])
+        }
+    };
+
+    const handleClearLocation = () => {
+        setIsEstablishmentLocPlace(false);
+        setDataPlace({isPlace: false} as INewsDataProps['place']);
+        setLocation({} as INewsDataProps['place']['location']);
+        setPlace({} as INewsDataProps['place']['place'])}
+
     return (
         <Box>
             <Box
@@ -106,110 +145,14 @@ const NewsFormData = (props: INewsDataProps) => {
                         borderRadius: '10px',
                         bgcolor: mode === 'dark' ? '#1f1f1f' : '#f6f6f6',
                     }}>
-                        <FormControl fullWidth>
-                            <FormHelperText
-                                sx={{
-                                    fontWeight: 500,
-                                    margin: "10px 0",
-                                    fontSize: {xs: 12, sm: 16},
-                                    color: mode === "dark" ? "#fcfcfc" : "#11142D",
-                                }}
-                            >
-                                {translate("home.one")}
-                            </FormHelperText>
-                            <Box sx={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                gap: 1
-                            }}>
-                                <SearchInstitutions
-                                    typeSearch={'userInstitutions'} searchInstitution={institutionInfo}
-                                    setSearchInstitution={setInstitutionInfo}/>
-                            </Box>
-                        </FormControl>
-                        <FormControl>
-                            <FormHelperText
-                                sx={{
-                                    fontWeight: 500,
-                                    margin: "10px 0",
-                                    fontSize: {xs: 12, sm: 16},
-                                    color: mode === "dark" ? "#fcfcfc" : "#11142D",
-                                }}
-                            >
-                                {translate("buttons.details")}
-                            </FormHelperText>
-                            {
-                                institutionInfo?._id && (
-                                    <Box sx={{
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        gap: 1
-                                    }}>
-                                        <Box sx={{
-                                            width: '100%',
-                                            maxWidth: '400px',
-                                            height: {xs: '200px', sm: '250px', md: '300px'},
-                                            "& img": {
-                                                borderRadius: '10px',
-                                                objectFit: 'cover'
-                                            }
-                                        }}>
-                                            {
-                                                institutionInfo?.pictures?.length > 0 && (
-                                                    <Image
-                                                        src={institutionInfo?.pictures[0]?.url}
-                                                        width={'100%'}
-                                                        height={'100%'}
-                                                    />
-                                                )
-                                            }
-                                        </Box>
-                                        <Box sx={{
-                                            color: 'common.white',
-                                            width: '100%',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            gap: 2
-                                        }}>
-                                            <Typography
-                                                sx={{
-                                                    fontSize: {xs: '18px', md: '20px'},
-                                                    fontWeight: 600
-                                                }}
-                                            >
-                                                {institutionInfo?.title}
-                                            </Typography>
-                                            <span>
-                                                {translate(`home.sortByType.${institutionInfo?.type}`)}
-                                            </span>
-                                        </Box>
-                                        <Box sx={{
-                                            color: 'common.white',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            gap: 1
-                                        }}>
-                                            <PlaceOutlined
-                                                sx={{
-                                                    fontSize: '30px'
-                                                }}
-                                            />
-                                            <Box sx={{
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                                gap: 0.5
-                                            }}>
-                                                <span>
-                                                    {institutionInfo?.place?.city}
-                                                </span>
-                                                <span>
-                                                    {institutionInfo?.place?.address}
-                                                </span>
-                                            </Box>
-                                        </Box>
-                                    </Box>
-                                )
-                            }
+                        <FormControl fullWidth
+                                     sx={{
+                                         gridColumn: gridColumn
+                                     }}
+                        >
+                            <SearchInstitutions
+                                typeSearch={'userInstitutions'} searchInstitution={institutionInfo}
+                                setSearchInstitution={setInstitutionInfo}/>
                         </FormControl>
                     </Box>
                     <Box sx={{
@@ -221,10 +164,7 @@ const NewsFormData = (props: INewsDataProps) => {
                         <FormControl fullWidth>
                             <FormHelperText
                                 sx={{
-                                    fontWeight: 500,
-                                    margin: "10px 0",
-                                    fontSize: {xs: 12, sm: 16},
-                                    color: mode === "dark" ? "#fcfcfc" : "#11142D",
+                                    ...formHelperStyle
                                 }}
                             >
                                 {translate("news.create.title")}
@@ -243,10 +183,7 @@ const NewsFormData = (props: INewsDataProps) => {
                         <FormControl>
                             <FormHelperText
                                 sx={{
-                                    fontWeight: 500,
-                                    margin: "10px 0",
-                                    fontSize: {xs: 12, sm: 16},
-                                    color: mode === "dark" ? "#fcfcfc" : "#11142D",
+                                    ...formHelperStyle
                                 }}
                             >
                                 {translate("posts.fields.category.title")}
@@ -275,7 +212,8 @@ const NewsFormData = (props: INewsDataProps) => {
                         }}>
                             <CustomOpenContentBtn
                                 openComponent={dateEvent?.length > 0}
-                                openText={translate('buttons.add') + ' - ' + translate('news.dateEvent.title')}
+                                openText={translate('news.dateEvent.title')}
+                                closeText={translate('buttons.hide')}
                             >
                                 <DateTimeList
                                     dataLabel={translate("news.create.date.title")}
@@ -290,8 +228,36 @@ const NewsFormData = (props: INewsDataProps) => {
                             gridColumn: gridColumn,
                         }}>
                             <CustomOpenContentBtn
-                                openText={translate('buttons.add') + ' - ' + translate('home.create.location.title')}
+                                openText={translate('home.create.location.title')}
+                                closeText={translate('buttons.hide')}
                             >
+                                <Box>
+                                    <Box sx={{
+                                        color: 'common.white',
+                                        fontSize: '14px',
+                                        "span.css-a54nzi-MuiSwitch-track": {
+                                            backgroundColor: '#a00013'
+                                        }
+                                    }}>
+                                        <Switch
+                                            color={'info'}
+                                            checked={isEstablishmentLocPlace}
+                                            onChange={handleChange}
+                                            inputProps={{'aria-label': 'controlled'}}
+                                        />
+                                        Use establishment location and place
+                                    </Box>
+                                    <Button
+                                        color={'warning'}
+                                        variant={'text'}
+                                        onClick={handleClearLocation}
+                                        sx={{
+                                            textTransform: 'inherit'
+                                        }}
+                                    >
+                                        {translate('buttons.clear')}
+                                    </Button>
+                                </Box>
                                 <ChangeLocation
                                     location={location}
                                     setLocation={setLocation}
@@ -305,10 +271,7 @@ const NewsFormData = (props: INewsDataProps) => {
                         }}>
                             <FormHelperText
                                 sx={{
-                                    fontWeight: 500,
-                                    margin: "10px 0",
-                                    fontSize: {xs: 12, sm: 16},
-                                    color: mode === "dark" ? "#fcfcfc" : "#11142D",
+                                    ...formHelperStyle
                                 }}
                             >
                                 {translate("news.create.description")}
@@ -321,10 +284,7 @@ const NewsFormData = (props: INewsDataProps) => {
                         <FormControl fullWidth>
                             <FormHelperText
                                 sx={{
-                                    fontWeight: 500,
-                                    margin: "10px 0",
-                                    fontSize: {xs: 12, sm: 16},
-                                    color: mode === "dark" ? "#fcfcfc" : "#11142D",
+                                    ...formHelperStyle
                                 }}
                             >
                                 {translate("posts.fields.status.title")}
@@ -411,14 +371,12 @@ const NewsFormData = (props: INewsDataProps) => {
                     <FormControl sx={{
                         bgcolor: mode === 'dark' ? "#1a1313" : '#f4f4f4',
                         borderRadius: '10px',
-                        p: '10px'
+                        p: '10px',
+                        m: '-10px'
                     }}>
                         <FormHelperText
                             sx={{
-                                fontWeight: 500,
-                                margin: "10px 0",
-                                fontSize: {xs: 12, sm: 16},
-                                color: mode === "dark" ? "#fcfcfc" : "#11142D",
+                                ...formHelperStyle
                             }}
                         >
                             {translate("home.create.pictures.title")}

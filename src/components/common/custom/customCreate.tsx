@@ -11,16 +11,19 @@ import {ItemType} from "antd/es/breadcrumb/Breadcrumb";
 import './custom.css';
 import {ColorModeContext} from "../../../contexts";
 
-interface IProps {
+type TProps = {
     isLoading: boolean,
     children: ReactNode,
     showButtons?: boolean,
     bgColor?: 'transparent' | string,
     onClick?: () => void,
-    breadCrumbItems?: ItemType[]
+    breadCrumbItems?: ItemType[],
+    headerTitle?: string,
+    saveButtonText?: string,
+    maxWidth?: string
 }
 
-const CustomCreate = ({isLoading, children, bgColor, onClick, breadCrumbItems}: IProps) => {
+const CustomCreate = ({isLoading, children, bgColor, onClick, breadCrumbItems, headerTitle, saveButtonText, maxWidth}: TProps) => {
     const {mode} = useContext(ColorModeContext);
     const translate = useTranslate();
     const navigate = useNavigate();
@@ -47,6 +50,7 @@ const CustomCreate = ({isLoading, children, bgColor, onClick, breadCrumbItems}: 
                     style: {
                         background: bgColor ? bgColor : mode === 'dark' ? "#3e3e36" : '#fff',
                         padding: '0',
+                        boxShadow: 'unset'
                     },
                 }}
                 headerButtons={[]}
@@ -56,11 +60,11 @@ const CustomCreate = ({isLoading, children, bgColor, onClick, breadCrumbItems}: 
                             fontSize: '18px',
                             color: mode === 'dark' ? '#fcfcfc' : '#000'
                         }}
-                    >{translate('buttons.create')}</MuiTypography>,
+                    >{headerTitle ? headerTitle : translate('buttons.create')}</MuiTypography>,
                     style: {
                         color: mode === 'dark' ? '#fcfcfc' : '#000',
                         padding: '10px',
-                        maxWidth: '1100px',
+                        maxWidth: maxWidth ? maxWidth : '1100px',
                         margin: '0 auto'
                     },
                     backIcon: <ArrowBackOutlined sx={{
@@ -90,7 +94,7 @@ const CustomCreate = ({isLoading, children, bgColor, onClick, breadCrumbItems}: 
                             {translate('buttons.cancel')}
                         </Button>
                         {saveButtonProps && (
-                            <SaveButton size={"large"} {...saveButtonProps} onClick={onClick}/>
+                            <SaveButton size={"large"} {...saveButtonProps} onClick={onClick}>{saveButtonText && saveButtonText}</SaveButton>
                         )}
                     </Box>
                 )}
@@ -112,11 +116,6 @@ const CustomCreate = ({isLoading, children, bgColor, onClick, breadCrumbItems}: 
                     }}>
                         <Breadcrumb
                             items={breadCrumbItems}
-                        //     // breadcrumbProps={{
-                        //     // style: {
-                        //     //     color: mode === 'dark' ? '#fcfcfc' : '#000'
-                        //     // }
-                        // {/*}}*/}
                         />
                     </Box>
                 }

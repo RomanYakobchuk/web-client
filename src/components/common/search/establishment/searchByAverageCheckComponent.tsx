@@ -6,14 +6,14 @@ import {textFieldStyle} from "../../../../styles";
 import {SetFilterType} from "../../../../interfaces/types";
 
 
-interface IProps {
+type TProps = {
     valueGte: number,
     setValueGte: (value: number) => void,
     valueLte: number,
     setValueLte: (value: number) => void,
     setFilters: SetFilterType
 }
-const SearchByAverageCheckComponent = ({valueGte, valueLte, setValueLte, setValueGte, setFilters}: IProps) => {
+const SearchByAverageCheckComponent = ({valueGte, valueLte, setValueLte, setValueGte, setFilters}: TProps) => {
 
     const translate = useTranslate();
 

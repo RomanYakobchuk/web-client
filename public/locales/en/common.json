@@ -92,12 +92,14 @@
   },
   "buttons": {
     "copy": "Copy",
+    "share": "To share:",
     "add": "Add",
     "create": "Create",
     "details": "Details",
     "save": "Save",
     "logout": "Logout",
     "loadMore": "Load more",
+    "thatsAll": "That`s all",
     "delete": "Delete",
     "edit": "Edit",
     "cancel": "Cancel",
@@ -117,6 +119,7 @@
     "search": "Search",
     "import": "Import",
     "clone": "Clone",
+    "answer": "Answer",
     "submitting": "Submitting...",
     "notAccessTitle": "You don't have permission to access",
     "isPublished": "Published",
@@ -199,6 +202,7 @@
     "home": "Home",
     "title": "All Establishments",
     "one": "Establishment",
+    "theOne": "establishment",
     "owner": "Owner",
     "notHave": "There are no establishments",
     "search": "Search by title, description, city, features",
@@ -306,9 +310,10 @@
       },
       "comments": {
         "title": "Comments",
-        "notHave": "There are no comments"
+        "notHave": "There are no comments",
+        "leaveAs": "Leave a commet as "
       },
-      "addToFav": "Add to favorites",
+      "addToFav": "Save {{type}}",
       "delFromFav": "Remove from favorites",
       "reviews": {
         "title": "Reviews",
@@ -349,6 +354,7 @@
   },
   "news": {
     "news": "News",
+    "theOne": "the news",
     "title": "All news",
     "notHave": "There are no news",
     "button": "Add news",

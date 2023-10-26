@@ -1,4 +1,4 @@
-import {Box, CssBaseline, IconButton, StyledEngineProvider, SwipeableDrawer} from "@mui/material";
+import {Box, CssBaseline, IconButton, StyledEngineProvider, SwipeableDrawer, SxProps} from "@mui/material";
 import {Global} from "@emotion/react";
 import React, {Dispatch, ReactNode, SetStateAction, useEffect, useState} from "react";
 import {styled} from "@mui/material/styles";
@@ -10,8 +10,8 @@ const Root = styled('div')(({theme}) => ({
     height: '100%',
     zIndex: 150,
     position: 'relative',
-    backgroundColor:
-        theme.palette.mode === 'light' ? grey[100] : theme.palette.background.default,
+    // backgroundColor:
+    //     theme.palette.mode === 'light' ? grey[100] : theme.palette.background.default,
 }));
 const StyledBox = styled(Box)(({theme}) => ({
     backgroundColor: theme.palette.mode === 'light' ? '#fff' : grey[800],
@@ -29,18 +29,21 @@ const Puller = styled(Box)(({theme}) => ({
 
 const drawerBleeding = 56;
 
-interface IProps {
+type TProps = {
     window?: () => Window,
     children: ReactNode,
     anchor: "left" | "bottom" | "right" | "top",
     open: boolean,
     toggleDrawer: Dispatch<SetStateAction<boolean>>,
-    title: string | any,
+    title: string | ReactNode,
     button?: ReactNode,
-    closeWithOtherData?: any
+    closeWithOtherData?: any,
+    maxWidth?: string,
+    contentStyle?: SxProps,
+    bgColor?: string
 }
 
-const CustomDrawer = ({children, anchor, toggleDrawer, title, button, open, closeWithOtherData}: IProps) => {
+const CustomDrawer = ({children, anchor, toggleDrawer, title, button, open, closeWithOtherData, maxWidth = '725px', contentStyle, bgColor = ''}: TProps) => {
 
     const {device} = useMobile();
 
@@ -74,8 +77,8 @@ const CustomDrawer = ({children, anchor, toggleDrawer, title, button, open, clos
                 }}
                 />
                 <SwipeableDrawer
-                    anchor={anchor as IProps['anchor']}
-                    open={open as boolean}
+                    anchor={anchor as TProps['anchor']}
+                    open={isVisible as boolean}
                     hysteresis={0.52}
                     minFlingVelocity={450}
                     onOpen={() => toggleDrawer(true)}
@@ -90,8 +93,9 @@ const CustomDrawer = ({children, anchor, toggleDrawer, title, button, open, clos
                     PaperProps={{
                         sx: {
                             width: "100%",
-                            maxWidth: device ? '100%' : '725px',
+                            maxWidth: device ? '100%' : maxWidth,
                             p: 1,
+                            bgcolor: bgColor
                         },
                     }}
                 >
@@ -112,9 +116,10 @@ const CustomDrawer = ({children, anchor, toggleDrawer, title, button, open, clos
                             flexDirection: 'row',
                             alignItems: 'center',
                             justifyContent: 'space-between',
-                            mt: '10px'
+                            mt: '10px',
+                            borderBottom: '1px solid silver'
                         }}>
-                            <Box sx={{p: 2}}>
+                            <Box sx={{p: 1}}>
                                 {title}
                             </Box>
                             <Box sx={{
@@ -132,9 +137,10 @@ const CustomDrawer = ({children, anchor, toggleDrawer, title, button, open, clos
                     <Box sx={{
                         visibility: !device ? 'inherit' : 'hidden',
                         position: 'relative',
-                        display: 'flex',
+                        display: device ? 'none' : 'flex',
                         justifyContent: 'center',
-                        alignItems: 'center'
+                        alignItems: 'center',
+                        borderBottom: '1px solid silver'
                     }}>
                         <span>
                         {title}
@@ -154,8 +160,10 @@ const CustomDrawer = ({children, anchor, toggleDrawer, title, button, open, clos
                             p: {xs: 1, sm: 2},
                             display: 'flex',
                             height: '100%',
-                            overflow: 'hidden',
-                            bgcolor: 'transparent'
+                            // overflowX: 'hidden',
+                            overflowY: 'auto',
+                            bgcolor: 'transparent',
+                            ...contentStyle
                         }}
                     >
                         {children}

@@ -9,7 +9,7 @@ const UpdateFreeSeats = () => {
 
     return (
        <CustomEdit isLoading={false}>
-
+            <></>
        </CustomEdit>
     );
 };

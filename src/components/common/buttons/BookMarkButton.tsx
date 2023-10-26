@@ -10,7 +10,7 @@ import {AppContext} from "../../../contexts/AppContext";
 interface IProps {
     id: string,
     color?: string | any,
-    type: 'favoritePlaces' | 'favoriteNews' | string,
+    type: 'institutionNews' | 'institution',
     showText: boolean,
     bgColor?: string | any,
     style?: SxProps
@@ -22,31 +22,30 @@ const BookMarkButton = ({id, color, bgColor, type, showText, style}: IProps) => 
     const translate = useTranslate();
     const {mode} = useContext(ColorModeContext);
     const {favoritePlaces, setFavoritePlaces} = useContext(AppContext);
-
     const [book, setBook] = useState<any>();
     const [addDelFav, setAddDelFav] = useState(false);
 
-
     useEffect(() => {
-        const isInclude = favoritePlaces.includes(id);
+        const isInclude = favoritePlaces.some((value) => value.item === id && value.type === type);
         isInclude ? setBook(true) : setBook(false)
-    }, [favoritePlaces, id])
+    }, [favoritePlaces, id, type])
 
     const toFromBook = async (event: MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
         setAddDelFav(true)
 
-        await axiosInstance.post(`/users/${type === 'favoritePlaces' ? 'addDeleteFavoritePlace' : 'addDeleteFavoriteNews'}/${id}`, {
-            id
+        await axiosInstance.post(`/users/addDeleteFavoritePlace/${id}`, {
+            id,
+            refPath: type
         });
         if (book) {
-            setFavoritePlaces(favoritePlaces.filter(value => value !== id))
+            setFavoritePlaces(favoritePlaces.filter(value => value.item !== id && value.type !== type))
             open?.({
                 type: 'success',
                 message: translate('notifications.deleteSuccess', {"resource": translate('profile.my_fav_places')})
             })
         } else if (!book) {
-            setFavoritePlaces([...favoritePlaces, id])
+            setFavoritePlaces([...favoritePlaces, {type: type, item: id}])
             open?.({
                 type: "success",
                 message: translate('notifications.addSuccess', {"resource": translate('profile.my_fav_places')})
@@ -91,7 +90,7 @@ const BookMarkButton = ({id, color, bgColor, type, showText, style}: IProps) => 
                             }}/>
                         </> :
                         <>
-                            {showText && translate('home.show.addToFav')}
+                            {showText && translate('home.show.addToFav', {type: translate(`${type === 'institution' ? 'home' : 'news'}.theOne`)})}
                             <BookmarkBorderOutlined sx={{
                                 fontSize: 26,
                                 cursor: 'pointer',

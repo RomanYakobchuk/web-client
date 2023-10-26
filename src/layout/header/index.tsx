@@ -24,7 +24,7 @@ import {
     SettingsOutlined
 } from "@mui/icons-material";
 import {useDebounce} from "use-debounce";
-import {AutoComplete, Input} from "antd";
+import {Input} from "antd";
 import {useTranslation} from "react-i18next";
 import {useLocation, useNavigate} from "react-router-dom";
 
@@ -33,12 +33,12 @@ import {IGetIdentity, INews, IOptions, ProfileProps, PropertyProps} from "../../
 import {useSchema} from "../../settings";
 import {useMobile} from "../../hook";
 import {Loading, ModalWindow} from "../../components";
-import {searchRender} from "../../components/render"
+import {renderTitle, renderItem} from "../../components/render"
 import {antdInputStyle} from "../../styles";
 import {SchemaContext} from "../../settings/schema";
 
 export const Header: React.FC = () => {
-    const {mode, setMode, setOpen, collapsed} = useContext(ColorModeContext);
+    const {mode, setMode, setOpen} = useContext(ColorModeContext);
 
     const {schema} = useContext(SchemaContext)
 
@@ -55,7 +55,7 @@ export const Header: React.FC = () => {
     const currentLocale = locale();
 
 
-    const showUserInfo = user && (user.name || user.avatar);
+    const showUserInfo = user && (user.name || user.avatar || user._id);
     const [lan, setLan] = useState<any>(currentLocale);
     const [openModal, setOpenModal] = useState<boolean>(false);
     const handleChange = (event: SelectChangeEvent) => {
@@ -85,13 +85,13 @@ export const Header: React.FC = () => {
             enabled: false,
             onSuccess: (data) => {
                 const postOptionGroup = data.data.map((item, index) =>
-                    searchRender.renderItem(item, "all_institutions", index, mode, setOpenModal, data.data.length, translate),
+                    renderItem(item, "all_institutions", index, mode, setOpenModal, data.data.length, translate),
                 );
                 if (postOptionGroup.length > 0) {
                     setOptions((prevOptions) => [
                         ...prevOptions,
                         {
-                            label: searchRender.renderTitle(translate("all_institutions.all_institutions"), mode),
+                            label: renderTitle(translate("all_institutions.all_institutions"), mode),
                             options: postOptionGroup,
                         },
                     ] as IOptions[]);
@@ -107,13 +107,13 @@ export const Header: React.FC = () => {
             enabled: false,
             onSuccess: (data) => {
                 const categoryOptionGroup = data.data.map((item, index) =>
-                    searchRender.renderItem(item, "news", index, mode, setOpenModal, data.data.length),
+                    renderItem(item, "news", index, mode, setOpenModal, data.data.length),
                 );
                 if (categoryOptionGroup.length > 0) {
                     setOptions((prevOptions) => [
                         ...prevOptions,
                         {
-                            label: searchRender.renderTitle(translate("news.news"), mode),
+                            label: renderTitle(translate("news.news"), mode),
                             options: categoryOptionGroup,
                         },
                     ] as IOptions[]);
@@ -147,7 +147,7 @@ export const Header: React.FC = () => {
             borderRadius: styles.borderRadiusS,
             bgcolor: bgColor,
             // width: widthAppBar,
-            backdropFilter: schema === 'schema_1' ? 'blur(4px)' : 'unset',
+            backdropFilter: schema === 'schema_1' ? 'blur(20px)' : 'unset',
             transition:
                 "width 200ms cubic-bezier(0.4, 0, 0.6, 1) 0ms",
             borderBottom: schema === 'schema_1' ? '1px dashed silver' : ''

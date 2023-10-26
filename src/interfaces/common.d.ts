@@ -1,6 +1,7 @@
 import {ChangeEvent, ReactNode} from "react";
 import {CredentialResponse} from "./google";
 import {ContextStore} from "@uiw/react-md-editor";
+import {INewsDataFormPlace} from "./formData";
 
 export interface IUserLoginProps {
     email: string,
@@ -31,6 +32,7 @@ export interface IData {
     refresh_token: string,
     error?: any,
     favoritePlaces: string[],
+    subscribedEstablishments: [{id: string}];
 }
 
 export interface IUserRegisterProps {
@@ -75,8 +77,6 @@ export interface ProfileProps {
         isBlocked?: boolean,
         whyBlock?: string
     },
-
-    [key: string]: any
 }
 
 export interface IProfilePropsFilterVariables {
@@ -182,18 +182,16 @@ export interface IComment {
     text: string,
     _id: string,
     createdAt: Date | any,
-    institutionId: {
+    establishmentId: {
         _id: string,
-        pictures: {
-            url: string,
-            name: string,
-        }[],
+        pictures: IPicture[],
         title: string,
         type: string
-    },
-    parentCommentId: string | any,
+    } | string,
+    parentId: string | IComment,
     replies: IComment[],
-    containerId?: string
+    containerId?: string,
+    repliesLength: number
 }
 
 export interface NewsProps {
@@ -273,7 +271,7 @@ export interface INews {
     status?: "published" | "draft" | "rejected",
     pictures: IPicture[],
     description: string,
-    category?: "general" | "event" | "promotions",
+    category?: "general" | "events" | "promotions",
     createdBy?: string,
     variantForDisplay?: string,
     dateEvent: INewsDateEvent[],
@@ -281,17 +279,7 @@ export interface INews {
         isPublish: boolean,
         datePublish: Date | any
     },
-    place: {
-        place: {
-            city: string,
-            address: string,
-        },
-        isPlace?: boolean,
-        location: {
-            lat: number,
-            lng: number
-        }
-    }
+    place: INewsDataFormPlace
 }
 
 export interface INewsFilterVariables {
@@ -377,8 +365,8 @@ export interface INewsDateEvent {
         to?: Date | string | null
     },
     time?: {
-        from?: Date | string | null,
-        to?: Date | string | null
+        from?: string | Date | null,
+        to?: string | Date | null
     }
 }
 

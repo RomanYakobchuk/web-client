@@ -82,7 +82,7 @@ const NewsCard = ({
                         <Place
                             sx={{
                                 fontSize: 18,
-                                color: "secondary",
+                                color: "secondary.main",
                             }}
                         />
                         <Typography sx={{

@@ -29,7 +29,7 @@ import {CustomAccordion} from "../index";
 import {useMobile} from "../../hook";
 
 
-const ManagerList = () => {
+const CaplManagerPage = () => {
 
     const translate = useTranslate();
     const navigate = useNavigate();
@@ -467,4 +467,4 @@ const ManagerList = () => {
         </Grid>
     );
 };
-export default ManagerList
+export default CaplManagerPage

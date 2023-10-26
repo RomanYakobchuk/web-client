@@ -1,15 +1,11 @@
-import {Box, Button, Typography} from "@mui/material";
-import {FC, useContext} from "react";
+import {Box} from "@mui/material";
+import {FC} from "react";
 
 import "./home.css";
 
-
-import {CountCities, CountType, CountViews, TypePart, WelcomePart} from "../../components/home";
-import {ColorModeContext} from "../../contexts";
+import {CountCities, CountViews, TypePart, WelcomePart} from "../../components/home";
 
 const Home: FC = () => {
-
-    const {mode} = useContext(ColorModeContext);
 
     return (
         <Box sx={{
@@ -24,15 +20,20 @@ const Home: FC = () => {
                 width: "100%",
                 mb: 2
             }}>
-               <WelcomePart/>
+                <WelcomePart/>
                 <Box sx={{
                     width: '90%',
                     margin: '0 auto',
-                    p: {xs: 1, md: 2},
                 }}>
                     <CountCities/>
                 </Box>
-                <TypePart/>
+                <Box
+                    id={'typePart'}
+                    sx={{
+                        width: '100%'
+                    }}>
+                    <TypePart/>
+                </Box>
                 <Box sx={{
                     margin: '0 auto',
                     p: {xs: 1, md: 2},

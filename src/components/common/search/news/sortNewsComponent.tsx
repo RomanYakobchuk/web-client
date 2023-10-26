@@ -2,7 +2,7 @@ import {FormControl, MenuItem, Select, SxProps} from "@mui/material";
 import React, {useMemo} from "react";
 import {CrudSorting, useTranslate} from "@refinedev/core";
 
-interface IProps {
+type TProps = {
     newSorters: CrudSorting,
     setSortBy: (value: string) => void,
     defaultSetSorters: (sorter: CrudSorting) => void,
@@ -10,7 +10,7 @@ interface IProps {
     styles?: SxProps
 }
 
-const SortNewsComponent = ({newSorters, setSortBy, defaultSetSorters, sortBy, styles}: IProps) => {
+const SortNewsComponent = ({newSorters, setSortBy, defaultSetSorters, sortBy, styles}: TProps) => {
 
     const translate = useTranslate();
 

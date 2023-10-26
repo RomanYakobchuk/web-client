@@ -8,7 +8,7 @@ import {textFieldStyle} from "../../../styles";
 import {Loading} from "../../index";
 import {useLocationData} from "../../../hook";
 
-interface IProps {
+type TProps = {
     location: google.maps.LatLngLiteral | { lat: number, lng: number },
     setLocation: (value: { lat: number, lng: number }) => void,
     setPlace: (item: { address: string, city: string }) => void,
@@ -16,7 +16,7 @@ interface IProps {
     isReadOnly?: boolean
 }
 
-const ChangeLocation = ({setLocation, location, setPlace, place, isReadOnly = false}: IProps) => {
+const ChangeLocation = ({setLocation, location, setPlace, place, isReadOnly = false}: TProps) => {
 
     const translate = useTranslate();
 

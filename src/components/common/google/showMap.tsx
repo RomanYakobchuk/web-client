@@ -10,7 +10,7 @@ import {containerStyle} from "../../establishment/utills/mapsOptrions";
 import {Loading, openGoogleMaps} from "../../index";
 import {ColorModeContext} from "../../../contexts";
 
-interface IProps {
+type TProps = {
     location: google.maps.LatLngLiteral | { lat: number, lng: number },
     showRoute: boolean
 }
@@ -28,7 +28,7 @@ interface IProps {
 // } as const;
 // type TravelModeTypeValues = typeof TravelModeType[keyof typeof TravelModeType];
 
-const ShowMap = ({showRoute, location}: IProps) => {
+const ShowMap = ({showRoute, location}: TProps) => {
 
     const {mode} = useContext(ColorModeContext);
     const translate = useTranslate();
@@ -80,14 +80,14 @@ const ShowMap = ({showRoute, location}: IProps) => {
             height: '100%',
             display: 'flex',
             flexDirection: 'column',
-            gap: 1
+            gap: 1,
+            position: 'relative'
         }}>
             {
                 isLoaded ? (
                     <GoogleMap
                         mapContainerStyle={{
                             ...containerStyle,
-                            height: '90%'
                         }}
                         center={new google.maps.LatLng(location?.lat, location?.lng)}
                         zoom={10}
@@ -130,7 +130,10 @@ const ShowMap = ({showRoute, location}: IProps) => {
                 showRoute && (
                     <Box sx={{
                         height: '30px',
-                        width: '100%',
+                        position: 'absolute',
+                        top: '10px',
+                        left: '10px',
+                        // width: '100%',
                         transition: '300ms linear',
                         "& button:hover span":{
                             color: '#445fb7'
