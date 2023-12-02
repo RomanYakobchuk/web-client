@@ -8,19 +8,20 @@ import {
     Stack,
 } from "@mui/material";
 import dayjs from "dayjs";
-import {Link} from "react-router-dom";
+import {Link, unstable_useViewTransitionState} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import relativeTime from "dayjs/plugin/relativeTime"
 import {useTranslate} from "@refinedev/core";
 import React, {useContext, useEffect} from "react";
 
-import {PropertyProps} from "../../../interfaces/common";
-import {ColorModeContext} from "../../../contexts";
+import {PropertyProps} from "@/interfaces/common";
+import {ColorModeContext} from "@/contexts";
 import BookMarkButton from "../../common/buttons/BookMarkButton";
 import 'dayjs/locale/uk';
 import 'dayjs/locale/en';
-import {tagStyle} from "../../../styles";
+import {tagStyle} from "@/styles";
 import SharedComponent from "../../common/shared/sharedComponent";
+import {useMobile, useNavigateWithTransition} from "@/hook";
 
 dayjs.extend(relativeTime);
 
@@ -34,8 +35,10 @@ const Variant1EstablishmentCard = ({
                                    }: IProps) => {
     const {_id, type, place, pictures, rating, title, averageCheck} = institution;
 
+    const navigateWithTransition = useNavigateWithTransition();
     const translate = useTranslate();
     const {i18n} = useTranslation();
+    const {width} = useMobile();
     const {mode} = useContext(ColorModeContext);
     const color = mode === "dark" ? '#f1e6e6' : "#1d1a39";
 
@@ -44,11 +47,26 @@ const Variant1EstablishmentCard = ({
     }, [i18n.language])
 
 
+    const lL = width < 450 ? 15 : (width > 600 && width < 700) ? 30 : 20;
+    const currentTitle = title?.length > lL ? title?.slice(0, lL) : title;
+
+    const isSplicedTitle = title?.length > lL;
+
+    const linkTo = `/all_institutions/show/${institution?._id}`;
+
     return (
         <Link
-            to={`/all_institutions/show/${_id}`}
+            unstable_viewTransition
+            to={linkTo}
+            onClick={(event) => {
+                event.preventDefault();
+                navigateWithTransition(linkTo)
+            }}
             style={{
-                textDecoration: 'none'
+                textDecoration: 'none',
+                cursor: 'pointer',
+                contain: 'paint',
+                viewTransitionName: `establishment${institution?._id}`,
             }}
         >
             <Card
@@ -95,8 +113,8 @@ const Variant1EstablishmentCard = ({
                             style={{
                                 minWidth: '30px',
                                 bgcolor: '#f5841a',
-                                width: '40px',
-                                borderRadius: '7px',
+                                // width: '40px',
+                                borderRadius: '5px',
                                 p: '5px'
                             }}
                             showText={false} bgColor={'#f5841a'}
@@ -104,7 +122,7 @@ const Variant1EstablishmentCard = ({
                         <Box sx={{
                             backdropFilter: 'blur(10px)',
                             bgcolor: mode === 'dark' ? 'rgba(255,255,255,0.7)' : 'rgba(0, 0, 0, 0.4)',
-                            borderRadius: '10px'
+                            borderRadius: '5px'
                         }}>
                             <SharedComponent
                                 type={'institution'}
@@ -112,6 +130,7 @@ const Variant1EstablishmentCard = ({
                                 color={mode === 'dark' ? '#000' : '#fff'}
                                 url={`${CLIENT_URL}/all_institutions/show/${_id}`}
                                 title={translate('buttons.share')}
+                                name={institution?.title}
                             />
                         </Box>
                         {/*<Button*/}
@@ -226,7 +245,8 @@ const Variant1EstablishmentCard = ({
                             backdropFilter: 'blur(10px)',
                             width: '100%',
                         }}>
-                        {title}
+                        {currentTitle}
+                        {isSplicedTitle && '...'}
                     </Typography>
                     <Box color={"default"} sx={{
                         display: 'flex',

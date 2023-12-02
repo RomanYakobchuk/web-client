@@ -4,17 +4,18 @@ import {
 import React, {Dispatch, ReactNode, useContext, useEffect, useState} from "react";
 import {CrudFilters, CrudSorting, LogicalFilter, useTranslate} from "@refinedev/core";
 
-import SearchCity from "../../search/searchCity";
-import {SetFilterType} from "../../../interfaces/types";
+import SearchCity from "@/components/search/searchCity";
+import {SetFilterType} from "@/interfaces/types";
 import {
     SearchButtonFilterComponent, SearchByTypeComponent,
     SearchInputComponent,
     SortNewsComponent
 } from "../../common/search";
-import {useMobile} from "../../../hook";
+import {useMobile} from "@/hook";
 import ModalWindow from "../../window/modalWindow";
-import {FilterBtn} from "../../index";
-import {ColorModeContext} from "../../../contexts";
+import {FilterBtn, VariantComponent} from "../../index";
+import {ColorModeContext} from "@/contexts";
+import {GridViewSharp, ViewComfySharp, ViewStreamSharp } from "@mui/icons-material";
 
 
 interface IProps {
@@ -185,8 +186,8 @@ const FilterNews = ({
             width: '100%',
             gap: 2,
             display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
+            flexDirection: 'column',
+            alignItems: 'start',
             justifyContent: 'center',
             "& input": {
                 border: `1px solid ${mode === 'dark' ? '#fff' : '#000'}`
@@ -197,40 +198,30 @@ const FilterNews = ({
                 position: 'relative',
                 display: 'flex',
                 flexDirection: 'column',
-                gap: isHorizontalContent ? 2 : 1
+                gap: 2
             }}>
-                {
-                    isShowAllFilters && (
-                        <Box sx={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            width: '100%',
-                            height: '40px'
-                        }}>
-                            <Box sx={{
-                                height: '100%',
-                                minWidth: '30%',
-                                maxWidth: isHorizontalContent ? '100%' : '350px',
-                                width: '100%'
-                            }}>
-                                {
-                                    SearchByCityComponent
-                                }
-                            </Box>
-                            {
-                                !isHorizontalContent && (
-                                    <FilterBtn
-                                        setOpenFilter={setOpenFilter}
-                                        filterLength={filterLength}
-                                        isShowAllFilters={isShowAllFilters}
-                                    />
-                                )
-                            }
-                        </Box>
-                    )
-                }
+                {/*{*/}
+                {/*    isShowAllFilters && (*/}
+                {/*        <Box sx={{*/}
+                {/*            display: 'flex',*/}
+                {/*            flexDirection: 'row',*/}
+                {/*            alignItems: 'center',*/}
+                {/*            justifyContent: 'space-between',*/}
+                {/*            width: '100%',*/}
+                {/*            height: '40px'*/}
+                {/*        }}>*/}
+                {/*            {*/}
+                {/*                !isHorizontalContent && (*/}
+                {/*                    <FilterBtn*/}
+                {/*                        setOpenFilter={setOpenFilter}*/}
+                {/*                        filterLength={filterLength}*/}
+                {/*                        isShowAllFilters={isShowAllFilters}*/}
+                {/*                    />*/}
+                {/*                )*/}
+                {/*            }*/}
+                {/*        </Box>*/}
+                {/*    )*/}
+                {/*}*/}
                 <SearchInputComponent
                     styleSx={{
                         margin: '0'
@@ -240,6 +231,20 @@ const FilterNews = ({
                     setSearchValue={setSearchValue}
                     defaultSetFilters={defaultSetFilters}
                 />
+                {
+                    isShowAllFilters && (
+                        <Box sx={{
+                            height: '100%',
+                            minWidth: '30%',
+                            maxWidth: '350px',
+                            width: '100%'
+                        }}>
+                            {
+                                SearchByCityComponent
+                            }
+                        </Box>
+                    )
+                }
                 {
                     !isShowAllFilters && (
                         <FilterBtn
@@ -254,24 +259,30 @@ const FilterNews = ({
                 }
                 <Box sx={{
                     display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: isHorizontalContent ? 'start' : 'center',
-                    flexDirection: isHorizontalContent ? 'column' : 'row',
-                    gap: isHorizontalContent ? 2 : 0
+                    // justifyContent: 'space-between',
+                    // alignItems: isHorizontalContent ? 'start' : 'center',
+                    // flexDirection: isHorizontalContent ? 'column' : 'row',
+                    // gap: isHorizontalContent ? 2 : 0
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: 2,
+                    justifyContent: 'space-between'
                 }}>
                     {
                         isShowAllFilters && (
-                            <SearchByTypeComponent
-                                arrayType={arrayType}
-                                fieldName={'category'}
-                                sortTranslatePath={'news.sortByCategory'}
-                                defaultSetFilters={defaultSetFilters}
-                                setFilters={setFilters}
-                                type={category}
-                                isShowAllFilters={isShowAllFilters}
-                                setType={setCategory}
-                                setCurrent={setCurrent}
-                            />
+                            <>
+                                <SearchByTypeComponent
+                                    arrayType={arrayType}
+                                    fieldName={'category'}
+                                    sortTranslatePath={'news.sortByCategory'}
+                                    defaultSetFilters={defaultSetFilters}
+                                    setFilters={setFilters}
+                                    type={category}
+                                    isShowAllFilters={isShowAllFilters}
+                                    setType={setCategory}
+                                    setCurrent={setCurrent}
+                                />
+                            </>
                         )
                     }
                     <SortNewsComponent
@@ -282,6 +293,11 @@ const FilterNews = ({
                         setSortBy={setSortBy}
                         defaultSetSorters={defaultSetSorters}
                         sortBy={sortBy}
+                    />
+                    <VariantComponent
+                        variant1Icon={<ViewComfySharp/>}
+                        variant2Icon={width < 600 ? <ViewStreamSharp/> : <GridViewSharp/>}
+                        type={'news'}
                     />
                 </Box>
             </Box>

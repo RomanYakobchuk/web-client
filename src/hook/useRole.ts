@@ -1,7 +1,6 @@
 import {useEffect, useState} from "react";
-import {parseJwt} from "../utils";
-import {ProfileProps, PropertyProps} from "../interfaces/common";
-import {axiosInstance} from "../authProvider";
+import {parseJwt} from "@/utils";
+import {ProfileProps, PropertyProps} from "@/interfaces/common";
 
 export const useRole = () => {
     const [role, setRole] = useState<"admin" | "manager" | 'user' | string>("");

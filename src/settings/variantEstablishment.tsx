@@ -1,45 +1,33 @@
-import {createContext, FC, PropsWithChildren, useEffect, useState} from "react";
+import {createContext, Dispatch, FC, PropsWithChildren, SetStateAction, useEffect, useState} from "react";
 
 type TVariant = {
-    variant: IVariant['variant'],
-    setVariant: (value: IVariant['variant']) => void
-    newsVariant: IVariant['newsVariant'],
-    setNewsVariant: (value: IVariant['newsVariant']) => void
+    variantShowItems: TVariantShowItems,
+    setVariantShowItems: Dispatch<SetStateAction<TVariantShowItems>>
 }
 
 export interface IVariant {
     variant: 'variant_1' | 'variant_2',
     newsVariant: 'variant_1' | 'variant_2'
 }
-
+type TVariantShowItems = {
+    establishment: IVariant['variant'] | 'variant_1',
+    news: IVariant['variant'] | 'variant_1',
+}
 export const VariantContext = createContext<TVariant>({} as TVariant);
 
-
+const VSI = 'variant_show_items';
 export const VariantProvider: FC<PropsWithChildren> = ({children}) => {
-    const selectedVariant = window.localStorage.getItem("variant_place") as string;
-    const selectedNewsVariant = window.localStorage.getItem("variant_news") as string;
+    const selectedVariants = window.localStorage.getItem("variant_show_items") as string;
 
-
-    const [variant, setVariant] = useState<IVariant["variant"]>(
-        (selectedVariant as IVariant["variant"]) || "variant_1"
-    );
-    const [newsVariant, setNewsVariant] = useState<IVariant["newsVariant"]>(
-        (selectedNewsVariant as IVariant["newsVariant"]) || "variant_1"
-    );
+    const [variantShowItems, setVariantShowItems] = useState<TVariantShowItems>(selectedVariants ? JSON.parse(selectedVariants) : {establishment: "variant_1", news: "variant_1"} as TVariant["variantShowItems"]);
 
     useEffect(() => {
-        window.localStorage.setItem("variant_place", variant);
-    }, [variant]);
-    useEffect(() => {
-        window.localStorage.setItem("variant_news", newsVariant);
-    }, [newsVariant]);
-
+        window.localStorage.setItem(VSI, JSON.stringify(variantShowItems));
+    }, [variantShowItems]);
 
     const schemaContextValue: TVariant = {
-        variant,
-        setVariant,
-        setNewsVariant,
-        newsVariant
+        variantShowItems,
+        setVariantShowItems
     };
 
     return (

@@ -1,10 +1,10 @@
 import {Box} from "@mui/material";
-import { GoogleAuth} from "../../../components";
 import React from "react";
 import {useTranslate} from "@refinedev/core";
-import {FacebookAuth, GithubAuth} from "../../../auth";
+import {FacebookAuth, GoogleAuth} from "../../../auth";
 
 type IProps = {
+    isUserAggre?: boolean,
     googleType: "login" | "register",
     googleText?: "signin_with" | "signup_with" | "continue_with" | undefined,
     facebookType: "login" | "register",
@@ -12,7 +12,7 @@ type IProps = {
     facebookText?: "signin_with" | "signup_with" | "continue_with" | undefined,
 }
 
-const OrPart = ({googleType, googleText, facebookType, facebookText, githubType}: IProps) => {
+const OrPart = ({googleType, googleText, facebookType, facebookText, isUserAggre}: IProps) => {
     const translate = useTranslate();
     return (
         <Box sx={{
@@ -68,8 +68,8 @@ const OrPart = ({googleType, googleText, facebookType, facebookText, githubType}
                 width: '100%',
                 justifyContent: 'center'
             }}>
-                <GoogleAuth type={googleType} text={googleText}/>
-                <FacebookAuth type={facebookType} text={facebookText}/>
+                <GoogleAuth isUserAggre={isUserAggre} type={googleType} text={googleText}/>
+                <FacebookAuth isUserAggre={isUserAggre} type={facebookType} text={facebookText}/>
                 {/*<GithubAuth type={githubType}/>*/}
             </Box>
         </Box>

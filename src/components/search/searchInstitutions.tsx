@@ -5,8 +5,8 @@ import {Box, FormControl, FormHelperText, Typography} from "@mui/material";
 import {useDebounce} from "use-debounce";
 import {PlaceOutlined} from "@mui/icons-material";
 
-import {IOptions, PropertyProps} from "../../interfaces/common";
-import {ColorModeContext} from "../../contexts";
+import {IOptions, PropertyProps} from "@/interfaces/common";
+import {ColorModeContext} from "@/contexts";
 
 const {Text} = TypographyAntd;
 const renderTitle = (title: string) => {
@@ -63,7 +63,8 @@ interface IProps {
     typeSearch: 'userInstitutions' | string,
     showEstablishmentInfo?: boolean,
     showEstablishmentInfoLabel?: boolean,
-    showSearchLabel?: boolean
+    showSearchLabel?: boolean,
+    isOnlyShowInfo?: boolean
 }
 
 const SearchInstitutions = ({
@@ -72,7 +73,8 @@ const SearchInstitutions = ({
                                 setSearchInstitution,
                                 showEstablishmentInfo = true,
                                 showEstablishmentInfoLabel = true,
-                                showSearchLabel = true
+                                showSearchLabel = true,
+                                isOnlyShowInfo = false
                             }: IProps) => {
 
     const {mode} = useContext(ColorModeContext);
@@ -90,11 +92,11 @@ const SearchInstitutions = ({
         setSearchPlaceInput(value)
     }
     useEffect(() => {
-        if (searchInstitution?._id !== currentInstitution?._id) {
+        if (searchInstitution?._id !== currentInstitution?._id || !currentInstitution?.title) {
             setCurrentInstitution(searchInstitution)
         }
     }, [searchInstitution]);
-    const {refetch, } = useList<PropertyProps>({
+    const {refetch,} = useList<PropertyProps>({
         resource: `institution/${typeSearch}`,
         filters: [{field: 'title', operator: 'contains', value: value}],
         queryOptions: {
@@ -151,50 +153,55 @@ const SearchInstitutions = ({
             flexDirection: {xs: 'column', sm: 'row'},
             gap: showEstablishmentInfo ? 2 : 0
         }}>
-            <FormControl fullWidth>
-                {
-                    showSearchLabel && (
-                        <FormHelperText
-                            sx={{
-                                fontWeight: 500,
-                                margin: "10px 0",
-                                fontSize: {xs: 14, sm: 16},
-                                color: 'common.white',
+            {
+                !isOnlyShowInfo && (
+                    <FormControl fullWidth>
+                        {
+                            showSearchLabel && (
+                                <FormHelperText
+                                    sx={{
+                                        fontWeight: 500,
+                                        margin: "10px 0",
+                                        fontSize: {xs: 14, sm: 16},
+                                        color: 'common.white',
+                                    }}
+                                >
+                                    {translate("home.one")}
+                                </FormHelperText>
+                            )
+                        }
+                        <AutoComplete
+                            style={{
+                                color: mode === "dark" ? "#fcfcfc" : "#000",
+                                width: '100%'
+                            }}
+                            options={options}
+                            value={searchPlaceInput}
+                            disabled={isOnlyShowInfo}
+                            filterOption={false}
+                            onSearch={onSearch}
+                            onSelect={(selectValue, option) => {
+                                const {allInfo} = option;
+                                setSearchInstitution((prev) => ({...prev, ...allInfo}))
+                                setSearchPlaceInput(selectValue);
+                                setSearchInputValue(selectValue)
                             }}
                         >
-                            {translate("home.one")}
-                        </FormHelperText>
-                    )
-                }
-                <AutoComplete
-                    style={{
-                        color: mode === "dark" ? "#fcfcfc" : "#000",
-                        width: '100%'
-                    }}
-                    options={options}
-                    value={searchPlaceInput}
-                    filterOption={false}
-                    onSearch={onSearch}
-                    onSelect={(selectValue, option) => {
-                        const {allInfo} = option;
-                        setSearchInstitution((prev) => ({...prev, ...allInfo}))
-                        setSearchPlaceInput(selectValue);
-                        setSearchInputValue(selectValue)
-                    }}
-                >
-                    <Input
-                        value={searchInputValue}
-                        onChange={(e) => {
-                            setSearchPlaceInput(e.target.value)
-                        }}
-                        size={'large'}
-                        style={{
-                            background: "transparent",
-                            color: mode === "dark" ? "#fcfcfc" : "#000"
-                        }}
-                    />
-                </AutoComplete>
-            </FormControl>
+                            <Input
+                                value={searchInputValue}
+                                onChange={(e) => {
+                                    setSearchPlaceInput(e.target.value)
+                                }}
+                                size={'large'}
+                                style={{
+                                    background: "transparent",
+                                    color: mode === "dark" ? "#fcfcfc" : "#000"
+                                }}
+                            />
+                        </AutoComplete>
+                    </FormControl>
+                )
+            }
             {
                 showEstablishmentInfo && (
                     <FormControl fullWidth>

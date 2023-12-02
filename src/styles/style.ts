@@ -1,7 +1,7 @@
 export const textFieldStyle = {
     "& div": {
-        borderRadius: '10px'
-    }
+        borderRadius: '10px',
+    },
 }
 
 export const buttonStyle = {

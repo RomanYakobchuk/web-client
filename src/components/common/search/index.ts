@@ -7,11 +7,14 @@ import SortNewsComponent from "./news/sortNewsComponent";
 import SearchButtonFilterComponent from "./searchButtonFilterComponent";
 import SearchInputComponent from "./searchInputComponent";
 
+import SortCapl from "./capl/sortCapl";
+
 export {
     SearchInputComponent,
     SearchByTypeComponent,
     SearchButtonFilterComponent,
     SearchByAverageCheckComponent,
     SearchByFreeSeats,
-    SortNewsComponent
+    SortNewsComponent,
+    SortCapl
 }

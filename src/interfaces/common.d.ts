@@ -13,6 +13,10 @@ export interface IPicture {
     name: string
 }
 
+export interface IColor {
+    color: 'inherit' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning'
+}
+
 export interface IGetIdentity {
     user: ProfileProps,
     favoritePlaces: string[]
@@ -33,6 +37,7 @@ export interface IData {
     error?: any,
     favoritePlaces: string[],
     subscribedEstablishments: [{id: string}];
+    countNotReadNotifications: number
 }
 
 export interface IUserRegisterProps {
@@ -126,7 +131,7 @@ export interface PropertyProps {
     variantForDisplay?: string | any,
     news?: any,
     createdAt?: Date | any,
-    views?: {
+    viewsContainer?: {
         viewsNumber?: number
     },
     freeSeats: string | IFreeSeats
@@ -413,16 +418,18 @@ export interface IConversation {
 
 
 export interface IReserve {
-    institution: PropertyProps | any,
+    institution: PropertyProps | string | any,
     _id: string,
+    isAllowedEdit: boolean,
     fullName: string,
-    user?: string,
-    manager?: string,
+    user: string,
+    isClientAppeared: boolean,
+    manager: string,
     writeMe: boolean,
     whoPay: string,
     eventType: string,
-    date: Date | any,
-    isActive: string,
+    date: Date | string,
+    isActive?: string,
     comment: string,
     desiredAmount: number,
     numberPeople: number,
@@ -436,7 +443,7 @@ export interface IReserve {
         freeDateFor: [{
             day: Date,
             time: Date
-        }]
+        }] | null
     }
 }
 
@@ -460,10 +467,27 @@ export interface ISubscribe {
     updatedAt?: Date,
 }
 
-export interface INotification {
+export interface INotificationSubscribe {
     _id: string,
     subscribeId: string,
     newsId: string,
     createdAt?: Date,
     updatedAt?: Date,
+}
+
+export interface INotification {
+    _id: string,
+    isDelete: boolean,
+    forUser: {
+        role: "manager" | "admin" | "user",
+        userId?: string | ProfileProps
+    },
+    status: "usual" | "accepted" | "rejected",
+    userId: string | ProfileProps,
+    message: string,
+    description: string,
+    type: "newReservation" | "newMessage" | "newNews" |"newFunctional" | "newEstablishment" | "newUser",
+    isRead: boolean,
+    createdAt: Date,
+    updateAt: Date
 }

@@ -45,7 +45,7 @@ const ListForUsers = ({isLoading, news, data, current, setCurrent, setPageSize, 
                         </Box>
             }
             {
-                news.length > 1 && (
+                data && data?.total > 1 && (
                     <PaginationComponent count={data?.total as number} current={current} setCurrent={setCurrent}
                                          pageCount={pageSize} setPageSize={setPageSize}/>
                 )

@@ -8,7 +8,26 @@ import {Box, Button, Divider, IconButton, SxProps} from "@mui/material";
 import {MoreHoriz} from "@mui/icons-material";
 import {MouseEvent, useState} from "react";
 import {useNotification, useTranslate} from "@refinedev/core";
+
+import {
+    EmailShareButton,
+    EmailIcon,
+    FacebookShareButton,
+    FacebookIcon,
+    TelegramShareButton,
+    TelegramIcon,
+    TwitterShareButton,
+    TwitterIcon,
+    WhatsappShareButton,
+    WhatsappIcon,
+    RedditShareButton,
+    RedditIcon,
+    ViberShareButton,
+    ViberIcon
+} from "react-share";
+
 import BookMarkButton from "../buttons/BookMarkButton";
+import {ModalWindow} from "@/components";
 
 
 const StyledMenu = styled((props: MenuProps) => (
@@ -63,16 +82,23 @@ type TProps = {
     type: 'institution' | 'institutionNews',
     isShowSharedText?: boolean,
     bookMarkStyle?: SxProps,
-    sharedStyle?: SxProps
+    sharedStyle?: SxProps,
+    name?: string
 }
-const SharedComponent = ({url, title, id, isOnlyShared = false, color, type, isShowSharedText = false, bookMarkStyle, sharedStyle}: TProps) => {
+const SharedComponent = ({url, title, id, isOnlyShared = false, color, type, isShowSharedText = false, bookMarkStyle, sharedStyle, name}: TProps) => {
 
     const translate = useTranslate();
     const {open: openNotification} = useNotification();
 
+    const [openModal, setOpenModal] = useState<boolean>(false);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
 
+    const dataShare = {
+        title: title,
+        url: url,
+        text: url,
+    };
     const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
         setAnchorEl(event.currentTarget);
@@ -84,13 +110,11 @@ const SharedComponent = ({url, title, id, isOnlyShared = false, color, type, isS
 
     const handleShare = (event: MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
+        event.stopPropagation();
         handleClose(event);
+
         if (navigator.share) {
-            navigator.share({
-                title: title,
-                url: url,
-                text: url,
-            })
+            navigator.share(dataShare)
                 .then(() => openNotification?.({
                     type: 'success',
                     message: 'Link shared successful',
@@ -102,22 +126,34 @@ const SharedComponent = ({url, title, id, isOnlyShared = false, color, type, isS
                     message: 'Error shared link'
                 }))
         } else {
-            navigator.clipboard.writeText(url)?.then(() => openNotification?.({
-                type: 'success',
-                description: 'Shared',
-                message: 'Link copied successful'
-            }))?.catch(() => openNotification?.({
-                type: 'error',
-                description: 'Shared',
-                message: 'Error copied link'
-            }));
+            setOpenModal(true)
         }
+    }
+    const copy = () => {
+        navigator.clipboard.writeText(url)?.then(() => openNotification?.({
+            type: 'success',
+            description: 'Shared',
+            message: 'Link copied successful'
+        }))?.catch(() => openNotification?.({
+            type: 'error',
+            description: 'Shared',
+            message: 'Error copied link'
+        }));
+    }
+    const sharedIconButtonStyle = {
+        size: 46,
+        round: true
+    }
+    const sharedTextButtonStyle = {
+        fontSize: {xs: '18px', sm: '22px'},
+        fontWeight: 600
     }
     return (
         <Box>
             {
                 isOnlyShared ? (
                     <Button
+                        variant={'text'}
                         sx={{
                             color: 'common.white',
                             textTransform: 'inherit',
@@ -125,20 +161,16 @@ const SharedComponent = ({url, title, id, isOnlyShared = false, color, type, isS
                             display: 'flex',
                             alignItems: 'center',
                             minWidth: '30px',
+                            p: '5px',
+                            "& svg": {
+                                fontSize: {xs: '26px', sm: '30px'}
+                            },
                             ...sharedStyle
                         }}
                         onClick={handleShare}>
-                        {
-                            !navigator.share ? (
-                                <CopyIcon sx={{
-                                    color: color
-                                }}/>
-                            ) : (
-                                <ShareIcon sx={{
-                                    color: color
-                                }}/>
-                            )
-                        }
+                        <ShareIcon sx={{
+                            color: color
+                        }}/>
                         {
                             isShowSharedText && translate(`buttons.${!navigator.share ? 'copy' : 'share'}`)
                         }
@@ -169,12 +201,14 @@ const SharedComponent = ({url, title, id, isOnlyShared = false, color, type, isS
                                 disableRipple
                             >
                                 <Button
+                                    variant={'text'}
                                     onClick={handleShare}
                                     sx={{
                                         display: 'flex',
                                         alignItems: 'center',
                                         gap: 1,
                                         textTransform: 'inherit',
+                                        p: '0px 8px',
                                         color: 'common.white',
                                         minWidth: '30px',
                                         ...sharedStyle
@@ -182,11 +216,11 @@ const SharedComponent = ({url, title, id, isOnlyShared = false, color, type, isS
                                 >
                                     {
                                         isShowSharedText && (
-                                            translate(`buttons.${!navigator.share ? 'copy' : 'share'}`)
+                                            translate('buttons.share')
                                         )
                                     }
                                     {
-                                        !navigator.share ? <CopyIcon/> : <IosShareIcon/>
+                                        <IosShareIcon/>
                                     }
                                 </Button>
                             </MenuItem
@@ -203,9 +237,10 @@ const SharedComponent = ({url, title, id, isOnlyShared = false, color, type, isS
                                     <MenuItem disableRipple>
                                         <BookMarkButton
                                             style={{
-                                                p: '6px 8px',
+                                                p: '0px 8px',
                                                 bgcolor: 'transparent',
                                                 boxShadow: 'unset',
+                                                color: 'common.white',
                                                 ":hover": {
                                                     boxShadow: 'unset',
                                                     bgcolor: 'transparent',
@@ -220,6 +255,131 @@ const SharedComponent = ({url, title, id, isOnlyShared = false, color, type, isS
                     </>
                 )
             }
+            {/*{*/}
+            {/*    openModal && (*/}
+            <ModalWindow
+                open={openModal}
+                setOpen={setOpenModal}
+                title={
+                    <Box sx={{
+                        fontSize: {xs: '18px', sm: '22px'},
+                        fontWeight: 600,
+                        p: '5px 16px'
+                    }}>
+                        {translate('buttons.share')}
+                    </Box>
+                }
+                contentProps={{
+                    width: '90%',
+                    maxWidth: '550px',
+                    maxHeight: '70%',
+                    borderRadius: '10px'
+                }}
+            >
+                <Box sx={{
+                    py: '16px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 2
+                }}>
+                    <Box sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1
+                    }}>
+                        <a href={url}>{name}</a>
+                        <IconButton onClick={copy}>
+                            <CopyIcon fontSize={'small'}/>
+                        </IconButton>
+                    </Box>
+                    <Box sx={{
+                        display: 'flex',
+                        gap: 2,
+                        flexDirection: 'column',
+                        flexWrap: 'wrap',
+                        alignItems: 'start',
+                        width: '100%',
+                        "& button": {
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 2
+                        }
+                    }}>
+                        <TelegramShareButton
+                            url={url}
+                        >
+                            <TelegramIcon {...sharedIconButtonStyle}/>
+                            <Box sx={{
+                                ...sharedTextButtonStyle
+                            }}>
+                                Telegram
+                            </Box>
+                        </TelegramShareButton>
+                        <FacebookShareButton
+                            url={url}
+                        >
+                            <FacebookIcon {...sharedIconButtonStyle}/>
+                            <Box sx={{
+                                ...sharedTextButtonStyle
+                            }}>
+                                Facebook
+                            </Box>
+                        </FacebookShareButton>
+                        <TwitterShareButton
+                            url={url}
+                        >
+                            <TwitterIcon {...sharedIconButtonStyle}/>
+                            <Box sx={{
+                                ...sharedTextButtonStyle
+                            }}>
+                                Twitter
+                            </Box>
+                        </TwitterShareButton>
+                        <ViberShareButton
+                            url={url}
+                        >
+                            <ViberIcon {...sharedIconButtonStyle}/>
+                            <Box sx={{
+                                ...sharedTextButtonStyle
+                            }}>
+                                Viber
+                            </Box>
+                        </ViberShareButton>
+                        <WhatsappShareButton
+                            url={url}
+                        >
+                            <WhatsappIcon {...sharedIconButtonStyle}/>
+                            <Box sx={{
+                                ...sharedTextButtonStyle
+                            }}>
+                                Whatsapp
+                            </Box>
+                        </WhatsappShareButton>
+                        <RedditShareButton
+                            url={url}
+                        >
+                            <RedditIcon {...sharedIconButtonStyle}/>
+                            <Box sx={{
+                                ...sharedTextButtonStyle
+                            }}>
+                                Reddit
+                            </Box>
+                        </RedditShareButton>
+                        <EmailShareButton
+                            url={url}
+                        >
+                            <EmailIcon {...sharedIconButtonStyle}/>
+                            <Box sx={{
+                                ...sharedTextButtonStyle
+                            }}>
+                                Email
+                            </Box>
+                        </EmailShareButton>
+                    </Box>
+                </Box>
+            </ModalWindow>
+            {/*)*/}
+            {/*}*/}
         </Box>
     );
 };

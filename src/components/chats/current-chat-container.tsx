@@ -5,7 +5,7 @@ import {Clear} from "@mui/icons-material";
 import {Box, IconButton} from "@mui/material";
 import dayjs from "dayjs";
 
-import CommentInput from "../establishment/utills/comment-input";
+import CommentInput from "../comments/comment-input";
 import Loading from "../loading/loading";
 import {useMobile} from "../../hook";
 import {IConversation, IGetIdentity, IMessage, ProfileProps,} from "../../interfaces/common";

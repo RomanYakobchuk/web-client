@@ -1,6 +1,5 @@
 import React, {useContext, useEffect, useState} from "react";
 import {
-    useGetIdentity,
     useGetLocale, useList,
     useSetLocale, useTranslate,
 } from "@refinedev/core";
@@ -13,6 +12,7 @@ import {
     MenuItem,
     Select,
     Toolbar,
+    Badge,
     Typography, SelectChangeEvent, Button, Box
 } from "@mui/material";
 import {
@@ -28,22 +28,22 @@ import {Input} from "antd";
 import {useTranslation} from "react-i18next";
 import {useLocation, useNavigate} from "react-router-dom";
 
-import {ColorModeContext} from "../../contexts";
-import {IGetIdentity, INews, IOptions, ProfileProps, PropertyProps} from "../../interfaces/common";
-import {useSchema} from "../../settings";
-import {useMobile} from "../../hook";
-import {Loading, ModalWindow} from "../../components";
-import {renderTitle, renderItem} from "../../components/render"
-import {antdInputStyle} from "../../styles";
-import {SchemaContext} from "../../settings/schema";
+import {ColorModeContext} from "@/contexts";
+import {INews, IOptions, PropertyProps} from "@/interfaces/common";
+import {useSchema} from "@/settings";
+import {useMobile, useUserInfo, useUserProperties} from "@/hook";
+import {Loading, ModalWindow} from "@/components";
+import {renderTitle, renderItem} from "@/components/render"
+import {antdInputStyle} from "@/styles";
+import {SchemaContext} from "@/settings/schema";
 
 export const Header: React.FC = () => {
     const {mode, setMode, setOpen} = useContext(ColorModeContext);
+    const {properties} = useUserProperties();
 
     const {schema} = useContext(SchemaContext)
 
-    const {data} = useGetIdentity<IGetIdentity>();
-    const user: ProfileProps = data?.user as ProfileProps;
+    const {user} = useUserInfo();
     const {i18n} = useTranslation();
     const {pathname} = useLocation();
     const changeLanguage = useSetLocale();
@@ -70,9 +70,14 @@ export const Header: React.FC = () => {
     const buttonStyle = {
         border: '1px solid silver',
         borderRadius: '10px',
-        width: width < 500 ? '32px' : '40px',
-        minWidth: width < 500 ? '32px' : '40px',
-        height: width < 500 ? '32px' : '40px',
+        "@media screen and (max-width: 500px)": {
+            width: '32px',
+            minWidth: '32px',
+            height: '32px',
+        },
+        width: '40px',
+        minWidth: '40px',
+        height: '40px',
     };
     const [value, setValue] = useState<string>("");
     const [options, setOptions] = useState<IOptions[]>([]);
@@ -150,7 +155,7 @@ export const Header: React.FC = () => {
             backdropFilter: schema === 'schema_1' ? 'blur(20px)' : 'unset',
             transition:
                 "width 200ms cubic-bezier(0.4, 0, 0.6, 1) 0ms",
-            borderBottom: schema === 'schema_1' ? '1px dashed silver' : ''
+            borderBottom: schema === 'schema_1' ? '1px solid silver' : ''
         }}>
             <Toolbar sx={{
                 pl: '0 !important'
@@ -192,8 +197,14 @@ export const Header: React.FC = () => {
                                     display: 'flex',
                                     justifyContent: 'center',
                                     alignItems: 'center',
-                                    width: width < 500 ? '32px' : width < 600 ? '40px' : '120px',
-                                    gap: width < 600 ? 0 : 1,
+                                    width: '120px',
+                                    // "@media screen and (min-width: 0px && max-width: 500px)":{
+                                    //     width: '32px'
+                                    // },
+                                    // "@media screen and (max-width: 600px)":{
+                                    //     width: '40px'
+                                    // },
+                                    gap: {xs: 0, sm: 1},
                                     p: '5px',
                                     transition: 'width 1s linear'
                                 }}
@@ -206,7 +217,8 @@ export const Header: React.FC = () => {
                                 {
                                     width > 600 && (
                                         <Typography sx={{
-                                            textTransform: 'capitalize'
+                                            textTransform: 'capitalize',
+                                            display: {xs: 'none', sm: 'flex'}
                                         }}>
                                             {translate('buttons.search')}...
                                         </Typography>
@@ -311,12 +323,17 @@ export const Header: React.FC = () => {
                                 ...buttonStyle
                             }}
                             onClick={() => navigate('/notifications')}>
-                            <Notifications/>
+                            <Badge
+                                color={'info'}
+                                badgeContent={properties?.notReadNotifications || 0}
+                            >
+                                <Notifications/>
+                            </Badge>
                         </IconButton>
                     }
                     <IconButton
                         sx={{
-                            ...buttonStyle
+                            ...buttonStyle,
                         }}
                         onClick={() => {
                             setMode();
@@ -337,7 +354,7 @@ export const Header: React.FC = () => {
                                     justifyContent: 'center',
                                     margin: '0 3px'
                                 },
-                                width: 'fit-content',
+                                width: 'fit-content !important',
                             }}
                             value={lan ?? currentLocale}
                             onChange={handleChange}

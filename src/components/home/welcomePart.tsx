@@ -130,8 +130,8 @@ const WelcomePart = () => {
                     "& img": {
                         width: '100%',
                         height: '100%',
-                        WebkitMaskImage: 'url("images/home/shape.png")',
-                        maskImage: 'url("images/home/shape.png")',
+                        WebkitMaskImage: 'url("/images/home/shape.png")',
+                        maskImage: 'url("/images/home/shape.png")',
                         WebkitMaskRepeat: 'no-repeat',
                         maskRepeat: 'no-repeat',
                         WebkitMaskSize: 'contain',

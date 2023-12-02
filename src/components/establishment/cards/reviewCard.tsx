@@ -25,7 +25,7 @@ const ReviewCard = ({review}: TProps) => {
             width: '100%',
             p: '15px',
             borderRadius: '10px',
-            bgcolor: 'modern.modern_1.main'
+            bgcolor: 'common.black'
         }}>
             <Box sx={{
                 display: 'flex',

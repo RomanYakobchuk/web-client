@@ -4,3 +4,5 @@ export const localFavPlacesKey = "localFavoritePlaces";
 export const localSubscribedEstablishmentKey = "localSubscribedEstablishment";
 export const ACCESS_TOKEN_KEY = "access-refine-auth";
 export const REFRESH_TOKEN_KEY = "refresh-refine-auth";
+
+export const USER_PROPERTY = 'user_properties';

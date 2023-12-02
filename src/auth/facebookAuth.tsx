@@ -3,14 +3,16 @@ import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props
 import {Box, Button} from "@mui/material";
 import {Facebook} from '@mui/icons-material';
 import {useLogin, useNotification, useTranslate} from "@refinedev/core";
-import {axiosInstance} from "../authProvider";
-import {useMobile} from "../hook";
 import {FC, useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 
+import {axiosInstance} from "@/authProvider";
+import {useMobile} from "@/hook";
+
 type IProps = {
     text: "signin_with" | "signup_with" | "continue_with" | undefined,
-    type: "login" | "register"
+    type: "login" | "register",
+    isUserAggre?: boolean
 }
 
 const appId = `${import.meta.env.VITE_APP_FACEBOOK_APP_ID}`;
@@ -28,7 +30,7 @@ if (typeof FACEBOOK !== 'undefined' && typeof FB !== 'undefined') {
         console.log(e)
     }
 }
-const FacebookAuth: FC<IProps> = ({type, text}: IProps) => {
+const FacebookAuth: FC<IProps> = ({type, text, isUserAggre}: IProps) => {
 
     const {mutate: login} = useLogin<CredentialResponse>();
     const translate = useTranslate();
@@ -50,7 +52,7 @@ const FacebookAuth: FC<IProps> = ({type, text}: IProps) => {
                 console.log(e)
             }
         }
-    }, [FACEBOOK, FB]);
+    }, [FACEBOOK]);
     const facebookAuth = async (userInfo: ReactFacebookLoginInfo) => {
         console.log('clicked')
         try {
@@ -101,6 +103,7 @@ const FacebookAuth: FC<IProps> = ({type, text}: IProps) => {
                     <Button
                         color={'info'}
                         variant={'contained'}
+                        disabled={type === 'register' && !isUserAggre}
                         sx={{
                             display: 'flex',
                             justifyContent: 'center',

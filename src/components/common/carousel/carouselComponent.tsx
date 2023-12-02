@@ -3,31 +3,38 @@ import 'react-multi-carousel/lib/styles.css';
 
 import './carousel.css';
 import {ReactNode} from "react";
+
 type TProps = {
-    children: ReactNode
+    children: ReactNode,
+    responsive?: {
+        [key: string]:{
+            breakpoint: {max: number, min: number},
+            items: number
+        }
+    }
 }
 
 
-const CarouselComponent = ({children}: TProps) => {
+const defaultResponsive = {
+    superLargeDesktop: {
+        breakpoint: {max: 4000, min: 3000},
+        items: 5
+    },
+    desktop: {
+        breakpoint: {max: 3000, min: 1300},
+        items: 3
+    },
+    tablet: {
+        breakpoint: {max: 1300, min: 600},
+        items: 2
+    },
+    mobile: {
+        breakpoint: {max: 600, min: 0},
+        items: 1
+    }
+};
+const CarouselComponent = ({children, responsive = defaultResponsive}: TProps) => {
 
-    const responsive = {
-        superLargeDesktop: {
-            breakpoint: {max: 4000, min: 3000},
-            items: 5
-        },
-        desktop: {
-            breakpoint: {max: 3000, min: 1300},
-            items: 3
-        },
-        tablet: {
-            breakpoint: {max: 1300, min: 600},
-            items: 2
-        },
-        mobile: {
-            breakpoint: {max: 600, min: 0},
-            items: 1
-        }
-    };
 
     if (!children) {
         return null;

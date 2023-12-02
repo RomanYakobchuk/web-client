@@ -1,78 +1,93 @@
-import {Edit, Email, Phone} from "@mui/icons-material";
-import {Avatar, Box, Grid, Stack, Typography} from "@mui/material";
+import {CalendarMonthSharp, Edit, Email, Phone} from "@mui/icons-material";
+import {Avatar, Box, IconButton, Typography} from "@mui/material";
 import React, {useContext} from "react";
-import {useTranslate} from "@refinedev/core";
+import {usePermissions, useTranslate} from "@refinedev/core";
 import {useNavigate} from "react-router-dom";
 import {Image} from "antd";
 
 
-import {ProfileProps, PropertyProps} from "../../../interfaces/common";
-import Variant1EstablishmentCard from "../../establishment/cards/variant1EstablishmentCard";
-import {UserInstitutions, UserReviews} from "../../index";
-import {ColorModeContext} from "../../../contexts";
-import CustomAccordion from "./customAccordion";
+import {ProfileProps} from "@/interfaces/common";
+import {ColorModeContext} from "@/contexts";
 import dayjs from "dayjs";
-import TitleTextItem from "../TitleTextItem";
-import CommentsList from "../lists/comments-list";
-import {useUserInfo} from "../../../hook";
+import {useUserInfo} from "@/hook";
+import {TabsUserProperties} from "@/components/profile";
+import {SchemaContext} from "@/settings/schema";
 
 
-const CustomProfile = ({
-                           name,
-                           avatar,
-                           email,
-                           phone,
-                           _id,
-                           dOB,
-                           phoneVerify,
-                           status,
-                           isActivated,
-                           favoritePlaces,
-                       }: ProfileProps) => {
+type TProps = {
+    user: ProfileProps
+}
+const CustomProfile = ({user}: TProps) => {
 
-    const {user} = useUserInfo();
+    const {data: role} = usePermissions();
+    const {user: currentUser} = useUserInfo();
     const navigate = useNavigate();
     const {mode} = useContext(ColorModeContext);
+    const {schema} = useContext(SchemaContext);
     const translate = useTranslate();
+
+    const {_id, avatar, email, phone, dOB, name} = user;
 
     return (
         <Box sx={{
-            p: '20px',
+            p: 1,
             margin: '0 auto',
-            maxWidth: '1200px'
+            maxWidth: '1400px',
+            // "& *":{
+            //     color: 'common.white'
+            // }
         }}>
-            <Typography fontSize={{xs: '18px', sm: '22px'}} fontWeight={700}
-                        color={mode === "dark" ? "#fcfcfc" : "#11142D"}>
-                {translate("profile.profile")}
-            </Typography>
-            <Box mt={{xs: '10px', sm: '20px'}} borderRadius="15px" padding="10px"
-                 bgcolor={mode === "dark" ? "#2e424d" : "#fcfcfc"}>
-                <Box
-                    sx={{
-                        display: "flex",
-                        flexDirection: {xs: 'column', sm: 'row'},
-                        gap: 2.5,
-                        alignItems: 'center'
-                    }}
-                >
+            <Box sx={{
+                width: '100%',
+                display: 'flex',
+                flexDirection: {xs: 'column', lg: 'row'},
+                gap: {xs: 2, sm: 3, md: 4, xl: 10}
+            }}>
+                <Box sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 1,
+                    position: {lg: 'sticky'},
+                    height: 'fit-content',
+                    top: {lg: schema === 'schema_1' ? '85px' : '20px'},
+                    "& *":{
+                        color: 'common.white'
+                    }
+                }}>
+                    <Box sx={{
+                        display: 'flex',
+                        alignItems: 'baseline',
+                        gap: 1
+                    }}>
+                        <Typography fontSize={{xs: '18px', sm: '22px'}} fontWeight={700}
+                                    color={mode === "dark" ? "#fcfcfc" : "#11142D"}>
+                            {translate("profile.profile")}
+                        </Typography>
+                        <span style={{
+                            fontSize: '14px'
+                        }}>
+                        ({translate(`roles.${user?.status}`)})
+                        </span>
+                    </Box>
                     <Box
                         sx={{
                             display: 'flex',
-                            width: {xs: '100%', sm: 'auto'},
-                            gap: 2,
-                            flexDirection: {xs: 'row', sm: 'column'},
-                            justifyContent: {xs: 'center', sm: 'auto'},
+                            width: {xs: '100%', lg: 'fit-content'},
+                            gap: {xs: 2, sm: 4, lg: 2},
+                            flexDirection: {xs: 'row', lg: 'column'},
+                            justifyContent: {xs: 'center', sm: 'start'},
+                            flexWrap: {xs: 'wrap', sm: 'nowrap'},
                             alignItems: {xs: "center", sm: "start"},
-
+                            p: "16px 0"
                         }}
                     >
                         <Box sx={{
                             display: 'flex',
                             flexDirection: 'column',
-                            width: {xs: "120px", sm: '150px', md: '220px', lg: "300px"},
-                            height: {xs: "120px", sm: '150px', md: '220px', lg: "300px"},
+                            width: {xs: "100px", sm: '150px', md: '180px'},
+                            height: {xs: "100px", sm: '150px', md: '180px'},
                             gap: 3,
-                            "& > div > div":{
+                            "& > div > div": {
                                 borderRadius: '50%'
                             }
                         }}>
@@ -88,186 +103,81 @@ const CustomProfile = ({
                                                borderRadius: '50%'
                                            }}/> :
                                     <Avatar sx={{
-                                        width: {xs: "140px", md: "340px"},
-                                        height: {xs: "130px", md: "320px"},
-                                        borderRadius: '5px'
+                                        width: '100%',
+                                        height: '100%',
+                                        borderRadius: '50%'
                                     }}/>
                             }
                         </Box>
-                        {/*<Box sx={{*/}
-                        {/*    display: {xs: 'block', lg: 'none'},*/}
-                        {/*    ml: {xs: 6, sm: 0},*/}
-                        {/*}}>*/}
-                        {/*    <Stack direction="row" justifyContent={"space-between"}>*/}
-                        {/*        <Box display={"flex"} flexDirection={"column"}>*/}
-                        {/*            <Typography*/}
-                        {/*                fontSize={{xs: 16, md: 20}}*/}
-                        {/*                fontWeight={600}*/}
-                        {/*                color={mode === "dark" ? "#fcfcfc" : "#11142D"}*/}
-                        {/*            >*/}
-                        {/*                {name}*/}
-                        {/*            </Typography>*/}
-                        {/*        </Box>*/}
-                        {/*    </Stack>*/}
-                        {/*</Box>*/}
-                    </Box>
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: 2
-                        }}
-                    >
                         <Box sx={{
                             display: 'flex',
-                            width: '100%'
+                            flexDirection: 'column',
+                            gap: 1
                         }}>
-                            <Typography
-                                fontSize={{xs: 16, sm: 20, md: 30}}
-                                fontWeight={600}
-                                color={mode === "dark" ? "#fcfcfc" : "#11142D"}
-                            >
-                                {name}
-                            </Typography>
-                        </Box>
-                        <Box
-                            flex={1}
-                            display="flex"
-                            flexDirection={{xs: "column", md: "row"}}
-                            gap="20px"
-                        >
-                            <Box
-                                flex={1}
-                                display="flex"
-                                flexDirection="column"
-                                justifyContent="space-between"
-                                gap="20px"
-                            >
-                                <Stack direction="column" gap="20px">
-                                    <Grid
-                                        container
-                                        spacing={2}
+                            <Box sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 1
+                            }}>
+                                <Typography
+                                    fontSize={{xs: 16, sm: 20, md: 30}}
+                                    fontWeight={600}
+                                    color={mode === "dark" ? "#fcfcfc" : "#11142D"}
+                                >
+                                    {name}
+                                </Typography>
+                                <IconButton onClick={(event) => {
+                                    event.preventDefault();
+                                    navigate((role === 'admin' && currentUser?._id !== user?._id) ? `/profile/edit/${_id}` : '/profile/edit')
+                                }}>
+                                    <Edit/>
+                                </IconButton>
+                            </Box>
+                            {
+                                [
+                                    {
+                                        icon: <Phone color={'secondary'}/>,
+                                        value: phone ? phone.toString() : ""
+                                    },
+                                    {
+                                        icon: <Email color={'secondary'}/>,
+                                        value: email
+                                    },
+                                    {
+                                        icon: <CalendarMonthSharp color={'secondary'}/>,
+                                        value: dayjs(dOB).format("DD-MM-YYYY")
+                                    },
+                                ]?.map((item, index) => (
+                                    <Box
+                                        key={index}
                                         sx={{
                                             display: 'flex',
-                                            flexWrap: 'wrap'
+                                            alignItems: 'center',
+                                            gap: 1,
+                                            "& span": {
+                                                fontSize: '14px'
+                                            }
                                         }}
                                     >
-                                        {
-                                            [
-                                                {
-                                                    title: <Box sx={{
-                                                        display: 'flex',
-                                                        flexDirection: 'row',
-                                                        gap: 0.5,
-                                                        alignItems: 'center'
-                                                    }}>
-                                                        {translate("profile.edit.phone")}
-                                                        <Phone color={'secondary'}/>
-                                                    </Box>,
-                                                    value: phone ? phone.toString() : ""
-                                                },
-                                                {
-                                                    title: <Box sx={{
-                                                        display: 'flex',
-                                                        flexDirection: 'row',
-                                                        gap: 0.5,
-                                                        alignItems: 'center'
-                                                    }}>
-                                                        {translate("profile.email")}
-                                                        <Email color={'secondary'}/>
-                                                    </Box>,
-                                                    value: email
-                                                },
-                                                {
-                                                    title: <Box sx={{
-                                                        display: 'flex',
-                                                        flexDirection: 'row',
-                                                        gap: 0.5,
-                                                        alignItems: 'center'
-                                                    }}>
-                                                        {translate("profile.edit.dOB")}
-                                                        <Email color={'secondary'}/>
-                                                    </Box>,
-                                                    value: dayjs(dOB).format("DD-MM-YYYY")
-                                                },
-                                                {
-                                                    title: <Box
-                                                        sx={{
-                                                            display: 'flex',
-                                                            flexDirection: 'row',
-                                                            gap: 2,
-                                                            fontSize: '22px',
-                                                            alignItems: 'center',
-                                                            cursor: 'pointer',
-                                                        }}
-                                                    >
-                                                        {translate("profile.edit.title")}
-                                                        <Edit/>
-                                                    </Box>,
-                                                    bgColor: '#f36429',
-                                                    onClick: () => {
-                                                        navigate(user?.status === 'admin' ? `/profile/edit/${_id}` : '/profile/edit'
-                                                        )
-                                                    }
-                                                }
-                                            ].map((item, index) => (
-                                                <Grid
-                                                    key={index}
-                                                    item
-                                                    sx={{
-                                                        flex: '1 1 200px'
-                                                    }}
-                                                >
-                                                    <TitleTextItem
-                                                        title={item.title}
-                                                        value={item.value}
-                                                        bgColor={item?.bgColor}
-                                                        onClick={item?.onClick}
-                                                    />
-                                                </Grid>
-                                            ))
-                                        }
-                                    </Grid>
-                                </Stack>
-                            </Box>
+                                        {item?.icon}
+                                        <span style={{
+                                            whiteSpace: 'break-spaces'
+                                        }}>
+                                        {item?.value}
+                                    </span>
+                                    </Box>
+                                ))
+                            }
                         </Box>
                     </Box>
                 </Box>
+                <Box sx={{
+                    width: '100%'
+                }}>
+                    <TabsUserProperties user={user}/>
+                </Box>
             </Box>
-
-            <UserInstitutions id={_id}/>
-            <UserReviews id={_id}/>
-            {/*<CommentsList*/}
-            {/*    id={_id} type={"allByUserId"}*/}
-            {/*    setParent={() => {*/}
-            {/*    }}*/}
-            {/*    setIsAnswer={() => {*/}
-            {/*    }}*/}
-            {/*/>*/}
-            {
-                favoritePlaces?.length > 0 && (
-                    <CustomAccordion title={translate("profile.my_fav_places", {"length": favoritePlaces?.length})}
-                                     id={"favorite_places"}>
-                        <Box
-                            sx={{
-                                display: "flex",
-                                flexWrap: "wrap",
-                                gap: 2.5,
-                                width: '100%'
-                            }}
-                        >
-                            {favoritePlaces?.map((property: PropertyProps) => (
-                                <Variant1EstablishmentCard
-                                    key={property?._id}
-                                    institution={property}
-                                />
-                            ))}
-                        </Box>
-                    </CustomAccordion>
-                )
-            }
         </Box>
-    )
-        ;
+    );
 }
 export default CustomProfile;

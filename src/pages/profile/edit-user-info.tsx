@@ -1,16 +1,18 @@
 import React, {useEffect, useState} from "react";
 import {useForm} from "@refinedev/react-hook-form";
-import {useNavigate, useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 
-import {CustomEdit} from "../../components";
-import {ProfileProps} from "../../interfaces/common";
-import ProfileDataForm, { INewUserData } from "../../components/profile/utills/profileDataForm";
-import {useUserInfo} from "../../hook";
+import {CustomEdit} from "@/components";
+import {ProfileProps} from "@/interfaces/common";
+import ProfileDataForm, { INewUserData } from "@/components/profile/utills/profileDataForm";
+import {useUserInfo} from "@/hook";
+import {useTranslate} from "@refinedev/core";
 
 const EditUserInfo = () => {
     const {id: _id} = useParams();
     const navigate = useNavigate();
     const {user} = useUserInfo();
+    const translate = useTranslate();
 
     const [userDataInfo, setUserDataInfo] = useState<INewUserData>({} as INewUserData);
 
@@ -26,6 +28,7 @@ const EditUserInfo = () => {
         refineCoreProps: {
             resource: `users/userInfo`,
             id: _id as string,
+            action: 'edit',
             successNotification: (data: any) => {
                 return {
                     type: "success",
@@ -46,7 +49,8 @@ const EditUserInfo = () => {
                 currentId: getUserData?._id,
                 dOB: getUserData?.dOB ? getUserData?.dOB : new Date()?.toISOString()?.split('T')[0],
                 name: getUserData?.name,
-                phone: getUserData?.phone
+                phone: getUserData?.phone,
+                _id: getUserData?._id
             })
         }
     }, [queryResult?.data?.data])
@@ -84,7 +88,6 @@ const EditUserInfo = () => {
 
     if (isError) return <div>Error</div>
 
-
     return (
         <CustomEdit
             isLoading={formLoading}
@@ -94,6 +97,25 @@ const EditUserInfo = () => {
                 margin: '0 auto'
             }}
             onClick={onFinishHandler}
+            breadCrumbItems={[
+                {
+                    title: <Link
+                        style={{
+                            color: 'silver'
+                        }}
+                        to={'/profile'}>{translate('profile.profile')}</Link>
+                },
+                {
+                    title: <Link   style={{
+                        color: 'silver'
+                    }} to={`/profile/show/${userDataInfo?._id}`}>
+                        {translate('buttons.show')}
+                    </Link>
+                },
+                {
+                    title: translate('profile.edit.title')
+                }
+            ]}
         >
            <ProfileDataForm
                userInfo={userDataInfo}

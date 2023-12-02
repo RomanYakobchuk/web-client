@@ -2,7 +2,7 @@ import {useInfiniteList, useTranslate} from "@refinedev/core";
 import {INews} from "../../../interfaces/common";
 import Loading from "../../loading/loading";
 import {Box, Button} from "@mui/material";
-import NewsCard from "./NewsCard";
+import NewsCard from "../cards/NewsCard";
 import React from "react";
 
 interface IProps {

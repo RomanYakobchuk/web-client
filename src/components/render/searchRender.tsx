@@ -111,7 +111,7 @@ const renderItem = (item: any, resource: string, index: number, mode: string, se
                         style={{
                             color: '#74a496',
                             background: 'transparent',
-                            fontSize: window.innerWidth < 600 ? '12px' : '14px',
+                            fontSize: '14px',
                         }}
                         source={text2?.length > 20 ? `${text2.substring(0, 20)}...` : text2}
                     />

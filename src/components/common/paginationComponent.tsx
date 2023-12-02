@@ -1,8 +1,6 @@
 import {Box} from "@mui/material";
-import React, {Dispatch, SetStateAction, useContext} from "react";
+import React, {Dispatch, SetStateAction} from "react";
 import {Pagination} from "antd";
-
-import {ColorModeContext} from "../../contexts";
 
 
 interface IProps {
@@ -15,8 +13,6 @@ interface IProps {
 
 const PaginationComponent = ({current, setCurrent, pageCount, setPageSize, count}: IProps) => {
 
-    const {mode} = useContext(ColorModeContext)
-
     return (
         <Box
             sx={{
@@ -24,55 +20,68 @@ const PaginationComponent = ({current, setCurrent, pageCount, setPageSize, count
                 width: '100%',
                 justifyContent: 'center',
                 alignItems: 'center',
-                bgcolor: mode === 'dark' ? "#323349" : '#6e76b3',
-                p: "10px",
-                borderRadius: '10px',
+                "& *":{
+                    color: 'common.white'
+                },
+                // // bgcolor: mode === 'dark' ? "#323349" : '#6e76b3',
+                // p: "10px",
+                // borderRadius: '10px',
                 mt: 3,
-                "& ul.ant-pagination": {
-                    display: 'flex',
-                    alignItems: "center",
-                    flexWrap: 'wrap',
-                    gap: 1,
-                    justifyContent: 'center'
+                "& button, & a":{
+                    fontSize: '20px !important'
                 },
-                "& ul.ant-pagination .ant-pagination-options": {
-                    display: 'inline-table',
+                // "& ul.ant-pagination": {
+                //     display: 'flex',
+                //     alignItems: "center",
+                //     flexWrap: 'wrap',
+                //     gap: 1,
+                //     justifyContent: 'center'
+                // },
+                // "& ul.ant-pagination .ant-pagination-options": {
+                //     display: 'inline-table',
+                // },
+                // "& li.ant-pagination-options > div > div.ant-select-selector span": {
+                //     color: 'common.white',
+                //     // bgcolor: 'common.white'
+                // },
+                "& li.ant-pagination-item:not(.ant-pagination-item-active) > a, li.ant-pagination-next, li.ant-pagination-prev":{
+                    color: 'common.white'
                 },
-                "& li.ant-pagination-options > div > div.ant-select-selector span, & li.ant-pagination-options > div > span": {
-                    color: mode === 'dark' ? "#fcfcfc" : "#000",
-                },
-                "& li.ant-pagination-item, li.ant-pagination-next, li.ant-pagination-prev, li.ant-pagination-options > div > div.ant-select-selector": {
-                    minWidth: '40px',
-                    height: '40px',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    bgcolor: mode === 'dark' ? "#41436a" : '#fff',
-                    "& a, button": {
-                        color: mode === 'dark' ? "#fcfcfc" : "#000",
-                    },
-                    border: `1px solid transparent`,
-                    "&:hover": {
-                        bgcolor: 'normal',
-                        scale: 1.2,
-                        border: '1px solid #ee29fb',
-                    },
-                },
-                "& li.ant-pagination-disabled": {
-                    "&:hover": {
-                        border: '1px solid transparent',
-                    }
-                },
-                "& li.ant-pagination-item-active": {
-                    bgcolor: mode === 'dark' ? "darkviolet" : "blueviolet",
-                    borderColor: 'transparent', //darkorchid
-                    "& a": {
-                        color: '#fcfcfc',
-                        "&:hover": {
-                            color: '#fcfcfc'
-                        }
-                    },
+               "& div.ant-select-selector span, & li.ant-pagination-options div.ant-select-dropdown div.ant-select-item-option-content":{
+                    color: '#000'
                 }
+                // "& li.ant-pagination-item, li.ant-pagination-next, li.ant-pagination-prev, li.ant-pagination-options > div > div.ant-select-selector": {
+                //     minWidth: '40px',
+                //     height: '40px',
+                //     display: 'flex',
+                //     justifyContent: 'center',
+                //     alignItems: 'center',
+                //     bgcolor: mode === 'dark' ? "#41436a" : '#fff',
+                //     "& a, button": {
+                //         color: mode === 'dark' ? "#fcfcfc" : "#000",
+                //     },
+                //     border: `1px solid transparent`,
+                //     "&:hover": {
+                //         bgcolor: 'normal',
+                //         scale: 1.2,
+                //         border: '1px solid #ee29fb',
+                //     },
+                // },
+                // "& li.ant-pagination-disabled": {
+                //     "&:hover": {
+                //         border: '1px solid transparent',
+                //     }
+                // },
+                // "& li.ant-pagination-item-active": {
+                //     bgcolor: mode === 'dark' ? "darkviolet" : "blueviolet",
+                //     borderColor: 'transparent', //darkorchid
+                //     "& a": {
+                //         color: '#fcfcfc',
+                //         "&:hover": {
+                //             color: '#fcfcfc'
+                //         }
+                //     },
+                // }
             }}
         >
             <Pagination

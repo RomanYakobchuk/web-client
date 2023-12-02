@@ -4,7 +4,7 @@ import {Box, Typography} from "@mui/material";
 import React, {useEffect, useState} from "react";
 
 import {FilterInstitutions} from "../index";
-import {PropertyProps} from "../../interfaces/common";
+import {PropertyProps} from "@/interfaces/common";
 import ListForUsers from "./utills/lists/listForUsers";
 
 const UserList = () => {
@@ -26,7 +26,6 @@ const UserList = () => {
     } = useTable({
         resource: "institution/all",
         syncWithLocation: true,
-
     });
 
     useEffect(() => {
@@ -58,6 +57,7 @@ const UserList = () => {
                 display: 'flex',
                 flexDirection: 'row',
                 alignItems: 'center',
+                p: {xs: 1, sm: 0}
             }}>
                 <Box sx={{
                     display: 'flex',

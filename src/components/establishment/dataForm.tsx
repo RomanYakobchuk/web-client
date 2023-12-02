@@ -9,15 +9,15 @@ import {
 import MDEditor from "@uiw/react-md-editor";
 import {Switch} from "antd";
 
-import {IGetIdentity, IWorkDay, ProfileProps} from "../../interfaces/common";
+import {IGetIdentity, IWorkDay, ProfileProps} from "@/interfaces/common";
 import {SearchManager} from "../index";
-import {ColorModeContext} from "../../contexts";
+import {ColorModeContext} from "@/contexts";
 import ImageSelector from "./utills/ImageSelector";
 import ScheduleList from "./utills/lists/scheduleList";
 import ItemsList from "./utills/lists/dataPropertyList";
-import {selectStyle, textFieldStyle} from "../../styles";
+import {selectStyle, textFieldStyle} from "@/styles";
 import ChangeLocation from "../common/google/changeLocation";
-import {IEstablishmentFormProps} from "../../interfaces/formData";
+import {IEstablishmentFormProps} from "@/interfaces/formData";
 
 
 const DataForm = (props: IEstablishmentFormProps) => {
@@ -96,10 +96,10 @@ const DataForm = (props: IEstablishmentFormProps) => {
     return (
         <Box
             sx={{
-                borderRadius: '15px',
-                p: '15px',
-                paddingBottom: '30px',
-                bgcolor: 'primary.main',
+                // borderRadius: '15px',
+                p: 1,
+                // paddingBottom: '30px',
+                // bgcolor: 'primary.main',
             }}
         >
             <Box

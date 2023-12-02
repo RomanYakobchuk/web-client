@@ -6,23 +6,25 @@ import {
     Avatar,
     Button,
     TextField,
-    FormControl, CircularProgress, Select, MenuItem, InputLabel
+    FormControl, CircularProgress, MenuItem, SxProps
 } from "@mui/material";
+import {useStepsForm} from "@refinedev/react-hook-form";
 import React, {ChangeEvent, useContext, useEffect, useState} from "react";
 import {FieldValues} from "react-hook-form";
-import {useNotification, useTranslate} from "@refinedev/core";
+import {HttpError, useNotification, useTranslate} from "@refinedev/core";
 import {
+    Check,
     ErrorOutlineOutlined,
     VisibilityOffOutlined,
     VisibilityOutlined
 } from "@mui/icons-material";
-import {useForm} from "@refinedev/react-hook-form";
 import {Link, useNavigate} from "react-router-dom";
+import dayjs from "dayjs";
 
 import {ColorModeContext} from "../../contexts";
 import {buttonStyle, selectStyle, textFieldStyle} from "../../styles";
 import ContainerComponent from "./utills/containerComponent";
-import {ModalWindow} from "../../components";
+import {ModalWindow} from "@/components";
 import OrPart from "./utills/orPart";
 import UserAgreement from "./utills/userAgreement";
 
@@ -42,15 +44,23 @@ const Register = () => {
         refineCore: {onFinish, formLoading},
         register,
         handleSubmit,
-    } = useForm({
+        steps: {gotoStep, currentStep},
+        formState: {errors}
+    } = useStepsForm<IRegister, HttpError, IRegister>({
         refineCoreProps: {
             resource: 'auth/register',
+            action: 'create',
             onMutationError: (data) => {
                 setError(data?.response?.data)
             },
             redirect: false
+        },
+        stepsProps: {
+            defaultStep: 0
         }
     },);
+
+    const stepTitles = [translate('pages.register.steps.first'), translate('pages.register.steps.second')]
 
     const onFinishHandler = async (data: FieldValues) => {
         if (!accept) return alert(translate("agreement.alert"));
@@ -58,11 +68,10 @@ const Register = () => {
         if (data?.dOB > (new Date().getFullYear() - 18)) {
             return alert(translate("account.edit.alert"))
         }
-
         const response: any = await onFinish({
             ...data,
             registerBy: "Email"
-        });
+        } as IRegister);
         if (response?.data) {
             if (!response?.data?.isVerify) {
                 setOpenModal(true)
@@ -84,137 +93,193 @@ const Register = () => {
         showPass ? setShowPass(false) : setShowPass(true)
     }
 
-    const size = 'small';
+    const size = 'small', variant: "outlined" | "filled" | "standart" = 'outlined';
 
-    return (
-        <ContainerComponent isPicture={false}>
-            <Box
-                sx={{
-                    marginTop: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    margin: 'auto',
-                    width: {xs: '90%', md: '700px'},
-                    maxWidth: '700px',
-                }}
-            >
-                <Avatar src={`/images/logo.png`} onClick={() => navigate('/welcome')}
-                        sx={{m: 1, cursor: 'pointer'}}/>
-                <Typography component="h1" variant="h5" fontSize={{xs: 18, md: 22}}>
-                    {translate("pages.register.title")}
-                </Typography>
-                <Typography component={"h3"} color={'red'}>
-                    {translate("importantText")}
-                </Typography>
-                <Box component="form" onSubmit={handleSubmit(onFinishHandler)} noValidate sx={{mt: 3}}>
-                    <Grid container spacing={3}
-                          sx={{
-                              display: 'flex',
-                              flexDirection: {xs: 'column', md: 'row'},
-                              flexWrap: {xs: 'unset', md: 'wrap'},
-                              "& div.MuiGrid-item": {
-                                  maxWidth: '350px !important'
-                              }
-                          }}
+    const requiredText = (field: string) => translate("capl.required", {field: translate(`pages.register.fields.${field}`)});
+
+    const itemContainerStepStyle: SxProps = {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 2,
+        width: '100%'
+    }
+    const now = new Date();
+    const color = "secondary";
+
+    const textFieldCurrentStyle = {
+        ...textFieldStyle
+    }
+
+    const renderFormByStep = (step: number) => {
+        switch (step) {
+            case 0:
+                return (
+                    <Box
+                        key={'0'}
+                        sx={{
+                            ...itemContainerStepStyle
+                        }}
                     >
-                        <Grid item xs={12}>
-                            <TextField
-                                autoComplete="given-name"
-                                required
-                                color={"secondary"}
-                                fullWidth
-                                size={size}
-                                sx={textFieldStyle}
-                                id="name"
-                                label={translate("pages.register.fields.name")}
-                                autoFocus
-                                {...register('name', {required: true})}
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
+                        <FormControl>
                             <TextField
                                 required
                                 size={size}
                                 fullWidth
                                 id="phone"
-                                sx={textFieldStyle}
-                                color={"secondary"}
+                                variant={variant}
+                                // sx={textFieldStyle}
+                                color={color}
                                 label={translate("pages.register.fields.phone")}
                                 defaultValue={'+380'}
-                                inputProps={{pattern: "/\\(?\\+[0-9]{1,3}\\)? ?-?[0-9]{1,3} ?-?[0-9]{3,5} ?-?[0-9]{4}( ?-?[0-9]{3})? ?(\\w{1,10}\\s?\\d{1,6})?/"}}
-                                autoComplete="family-name"
-                                {...register('phone', {required: true})}
+                                sx={{
+                                    ...textFieldCurrentStyle
+                                }}
+                                // type={'tel'}
+                                // inputProps={{pattern: }}
+                                {...register('phone', {
+                                    required: requiredText('phone'),
+                                    pattern: {
+                                        value: /^\+?3?8?(0\d{9})$/,
+                                        message: 'Phone number not valid'
+                                    }
+                                })}
                             />
-                        </Grid>
-                        <Grid item xs={12}>
+                            {errors.phone && (
+                                <span>{errors?.phone?.message as string}</span>
+                            )}
+                        </FormControl>
+                        <FormControl>
+                            <TextField
+                                fullWidth
+                                required
+                                size={size}
+                                id={"dOB"}
+                                variant={variant}
+                                color={color}
+                                type={"date"}
+                                sx={{
+                                    ...textFieldCurrentStyle
+                                }}
+                                // sx={textFieldStyle}
+                                defaultValue={"2000-01-01"}
+                                label={translate("pages.register.fields.dOB")}
+                                {...register('dOB', {
+                                    required: requiredText('dOB'),
+                                    max: {
+                                        value: dayjs(new Date(now.getFullYear() - 18, now.getMonth(), now.getDate()))?.format('YYYY-MM-DD'),
+                                        message: 'Only 18+'
+                                    }
+                                })}
+                            />
+                            {errors.dOB && (
+                                <span>{errors?.dOB?.message as string}</span>
+                            )}
+                        </FormControl>
+                        <FormControl>
                             <TextField
                                 required
                                 fullWidth
-                                sx={textFieldStyle}
-                                id="email"
+                                select
                                 size={size}
-                                color={"secondary"}
+                                color={color}
+                                defaultValue={'user'}
+                                id={'status'}
+                                sx={{
+                                    ...textFieldCurrentStyle
+                                }}
+                                // sx={selectStyle}
+                                variant={variant}
+                                label={translate('pages.login.fields.role')}
+                                {...register('status', {required: requiredText('role')})}
+                            >
+                                <MenuItem value={'user'}>{translate("roles.user")}</MenuItem>
+                                <MenuItem value={'manager'}>{translate("roles.manager")}</MenuItem>
+                            </TextField>
+                            {errors.status && (
+                                <span>{errors?.status?.message as string}</span>
+                            )}
+                        </FormControl>
+                    </Box>
+                );
+            case 1:
+                return (
+                    <Box
+                        key={'1'}
+                        sx={{
+                            ...itemContainerStepStyle
+                        }}
+                    >
+                        <FormControl>
+                            <TextField
+                                required
+                                color={color}
+                                fullWidth
+                                defaultValue={''}
+                                size={size}
+                                sx={{
+                                    ...textFieldCurrentStyle
+                                }}
+                                id={"name"}
+                                variant={variant}
+                                label={translate("pages.register.fields.name")}
+                                {...register('name', {
+                                    required: requiredText('name'),
+                                })}
+                            />
+                            {errors.name && (
+                                <span>{errors?.name?.message as string}</span>
+                            )}
+                        </FormControl>
+                        <FormControl>
+                            <TextField
+                                required
+                                fullWidth
+                                sx={{
+                                    ...textFieldCurrentStyle
+                                }}
+                                id="email"
+                                variant={variant}
+                                size={size}
+                                defaultValue={'@gmail.com'}
+                                color={color}
                                 inputProps={{pattern: "/^([^.@]+)(\\.[^.@]+)*@([^.@]+\\.)+([^.@]+)$/"}}
                                 label={translate("pages.register.fields.email")}
                                 type={"email"}
-                                {...register('email', {required: true})}
-                                autoComplete="email"
+                                {...register('email', {
+                                    required: requiredText('email'),
+                                    pattern: {
+                                        value: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+                                        message: translate('pages.register.errors.validEmail')
+                                    }
+                                })}
                             />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                fullWidth
-                                required
-                                size={size}
-                                id="outlined-basic"
-                                color={"secondary"}
-                                type={"date"}
-                                sx={textFieldStyle}
-                                inputProps={{}}
-                                defaultValue={"2000-01-01"}
-                                label={translate("pages.register.fields.dOB")}
-                                variant="outlined"
-                                {...register('dOB', {required: true})}
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <FormControl fullWidth>
-                                <InputLabel color={"secondary"}
-                                            id="demo-simple-select-label">{translate('pages.login.fields.role')}</InputLabel>
-                                <Select
-                                    required
-                                    fullWidth
-                                    size={size}
-                                    color={"secondary"}
-                                    labelId="demo-simple-select-label"
-                                    defaultValue={'user'}
-                                    sx={selectStyle}
-                                    label={translate('pages.login.fields.role')}
-                                    {...register('status', {required: true})}
-                                >
-                                    <MenuItem value={'user'}>{translate("roles.user")}</MenuItem>
-                                    <MenuItem value={'manager'}>{translate("roles.manager")}</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <FormControl fullWidth sx={{
-                                position: 'relative'
-                            }}>
+                            {errors.email && (
+                                <span>{errors?.email?.message as string}</span>
+                            )}
+                        </FormControl>
+                        <FormControl>
+                            <Box sx={{width: '100%', position: 'relative'}}>
                                 <TextField
                                     required
                                     fullWidth
                                     label={translate("pages.login.fields.password")}
                                     type={showPass ? 'text' : 'password'}
-                                    sx={textFieldStyle}
-                                    color={"secondary"}
+                                    sx={{
+                                        ...textFieldCurrentStyle
+                                    }}
+                                    color={color}
                                     id="password"
+                                    variant={variant}
                                     size={size}
                                     placeholder={"Example: Thsd_e28gv"}
-                                    inputProps={{pattern: "/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?\\d)(?=.*?[#?!@$%^&*-]).{8,}$/"}}
-                                    {...register('password', {required: true})}
-                                    autoComplete="current-password"
+                                    {...register('password', {
+                                        required: requiredText('password'),
+                                        pattern: {
+                                            // value: /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?\d)(?=.*?[#?!@$%^&*-]).{8,}$/,
+                                            value: /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/,
+                                            message: translate('pages.login.errors.passValid')
+                                        }
+                                    })}
                                 />
                                 <Box sx={{
                                     cursor: 'pointer',
@@ -230,7 +295,7 @@ const Register = () => {
                                     alignItems: 'center',
                                     "&:hover": {
                                         color: 'cornflowerblue'
-                                    }
+                                    },
                                 }}>
                                     {
                                         showPass ?
@@ -238,59 +303,213 @@ const Register = () => {
                                             <VisibilityOutlined onClick={handleShowPass}/>
                                     }
                                 </Box>
-                            </FormControl>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <FormControl sx={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                justifyContent: 'start'
-                            }}>
-                                <Checkbox checked={accept} value="allowExtraEmails"
-                                          onChange={(e: ChangeEvent<HTMLInputElement>) => setAccept(e.target.checked)}
-                                          color={'secondary'} required/>
-                                <Typography sx={{
-                                    cursor: 'pointer',
-                                    "&:hover": {
-                                        color: 'cornflowerblue'
-                                    },
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    gap: 1,
-                                    alignItems: 'center'
-                                }}
-                                            onClick={() => setShow(true)}
-                                >
-                                    {translate("agreement.accept")}
-                                    <ErrorOutlineOutlined/>
-                                </Typography>
-                            </FormControl>
-                        </Grid>
-                        <UserAgreement show={show} setShow={setShow}/>
-                    </Grid>
-                    <Grid item sx={{
-                        mt: '10px',
-                        display: 'flex'
+                            </Box>
+                            {errors.password && (
+                                <span>{errors?.password?.message as string}</span>
+                            )}
+                        </FormControl>
+                    </Box>
+                )
+        }
+    }
+
+    return (
+        <ContainerComponent>
+            <Box
+                sx={{
+                    marginTop: 2,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    margin: '0 auto',
+                    width: {xs: '90%', md: '700px'},
+                    maxWidth: '700px',
+                }}
+            >
+                <Avatar src={`/images/logo.png`} onClick={() => navigate('/welcome')}
+                        sx={{m: 1, cursor: 'pointer'}}/>
+                <Typography component="h1" variant="h5" fontSize={{xs: 18, md: 22}}>
+                    {translate("pages.register.title")}
+                </Typography>
+                <Typography
+                    sx={{
+                        maxWidth: '500px',
+                        m: 1
+                    }}
+                    component={"h3"} color={'red'}>
+                    {translate("importantText")}
+                </Typography>
+                <Box sx={{
+                    width: '100%',
+                    maxWidth: '500px',
+                    p: 3,
+                    borderRadius: '10px',
+                    border: '2px solid cornflowerblue'
+                }}>
+                    <Box sx={{
+                        display: 'flex',
+                        // gap: 4,
+                        width: '90%',
+                        maxWidth: '300px',
+                        margin: '0 auto',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        gap: 2
                     }}>
-                        <Button
-                            type={"submit"}
-                            variant={'contained'}
-                            color={mode === "dark" ? "info" : "secondary"}
-                            sx={{
-                                ...buttonStyle,
-                                fontSize: '18px',
-                                width: '100%',
-                                maxWidth: '300px',
-                                margin: '0 auto'
-                            }}>
+                        <Box sx={{
+                            width: '100%',
+                            height: '2px',
+                            bgcolor: 'cornflowerblue',
+                            order: 1
+                        }}/>
+                        {
+                            stepTitles?.map((title, index) => (
+                                <Box sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 1,
+                                    order: index
+                                }}
+                                     key={index}
+                                >
+                                    <Button
+                                        variant={'contained'}
+                                        color={(currentStep === index || currentStep > index) ? 'info' : 'inherit'}
+                                        sx={{
+                                            // bgcolor: currentStep === index ? '#12a5ee' : 'silver',
+                                            borderRadius: '50%',
+                                            textTransform: 'inherit',
+                                            fontWeight: 600,
+                                            fontSize: '16px',
+                                            transition: '300ms linear',
+                                            "&:hover": {
+                                                bgcolor: '#12a5ee'
+                                            },
+                                            minWidth: '30px',
+                                            width: {xs: '40px', md: '50px'},
+                                            height: {xs: '40px', md: '50px'},
+                                        }}
+                                    >
+                                        {
+                                            currentStep > index ? <Check/> : index + 1
+                                        }
+                                    </Button>
+                                    <span>
+                                        {title}
+                                    </span>
+                                </Box>
+                            ))
+                        }
+                    </Box>
+                    <Box
+                        component="form"
+                        autoComplete="off"
+                        sx={{
+                            width: '100%',
+                            // mt: '30px',
+                            maxWidth: '350px',
+                            margin: '30px auto 0',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: 2,
+                            "& span:not(.MuiCheckbox-root)": {
+                                color: 'red',
+                                mt: '5px'
+                            }
+                        }}
+                    >
+                        {
+                            renderFormByStep(currentStep)
+                        }
+                        <Box sx={{
+                            display: 'flex',
+                            gap: 4,
+                            "& button:not(:nth-of-type(3))": {
+                                borderWidth: '2px !important',
+                                textTransform: 'inherit',
+                                borderRadius: '10px',
+                                p: '5px 20px'
+                            }
+                        }}>
+                            {currentStep > 0 && (
+                                <Button
+                                    variant={'outlined'}
+                                    color={'warning'}
+                                    onClick={(event) => {
+                                        event.preventDefault();
+                                        gotoStep(currentStep - 1);
+                                    }}
+                                >
+                                    {translate('buttons.steps.previous')}
+                                </Button>
+                            )}
+                            {currentStep < stepTitles.length - 1 && (
+                                <Button
+                                    variant={'outlined'}
+                                    color={'info'}
+                                    onClick={(event) => {
+                                        event.preventDefault();
+                                        gotoStep(currentStep + 1);
+                                    }}
+                                >
+                                    {translate('buttons.steps.next')}
+                                </Button>
+                            )}
                             {
-                                formLoading ? <CircularProgress/> :
-                                    translate("pages.register.buttons.submit")}
-                        </Button>
-                    </Grid>
+                                currentStep === stepTitles?.length - 1 && (
+                                    <Button
+                                        type={"submit"}
+                                        variant={'contained'}
+                                        color={mode === "dark" ? "info" : "secondary"}
+                                        sx={{
+                                            ...buttonStyle,
+                                            fontSize: '18px',
+                                            width: '100%',
+                                            maxWidth: '300px',
+                                            margin: '0 auto'
+                                        }}
+                                        onClick={handleSubmit(onFinishHandler)}
+                                    >
+                                        {
+                                            formLoading ? <CircularProgress/> :
+                                                translate("pages.register.buttons.submit")}
+                                    </Button>
+                                )
+                            }
+                        </Box>
+                    </Box>
+                </Box>
+                <Box sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'start',
+                    width: '100%',
+                    mt: '10px'
+                }}>
+                    <Checkbox
+                        checked={accept} value="allowExtraEmails"
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => setAccept(e.target.checked)}
+                        color={'secondary'} required/>
+                    <Box sx={{
+                        cursor: 'pointer',
+                        "&:hover": {
+                            color: 'cornflowerblue'
+                        },
+                        display: 'flex',
+                        flexDirection: 'row',
+                        gap: 1,
+                        alignItems: 'center'
+                    }}
+                         onClick={() => setShow(true)}
+                    >
+                        {translate("agreement.accept")}
+                        <ErrorOutlineOutlined/>
+                    </Box>
+                    <UserAgreement show={show} setShow={setShow}/>
                 </Box>
                 <OrPart
+                    isUserAggre={accept}
                     githubType={'register_github'}
                     googleType={'register'}
                     googleText={'signup_with'}
@@ -384,4 +603,15 @@ const Register = () => {
         </ContainerComponent>
     );
 }
+
+interface IRegister {
+    status: "role" | "manager",
+    password: string,
+    email: string,
+    phone: string,
+    dOB: Date,
+    name: string,
+    registerBy?: "Email"
+}
+
 export default Register;

@@ -2,10 +2,10 @@ import {Box, Button} from "@mui/material";
 import {GetListResponse, useInfiniteList, useTranslate} from "@refinedev/core";
 import {useContext, useEffect, useState} from "react";
 
-import {INews} from "../../../interfaces/common";
-import NewsItem1Info from "../../news/utills/newsItem_1_Info";
+import {INews} from "@/interfaces/common";
+import NewsItem1Info from "../../news/cards/newsItem_1_Info";
 import Loading from "../../loading/loading";
-import {ColorModeContext} from "../../../contexts";
+import {ColorModeContext} from "@/contexts";
 
 interface IProps {
     id: string
@@ -65,6 +65,7 @@ const EstablishmentNews = ({id}: IProps) => {
                         <Box key={index}
                              sx={{
                                  width: '100%',
+                                 bgcolor: 'common.black',
                                  boxShadow: `0px 0px 10px 0px ${mode === 'dark' ? 'rgba(50, 50, 50, 0.9)' : 'rgba(225, 225, 225, 0.9)'}`,
                                  p: '10px',
                                  borderRadius: '7px',
@@ -73,7 +74,8 @@ const EstablishmentNews = ({id}: IProps) => {
                                  },
                                  transition: '200ms linear',
                                  '&:hover': {
-                                     boxShadow: `0px 0px 10px 0px ${mode === 'dark' ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.4)'}`,
+                                     bgcolor: 'modern.modern_1.main'
+                                     // boxShadow: `0px 0px 10px 0px ${mode === 'dark' ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.4)'}`,
                                  }
                              }}>
                             <NewsItem1Info
@@ -92,7 +94,7 @@ const EstablishmentNews = ({id}: IProps) => {
                                     },
                                     "& .newsCardMedia": {
                                         width: 'calc(40% - 8px)',
-                                        height: {xs: '140px', sm: '170px', lg: '220px'}
+                                        height: {xs: '140px', sm: '200px', lg: '220px'}
                                     },
                                     flexDirection: 'row',
                                     marginLeft: 0,

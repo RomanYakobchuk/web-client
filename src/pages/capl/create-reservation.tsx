@@ -1,59 +1,48 @@
-import {Link, useLocation, useNavigate, useSearchParams} from "react-router-dom";
-import {
-    Box,
-    Button,
-    Checkbox,
-    FormControl,
-    FormHelperText,
-    TextareaAutosize,
-    TextField,
-    Typography
-} from "@mui/material";
-import {ArrowBackIosNew, Check, Clear} from "@mui/icons-material";
-import React, {ChangeEvent, useContext, useEffect, useState} from "react";
-import {useGetIdentity, useNotification, useTranslate} from "@refinedev/core";
+import {Link, useLocation} from "react-router-dom";
+import React, {useEffect, useState} from "react";
+import {useBack, useNotification, useTranslate} from "@refinedev/core";
 import {useForm} from "@refinedev/react-hook-form";
-import dayjs from "dayjs";
 
-import {ColorModeContext} from "../../contexts";
-import {IGetIdentity, ProfileProps, PropertyProps} from "../../interfaces/common";
-import {CustomCreate, ModalWindow, SearchInstitutions} from "../../components";
-import {isJsonString} from "../../utils";
+import {IReserve, PropertyProps} from "@/interfaces/common";
+import {CaplForm, CustomCreate} from "@/components";
+import {useUserInfo} from "@/hook";
+import {socket} from "@/socketClient";
 
 const CreateReservation = () => {
-    const {data: identity} = useGetIdentity<IGetIdentity>();
-    const user: ProfileProps = identity?.user as ProfileProps;
+    const {user: currentUser} = useUserInfo();
     const translate = useTranslate();
-    const navigate = useNavigate();
-    const {mode} = useContext(ColorModeContext);
     const {open} = useNotification();
+    const goBack = useBack();
     const {search: searchEstablishment} = useLocation();
 
-    const [search, setSearch] = useState<PropertyProps>({} as PropertyProps);
+    const [manager, setManager] = useState<string>("");
+    const [isAllowedEdit, setIsAllowedEdit] = useState<boolean>(true);
+    const [user, setUser] = useState<string>(currentUser?._id);
     const [searchPlace, setSearchPlace] = useState<PropertyProps>({} as PropertyProps);
-    const [fullName, setFullName] = useState<string>('');
+    const [fullName, setFullName] = useState<string>(currentUser?.name);
     const [eventType, setEventType] = useState<string>('');
-    const [date, setDate] = useState<Date | any>(dayjs(new Date()).format('YYYY-MM-DDThh:mm'));
+    const [date, setDate] = useState<Date | any>(new Date(new Date()?.getTime() + (1 * 60 * 60 * 1000)));
     const [comment, setComment] = useState<string>('');
     const [writeMe, setWriteMe] = useState<boolean>(false);
-    const [openModal, setOpenModal] = useState<boolean>(false);
-    const [desiredAmount, setDesiredAmount] = useState<number | any>(0);
-    const [numberPeople, setNumberPeople] = useState<number | any>(0);
-    const [whoPay, setWhoPay] = useState<string>('');
-
-    const establishmentParam = new URLSearchParams(searchEstablishment).get('establishment');
+    const [desiredAmount, setDesiredAmount] = useState<number>(0);
+    const [numberPeople, setNumberPeople] = useState<number>(0);
+    const [whoPay, setWhoPay] = useState<string>(currentUser?.name);
+    const [userStatus, setUserStatus] = useState<IReserve['userStatus']>({value: 'draft', reasonRefusal: ''});
+    const [institutionStatus, setInstitutionStatus] = useState<IReserve['institutionStatus']>({value: 'draft', reasonRefusal: '', freeDateFor: [{}] as IReserve['institutionStatus']['freeDateFor']});
 
     useEffect(() => {
         if (searchEstablishment) {
-            // const jsonString = decodeURIComponent(establishmentParam);
-            // if (isJsonString(jsonString)) {
-            //     setSearchPlace(JSON.parse(jsonString))
-            // }
-            console.log(searchEstablishment)
+            const establishmentParam = new URLSearchParams(searchEstablishment).get('establishmentId');
+            if (establishmentParam) {
+                setSearchPlace({
+                    _id: establishmentParam
+                } as PropertyProps)
+            }
         }
     }, [searchEstablishment]);
 
-    const {refineCore: {onFinish, formLoading, queryResult}, handleSubmit} = useForm({
+    const {refineCore: {onFinish, formLoading}} = useForm({
+        warnWhenUnsavedChanges: true,
         refineCoreProps: {
             resource: `capl/create`,
             errorNotification: (data: any) => {
@@ -68,18 +57,18 @@ const CreateReservation = () => {
                     message: data?.data?.message
                 }
             },
-            redirect: "list"
+            redirect: false
         },
     })
-    useEffect(() => {
-        if (user?.name) {
-            setFullName(user?.name)
-            setWhoPay(user?.name)
-        }
-    }, [user?.name])
 
+    useEffect(() => {
+        if (searchPlace?.createdBy) {
+            setManager(searchPlace?.createdBy)
+        }
+    }, [searchPlace?.createdBy]);
 
     const onFinishHandler = async () => {
+
         const requestData = {
             fullName,
             eventType,
@@ -87,8 +76,13 @@ const CreateReservation = () => {
             desiredAmount,
             numberPeople,
             whoPay,
+            comment,
+            writeMe,
+            userStatus,
+            institutionStatus
         }
-        if (!searchPlace) {
+
+        if (!searchPlace?._id) {
             open?.({
                 type: 'error',
                 message: `${translate('capl.required', {"field": translate(`home.one`)})}`
@@ -96,7 +90,7 @@ const CreateReservation = () => {
             return;
         }
         for (const [key, value] of Object.entries(requestData)) {
-            if (!value) {
+            if (!value && key !== 'comment' && key !== 'writeMe') {
                 open?.({
                     type: 'error',
                     message: `${translate('capl.required', {"field": translate(`capl.create.${key}`)})}`
@@ -111,8 +105,57 @@ const CreateReservation = () => {
             })
             return;
         }
-        await onFinish({...requestData, comment, institutionId: searchPlace, writeMe})
+        const currentDate = new Date(new Date()?.getTime() + (1 * 60 * 60 * 1000));
+        const reserveDate = new Date(date);
+        if (reserveDate < currentDate) {
+            open?.({
+                type: 'error',
+                message: translate('capl.create.minDateReserve.isError')
+            })
+            return;
+        }
 
+        try {
+            const res = await onFinish({...requestData, institutionId: searchPlace?._id, userId: user, managerId: manager});
+            if (res?.data?.notification && res?.data?.reservation?.manager) {
+                socket?.emit('createdNewReservation', {
+                    userId: res?.data?.reservation?.manager,
+                    notification: res?.data?.notification
+                })
+            }
+            // goBack();
+        } catch (e) {
+
+        }
+    }
+
+    const dataCapl = {
+        fullName: fullName,
+        setFullName: setFullName,
+        whoPay,
+        setWhoPay,
+        eventType,
+        date,
+        desiredAmount,
+        numberPeople,
+        comment,
+        writeMe,
+        setEventType,
+        setDate,
+        setDesiredAmount,
+        setNumberPeople,
+        setComment,
+        setWriteMe,
+        user,
+        setUser,
+        isAllowedEdit,
+        setIsAllowedEdit,
+        manager,
+        setManager,
+        institutionStatus,
+        setInstitutionStatus,
+        userStatus,
+        setUserStatus
     }
 
     return (
@@ -132,170 +175,19 @@ const CreateReservation = () => {
                     }
                 ]
             }
+            bgColor={'transparent'}
             headerTitle={translate('capl.title')}
             saveButtonText={translate('buttons.confirm')}
             maxWidth={'900px'}
             onClick={onFinishHandler}
         >
-            <Box
-                sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    borderRadius: '15px',
-                    p: '10px',
-                }}
-            >
-                <Box sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 4,
-                    width: '100%',
-                }}>
-                    <FormControl fullWidth>
-                        <SearchInstitutions searchInstitution={searchPlace as PropertyProps}
-                                            setSearchInstitution={setSearchPlace}
-                                            typeSearch={'all'}/>
-                    </FormControl>
-                    <FormControl fullWidth>
-                        <TextField
-                            fullWidth
-                            label={translate("capl.create.fullName")}
-                            required
-                            size={"small"}
-                            id="outlined-basic"
-                            color={"secondary"}
-                            variant="outlined"
-                            value={fullName ? fullName : ''}
-                            onChange={(event) => setFullName(event.target.value)}
-                        />
-                    </FormControl>
-                    <FormControl fullWidth>
-                        <TextField
-                            fullWidth
-                            label={translate("capl.create.date")}
-                            required
-                            size={"small"}
-                            type={"datetime-local"}
-                            id="outlined-basic"
-                            color={"secondary"}
-                            variant="outlined"
-                            value={date ? date : ''}
-                            onChange={(event) => setDate(event.target.value)}
-                        />
-                    </FormControl>
-                    <FormControl fullWidth>
-                        <TextField
-                            fullWidth
-                            label={translate("capl.create.desiredAmount")}
-                            required
-                            size={"small"}
-                            type={"number"}
-                            id="outlined-basic"
-                            color={"secondary"}
-                            variant="outlined"
-                            inputProps={{inputMode: 'numeric', pattern: '[0-9]*'}}
-                            value={desiredAmount ? desiredAmount : ''}
-                            onChange={(event) => setDesiredAmount(event.target.value)}
-                        />
-                    </FormControl>
-                    <FormControl fullWidth>
-                        <TextField
-                            fullWidth
-                            label={translate("capl.create.numberPeople")}
-                            required
-                            size={"small"}
-                            type={"number"}
-                            id="outlined-basic"
-                            color={"secondary"}
-                            variant="outlined"
-                            inputProps={{inputMode: 'numeric', pattern: '[0-9]*'}}
-                            value={numberPeople ? numberPeople : ''}
-                            onChange={(event) => setNumberPeople(event.target.value)}
-                        />
-                    </FormControl>
-                    <FormControl fullWidth>
-                        <TextField
-                            fullWidth
-                            label={translate("capl.create.whoPay")}
-                            required
-                            size={"small"}
-                            id="outlined-basic"
-                            color={"secondary"}
-                            variant="outlined"
-                            value={whoPay ? whoPay : ''}
-                            onChange={(event) => setWhoPay(event.target.value)}
-                        />
-                    </FormControl>
-                    <FormControl fullWidth>
-                        <FormHelperText
-                            sx={{
-                                fontSize: '14px',
-                                mb: 0.5,
-                                color: (theme) => theme.palette.text.primary
-                            }}
-                        >
-                            {translate('capl.create.comment')}
-                        </FormHelperText>
-                        <TextareaAutosize
-                            minRows={5}
-                            required
-                            style={{
-                                width: "100%",
-                                background: "transparent",
-                                fontSize: "16px",
-                                resize: 'vertical',
-                                minHeight: '100px',
-                                maxHeight: '200px',
-                                height: '100px',
-                                borderRadius: 6,
-                                padding: 10,
-                                color: mode === "dark" ? "#fcfcfc" : "#000",
-                            }}
-                            id="outlined-basic"
-                            color={"secondary"}
-                            value={comment ? comment : ''}
-                            onChange={(event) => setComment(event.target.value)}
-                        />
-                    </FormControl>
-                    <FormControl fullWidth>
-                        <TextField
-                            fullWidth
-                            label={translate("capl.create.eventType")}
-                            required
-                            size={"small"}
-                            id="outlined-basic"
-                            color={"secondary"}
-                            variant="outlined"
-                            value={eventType ? eventType : ''}
-                            onChange={(event) => setEventType(event.target.value)}
-                        />
-                    </FormControl>
-                    <FormControl sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'start'
-                    }}>
-                        <Checkbox checked={writeMe} value="allowExtraEmails"
-                                  onChange={(e: ChangeEvent<HTMLInputElement>) => setWriteMe(e.target.checked)}
-                                  color={"secondary"}/>
-                        <Typography
-                            sx={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                gap: 1,
-                                alignItems: 'center'
-                            }}
-                        >
-                            {translate("capl.create.writeMe")}
-                        </Typography>
-                    </FormControl>
-                </Box>
-            </Box>
+            <CaplForm
+                {...dataCapl}
+                type={'create'}
+                searchPlace={searchPlace}
+                setSearchPlace={setSearchPlace}
+            />
         </CustomCreate>
-
     );
 };
 export default CreateReservation

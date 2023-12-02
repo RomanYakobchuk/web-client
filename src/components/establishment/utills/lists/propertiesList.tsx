@@ -1,36 +1,39 @@
-import {PropertyProps} from "../../../../interfaces/common";
-import {Box, Grid, SxProps} from "@mui/material";
-import {Variant1EstablishmentCard} from "../../../index";
 import React, {Dispatch, SetStateAction, useContext} from "react";
-import {VariantContext} from "../../../../settings/variantEstablishment";
+import {Box, Grid, SxProps} from "@mui/material";
+
+import {PropertyProps} from "@/interfaces/common";
+import {Variant1EstablishmentCard} from "../../../index";
+import {VariantContext} from "@/settings/variantEstablishment";
 import Variant2EstablishmentCard from "../../cards/variant2EstablishmentCard";
-import {useMobile} from "../../../../hook";
+import {useMobile} from "@/hook";
 
 interface IProps {
     items: PropertyProps[],
-    setIsOpen?: Dispatch<SetStateAction<boolean>>
+    setIsOpen?: Dispatch<SetStateAction<boolean>>,
+    numberOfColumnsByWidth?: number
 }
 
-const PropertiesList = ({items, setIsOpen}: IProps) => {
+const PropertiesList = ({items, setIsOpen, numberOfColumnsByWidth}: IProps) => {
 
     const {width} = useMobile();
-    const {variant} = useContext(VariantContext);
+    const {variantShowItems} = useContext(VariantContext);
 
-    const numberOfColumnsByWidth = width < 700 ? 2 : width < 1100 ? 3 : 4;
+    const defaultNumberOfColumnsByWidth = width < 700 ? 2 : width < 1100 ? 3 : 4;
 
-    const style: SxProps = variant === 'variant_2'
+    const style: SxProps = variantShowItems?.establishment === 'variant_1'
         ? {
             display: 'grid',
-            gridTemplateColumns: `repeat(${numberOfColumnsByWidth}, 1fr)`,
+            gridTemplateColumns: `repeat(${numberOfColumnsByWidth ? numberOfColumnsByWidth : defaultNumberOfColumnsByWidth}, 1fr)`,
             gap: 1,
             width: '100%',
+            p: '0 8px',
             margin: '0 auto',
             justifyItems: 'center'
-        } : variant === 'variant_1'
+        } : variantShowItems?.establishment === 'variant_2'
             ? {
                 display: 'flex',
                 flexDirection: 'column',
-                gap: {sm: 2},
+                gap: {xs: 0, sm: 2},
                 justifyContent: 'start',
                 alignItems: 'start'
             } : {}
@@ -43,8 +46,8 @@ const PropertiesList = ({items, setIsOpen}: IProps) => {
                 ...style
             }}>
                 {
-                    items.map((institution: PropertyProps | any) => {
-                            if (variant === 'variant_1') {
+                    items.map((institution: PropertyProps) => {
+                            if (variantShowItems?.establishment === 'variant_2') {
                                 return (
                                     <Box
                                         key={institution._id}
@@ -56,23 +59,6 @@ const PropertiesList = ({items, setIsOpen}: IProps) => {
                                         sx={{
                                             width: '100%',
                                             position: 'relative',
-                                            "&:not(:last-of-type)": {
-                                                position: 'relative',
-                                                borderRight: 'unset !important',
-                                                "&::after": {
-                                                    content: "''",
-                                                    display: {xs: 'block', sm: 'none'},
-                                                    position: 'absolute',
-                                                    bottom: '0',
-                                                    left: 0,
-                                                    right: 0,
-                                                    margin: '0 auto',
-                                                    height: '1px',
-                                                    width: '95%',
-                                                    bgcolor: 'silver',
-                                                    zIndex: 10
-                                                }
-                                            }
                                         }}
                                     >
                                         <Variant2EstablishmentCard establishment={institution}/>

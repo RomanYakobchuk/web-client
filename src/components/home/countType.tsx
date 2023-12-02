@@ -2,11 +2,12 @@ import {Box, Skeleton} from "@mui/material";
 import {useList, useTranslate} from "@refinedev/core";
 import {Link} from "react-router-dom";
 import {Typography as TypographyAntd} from "antd";
-import {useMobile} from "../../hook";
 import {useContext} from "react";
-import {ColorModeContext} from "../../contexts";
 import {LocalCafe, Restaurant, WineBar} from "@mui/icons-material";
 import {useTranslation} from "react-i18next";
+
+import {ColorModeContext} from "@/contexts";
+import {useMobile} from "@/hook";
 
 const {Text} = TypographyAntd;
 const CountType = () => {

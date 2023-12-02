@@ -22,6 +22,9 @@ const SearchButtonFilterComponent = ({setOpenFilter, handleReplace, handleSearch
             width: '100%',
             justifyContent: {xs: 'space-between', sm: 'start', md: 'end'},
             gap: 2,
+            "& button":{
+                textTransform: 'inherit',
+            },
             ...styleSx
         }}>
             <Box sx={{

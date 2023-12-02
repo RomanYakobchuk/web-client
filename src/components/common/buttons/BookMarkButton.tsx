@@ -3,9 +3,8 @@ import {BookmarkBorderOutlined, BookmarkOutlined} from "@mui/icons-material";
 import React, {useContext, useEffect, useState, MouseEvent} from "react";
 import {useNotification, useTranslate} from "@refinedev/core";
 
-import {axiosInstance} from "../../../authProvider";
-import {ColorModeContext} from "../../../contexts";
-import {AppContext} from "../../../contexts/AppContext";
+import {axiosInstance} from "@/authProvider";
+import {AppContext} from "@/contexts/AppContext";
 
 interface IProps {
     id: string,
@@ -20,26 +19,26 @@ const BookMarkButton = ({id, color, bgColor, type, showText, style}: IProps) => 
 
     const {open} = useNotification();
     const translate = useTranslate();
-    const {mode} = useContext(ColorModeContext);
     const {favoritePlaces, setFavoritePlaces} = useContext(AppContext);
-    const [book, setBook] = useState<any>();
+    const [book, setBook] = useState<boolean>(false);
     const [addDelFav, setAddDelFav] = useState(false);
 
     useEffect(() => {
         const isInclude = favoritePlaces.some((value) => value.item === id && value.type === type);
-        isInclude ? setBook(true) : setBook(false)
+        setBook(isInclude)
     }, [favoritePlaces, id, type])
 
     const toFromBook = async (event: MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
         setAddDelFav(true)
 
-        await axiosInstance.post(`/users/addDeleteFavoritePlace/${id}`, {
-            id,
+        await axiosInstance.post(`/users/addDeleteFavoritePlace`, {
+            // id,
+            placeId: id,
             refPath: type
         });
-        if (book) {
-            setFavoritePlaces(favoritePlaces.filter(value => value.item !== id && value.type !== type))
+        if (book && id && type) {
+            setFavoritePlaces(favoritePlaces.filter(value => !(value.item === id && value.type === type)))
             open?.({
                 type: 'success',
                 message: translate('notifications.deleteSuccess', {"resource": translate('profile.my_fav_places')})
@@ -51,26 +50,25 @@ const BookMarkButton = ({id, color, bgColor, type, showText, style}: IProps) => 
                 message: translate('notifications.addSuccess', {"resource": translate('profile.my_fav_places')})
             })
         }
-        // localStorage.setItem(
-        //     "user",
-        //     JSON.stringify(data?.data?.user)
-        // );
         setAddDelFav(false)
         setBook(!book)
     }
     return (
         <Button
-            variant={'contained'}
+            variant={'text'}
             sx={{
                 display: 'flex',
-                bgcolor: bgColor ? bgColor : mode === "dark" ? "#605454" : "#ffffff",
+                bgcolor: bgColor,
                 flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: showText ? 'space-evenly' : 'center',
                 gap: 1,
                 textTransform: 'inherit',
                 boxShadow: 'none',
-                borderRadius: showText ? '20px' : '0 10px 0 10px',
+                p: '5px',
+                "& svg": {
+                    fontSize: {xs: '26px', sm: '30px'},
+                },
                 ...style
             }}
             onClick={toFromBook}
@@ -86,7 +84,7 @@ const BookMarkButton = ({id, color, bgColor, type, showText, style}: IProps) => 
                                 fontSize: 26,
                                 cursor: 'pointer',
                                 transition: '300ms linear',
-                                color: color ? color : '#fcfcfc'
+                                color: color ? color : 'common.black'
                             }}/>
                         </> :
                         <>

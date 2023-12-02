@@ -5,13 +5,14 @@ import {Link, useNavigate} from "react-router-dom";
 import {Apartment, EditLocationOutlined} from "@mui/icons-material";
 
 import ScrollContent from "../common/scroll/scrollContent";
-import {useMobile} from "../../hook";
+import {useMobile} from "@/hook";
 
-interface ICity {
+export interface ICity {
     name_ua: string,
     name_en: string,
     institutionCount: number,
-    url: string
+    url: string,
+    _id: string
 }
 
 const {Text} = TypographyAntd;
@@ -27,6 +28,7 @@ const CountCities = () => {
 
     const locale = useGetLocale();
     const currentLocale = locale();
+
 
     return (
         <Box sx={{
@@ -70,7 +72,6 @@ const CountCities = () => {
                 </Box>
             </Box>
             <ScrollContent
-
                 parentWidth={`calc(${layoutWidth}px - 10vw - 40px)`}
             >
                 {

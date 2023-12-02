@@ -3,7 +3,7 @@ import {Avatar, Box, Button, Container, CssBaseline, Typography} from "@mui/mate
 import React, {FC, useContext} from "react";
 import {useTranslate} from "@refinedev/core";
 import {ColorModeContext} from "../../contexts";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {buttonStyle} from "../../styles";
 import ContainerComponent from "./utills/containerComponent";
 
@@ -14,7 +14,7 @@ const Welcome: FC = () => {
     const navigate = useNavigate();
 
     return (
-        <ContainerComponent isPicture={false} childrenProps={{
+        <ContainerComponent childrenProps={{
             maxWidth: '90%'
         }}>
             <Box
@@ -46,7 +46,7 @@ const Welcome: FC = () => {
                         alignItems: 'center',
                         gap: 1,
                     }}>
-                        <Avatar src={'/images/favicon.ico'}/>
+                        <Avatar src={'./favicon.ico'}/>
                         <Typography sx={{
                             fontSize: {xs: 30, md: 40},
                             fontWeight: 700
@@ -71,48 +71,59 @@ const Welcome: FC = () => {
                     display: 'flex',
                     flexDirection: {xs: 'column', sm: 'row'},
                     gap: {xs: 2, sm: 4},
-                    alignItems: {xs: 'start', sm: 'center'}
+                    alignItems: {xs: 'start', sm: 'end'},
+                    "& a":{
+                        fontSize: {xs: 16, sm: 18, md: 20}
+                    }
                 }}>
                     <Typography sx={{
-                        fontSize: {xs: 16, md: 20},
+                        fontSize: {xs: 16, sm: 18, md: 20},
                         maxWidth: {xs: '90%', sm: "70%"},
                     }}>
                         {translate("welcomePage.text2")}
                     </Typography>
-                    <Button onClick={() => navigate('/register')}
-                            color={mode === "dark" ? "info" : "secondary"} variant={"contained"}
-                            sx={{
-                                ...buttonStyle,
-                                padding: '5px 10px',
-                                height: {xs: '40px', md: '60px'},
-                                width: '300px',
-                            }}>
+                    <Link
+                        to={'/register'}
+                        style={{
+
+                        }}
+                    >
                         {translate("pages.login.signup")}
-                    </Button>
+                    </Link>
+                    {/*<Button onClick={() => navigate('/register')}*/}
+                    {/*        color={mode === "dark" ? "info" : "secondary"} variant={"contained"}*/}
+                    {/*        sx={{*/}
+                    {/*            ...buttonStyle,*/}
+                    {/*            padding: '5px 10px',*/}
+                    {/*            height: {xs: '40px', md: '60px'},*/}
+                    {/*            width: '300px',*/}
+                    {/*        }}>*/}
+                    {/*</Button>*/}
                 </Box>
                 <Box sx={{
                     mt: 6,
                     display: 'flex',
                     flexDirection: 'row',
-                    gap: {xs: 2, sm: 4},
-                    alignItems: 'center'
+                    gap: 2,
+                    alignItems: 'end',
+                    "& a":{
+                        fontSize: {xs: 16, sm: 18, md: 20}
+                    }
                 }}>
                     <Typography sx={{
-                        fontSize: {xs: 16, md: 20},
-                        maxWidth: "70%",
+                        fontSize: {xs: 16, sm: 18, md: 20},
+                        // maxWidth: "70%",
                     }}>
                         {translate("welcomePage.question")}
                     </Typography>
-                    <Button
-                        onClick={() => navigate('/login')} variant={"contained"}
-                        color={mode === "dark" ? "info" : "secondary"} sx={{
-                        ...buttonStyle,
-                        padding: '5px 10px',
-                        height: {xs: '40px', md: '60px'},
-                        width: '150px',
-                    }}>
+                    <Link
+                        to={'/login'}
+                        style={{
+
+                            }}
+                    >
                         {translate("pages.login.signin")}
-                    </Button>
+                    </Link>
                 </Box>
             </Box>
         </ContainerComponent>

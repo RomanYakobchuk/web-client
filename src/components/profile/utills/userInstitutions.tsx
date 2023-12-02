@@ -1,11 +1,16 @@
-import {Box, Button, CircularProgress, MenuItem, Select} from "@mui/material";
+import {Box, MenuItem, Select} from "@mui/material";
 import {HourglassBottom, Public, ThumbDownAltOutlined} from "@mui/icons-material";
-import {PropertyProps} from "../../../interfaces/common";
-import Variant1EstablishmentCard from "../../establishment/cards/variant1EstablishmentCard";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useInfiniteList, useTranslate} from "@refinedev/core";
+
 import Loading from "../../loading/loading";
-import {useMobile} from "../../../hook";
+import {useMobile} from "@/hook";
+import {PropertyProps} from "@/interfaces/common";
+import MoreButton from "@/components/common/buttons/MoreButton";
+import PropertiesList from "@/components/establishment/utills/lists/propertiesList";
+import {VariantComponent} from "@/components";
+import {SearchInputComponent} from "@/components/common/search";
+import {useDebounce} from "use-debounce";
 
 interface IProps {
     id: string
@@ -14,11 +19,13 @@ interface IProps {
 const UserInstitutions = ({id}: IProps) => {
 
     const translate = useTranslate();
-    const {device} = useMobile();
+    const {width} = useMobile();
 
-    const [favoritePlaces, setFavoritePlaces] = useState();
+    const [searchValue, setSearchValue] = useState<string>('');
+    const [establishment, setEstablishment] = useState<PropertyProps[]>([] as PropertyProps[]);
     const [status, setStatus] = useState<"draft" | "published" | "rejected">("published");
 
+    const [debounceSearchValue] = useDebounce(searchValue, 500);
 
     const {
         data,
@@ -30,21 +37,33 @@ const UserInstitutions = ({id}: IProps) => {
     } = useInfiniteList<PropertyProps>({
         resource: `institution/allByUserId/${id}`,
         pagination: {
-            pageSize: 5
+            pageSize: 10
         },
         filters: [
             {
                 field: 'verify',
                 operator: 'eq',
                 value: status
+            },
+            {
+                field: 'title',
+                value: debounceSearchValue,
+                operator: 'contains'
             }
         ]
     });
-    // const lengthPublic = institutions?.filter((item: PropertyProps) => item?.verify === "published")?.length;
-    console.log(data)
-    // const lengthDraft = institutions?.filter((item: PropertyProps) => item?.verify === "draft")?.length;
-    if (isLoading) return device ? <Loading/> : <CircularProgress color={'secondary'}/>;
-    if (isError) return <div>Error</div>;
+
+    useEffect(() => {
+        if (data?.pages) {
+            const list = [].concat(...((data?.pages as any ?? [])?.map((page: {
+                data: PropertyProps[],
+                total: number
+            }) => page?.data ?? [])));
+            setEstablishment(list);
+        }
+    }, [data]);
+    const total = data?.pages?.length && data?.pages?.length > 0 ? data?.pages[0]?.total : 0;
+
     return (
         <Box
             sx={{
@@ -57,87 +76,94 @@ const UserInstitutions = ({id}: IProps) => {
             <Box sx={{
                 width: '100%',
                 display: 'flex',
-                justifyContent: {xs: 'space-between', sm: 'start'},
-                alignItems: 'center',
-                gap: {xs: 0, sm: 2}
+                flexDirection: 'column',
+                gap: 2
             }}>
-                <Select
-                    color={'secondary'}
-                    value={status}
-                    size={'small'}
-                    sx={{
-                        "& div": {
-                            display: 'flex',
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            gap: 1
-                        }
-                    }}
-                    onChange={(event) => setStatus(event.target.value as any)}
-                >
-                    {
-                        [
-                            {
-                                title: translate("buttons.isPublished"),
-                                value: 'published' as "published",
-                                color: "success",
-                                icon: <Public/>
-                            },
-                            {
-                                title: translate("buttons.isDraft"),
-                                value: 'draft' as "draft",
-                                color: 'info',
-                                icon: <HourglassBottom/>
-                            },
-                            {
-                                title: translate('buttons.isRejected'),
-                                value: 'rejected' as 'rejected',
-                                color: 'error',
-                                icon: <ThumbDownAltOutlined/>
-                            }
-                        ].map((item, index) => (
-                            <MenuItem
-                                value={item.value}
-                                key={index}
-                                sx={{
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                    gap: 1
-                                }}
-                            >
-                                {item.icon}
-                                {item.title}
-                            </MenuItem>
-                        ))
-                    }
-                </Select>
+                <SearchInputComponent
+                    searchValue={searchValue}
+                    setSearchValue={setSearchValue}
+                    isButton={false}
+                />
+                <Box sx={{
+                    width: '100%',
+                    display: 'flex',
+                    justifyContent: {xs: 'space-between', sm: 'start'},
+                    alignItems: 'center',
+                    gap: {xs: 0, sm: 2}
+                }}>
 
+                    <Select
+                        color={'secondary'}
+                        value={status}
+                        size={'small'}
+                        sx={{
+                            "& div": {
+                                display: 'flex',
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                gap: 1
+                            }
+                        }}
+                        onChange={(event) => setStatus(event.target.value as any)}
+                    >
+                        {
+                            [
+                                {
+                                    title: translate("buttons.isPublished"),
+                                    value: 'published' as "published",
+                                    color: "success",
+                                    icon: <Public/>
+                                },
+                                {
+                                    title: translate("buttons.isDraft"),
+                                    value: 'draft' as "draft",
+                                    color: 'info',
+                                    icon: <HourglassBottom/>
+                                },
+                                {
+                                    title: translate('buttons.isRejected'),
+                                    value: 'rejected' as 'rejected',
+                                    color: 'error',
+                                    icon: <ThumbDownAltOutlined/>
+                                }
+                            ].map((item, index) => (
+                                <MenuItem
+                                    value={item.value}
+                                    key={index}
+                                    sx={{
+                                        display: 'flex',
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        gap: 1
+                                    }}
+                                >
+                                    {item.icon}
+                                    {item.title}
+                                </MenuItem>
+                            ))
+                        }
+                    </Select>
+                    <VariantComponent type={"establishment"}/>
+                </Box>
             </Box>
             {
-                data?.pages?.length > 0 ?
-                    data?.pages?.map((page) =>
-                        page?.data?.map((property, index) => (
-                                <Variant1EstablishmentCard
-                                    key={index}
-                                    institution={property}
-                                />
-                            )
-                        )
-                    ) : ''
+                isLoading
+                    ? <Loading height={'200px'}/>
+                    : isError
+                        ? <p>Something went wrong</p>
+                        : establishment?.length > 0 && (
+                        <PropertiesList
+                            items={establishment}
+                            numberOfColumnsByWidth={width < 700 ? 2 : width < 1400 ? 3 : 4}
+                        />
+                    )
             }
-            {
-                hasNextPage && (
-                    <Button
-                        variant={"outlined"}
-                        color={'secondary'}
-                        onClick={() => fetchNextPage()}
-                        disabled={isFetchingNextPage}
-                    >
-                        {translate(isFetchingNextPage ? 'loading' : 'buttons.loadMore')}
-                    </Button>
-                )
-            }
+            <MoreButton
+                hasNextPage={hasNextPage}
+                isFetchingNextPage={isFetchingNextPage}
+                fetchNextPage={fetchNextPage}
+                total={total}
+            />
         </Box>
     );
 };

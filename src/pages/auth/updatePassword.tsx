@@ -85,7 +85,7 @@ const UpdatePassword = () => {
         showConfirmPass ? setShowConfirmPass(false) : setShowConfirmPass(true)
     }
     return (
-        <ContainerComponent isPicture={false}>
+        <ContainerComponent >
             <Box
                 sx={{
                     marginTop: 8,
@@ -108,8 +108,13 @@ const UpdatePassword = () => {
                             required
                             fullWidth
                             color={"secondary"}
-                            inputProps={{pattern: "/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?\\d)(?=.*?[#?!@$%^&*-]).{8,}$/"}}
-                            {...register("password", {required: true})}
+                            {...register("password", {
+                                required: translate("capl.required", {field: translate(`pages.register.fields.password`)}),
+                                pattern: {
+                                    value: /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/,
+                                    message: translate('pages.login.errors.passValid')
+                                }
+                            })}
                             label={translate("pages.login.fields.password")}
                             type={showPass ? 'text' : 'password'}
                             id="password"

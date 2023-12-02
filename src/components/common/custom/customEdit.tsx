@@ -1,27 +1,34 @@
 import {Box, SxProps, Typography} from "@mui/material";
-import {Breadcrumb, DeleteButton, Edit, SaveButton} from "@refinedev/antd";
+import {Breadcrumb, DeleteButton, Edit, SaveButton, SaveButtonProps} from "@refinedev/antd";
 import React, {ReactNode, useContext} from "react";
 import {Button} from "antd";
-import {useTranslate} from "@refinedev/core";
+import {useBack, useTranslate} from "@refinedev/core";
 import {ArrowBackOutlined, Close} from "@mui/icons-material";
 import {useNavigate} from "react-router-dom";
+import {ItemType} from "antd/es/breadcrumb/Breadcrumb";
 
-import {ColorModeContext} from "../../../contexts";
+import {ColorModeContext} from "@/contexts";
 
 type TProps = {
     children: ReactNode,
     isLoading: boolean,
     bgColor?: string,
     onClick?: () => void,
-    style?: SxProps
+    style?: SxProps,
+    maxWidth?: string,
+    breadCrumbItems?: ItemType[],
+    // currentSaveButtonsProps?: SaveButtonProps
 }
 
-const CustomEdit = ({children, isLoading, bgColor, onClick, style}: TProps) => {
+const CustomEdit = ({children, isLoading, bgColor, onClick, style, maxWidth = '1100px', breadCrumbItems}: TProps) => {
+
+    const back = useBack();
 
     const {mode} = useContext(ColorModeContext);
     const navigate = useNavigate();
     const translate = useTranslate();
 
+    const currentBreadCrumbItems = breadCrumbItems && breadCrumbItems?.length > 0 ? {items: breadCrumbItems} : null
     return (
         <Box sx={{
             width: '100%',
@@ -29,11 +36,11 @@ const CustomEdit = ({children, isLoading, bgColor, onClick, style}: TProps) => {
                 bgcolor: 'transparent !important',
                 borderTop: 'unset !important'
             },
-            "& li span div.ant-space":{
+            "& li span div.ant-space": {
                 mr: 'unset !important',
                 float: 'unset !important',
                 width: '100% !important',
-                "& > div":{
+                "& > div": {
                     width: '100% !important',
                     p: '20px'
                 }
@@ -49,6 +56,7 @@ const CustomEdit = ({children, isLoading, bgColor, onClick, style}: TProps) => {
                         boxShadow: 'unset'
                     },
                 }}
+                headerButtons={[]}
                 headerProps={{
                     title: <Typography
                         sx={{
@@ -59,19 +67,20 @@ const CustomEdit = ({children, isLoading, bgColor, onClick, style}: TProps) => {
                     style: {
                         color: mode === 'dark' ? '#fcfcfc' : '#000',
                         padding: '10px',
-                        maxWidth: '1100px',
+                        maxWidth: maxWidth,
                         margin: '0 auto'
                     },
                     backIcon: <ArrowBackOutlined sx={{
                         color: mode === 'dark' ? '#fcfcfc' : '#000'
                     }}/>,
+                    onBack: back
                 }}
                 footerButtons={({saveButtonProps, deleteButtonProps}) => (
                     <Box sx={{
                         display: 'flex',
                         gap: 2,
                         flexWrap: 'wrap',
-                        "& button":{
+                        "& button": {
                             flex: '1 1 150px'
                         }
                     }}>
@@ -91,23 +100,16 @@ const CustomEdit = ({children, isLoading, bgColor, onClick, style}: TProps) => {
                         {deleteButtonProps && (
                             <DeleteButton size={"large"} {...deleteButtonProps}/>
                         )}
-                        {saveButtonProps && (
+                        {(saveButtonProps) && (
                             <SaveButton size={"large"} {...saveButtonProps} onClick={onClick}/>
                         )}
                     </Box>
                 )}
-                footerButtonProps={{
-                    // onClick: onClick,
-                    // color: 'transparent',
-                    // style: {
-                    //     color: mode === 'dark' ? '#fcfcfc' : '#000',
-                    //     padding: '10px',
-                    //     maxWidth: '1100px',
-                    //     margin: '0 auto',
-                    //     background: 'transparent'
-                    // }
-                }}
-                headerButtons={[]}
+                goBack={<Button>
+                    <ArrowBackOutlined sx={{
+                        color: mode === 'dark' ? '#fcfcfc' : '#000'
+                    }}/>
+                </Button>}
                 breadcrumb={
                     <Box sx={{
                         color: mode === 'dark' ? '#fcfcfc' : '#000',
@@ -124,11 +126,14 @@ const CustomEdit = ({children, isLoading, bgColor, onClick, style}: TProps) => {
                             color: mode === 'dark' ? '#fcfcfc' : '#000'
                         }
                     }}>
-                        <Breadcrumb breadcrumbProps={{
-                            style: {
-                                color: mode === 'dark' ? '#fcfcfc' : '#000'
-                            }
-                        }}/>
+                        <Breadcrumb
+                            breadcrumbProps={{
+                                style: {
+                                    color: mode === 'dark' ? '#fcfcfc' : '#000'
+                                },
+                                ...currentBreadCrumbItems
+                            }}
+                        />
                     </Box>
                 }
             >

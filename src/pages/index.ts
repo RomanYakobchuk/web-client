@@ -28,7 +28,6 @@ import EditNews from './news/edit-news';
 import Home from "./home/home";
 import UpdateCity from "./home/update-city";
 
-import AllUsers from "./user/all-users";
 import AllReviews from "./review/all-reviews";
 import AllComments from "./comment/all-comments";
 
@@ -40,6 +39,7 @@ import EditProfile from './profile/editProfile';
 import Chat from "./chat/chat";
 
 import Notifications from './notification/notifications';
+import ShowNotification from './notification/showNotification';
 
 import Settings from "./other/settings";
 
@@ -63,7 +63,6 @@ export {
     Welcome,
     ForgotPassword,
     UpdatePassword,
-    AllUsers,
     AllComments,
     AllReviews,
     Notifications,
@@ -77,5 +76,6 @@ export {
     ShowFreeSeats,
     AddFreeSeats,
     UpdateFreeSeats,
-    EditProfile
+    EditProfile,
+    ShowNotification
 }

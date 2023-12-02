@@ -72,6 +72,7 @@ const NewsMainInfo = ({news}: TProps) => {
                     type={'institutionNews'}
                     isOnlyShared={true}
                     color={'common.white'}
+                    name={title}
                     isShowSharedText={true}
                     sharedStyle={{
                         gap: 0.5,
@@ -272,13 +273,13 @@ const NewsMainInfo = ({news}: TProps) => {
                         <Box sx={{
                             p: 1.5,
                             width: '100%',
-                            maxWidth: '550px',
+                            maxWidth: '300px',
                             display: 'flex',
                             flexDirection: 'column',
                             gap: 1,
                             "& a": {
-                                color: 'common.white',
-                                bgcolor: 'modern.modern_1.main',
+                                color: '#fff',
+                                bgcolor: 'info.main',
                                 transition: '200ms linear',
                                 "&:hover": {
                                     bgcolor: 'modern.modern_1.second',
@@ -291,7 +292,7 @@ const NewsMainInfo = ({news}: TProps) => {
                                         {
                                             establishment?.pictures?.length > 0 && (
                                                 <Box sx={{
-                                                    width: '250px',
+                                                    width: '100%',
                                                     height: '200px',
                                                     "& img": {
                                                         borderRadius: '7px',
@@ -325,8 +326,8 @@ const NewsMainInfo = ({news}: TProps) => {
                                                 {establishment?.title}
                                             </Typography>
                                             <Box sx={{
-                                                bgcolor: 'modern.modern_1.main',
-                                                color: 'common.white',
+                                                bgcolor: 'common.white',
+                                                color: 'common.black',
                                                 p: '3px 10px',
                                                 borderRadius: '10px'
                                             }}>

@@ -2,8 +2,8 @@ import {Button, ButtonGroup, SxProps} from "@mui/material";
 import React, {Dispatch, useContext} from "react";
 import {useTranslate} from "@refinedev/core";
 
-import {ColorModeContext} from "../../../contexts";
-import {SetFilterType} from "../../../interfaces/types";
+import {ColorModeContext} from "@/contexts";
+import {SetFilterType} from "@/interfaces/types";
 
 type TArrayType = {
     title: string,
@@ -11,14 +11,14 @@ type TArrayType = {
 }
 
 interface IProps<T> {
-    defaultSetFilters: SetFilterType,
-    setFilters: SetFilterType,
+    defaultSetFilters?: SetFilterType,
+    setFilters?: SetFilterType,
     type: string,
-    isShowAllFilters: boolean,
+    isShowAllFilters?: boolean,
     setType: (value: T) => void,
     styleSx?: SxProps,
     fieldName?: string,
-    setCurrent: Dispatch<React.SetStateAction<number>>,
+    setCurrent?: Dispatch<React.SetStateAction<number>>,
     sortTranslatePath?: string,
     arrayType?: TArrayType[]
 }
@@ -41,18 +41,18 @@ const establishmentType = [
         value: 'bar' as 'bar'
     }
 ]
-const SearchByTypeComponent = <T,>({
-                                   defaultSetFilters,
-                                   type,
-                                   fieldName = 'propertyType',
-                                   isShowAllFilters,
-                                   setType,
-                                   setFilters,
-                                   styleSx,
-                                   setCurrent,
-                                   sortTranslatePath = 'home.sortByType',
-                                   arrayType = establishmentType
-                               }: IProps<T>) => {
+const SearchByTypeComponent = <T, >({
+                                        defaultSetFilters,
+                                        type,
+                                        fieldName = 'propertyType',
+                                        isShowAllFilters = false,
+                                        setType,
+                                        setFilters,
+                                        styleSx,
+                                        setCurrent,
+                                        sortTranslatePath = 'home.sortByType',
+                                        arrayType = establishmentType
+                                    }: IProps<T>) => {
 
     const translate = useTranslate();
     const {mode} = useContext(ColorModeContext);
@@ -61,19 +61,25 @@ const SearchByTypeComponent = <T,>({
 
     const handleSetFilter = (value: string) => {
         setType(value as T)
-        setCurrent(1)
+        if (setCurrent) {
+            setCurrent(1)
+        }
         if (isShowAllFilters) {
-            defaultSetFilters([{
-                field: fieldName,
-                value: value,
-                operator: 'eq'
-            }])
+            if (defaultSetFilters) {
+                defaultSetFilters([{
+                    field: fieldName,
+                    value: value,
+                    operator: 'eq'
+                }])
+            }
         } else {
-            setFilters([{
-                field: fieldName,
-                value: value,
-                operator: 'eq'
-            }])
+            if (setFilters) {
+                setFilters([{
+                    field: fieldName,
+                    value: value,
+                    operator: 'eq'
+                }])
+            }
         }
     }
 
@@ -81,9 +87,9 @@ const SearchByTypeComponent = <T,>({
         <ButtonGroup variant={'contained'} sx={{
             p: '5px',
             gap: '10px',
-            bgcolor: 'common.black',
             borderRadius: bRButtonFilter,
             border: `1px solid ${mode === 'dark' ? '#fff' : '#000'}`,
+            color: 'common.white',
             "& button": {
                 height: '30px !important',
                 borderRadius: '5px !important',

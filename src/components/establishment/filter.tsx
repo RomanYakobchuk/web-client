@@ -7,7 +7,7 @@ import {CrudFilters, CrudSorting, LogicalFilter, useTranslate} from "@refinedev/
 import {useLocation} from "react-router-dom";
 import {useDebounce} from "use-debounce";
 
-import {ColorModeContext} from "../../contexts";
+import {ColorModeContext} from "@/contexts";
 import {
     CustomOpenContentBtn,
     FilterBtn,
@@ -16,8 +16,8 @@ import {
     SearchCity,
     VariantComponent
 } from "../index";
-import {useMobile, usePosition} from "../../hook";
-import {EstablishmentType, SetFilterType} from "../../interfaces/types";
+import {useMobile, usePosition} from "@/hook";
+import {EstablishmentType, SetFilterType} from "@/interfaces/types";
 import {
     SearchButtonFilterComponent,
     SearchByAverageCheckComponent, SearchByFreeSeats,
@@ -25,7 +25,7 @@ import {
     SearchInputComponent
 } from "../common/search";
 import SortEstablishmentComponent from "../common/search/establishment/sortEstablishmentComponent";
-import {IFreeSeatsProps, PropertyProps} from "../../interfaces/common";
+import {IFreeSeatsProps, PropertyProps} from "@/interfaces/common";
 
 
 interface IProps {

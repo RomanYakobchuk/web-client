@@ -3,7 +3,7 @@ import {GetListResponse, HttpError, useTranslate} from "@refinedev/core";
 import React, {FC} from "react";
 import {Button} from "@mui/material";
 
-interface IMoreButton {
+export interface IMoreButton {
     hasNextPage: boolean | undefined,
     isFetchingNextPage: boolean,
     fetchNextPage: (options?: FetchNextPageOptions | undefined) => Promise<InfiniteQueryObserverResult<GetListResponse<any>, HttpError>>,

@@ -2,11 +2,11 @@ import {useBack, useGetIdentity, useTranslate} from "@refinedev/core";
 import {useForm} from "@refinedev/react-hook-form";
 import React, {FC, useEffect, useState} from "react";
 
-import {IPicture, ProfileProps, PropertyProps} from "../../interfaces/common";
-import DataForm from "../../components/establishment/dataForm";
-import {CustomCreate} from "../../components";
+import {IPicture, ProfileProps, PropertyProps} from "@/interfaces/common";
+import DataForm from "@/components/establishment/dataForm";
+import {CustomCreate} from "@/components";
 import {Link} from "react-router-dom";
-import {IEstablishmentFormProps} from "../../interfaces/formData";
+import {IEstablishmentFormProps} from "@/interfaces/formData";
 
 
 const CreateEstablishment: FC = () => {

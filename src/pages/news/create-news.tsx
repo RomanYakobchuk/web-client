@@ -9,10 +9,10 @@ import {
     IPicture,
     ProfileProps,
     PropertyProps
-} from "../../interfaces/common";
-import NewsFormData from "../../components/news/utills/newsFormData";
-import {CustomCreate} from "../../components";
-import {INewsDataProps} from "../../interfaces/formData";
+} from "@/interfaces/common";
+import NewsFormData from "@/components/news/utills/newsFormData";
+import {CustomCreate} from "@/components";
+import {INewsDataProps} from "@/interfaces/formData";
 
 const CreateNews = () => {
     const {search} = useLocation();

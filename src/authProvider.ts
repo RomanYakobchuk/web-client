@@ -8,7 +8,7 @@ import {
     localFavPlacesKey,
     localKeyEstablishment,
     localKeyLeaveCommentAs, localSubscribedEstablishmentKey,
-    REFRESH_TOKEN_KEY
+    REFRESH_TOKEN_KEY, USER_PROPERTY
 } from "./config/const";
 
 export const baseURL = `${import.meta.env.VITE_APP_API}/api/v1`;
@@ -84,7 +84,9 @@ axiosInstance.interceptors.response.use(
                         localStorage.setItem(REFRESH_TOKEN_KEY, response?.data?.refresh_token);
                         localStorage.setItem("user", response?.data?.user);
                         localStorage.setItem(localFavPlacesKey, JSON.stringify(response?.data?.favoritePlaces));
-
+                        localStorage.setItem(USER_PROPERTY, JSON.stringify({
+                            notReadNotifications: response?.data?.countNotReadNotifications || 0
+                        }))
                         onTokenRefreshed();
                         config._retry = true;
 
@@ -100,6 +102,7 @@ axiosInstance.interceptors.response.use(
                             localStorage.removeItem(localKeyEstablishment);
                             localStorage.removeItem("user");
                             localStorage.removeItem(localFavPlacesKey);
+                            localStorage.removeItem(USER_PROPERTY);
                             return window.location.reload();
                         }
                         return {};
@@ -120,7 +123,7 @@ axiosInstance.interceptors.response.use(
 );
 
 export const authProvider: AuthBindings = {
-        login: async ({user, access_token, refresh_token, favoritePlaces}: IData) => {
+        login: async ({user, access_token, refresh_token, favoritePlaces, countNotReadNotifications}: IData) => {
             if (user) {
                 const profileObj = user ? parseJwt(user) : null;
                 if (profileObj) {
@@ -131,6 +134,9 @@ export const authProvider: AuthBindings = {
                     localStorage.setItem(localFavPlacesKey, JSON.stringify(favoritePlaces ?? []));
                     localStorage.setItem(ACCESS_TOKEN_KEY, access_token)
                     localStorage.setItem(REFRESH_TOKEN_KEY, refresh_token)
+                    localStorage.setItem(USER_PROPERTY, JSON.stringify({
+                        notReadNotifications: countNotReadNotifications || 0
+                    }))
 
                     return {
                         success: true,
@@ -153,6 +159,7 @@ export const authProvider: AuthBindings = {
             localStorage.removeItem(localKeyEstablishment);
             localStorage.removeItem("user");
             localStorage.removeItem(localFavPlacesKey);
+            localStorage.removeItem(USER_PROPERTY);
             axios.defaults.headers.common = {};
             return {
                 success: true,

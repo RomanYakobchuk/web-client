@@ -13,10 +13,11 @@ import {useNavigate} from "react-router-dom";
 
 type IProps = {
     type: "login" | "register",
+    isUserAggre?: boolean,
     text?: "signin_with" | "signup_with" | "continue_with" | undefined
 }
 
-const GoogleButton = ({type, text = "signin_with"}: IProps): JSX.Element => {
+const GoogleButton = ({type, text = "signin_with", isUserAggre}: IProps): JSX.Element => {
     const {open} = useNotification();
     const translate = useTranslate();
     const {mode} = useContext(ColorModeContext);
@@ -74,6 +75,7 @@ const GoogleButton = ({type, text = "signin_with"}: IProps): JSX.Element => {
                 variant={'contained'}
                 color={'info'}
                 id={'googleButton'}
+                disabled={type === 'register' && !isUserAggre}
                 onClick={() => handleGoogle()}
                 sx={{
                     ...buttonStyle,

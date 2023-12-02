@@ -1,4 +1,4 @@
-import {IGetIdentity, ProfileProps} from "../interfaces/common";
+import {IGetIdentity, ProfileProps} from "@/interfaces/common";
 import {useGetIdentity} from "@refinedev/core";
 
 type TProps = {

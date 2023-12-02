@@ -1,15 +1,23 @@
 import {
-    Apartment,
-    ForumOutlined, Group,
+    Apartment, DashboardOutlined,
+    ForumOutlined,
     Home as HomeIcon,
     NewspaperOutlined,
-    Person, Reviews,
+    Person,
     Star,
     WineBar
 } from "@mui/icons-material";
 import React from "react";
 
 const resources = [
+    {
+        name: 'dashboard',
+        list: '/dashboard',
+        meta: {
+            label: 'dashboard/user',
+            icon: <DashboardOutlined/>
+        },
+    },
     {
         name: "home",
         meta: {
@@ -77,23 +85,7 @@ const resources = [
             label: "Profile"
         },
         show: '/profile/show/:id',
-        edit: '/profile/edit/:id'
-    },
-    {
-        name: "all-users",
-        list: '/all-users',
-        meta: {
-            icon: <Group/>,
-            label: "All users"
-        },
-    },
-    {
-        name: "all-reviews",
-        list: '/all-reviews',
-        meta: {
-            icon: <Reviews/>,
-            label: "All reviews"
-        },
+        edit: '/profile/edit'
     },
 ];
 

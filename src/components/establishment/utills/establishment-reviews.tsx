@@ -1,5 +1,14 @@
-import {Box, Button, CircularProgress, Rating, TextareaAutosize} from "@mui/material";
-import React, {useContext, useEffect, useState} from "react";
+import {
+    Box,
+    Button,
+    CircularProgress,
+    IconButton,
+    InputAdornment,
+    Rating,
+    TextField,
+    TextareaAutosize
+} from "@mui/material";
+import React, {Dispatch, SetStateAction, useContext, useEffect, useState} from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime"
 import {useTranslation} from "react-i18next";
@@ -11,14 +20,15 @@ import {
     useOne,
     useTranslate
 } from "@refinedev/core";
-import {Add} from "@mui/icons-material";
+import {Add, Close} from "@mui/icons-material";
 import {useForm} from "@refinedev/react-hook-form";
 
-import {ColorModeContext} from "../../../contexts";
+import {ColorModeContext} from "@/contexts";
 import Loading from "../../loading/loading";
-import {IReviews} from "../../../interfaces/common";
+import {IReviews} from "@/interfaces/common";
 import ReviewCard from "../cards/reviewCard";
 import MoreButton from "../../common/buttons/MoreButton";
+import {useMobile} from "@/hook";
 
 
 dayjs.extend(relativeTime);
@@ -30,6 +40,7 @@ interface IProps {
 const EstablishmentReviews = ({id}: IProps) => {
 
     const {i18n} = useTranslation();
+    const {device} = useMobile();
     const translate = useTranslate();
     const {mode} = useContext(ColorModeContext);
     const {open} = useNotification();
@@ -134,6 +145,27 @@ const EstablishmentReviews = ({id}: IProps) => {
     }, [data]);
     const total = data?.pages?.length && data?.pages?.length > 0 ? data?.pages[0]?.total : 0;
 
+    const variantTextArea: 'standard' | "filled" | 'outlined' = 'standard';
+
+    const maxUnLikeLength = 700, maxLikeLength = 700;
+
+    const someStyle = !device ? {
+        '&::-webkit-scrollbar': {
+            width: '7px',
+            bgcolor: 'silver',
+            borderRadius: '5px',
+        },
+        '&::-webkit-scrollbar-track': {
+            'webkitBoxShadow': 'inset 0 0 6px rgba(0,0,0,0.00)'
+        },
+        '&::-webkit-scrollbar-thumb': {
+            backgroundColor: 'rgba(0,0,0,.1)',
+            outline: '1px solid slategrey',
+            bgcolor: 'steelblue',
+            borderRadius: '5px',
+            width: '5px'
+        }
+    } : {};
     return (
         <Box
             sx={{
@@ -141,7 +173,8 @@ const EstablishmentReviews = ({id}: IProps) => {
                 flexDirection: 'column',
                 gap: 2.5,
                 flex: 1,
-                position: 'relative'
+                position: 'relative',
+                width: '100%'
             }}
         >
             <Box sx={{
@@ -152,6 +185,7 @@ const EstablishmentReviews = ({id}: IProps) => {
                 position: 'relative',
                 height: '100%',
                 bottom: 0,
+                width: '100%'
             }}>
                 <Box
                     component={'form'}
@@ -162,14 +196,25 @@ const EstablishmentReviews = ({id}: IProps) => {
                         flexDirection: 'column',
                         gap: 2,
                         alignItems: 'start',
-                        "& textarea": {
-                            border: `1px solid ${mode === 'light' ? '#000' : '#fff'}`,
-                            backgroundColor: 'common.black',
-                            color: mode === 'light' ? '#000' : '#fff',
-                            "&::placeholder": {
+                        width: '100%',
+                        "& .MuiTextField-root": {
+                            "& > div": {
+                                pb: '10px',
+                                alignItems: 'end'
+                            },
+                            width: '100%',
+                            "& textarea": {
+                                width: '100%',
+                                // border: `1px solid ${mode === 'light' ? '#000' : '#fff'}`,
+                                // backgroundColor: 'common.black',
                                 color: mode === 'light' ? '#000' : '#fff',
+                                "&::placeholder": {
+                                    color: mode === 'light' ? '#000' : '#fff',
+                                },
+                                ...someStyle
                             }
-                        }
+
+                        },
                     }}
                 >
                     <Box sx={{
@@ -185,52 +230,62 @@ const EstablishmentReviews = ({id}: IProps) => {
                                 }}
                         />
                     </Box>
-                    <TextareaAutosize
+                    <TextField
+                        multiline
                         value={like}
-                        style={{
-                            resize: 'vertical',
-                            minHeight: '100px',
-                            width: '100%',
-                            maxHeight: '200px',
-                            padding: '10px',
-                            borderRadius: '10px',
-                        }}
+                        variant={variantTextArea}
                         disabled={!isAllowedNewReview}
+                        inputProps={{
+                            maxLength: maxLikeLength
+                        }}
+                        maxRows={10}
+                        InputProps={{
+                            endAdornment: <AdornmentBtn value={like} setValue={setLike} maxValueLength={maxLikeLength}/>
+                        }}
                         placeholder={'*' + translate("home.show.reviews.like")}
                         onChange={(event) => setLike(event.target.value)}
                     />
-                    <TextareaAutosize
+                    <TextField
                         value={notLike}
-                        style={{
-                            resize: 'vertical',
-                            minHeight: '100px',
-                            width: '100%',
-                            maxHeight: '200px',
-                            padding: '10px',
-                            borderRadius: '10px'
-                        }}
+                        variant={variantTextArea}
+                        multiline
                         disabled={!isAllowedNewReview}
+                        inputProps={{
+                            maxLength: maxUnLikeLength
+                        }}
+                        maxRows={10}
+                        InputProps={{
+                            endAdornment: <AdornmentBtn value={notLike} setValue={setNotLike}
+                                                        maxValueLength={maxUnLikeLength}/>
+                        }}
                         placeholder={translate("home.show.reviews.notLike")}
                         onChange={(event) => setNotLike(event.target.value)}
                     />
-                    <Button
-                        variant={"outlined"}
-                        color={"secondary"}
-                        endIcon={formLoading || !isLoading ? <></> : <Add/>}
-                        type={"submit"}
-                        sx={{
-                            // width: '100%',
-                            textTransform: 'inherit',
-                        }}
-                        disabled={!isAllowedNewReview}
-                    >
-                        {
-                            !isAllowedNewReview
-                                ? translate('home.show.reviews.isAllowedBlock')
-                                : formLoading ? <CircularProgress id={'loadReview'} color={"secondary"} size={'25px'}/>
-                                    : translate(data?.pages?.length && data?.pages?.length > 0 ? 'home.show.reviews.leaveReview' : 'home.show.reviews.leaveFirstReview')
-                        }
-                    </Button>
+                    <Box sx={{
+                        width: '100%',
+                        display: 'flex',
+                        justifyContent: 'end'
+                    }}>
+                        <Button
+                            variant={"contained"}
+                            color={"info"}
+                            endIcon={formLoading || !isLoading ? <></> : <Add/>}
+                            type={"submit"}
+                            sx={{
+                                // width: '100%',
+                                borderRadius: '7px',
+                                textTransform: 'inherit',
+                            }}
+                            disabled={!isAllowedNewReview}
+                        >
+                            {
+                                formLoading ? <CircularProgress id={'loadReview'} color={"secondary"} size={'25px'}/>
+                                    : isAllowedNewReview
+                                        ? translate(total > 0 ? 'home.show.reviews.leaveReview' : 'home.show.reviews.leaveFirstReview')
+                                        : translate('home.show.reviews.isAllowedBlock')
+                            }
+                        </Button>
+                    </Box>
                 </Box>
             </Box>
             <Box sx={{
@@ -256,7 +311,30 @@ const EstablishmentReviews = ({id}: IProps) => {
                 />
             </Box>
         </Box>
-    )
-        ;
+    );
 };
+
+type TAdornmentBtnProps = {
+    value: string,
+    setValue: Dispatch<SetStateAction<string>>,
+    maxValueLength: number
+}
+export const AdornmentBtn = ({value, setValue, maxValueLength}: TAdornmentBtnProps) => {
+    return (
+        <Box sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center'
+        }}>
+            {
+                value?.length > 0 && (
+                    <IconButton onClick={() => setValue('')}>
+                        <Close/>
+                    </IconButton>
+                )
+            }
+            <InputAdornment position={'end'}>{value?.length}/{maxValueLength}</InputAdornment>
+        </Box>
+    )
+}
 export default EstablishmentReviews;

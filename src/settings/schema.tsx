@@ -1,5 +1,5 @@
 import {createContext, FC, PropsWithChildren, useContext, useEffect, useState} from "react";
-import {useMobile} from "../hook";
+import {useMobile} from "@/hook";
 
 type ISchemaType = {
     styles: {

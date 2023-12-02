@@ -1,5 +1,5 @@
 import {useNavigate, useParams} from "react-router-dom";
-import {useGetIdentity, useShow, useTranslate} from "@refinedev/core";
+import {useShow, useTranslate} from "@refinedev/core";
 import {ErrorComponent} from "@refinedev/mui";
 import {
     Box, Button,
@@ -9,20 +9,19 @@ import MDEditor from "@uiw/react-md-editor";
 import {useJsApiLoader} from "@react-google-maps/api";
 import React, {useContext} from "react";
 
-import {IGetIdentity, INews, ProfileProps, PropertyProps} from "../../interfaces/common";
-import {useMobile} from "../../hook";
-import {ColorModeContext} from "../../contexts";
-import OtherNews from "../../components/news/utills/otherNews";
-import {CustomShow} from "../../components";
-import ImageGalleryV2 from "../../components/gallery/imageGallery_v-2";
+import {INews, PropertyProps} from "@/interfaces/common";
+import {useMobile, useUserInfo} from "@/hook";
+import {ColorModeContext} from "@/contexts";
+import OtherNews from "@/components/news/utills/otherNews";
+import {CustomShow} from "@/components";
+import ImageGalleryV2 from "@/components/gallery/imageGallery_v-2";
 import NewsMainInfo from "./utils/newsMainInfo";
 
 const DetailsNews = () => {
 
     const {id} = useParams();
     const navigate = useNavigate();
-    const {data: identity} = useGetIdentity<IGetIdentity>();
-    const user: ProfileProps = identity?.user as ProfileProps;
+    const {user} = useUserInfo();
     const { width} = useMobile();
     const {mode, collapsed} = useContext(ColorModeContext);
     const translate = useTranslate();
@@ -82,7 +81,16 @@ const DetailsNews = () => {
                     flexDirection: 'column',
                     gap: {xs: 4, md: 5, lg: 6},
                     color: 'common.white',
-                    maxWidth: width < 1200 ? '100%' : width < 1500 ? (collapsed ? '750px' : '700px') : width < 1800 ? '800px' : '900px' ,
+                    maxWidth: '900px' ,
+                    "@media screen and (max-width: 1200px)":{
+                        maxWidth: '100%'
+                    },
+                    "@media screen and (max-width: 1500px)":{
+                        maxWidth: collapsed ? '750xp' : '700px'
+                    },
+                    "@media screen and (max-width: 1800px)":{
+                        maxWidth: '800px'
+                    },
                 }}>
                     <ImageGalleryV2 images={news?.pictures}/>
                     <Box sx={{

@@ -4,10 +4,11 @@ import {useNavigate, useSearchParams} from "react-router-dom";
 import {CanAccess, useTranslate} from "@refinedev/core";
 import {EastOutlined} from "@mui/icons-material";
 
-import {axiosInstance} from "../../authProvider";
-import {useMobile, useRole} from "../../hook";
-import {CurrentChatContainer, CustomDrawer, ListChats, SearchInstitutions} from "../../components";
-import {IConversation} from "../../interfaces/common";
+import {axiosInstance} from "@/authProvider";
+import {useMobile, useRole} from "@/hook";
+import {CurrentChatContainer, CustomDrawer, ListChats} from "@/components";
+import {IConversation} from "@/interfaces/common";
+
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
@@ -191,7 +192,10 @@ const Chat = () => {
                                 p: '15px',
                                 bgcolor: "primary.main",
                                 maxHeight: '80vh',
-                                width: (900 < width && width < 950) ? '330px' : 'auto'
+                                width: 'auto',
+                                "@media screen and (max-width: 950px && min-width: 900px)":{
+                                    width: '330px'
+                                },
                             }}>
                                 <CurrentChatContainer
                                     setOpenDrawer={setOpenDrawer}

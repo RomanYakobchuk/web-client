@@ -3,10 +3,10 @@ import {useTranslate} from "@refinedev/core";
 import {ReactNode, useState} from "react";
 import {Radar} from "@mui/icons-material";
 
-import CustomDrawer from "../custom/customDrawer";
-import {useMobile} from "../../../hook";
+import CustomDrawer from "../../drawer/customDrawer";
+import {useMobile} from "@/hook";
 import FindNearbyPlaces from "../places/findNearbyPlaces";
-import {PropertyProps} from "../../../interfaces/common";
+import {PropertyProps, IColor} from "@/interfaces/common";
 
 type TProps = {
     style?: SxProps,
@@ -17,7 +17,8 @@ type TProps = {
     variant?: "text" | "contained" | "outlined",
     location: PropertyProps['location'],
     error?: string | null,
-    establishment?: PropertyProps
+    establishment?: PropertyProps,
+    btnColor?: IColor['color']
 }
 
 // export const OpenDrawer = 'openDrawer';
@@ -31,10 +32,11 @@ const NearbyEstablishmentBtn = ({
                                     variant = 'contained',
                                     location,
                                     error,
-                                    establishment
+                                    establishment,
+                                    btnColor = 'info'
                                 }: TProps) => {
     const translate = useTranslate();
-    const {device} = useMobile();
+    const {device, width} = useMobile();
     // const go = useGo();
     // const {params} = useParsed();
     const [openDrawer, setOpenDrawer] = useState<boolean>(false);
@@ -66,14 +68,14 @@ const NearbyEstablishmentBtn = ({
     //             setOpenDrawer(v)
     //         }
     //     }
-        // for (const filter of params?.filters as LogicalFilter[]) {
-        //     if (filter?.field === OpenDrawer && filter?.value !== undefined) {
-        //         console.log(filter?.value)
-        //         if (typeof filter?.value !== 'boolean' && filter?.value === ('true' || 'false')) {
-        //             setOpenDrawer(Boolean(filter?.value))
-        //         }
-        //     }
-        // }
+    // for (const filter of params?.filters as LogicalFilter[]) {
+    //     if (filter?.field === OpenDrawer && filter?.value !== undefined) {
+    //         console.log(filter?.value)
+    //         if (typeof filter?.value !== 'boolean' && filter?.value === ('true' || 'false')) {
+    //             setOpenDrawer(Boolean(filter?.value))
+    //         }
+    //     }
+    // }
     // }, [params?.openDrawer]);
 
     // useEffect(() => {
@@ -95,6 +97,7 @@ const NearbyEstablishmentBtn = ({
     return (
         <>
             <Button
+                color={btnColor}
                 variant={variant}
                 onClick={onClick}
                 sx={{
@@ -103,7 +106,7 @@ const NearbyEstablishmentBtn = ({
                     justifyContent: 'center',
                     gap: 1,
                     textTransform: 'inherit',
-                    marginTop: {xs: '10px', sm: 0},
+                    // marginTop: {xs: '10px', sm: 0},
                     ...style
                 }}
             >
@@ -112,6 +115,7 @@ const NearbyEstablishmentBtn = ({
             </Button>
             <CustomDrawer
                 open={openDrawer as boolean}
+                maxWidth={width < 600 ? '100%' : width < 900 ? '600px' : width < 1500 ? '800px' : '1000px'}
                 anchor={device ? "bottom" : "right"}
                 title={<Box sx={{
                     display: 'flex',

@@ -323,6 +323,7 @@ const FindNearbyPlaces = ({location, establishment, setOpenDrawer}: TProps) => {
                         : isError ? <div>Something went wrong (((</div>
                             : establishmentList?.length > 0 && (
                             <PropertiesList
+                                numberOfColumnsByWidth={innerWidth < 500 ? 1 : 2}
                                 items={establishmentList}
                                 setIsOpen={setOpenDrawer}
                             />

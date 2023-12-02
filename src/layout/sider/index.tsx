@@ -39,6 +39,7 @@ import {ColorModeContext} from "../../contexts";
 import {ModalWindow} from "../../components";
 import {SchemaContext} from "../../settings/schema";
 import {googleLogout} from "@react-oauth/google";
+import {socket} from "@/socketClient";
 
 export const Sider: typeof DefaultSider = ({render}) => {
 
@@ -144,7 +145,7 @@ export const Sider: typeof DefaultSider = ({render}) => {
                                         sx={{
                                             justifyContent: "center",
                                             minWidth: 36,
-                                            color: "primary.contrastText",
+                                            color: isSelected ? '#fff' : "primary.contrastText",
                                         }}
                                     >
                                         {icon ?? <ListOutlined/>}
@@ -153,6 +154,7 @@ export const Sider: typeof DefaultSider = ({render}) => {
                                         primary={t(`${name}.${name}`)}
                                         primaryTypographyProps={{
                                             noWrap: true,
+                                            color: isSelected ? '#fff' : "primary.contrastText",
                                             fontSize: "16px",
                                             fontWeight: isSelected
                                                 ? "bold"
@@ -208,18 +210,23 @@ export const Sider: typeof DefaultSider = ({render}) => {
                                     bgcolor: isSelected
                                         ? "#475be8"
                                         : "transparent",
+                                    color: isSelected ? '#fff' : "primary.contrastText",
                                     "&:hover": {
                                         bgcolor: "#1e36e8",
-                                        color: (theme) => theme.palette.secondary.main,
+                                        color: '#fff',
                                     },
                                 },
                                 transition: '300ms linear',
+                                color: isSelected ? '#fff' : "primary.contrastText",
+                                // "& *": {
+                                //     color: isSelected ? '#fff' : "primary.contrastText",
+                                // },
                                 "&:hover": {
                                     bgcolor: "#1e36e8",
-                                    color: (theme) => theme.palette.secondary.main,
+                                    color: '#fff',
                                 },
-                                "&:hover > div": {
-                                    color: (theme) => theme.palette.secondary.main,
+                                "&:hover > div, &:hover span": {
+                                    color: '#fff',
                                 },
                                 justifyContent: "center",
                                 margin: "10px auto",
@@ -232,7 +239,7 @@ export const Sider: typeof DefaultSider = ({render}) => {
                                 sx={{
                                     justifyContent: "center",
                                     minWidth: 36,
-                                    color: (theme) => theme.palette.secondary.main,
+                                    color: isSelected ? '#fff' : 'secondary.main',
                                 }}
                             >
                                 {icon ?? <ListOutlined/>}
@@ -243,7 +250,7 @@ export const Sider: typeof DefaultSider = ({render}) => {
                                     noWrap: true,
                                     fontSize: "16px",
                                     fontWeight: isSelected ? "bold" : "normal",
-                                    color: (theme) => theme.palette.secondary.main,
+                                    color: isSelected ? '#fff' : "secondary.main",
                                     marginLeft: "10px",
                                 }}
                             />
@@ -253,13 +260,13 @@ export const Sider: typeof DefaultSider = ({render}) => {
             );
         });
     };
-    const [logoutPath, setLogoutPath] = useState(window.location.pathname + window.location.search);
-
-    useEffect(() => {
-        if (window.location.pathname) {
-            setLogoutPath(window.location.pathname + window?.location?.search)
-        }
-    }, [window.location.pathname, window.location.search]);
+    // const [logoutPath, setLogoutPath] = useState(window.location.pathname + window.location.search);
+    //
+    // useEffect(() => {
+    //     if (window.location.pathname) {
+    //         setLogoutPath(window.location.pathname + window?.location?.search)
+    //     }
+    // }, [window.location.pathname, window.location.search]);
 
     const logout = isExistAuthentication && (
         <Tooltip
@@ -315,6 +322,7 @@ export const Sider: typeof DefaultSider = ({render}) => {
                             onClick={() => {
                                 googleLogout()
                                 mutateLogout()
+                                socket.disconnect()
                                 FB?.getLoginStatus(function (response) {
                                     if (response.status === 'connected') {
                                         FB?.logout()
@@ -341,17 +349,18 @@ export const Sider: typeof DefaultSider = ({render}) => {
                         justifyContent: "center",
                         margin: "10px auto",
                         borderRadius: "12px",
+                        bgcolor: 'error.main',
                         minHeight: "56px",
                         width: "90%",
                         transition: '300ms linear',
-                        color: (theme) => theme.palette.secondary.main,
+                        color: 'secondary.main',
                         "&:hover": {
                             bgcolor: 'red',
-                            color: (theme) => theme.palette.secondary.main,
-                            transition: '300ms linear',
-                            "> div": {
-                                color: (theme) => theme.palette.secondary.main
-                            }
+                            //     color: (theme) => theme.palette.secondary.main,
+                            //     transition: '300ms linear',
+                            //     "> div": {
+                            //         color: (theme) => theme.palette.secondary.main
+                            //     }
                         }
                     }}
                 >
@@ -503,7 +512,7 @@ export const Sider: typeof DefaultSider = ({render}) => {
                         display: {xs: "none", md: "block"},
                         zIndex: 8,
                         "& .MuiDrawer-paper": {
-                            borderRight: schema === 'schema_1' ? '1px dashed silver' : '',
+                            // borderRight: schema === 'schema_1' ? '1px dashed silver' : '',
                             width: drawerWidth,
                             bgcolor: 'common.black',
                             overflow: "hidden",

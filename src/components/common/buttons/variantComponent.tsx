@@ -1,34 +1,40 @@
 import {FormatListBulleted, GridViewOutlined} from "@mui/icons-material";
 import {Button, ButtonGroup} from "@mui/material";
-import React, {useContext, useEffect, useState} from "react";
+import React, {ReactNode, useContext, useEffect, useState} from "react";
 
-import {VariantContext} from "../../../settings/variantEstablishment";
+import {VariantContext} from "@/settings/variantEstablishment";
 
 type TProps = {
-    type: "establishment" | "news"
+    type: "establishment" | "news",
+    variant1Icon?: ReactNode,
+    variant2Icon?: ReactNode
 }
 
-const VariantComponent = ({type}: TProps) => {
+const VariantComponent = ({type, variant2Icon = <FormatListBulleted/>, variant1Icon = <GridViewOutlined/>}: TProps) => {
 
-    const {variant: placeVariant, setVariant: setPlaceVariant, setNewsVariant, newsVariant} = useContext(VariantContext);
+    if (!variant1Icon) {
+        variant1Icon = <FormatListBulleted/>
+    }
+    if (!variant2Icon) {
+        variant2Icon = <GridViewOutlined/>
+    }
+
+    const {setVariantShowItems, variantShowItems} = useContext(VariantContext);
 
     const [variant, setVariant] = useState<"variant_1" | "variant_2">("variant_1");
 
     useEffect(() => {
-        if (type === 'establishment') {
-            setVariant(placeVariant)
-        } else if (type === 'news') {
-            setVariant(newsVariant)
-        }
-    }, [type, placeVariant, newsVariant]);
+            setVariant(variantShowItems[type])
+    }, [type, variantShowItems[type]]);
 
     return (
         <ButtonGroup variant={'contained'} sx={{
             p: '5px',
             gap: 1,
-            bgcolor: 'common.black',
+            // bgcolor: 'common.black',
             borderRadius: '10px',
             border: `1px solid silver`,
+            boxShadow: '0px 0px 5px 0px #000',
             "& button": {
                 height: '30px !important',
                 borderRadius: '5px !important',
@@ -41,27 +47,30 @@ const VariantComponent = ({type}: TProps) => {
                 "&:not(:last-of-type)": {
                     position: 'relative',
                     borderRight: 'unset !important',
-                }
+                },
+                // "& svg":{
+                //     color: 'common.black'
+                // }
             }
         }}>
             {
                 [
                     {
-                        icon: <FormatListBulleted/>,
+                        icon: variant1Icon,
                         variant: 'variant_1' as 'variant_1'
                     },
                     {
-                        icon: <GridViewOutlined/>,
+                        icon: variant2Icon,
                         variant: 'variant_2' as 'variant_2'
                     }
                 ].map((item, index) => (
-                    <Button key={index}
+                    <Button className={'variantButton'} key={index}
                             onClick={() => {
-                                if (type === 'establishment') {
-                                    setPlaceVariant(item.variant)
-                                } else if (type === 'news') {
-                                    setNewsVariant(item.variant)
-                                }
+                                // if (type === 'establishment') {
+                                    setVariantShowItems({...variantShowItems, [type]: item?.variant})
+                                // } else if (type === 'news') {
+                                //     setNewsVariant(item.variant)
+                                // }
                             }}
                             sx={{
                                 bgcolor: variant === item.variant ? 'common.white' : 'transparent',

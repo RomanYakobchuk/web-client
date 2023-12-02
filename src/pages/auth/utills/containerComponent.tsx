@@ -3,66 +3,43 @@ import {Box, Container, CssBaseline, SxProps} from "@mui/material";
 import React, {ReactNode, useContext} from "react";
 import {ColorModeContext} from "../../../contexts";
 import Copyright from "./copyright";
-import {useMobile} from "../../../hook";
 
 import "./containerStyles.css";
-import MovingElement from "./movingElement";
 
 interface IProps {
     children: ReactNode,
-    isPicture?: boolean,
     childrenProps?: SxProps,
-    picturePath?: string,
-    pictureProps?: SxProps
 }
 
-const ContainerComponent = ({children, isPicture = true, childrenProps, picturePath, pictureProps}: IProps) => {
+const ContainerComponent = ({children, childrenProps}: IProps) => {
     const {mode} = useContext(ColorModeContext);
-    const {width} = useMobile();
-    const totalElements = 7; // Кількість елементів
-    const radius = width / 2 - 100;
-    const duration = 3000;
 
     return (
         <Box sx={{
             width: '100%',
             flex: 1,
-            minHeight: '100vh',
+            // minHeight: '100vh',
             height: '100%',
-            bgcolor: mode === "dark" ? "#173d4f" : '#E9EEF2',
+            overflowX: 'hidden',
+            overflowY: 'auto',
+            // bgcolor: mode === "dark" ? "#1c1d21" : '#f1f3f4',
+            // pb: 4
         }}>
             <Header/>
             <Container component="main" sx={{
                 bgcolor: 'transparent',
                 width: '100vw',
                 position: 'relative',
-                height: '100%',
+                height: 'fit-content',
+                minHeight: '100%',
                 zIndex: 0,
-                p: '0 !important',
+                p: '0',
                 // mt: 2,
-                overflowX: 'hidden',
                 maxWidth: '100% !important',
-                overflowY: 'auto',
+                // pb: 4,
             }}>
                 <CssBaseline/>
-                <Box sx={{
-                    width: '90%',
-                    height: '500px',
-                    position: 'relative',
-                    margin: '0 auto',
-                    transform: 'translate(50%, 60%)'
-                }}>
-                    {Array.from({length: totalElements}).map((_, index) => (
-                        <MovingElement
-                            key={index}
-                            index={index}
-                            totalElements={totalElements}
-                            // background={'linear-gradient(rgba(222,19,35,0.6), rgba(222,19,35,0.4))'}
-                            radius={radius}
-                            duration={duration}
-                        />
-                    ))}
-                </Box>
+
                 {/*<Box sx={{*/}
                 {/*    position: 'absolute',*/}
                 {/*    width: '150px',*/}
@@ -97,10 +74,11 @@ const ContainerComponent = ({children, isPicture = true, childrenProps, pictureP
                 {/*    animation: 'circular3 10s linear infinite'*/}
                 {/*}}/>*/}
                 <Box sx={{
-                    bgcolor: mode === 'dark' ? 'rgba(50, 50, 50, 0.3)' : 'rgba(255, 255, 255, 0.5)',
-                    backdropFilter: 'blur(10px)',
+                    bgcolor: mode === 'dark' ? 'rgba(50, 50, 50, 0.3)' : 'rgba(255, 255, 255, 1)',
+                    // backdropFilter: 'blur(10px)',
                     width: '100%',
-                    height: '100%',
+                    height: 'fit-content',
+                    minHeight: '100%',
                     position: 'absolute',
                     display: 'flex',
                     zIndex: 5,
@@ -108,8 +86,9 @@ const ContainerComponent = ({children, isPicture = true, childrenProps, pictureP
                 }}>
                     <Box sx={{
                         width: '100%',
-                        height: '100%',
-                        maxHeight: '100%',
+                        height: 'fit-content',
+                        // maxHeight: '100%',
+                        minHeight: '100%',
                         display: 'flex'
                     }}>
                         <Box sx={{
@@ -118,23 +97,12 @@ const ContainerComponent = ({children, isPicture = true, childrenProps, pictureP
                             // maxWidth: '440px',
                             width: '100%',
                             margin: '0 auto',
+                            height: 'fit-content',
                             ...childrenProps
                         }}>
                             {children}
                             <Copyright sx={{mt: 5, mb: 10}}/>
                         </Box>
-                        {
-                            isPicture && width > 900 && (
-                                <Box sx={{
-                                    height: '100%',
-                                    width: '40%',
-                                    order: 3,
-                                    backgroundImage: `url(${picturePath ? picturePath : "images/home/restaurant.png"})`,
-                                    backgroundPosition: 'center',
-                                    ...pictureProps
-                                }}/>
-                            )
-                        }
                     </Box>
                 </Box>
             </Container>

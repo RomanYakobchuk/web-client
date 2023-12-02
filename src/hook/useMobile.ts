@@ -1,5 +1,5 @@
 import {useContext, useEffect, useState} from "react";
-import {ColorModeContext} from "../contexts";
+import {ColorModeContext} from "@/contexts";
 
 type TMobile = {
     width: number,
@@ -20,14 +20,14 @@ export const useMobile = (): TMobile => {
     const [height, setHeight] = useState(window.innerHeight);
     // const [layoutWidth, setLayoutWidth] = useState<number>(width > 900 ? collapsed ? width - 64 : width - 200 : width);
 
-    const maxDeviceWidth = Math.min(window.innerWidth, window.screen.width);
+    const maxDeviceWidth = Math.min(window.screen.width, innerWidth);
 
     const [layoutWidth, setLayoutWidth] = useState<number>(
-        width > 900 ? (collapsed ? Math.min(width - 64, maxDeviceWidth) : Math.min(width - 200, maxDeviceWidth)) : width
+        innerWidth > 900 ? (collapsed ? Math.min(width - 64, maxDeviceWidth) : Math.min(width - 200, maxDeviceWidth)) : innerWidth
     );
 
     const handleCheckLayout = () => {
-        const newWidth = window.innerWidth;
+        const newWidth = innerWidth;
         const newLayoutWidth =
             newWidth > 900 ? (collapsed ? Math.min(newWidth - 64, maxDeviceWidth) : Math.min(newWidth - 200, maxDeviceWidth)) : newWidth;
         setWidth(newWidth);
@@ -43,11 +43,11 @@ export const useMobile = (): TMobile => {
             window.removeEventListener('resize', handleCheckLayout);
             window.removeEventListener('orientationchange', handleCheckLayout);
         };
-    }, [width, collapsed, maxDeviceWidth, window.screen.orientation]);
+    }, [innerWidth, collapsed, maxDeviceWidth, window.screen.orientation, window.screen.width, navigator.userAgent]);
     useEffect(() => {
         const handleSet = () => {
-            setWidth(window.innerWidth);
-            setHeight(window.innerHeight);
+            setWidth(innerWidth);
+            setHeight(innerHeight);
             checkDevice().then(isMobile => {
                 setDevice(isMobile);
             });
@@ -65,7 +65,7 @@ export const useMobile = (): TMobile => {
             window.removeEventListener("resize", handleSet);
             window.removeEventListener('orientationchange', handleSet)
         }
-    }, [window.screen.orientation, window.innerWidth, collapsed]);
+    }, [window.screen.orientation, innerWidth, navigator.userAgent, collapsed, window.screen.width]);
 
     return {
         device, width, layoutWidth, height

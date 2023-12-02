@@ -22,6 +22,9 @@ p, admin, home, (list)|(create)
 p, admin, home, (show)|(edit)|(delete)
 
 p, admin, all_institutions, (list)|(create)
+p, admin, (all_institutions/adminList), (list)|(create)
+p, admin, (all_institutions/adminList), (show)|(edit)|(delete)
+
 p, admin, all_institutions, (show)|(edit)|(delete)
 p, admin, all_institutions, update_status
 p, admin, all_institutions, add_free_places
@@ -42,11 +45,13 @@ p, admin, institutions, adminListInstitutions
 p, admin, institutions, userListInstitutions
 p, admin, news, adminListNews
 
-p, admin, capl, (list)|(create)
-p, admin, capl, managerListReserve
+p, admin, capl, (create)
+// p, admin, capl, userListReserve
 p, admin, capl, (show)|(edit)|(delete)
 p, admin, capl, updateUserStatus
 p, admin, capl, updateInstitutionStatus
+
+p, admin, dashboard, list
 
 p, admin, institution/deleteOne, delete
 
@@ -54,17 +59,21 @@ p, admin, my-review, list
 
 p, admin, all-reviews, (list)|(create)
 p, admin, all-reviews, (edit)|(show)|(delete)
+p, admin, list, (list)|(create)
+p, admin, list, (edit)|(show)|(delete)
 
 p, admin, favorite-places, list
 
 p, admin, all-places, (list)|(create)
 p, admin, all-places, (edit)|(show)|(delete)
 
-p, admin, all-users, (list)|(create)
-p, admin, all-users, (edit)|(show)|(delete)
+p, admin, dashboard/user, (list)|(create)
+p, admin, dashboard/user, (edit)|(show)|(delete)
 
 p, admin, all-news, (list)|(create)
 p, admin, all-news, (edit)|(show)|(delete)
+
+p, admin, chooseUser, choose
 
 p, admin, top_institutions, (list)|(create)
 p, admin, top_institutions, show

@@ -1,18 +1,16 @@
-import {Box, Grid, Skeleton, Typography} from "@mui/material";
+import {Box, Typography} from "@mui/material";
 import {useList, useTranslate} from "@refinedev/core";
-import {Link, useNavigate} from "react-router-dom";
+import {Link} from "react-router-dom";
 import {Typography as TypographyAntd} from "antd";
 import {CallMade, PlaceOutlined} from "@mui/icons-material";
-import ScrollContent from "../common/scroll/scrollContent";
-import {useMobile} from "../../hook";
+
+import {useMobile} from "@/hook";
 import {CarouselComponent} from "../index";
-import {IPicture} from "../../interfaces/common";
 
 const {Text} = TypographyAntd;
 const CountViews = () => {
 
     const translate = useTranslate();
-    const navigate = useNavigate();
     const {layoutWidth, width} = useMobile();
 
 
@@ -43,13 +41,13 @@ const CountViews = () => {
                 </Typography>
             }
             <Box sx={{
-                width: {xs: '80vw', md: layoutWidth - 160},
+                width: {xs: '80vw', md: `calc(${layoutWidth}px - 160px)`},
                 margin: '0 auto',
                 position: 'relative'
             }}>
                 <CarouselComponent>
                     {
-                        dataViews?.data?.map((item, index, array) => (
+                        dataViews?.data?.map((item, index) => (
                             <Box key={index} sx={{
                                 width: '100%',
                                 height: {xs: '180px', lg: '220px'},
@@ -62,16 +60,12 @@ const CountViews = () => {
                                         width: '100%',
                                         height: '100%',
                                         borderRadius: '10px',
-                                        backgroundImage: `url("${item.url}")`,
+                                        backgroundImage: `url("${item?.url}")`,
                                         backgroundPosition: 'center',
                                         backgroundSize: 'cover',
                                         display: 'flex',
                                         flexDirection: 'column',
                                         justifyContent: 'space-between',
-                                        // "& a":{
-                                        //     maxHeight: {xs: '60%', md: '45%'},
-                                        //     height: {xs: '60%', md: '45%'},
-                                        // }
                                     }}>
                                     <Box sx={{
                                         display: 'flex',

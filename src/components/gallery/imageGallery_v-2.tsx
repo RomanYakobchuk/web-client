@@ -1,9 +1,10 @@
 import {useContext, useEffect, useState} from "react";
 import {Box, SxProps} from "@mui/material";
-import {IPicture} from "../../interfaces/common";
-import {ColorModeContext} from "../../contexts";
 import {Image} from "antd";
-import {useMobile} from "../../hook";
+
+import {IPicture} from "@/interfaces/common";
+import {ColorModeContext} from "@/contexts";
+import {useMobile} from "@/hook";
 import {touchScroll} from "../common/scroll/touchScroll";
 
 type TProps = {
@@ -40,7 +41,7 @@ const ImageGalleryV2 = ({images, styles}: TProps) => {
     const isMoreOne = gallery?.length > 1;
     const changeImageWidth = gallery?.length === 2 ? 'calc(50% - 4px)' : gallery?.length === 3 ? 'calc(100% / 3 - 4px)' : width < 600 ? '150px' : '200px';
 
-    const maxWidth = width > 900 ? (collapsed ? 'calc(100vw - 104px)' : 'calc(100vw - 240px)') : 'calc(100vw - 40px)';
+    const maxWidth = width > 900 ? (collapsed ? 'calc(100vw - 104px)' : 'calc(100vw - 240px)') : 'calc(100vw - 30px)';
 
     const someStyle = !device ? {
         '&::-webkit-scrollbar': {

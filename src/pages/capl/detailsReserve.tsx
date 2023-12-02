@@ -1,40 +1,40 @@
 import {useNavigate, useParams} from "react-router-dom";
-import {useDelete, useGetIdentity, useShow, useTranslate} from "@refinedev/core";
+import {useDelete, useShow, useTranslate} from "@refinedev/core";
 import {
     Box,
     Button,
     CardContent,
     CardHeader,
-    Grid, Tooltip, IconButton,
+    Grid, Tooltip, IconButton, Divider,
 } from "@mui/material";
-import {TagField} from "@refinedev/mui";
 import dayjs from "dayjs";
-import {Check, Close, Delete, EastOutlined, RateReview} from "@mui/icons-material";
-import {Typography} from "antd";
-import React, {useContext, useState} from "react";
+import {Check, Close, Delete, EastOutlined, Place, RateReview} from "@mui/icons-material";
+import {Image, Typography} from "antd";
+import React, {ReactNode, useContext, useState} from "react";
 
-import {IGetIdentity, IReserve, ProfileProps} from "../../interfaces/common";
-import {ColorModeContext} from "../../contexts";
-import {CustomShow, TitleTextItem as Item} from "../../components";
-import "../../components/capl/reserve_style.css";
+import {IReserve} from "@/interfaces/common";
+import {ColorModeContext} from "@/contexts";
+import {CustomShow} from "@/components";
+import "@/components/capl/reserve_style.css";
+import {useMobile, useUserInfo} from "@/hook";
+import RenderTag from "@/components/common/statusTagRender";
 
 const {Title, Text} = Typography;
 
 interface GridItem {
-    value: string | any,
-    title: string
+    value: string | ReactNode,
+    title: string,
+    field?: string
 }
 
 
 const DetailsReserve = () => {
     const {id} = useParams();
-    const {data: identity} = useGetIdentity<IGetIdentity>();
-    const user: ProfileProps = identity?.user as ProfileProps;
+    const {user} = useUserInfo();
     const navigate = useNavigate();
+    const {width} = useMobile();
     const {mode} = useContext(ColorModeContext);
     const translate = useTranslate();
-
-    const [selectedItem, setSelectedItem] = useState<number | null>(null);
 
     const {queryResult} = useShow<IReserve>({
         resource: 'capl/findOne',
@@ -50,20 +50,13 @@ const DetailsReserve = () => {
 
     const reserve = data?.data as IReserve;
 
-    const textColor = mode === 'dark' ? '#fff' : '#000';
-
-    const handleClick = (index: number) => {
-        setSelectedItem((prevSelectedItem) =>
-            prevSelectedItem === index ? null : index
-        );
-    };
     const items: GridItem[] = [
         {
             value: reserve?.fullName,
             title: translate('capl.create.fullName')
         },
         {
-            value: dayjs(reserve?.date).format('DD/MM/YYYY HH:mm'),
+            value: dayjs(reserve?.date).format('DD/MM/YYYY HH:mm') + ' ' + dayjs(reserve?.date)?.fromNow(),
             title: translate('capl.create.date')
         },
         {
@@ -79,12 +72,12 @@ const DetailsReserve = () => {
             title: translate('capl.create.whoPay')
         },
         {
-            value: <Box
-                sx={{
+            value: <span
+                style={{
                     display: 'flex',
                     flexDirection: 'row',
                     alignItems: 'center',
-                    gap: 2
+                    gap: '16px'
                 }}
             >
                 {
@@ -93,78 +86,22 @@ const DetailsReserve = () => {
                 <IconButton
                     disabled={!reserve?.writeMe}
                     sx={{
-                        m: 'auto'
+                        // m: 'auto'
                     }}
                     color={'inherit'}
                     onClick={() => navigate(`/chats/show/${reserve?.user}/${reserve?.institution?._id}`)}
                 >
                     <RateReview/>
                 </IconButton>
-            </Box>,
+            </span>,
             title: translate('capl.create.writeMe')
         },
         {
-            value: reserve?.userStatus?.value === 'accepted'
-                ?
-                <TagField
-                    style={{
-                        fontSize: '16px',
-                        padding: '7px'
-                    }}
-                    value={translate(`capl.status.${reserve?.userStatus?.value}`)}
-                    color={"success"}/>
-                : reserve?.userStatus?.value === 'draft'
-                    ?
-                    <TagField
-                        style={{
-                            fontSize: '16px',
-                            padding: '7px'
-                        }}
-                        value={translate(`capl.status.${reserve?.userStatus?.value}`)}
-                        color={"info"}/>
-                    : reserve?.userStatus?.value === 'rejected'
-                        ? <TagField
-                            style={{
-                                fontSize: '16px',
-                                padding: '7px'
-                            }}
-
-                            value={translate(`capl.status.${reserve?.userStatus?.value}`)}
-                            color={"error"}/>
-                        : <TagField value={""}
-                                    color={"default"}/>,
+            value: <RenderTag value={reserve?.userStatus?.value}/>,
             title: translate('capl.status.userStatus')
         },
         {
-            value: reserve?.institutionStatus?.value === 'accepted'
-                ?
-                <TagField
-                    style={{
-                        fontSize: '16px',
-                        padding: '7px'
-                    }}
-                    value={translate(`capl.status.${reserve?.institutionStatus?.value}`)}
-                    color={"success"}/>
-                : reserve?.institutionStatus?.value === 'draft'
-                    ?
-                    <TagField
-                        style={{
-                            fontSize: '16px',
-                            padding: '7px'
-                        }}
-                        value={translate(`capl.status.${reserve?.institutionStatus?.value}`)}
-                        color={"info"}/>
-                    : reserve?.institutionStatus?.value === 'rejected'
-                        ? <TagField
-                            style={{
-                                fontSize: '16px',
-                                padding: '7px'
-                            }}
-
-                            value={translate(`capl.status.${reserve?.institutionStatus?.value}`)}
-                            color={"error"}/>
-                        : <TagField value={""}
-                                    color={"default"}/>,
+            value: <RenderTag value={reserve?.institutionStatus?.value}/>,
             title: translate('capl.status.institutionStatus')
         },
         {
@@ -173,86 +110,133 @@ const DetailsReserve = () => {
         },
         {
             value: reserve?.comment,
-            title: translate('capl.create.comment')
+            title: translate('capl.create.comment'),
+            field: 'comment'
         },
     ];
+
+    const gridItemWidth = `calc(${(width < 500 || (width >= 900 && width < 1100)) ? '100% / 2 - 8px' : (width < 900 || (width > 1100 && width <= 1300)) ? 'calc(100% / 4)' : 'calc(100% / 5)'})`
 
     if (isError) return <div>Error</div>
     return (
         <CustomShow
             isLoading={isLoading}
+            bgColor={'transparent'}
             isShowButtons={user?._id === reserve?.user || user?._id === reserve?.manager || user?.status === 'admin'}
         >
-            <Box
-                sx={{
-                    display: 'grid',
-                    gridTemplateColumns: {
-                        xs: 'repeat(auto-fit, minmax(calc(100% / 3), 1fr))',
-                        sm: 'repeat(auto-fit, minmax(calc(100% / 4), 1fr))',
-                        md: 'repeat(auto-fit, minmax(calc(100% / 5), 1fr))',
-                        lg: 'repeat(auto-fit, minmax(calc(100% / 6), 1fr))',
-                        xl: 'repeat(auto-fit, minmax(calc(100% / 8), 1fr))',
-                    },
-                    gap: '8px',
-                    gridAutoRows: 'minmax(0, 1fr)',
-                }}
-            >
-                {
-                    items.map((item, index) => (
-                            <Box
-                                key={index + 1}
-                                onClick={() => handleClick(index)}
-                                sx={{
-                                    transition: 'width 1s ease-in-out, height 1s ease-in-out',
-                                }}
-                                className={`grid-item ${selectedItem === index ? 'selected' : 'shrink'}`}
-                            >
-                                <Item
-                                    title={item.title} value={item.value}/>
-                            </Box>
+            <Box sx={{
+                width: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 2
+            }}>
+                <div style={{
+                    width: '100%',
+                    display: 'flex',
+                    justifyContent: 'end'
+                }}>
+                    <Box sx={{
+                        p: '8px 16px',
+                        bgcolor: reserve?.isActive ? '#00be65' : '#ff6464',
+                        color: '#010101',
+                        borderRadius: '10px',
+                        fontSize: {xs: '16px', sm: '18px'},
+                        width: 'fit-content'
+                    }}>
+                        {translate(`capl.status.valid.${reserve?.isActive ? 'active' : 'inactive'}`)}
+                    </Box>
+                </div>
+                <Box
+                    sx={{
+                        display: 'grid',
+                        gridTemplateColumns: `repeat(auto-fit, minmax(${gridItemWidth}, 1fr))`,
+                        gap: '8px',
+                        width: '100%',
+                        gridAutoRows: 'minmax(80px, 1fr)',
+                        "& *": {
+                            color: '#fff'
+                        }
+                    }}
+                >
+                    {
+                        items.map((item, index) => (
+                                <Box
+                                    key={index + 1}
+                                    // onClick={() => handleClick(index)}
+                                    sx={{
+                                        width: '100%',
+                                        gridColumn: (item?.field === 'comment' && typeof item?.value === 'string' && item?.value?.length > 10) ? 'span 2' : 'span 1',
+                                        gridRow: (item?.field === 'comment' && typeof item?.value === 'string' && item?.value?.length > 10) ? 'span 2' : 'span 1',
+                                        height: '100%',
+                                        bgcolor: mode === 'dark' ? "#252525" : '#016AB9',
+                                        borderRadius: '15px',
+                                        // p: 2,
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        gap: 1,
+                                        justifyContent: 'start',
+                                        alignItems: 'start',
+                                        "& div": {
+                                            p: '8px 16px'
+                                        }
+                                    }}
+                                    // className={`grid-item ${selectedItem === index ? 'selected' : 'shrink'}`}
+                                >
+                                    <Box sx={{
+                                        fontSize: {xs: '14px', sm: '16px'},
+                                        fontWeight: 400,
+                                        height: {xs: '45px', sm: '35px'},
+                                        display: 'flex',
+                                        alignItems: 'center'
+                                    }}>
+                                        {item?.title}
+                                    </Box>
+                                    <Divider sx={{
+                                        bgcolor: 'silver',
+                                        width: '100%'
+                                    }}/>
+                                    <Box sx={{
+                                        fontSize: {xs: '15px', sm: '17px'},
+                                        fontWeight: 600,
+                                        whiteSpace: typeof item?.value === 'string' ? 'break-space' : 'unset'
+                                    }}>
+                                        {item?.value ? item?.value : <span style={{
+                                            fontWeight: 400,
+                                            fontSize: '15px',
+                                            color: 'silver'
+                                        }}>{translate('text.nothing')}</span>}
+                                    </Box>
+                                </Box>
+                            )
                         )
-                    )
-                }
+                    }
+                </Box>
             </Box>
-            <Grid container spacing={2}>
-                <Grid item xs={12} p={4}>
-                    <CardHeader
-                        style={{
-                            color: textColor
-                        }}
-                        title={translate('home.one')}/>
-                    <CardContent>
-                        <img
-                            src={reserve?.institution?.pictures[0].url}
-                            alt={reserve?.institution?.title}
-                            style={{
-                                width: '100%',
-                                maxWidth: '400px',
-                                height: '250px',
-                                borderRadius: '10px',
-                                objectFit: 'cover'
-                            }}
-                        />
-                        <Title style={{
-                            color: textColor
-                        }} level={4}>{reserve?.institution?.title}</Title>
-                        <Text style={{
-                            color: textColor
-                        }}>{translate(`home.sortByType.${reserve?.institution?.type}`)}</Text>
-                        <Title
-                            level={5}
-                            style={{
-                                color: textColor,
-                                fontSize: '14px'
-                            }}
-                        >
-                            {reserve?.institution?.place?.address}
-                        </Title>
+            <Grid
+                sx={{
+                    "& *, & *.ant-typography": {
+                        color: 'common.white'
+                    },
+                    mt: 4,
+                    maxWidth: '500px'
+                }}
+                container spacing={2}>
+                <Grid sx={{width: '100%'}} item xs={12} p={4}>
+                    <Box sx={{
+                        width: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        flexWrap: 'wrap',
+                        gap: 2
+                    }}>
+                        <CardHeader
+                            title={translate('home.one')}/>
                         <Button
                             sx={{
-                                fontSize: {xs: '12px', sm: '14px'},
-                                width: '100%',
-                                maxWidth: '400px'
+                                fontSize: {xs: '14px', sm: '16px'},
+                                width: 'fit-content',
+                                textTransform: 'inherit'
                             }}
                             onClick={() => navigate(`/all_institutions/show/${reserve?.institution?._id}`)}
                             color={"secondary"}
@@ -260,6 +244,52 @@ const DetailsReserve = () => {
                             variant={"outlined"}>
                             {translate("buttons.details")}
                         </Button>
+                    </Box>
+                    <CardContent sx={{
+                        width: '100%',
+                        p: '16px 0 16px 16px',
+                        "& div.ant-image": {
+                            width: '100%'
+                        }
+                    }}>
+                        <Image
+                            width={'100%'}
+                            src={reserve?.institution?.pictures[0].url}
+                            alt={reserve?.institution?.title}
+                            style={{
+                                width: '100%',
+                                // maxWidth: '400px',
+                                height: '250px',
+                                borderRadius: '10px',
+                                objectFit: 'cover'
+                            }}
+                        />
+                        <Title level={4}>{reserve?.institution?.title}</Title>
+                        <Text>{translate(`home.sortByType.${reserve?.institution?.type}`)}</Text>
+                        {
+                            reserve?.institution?.place?.city && (
+                                <Box sx={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    gap: 1,
+                                    my: 0.5
+                                }}>
+                                    <Place/>
+                                    <Box sx={{
+                                        display: 'flex',
+                                        flexDirection: 'column'
+                                    }}>
+                                        <span>
+                                            {reserve?.institution?.place?.city}
+                                        </span>
+                                        <span>
+                                            {reserve?.institution?.place?.address}
+                                        </span>
+                                    </Box>
+                                </Box>
+                            )
+                        }
                     </CardContent>
                 </Grid>
             </Grid>

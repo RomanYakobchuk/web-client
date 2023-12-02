@@ -1,16 +1,31 @@
-import React, {useContext, useEffect, useState} from "react";
-import {LayoutProps, useNotification, useTranslate} from "@refinedev/core";
-import {Box, Button, Tooltip} from "@mui/material";
-import {Article} from "@mui/icons-material";
+import React, {useContext, useEffect} from "react";
+import {LayoutProps, useNotification} from "@refinedev/core";
+import {Box} from "@mui/material";
 import {Outlet, useNavigate} from "react-router-dom";
 
 import {Sider as DefaultSider} from "../sider";
 import {Header as DefaultHeader} from "../header";
 import {Footer as DefaultFooter} from "../footer";
-import {useMobile, useModalListLayout, useScrollRestoration, useUserInfo} from "../../hook";
-import {useSchema} from "../../settings";
-import {SchemaContext} from "../../settings/schema";
-import {ModalShowContent} from "../../components";
+import {useMobile, useScrollRestoration, useUserInfo} from "@/hook";
+import {useSchema} from "@/settings";
+import {SchemaContext} from "@/settings/schema";
+import {ColorModeContext} from "@/contexts";
+
+import "../layout.css";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from 'dayjs/plugin/timezone';
+
+import {useTranslation} from "react-i18next";
+
+import "dayjs/locale/uk";
+import "dayjs/locale/en";
+import {socket} from "@/socketClient";
+import {INotification} from "@/interfaces/common";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
 
 export const Layout: React.FC<LayoutProps> = ({
                                                   Sider,
@@ -21,16 +36,42 @@ export const Layout: React.FC<LayoutProps> = ({
     const SiderToRender = Sider ?? DefaultSider;
     const HeaderToRender = Header ?? DefaultHeader;
     const FooterToRender = Footer ?? DefaultFooter;
+
+    const {i18n} = useTranslation();
     const {schema} = useContext(SchemaContext);
     const {device, width} = useMobile();
     const {styles} = useSchema();
     const {user} = useUserInfo();
-    const translate = useTranslate();
-    const {modalCaplContext, setModalCaplContext} = useModalListLayout();
+    const {mode} = useContext(ColorModeContext);
     const {open, close} = useNotification();
     const navigate = useNavigate();
 
-    const [openModal, setOpenModal] = useState<boolean>(false);
+    useEffect(() => {
+
+        socket?.on('newNotification', (notification: INotification) => {
+            open?.({
+                type: 'success',
+                message: 'New notification',
+                description: notification?.message
+            })
+        })
+        return () => {
+            socket.off('newNotification');
+        }
+    }, [open]);
+
+    useEffect(() => {
+        if (user?._id) {
+            socket.connect();
+            socket.on('connect', () => {
+            });
+            socket?.emit("addUser", user?._id);
+        }
+        return () => {
+            socket.off('addUser')
+            socket.off('connect')
+        }
+    }, [user?._id]);
 
     const someStyle = !device ? {
         '&::-webkit-scrollbar': {
@@ -67,22 +108,15 @@ export const Layout: React.FC<LayoutProps> = ({
     const ref = useScrollRestoration(window.location.href);
 
     useEffect(() => {
-        setModalCaplContext([
-            {
-                color: 'info',
-                variant: 'contained',
-                link: '/capl/create',
-                name: translate('capl.title')
-            }
-        ]);
-    }, [translate]);
+        i18n.language === "ua" ? dayjs.locale('uk') : dayjs.locale('en')
+    }, [i18n.language, dayjs]);
 
     return (
         <Box
             display="flex" flexDirection="row"
             sx={{
                 margin: styles.marginS,
-                height: '100%'
+                height: '100%',
             }}>
             <SiderToRender/>
             <Box
@@ -103,14 +137,58 @@ export const Layout: React.FC<LayoutProps> = ({
                 <Box
                     ref={ref}
                     component="main"
+                    id={'mainLayout'}
                     sx={{
                         height: styles.heightLayoutS,
-                        overflow: 'auto',
+                        overflowY: 'auto',
+                        overflowX: 'hidden',
                         borderRadius: styles.borderRadiusS,
-                        bgcolor: 'common.black',
+                        // background: 'rgb(85,84,107)',
+                        backgroundSize: '300% 300%',
+                        backgroundImage: mode === 'dark'
+                            ? 'radial-gradient(circle, rgba(32,31,47,1) 0%, rgba(58,58,65,1) 20%, rgba(82,79,98,1) 40%, rgba(55,52,73,1) 60%, rgba(66,62,78,1) 80%, rgba(31,30,33,1) 100%)'
+                            // ? 'linear-gradient(180deg, rgba(32,31,47,1) 0%, rgba(58,58,65,1) 20%, rgba(82,79,98,1) 40%, rgba(55,52,73,1) 60%, rgba(66,62,78,1) 80%, rgba(31,30,33,1) 100%)'
+                            : 'radial-gradient(circle, rgba(249,249,249,1) 0%, rgb(158 185 235) 20%, rgba(235,234,242,1) 40%, rgb(157 188 227) 60%, rgba(237,233,244,1) 80%, rgba(234,232,237,1) 100%)',
+                        // : 'linear-gradient(180deg, rgba(249,249,249,1) 0%, rgba(236,236,245,1) 20%, rgba(235,234,242,1) 40%, rgba(246,246,246,1) 60%, rgba(237,233,244,1) 80%, rgba(234,232,237,1) 100%)',
+                        // WebkitAnimation: 'bgcolorGradientAnimation320s ease infinite',
+                        // MozAnimation: 'bgcolorGradientAnimation 30s ease infinite',
+                        // animation: 'bgcolorGradientAnimation 30s ease infinite',
                         ...someStyle,
-                        WebkitOverflowScrolling: 'touch'
+                        // WebkitOverflowScrolling: 'touch'
                         // paddingTop: schema === 'schema_1' ? '80px' : '0',
+                        "& div.MuiInputBase-root": {
+                            borderRadius: '7px',
+                            color: 'common.white',
+                            "&::placeholder": {
+                                color: 'silver'
+                            },
+                            "& > fieldset": {
+                                borderColor: `${mode === 'dark' ? '#fff' : '#000'} !important`
+                            }
+                        },
+                        "& .ant-select-auto-complete input": {
+                            borderColor: 'common.white'
+                        },
+                        '& label': {
+                            color: 'secondary.main',
+                        },
+                        '& .MuiOutlinedInput-root': {
+                            '& fieldset': {
+                                borderColor: 'common.white',
+                            },
+                            '&:hover fieldset': {
+                                borderColor: 'common.white',
+                            },
+                            '&.Mui-focused fieldset': {
+                                borderColor: 'common.white',
+                            },
+                        },
+                        "& label, & label.Mui-focused": {
+                            color: 'common.white'
+                        },
+                        "& *:not(button).Mui-disabled": {
+                            WebkitTextFillColor: '#514f4f !important'
+                        }
                     }}
                 >
                     {
@@ -121,71 +199,6 @@ export const Layout: React.FC<LayoutProps> = ({
                     {/*<ScrollManager/>*/}
                     <Outlet/>
                     <FooterToRender/>
-
-                    <ModalShowContent
-                        openComponent={
-                            <Tooltip title={'Capl'} arrow>
-                                <Button
-                                    onClick={() => setOpenModal(true)}
-                                    sx={{
-                                        // boxShadow: '0 0 10px #ccc',
-                                        position: 'fixed',
-                                        right: width < 900 ? '10px' : '20px',
-                                        bottom: width < 900 ? '10px' : '20px',
-                                        minWidth: '30px',
-                                        zIndex: 10,
-                                        borderRadius: '50%',
-                                        p: 1.5,
-                                        width: 'fit-content',
-                                        height: 'fit-content',
-                                        aspectRatio: '1 / 1',
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        alignItems: 'center'
-                                    }}
-                                    variant={"contained"}
-                                    color={'info'}
-                                >
-                                    <Article fontSize={'large'}/>
-                                </Button>
-                            </Tooltip>
-                        }
-                        isOpen={openModal}
-                        setIsOpen={setOpenModal}
-                        contentStyle={{
-                            width: '100%',
-                        }}
-                        modalStyle={{
-                            width: '90%',
-                            maxWidth: '500px',
-                            top: '40%'
-                        }}
-                    >
-                        <Box sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: 1
-                        }}>
-                            {
-                                modalCaplContext?.length > 0 && modalCaplContext?.map((value, index) => (
-                                    <Button key={index}
-                                            color={value?.color}
-                                            sx={{
-                                                width: '100%',
-                                                textTransform: 'inherit'
-                                            }}
-                                            onClick={() => {
-                                                navigate(value?.link)
-                                                setOpenModal(false)
-                                            }}
-                                            variant={value?.variant}
-                                    >
-                                        {value.name}
-                                    </Button>
-                                ))
-                            }
-                        </Box>
-                    </ModalShowContent>
                     {/*<ModalWindow*/}
                     {/*    open={openModal}*/}
                     {/*    setOpen={setOpenModal}*/}

@@ -1,8 +1,10 @@
-import React, {ReactNode} from "react";
-import {Box, IconButton, Modal, SxProps} from "@mui/material";
+import React, {CSSProperties, ReactNode, useEffect} from "react";
+import {Box, Button, IconButton, Modal, SxProps} from "@mui/material";
 import {Close} from "@mui/icons-material";
+import {Portal} from "@reach/portal";
 
-import {useMobile} from "../../hook";
+import {useMobile} from "@/hook";
+import {useTranslate} from "@refinedev/core";
 
 type TProps = {
     children: ReactNode,
@@ -12,10 +14,15 @@ type TProps = {
     setIsOpen: (value: boolean) => void,
     contentStyle?: SxProps,
     modalStyle?: SxProps
+    headerStyle?: CSSProperties,
+    additionalHeaderValue?: ReactNode,
+    onClick: () => void,
+    onSuccessText?: string
 }
-const ModalShowContent = ({children, openComponent, openComponentStyle, isOpen, setIsOpen, contentStyle, modalStyle}: TProps) => {
+const ModalShowContent = ({children, openComponent, openComponentStyle, isOpen, setIsOpen, contentStyle, modalStyle, onClick, headerStyle, additionalHeaderValue, onSuccessText}: TProps) => {
 
     const {device} = useMobile();
+    const translate = useTranslate();
 
     const scrollBar = !device ? {
         '&::-webkit-scrollbar': {
@@ -32,6 +39,15 @@ const ModalShowContent = ({children, openComponent, openComponentStyle, isOpen, 
             borderRadius: '5px',
         }
     } : {};
+
+    useEffect(() => {
+        if (isOpen) {
+            const modalRoot = document.getElementById('modalShowContent'); // Замість 'modal-root' вкажіть ID вашого контейнера модалі
+            if (modalRoot) {
+                modalRoot.focus();
+            }
+        }
+    }, [isOpen]);
     return (
         <>
             <Box sx={{
@@ -39,51 +55,94 @@ const ModalShowContent = ({children, openComponent, openComponentStyle, isOpen, 
             }}>
                 {openComponent}
             </Box>
-            <Modal
-                open={isOpen}
-                onClose={() => setIsOpen(false)}
-            >
-                <Box sx={{
-                    position: 'absolute' as 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    whiteSpace: 'break-spaces',
-                    borderRadius: '7px',
-                    maxWidth: '90%',
-                    maxHeight: '70vh',
-                    overflow: 'hidden',
-                    transform: 'translate(-50%, -50%)',
-                    width: 'max-content',
-                    bgcolor: 'background.paper',
-                    boxShadow: 24,
-                    p: 4,
-                    ...modalStyle
-                }}>
-                    <header style={{
-                        margin: '-32px',
-                        marginBottom: '32px',
-                        display: 'flex',
-                        justifyContent: 'end',
-                    }}>
-                        <IconButton
-                            onClick={() => setIsOpen(false)}
-                        >
-                            <Close/>
-                        </IconButton>
-                    </header>
+            {/*<Portal>*/}
+                <Modal
+                    id={'modalShowContent'}
+                    open={isOpen}
+                    container={() => document.body}
+                    onClose={() => setIsOpen(false)}
+                >
                     <Box sx={{
-                        maxHeight: 'calc(70vh - 104px)',
-                        overflowX: 'hidden',
-                        overflowY: 'auto',
-                        ...scrollBar,
-                        pr: '20px',
-                        mr: '-20px',
-                        ...contentStyle
+                        position: 'absolute' as 'absolute',
+                        left: '50%',
+                        whiteSpace: 'break-spaces',
+                        borderRadius: '7px',
+                        maxHeight: '70vh',
+                        overflow: 'hidden',
+                        transform: 'translate(-50%, -50%)',
+                        width: '100%',
+                        maxWidth: {xs: '300px', sm: '400px'},
+                        p: 0,
+                        bgcolor: 'rgba(0, 0, 0, 0.6)',
+                        backdropFilter: 'blur(15px)',
+                        boxShadow: `0px 0px 2px 0px #fff`,
+                        top: '45%',
+                        "& header svg": {
+                            color: '#fff'
+                        },
+                        ...modalStyle
                     }}>
-                        {children}
+                        <header style={{
+                            margin: '-32px',
+                            marginBottom: '32px',
+                            display: 'flex',
+                            justifyContent: 'end',
+                            ...headerStyle
+                        }}>
+                            {additionalHeaderValue && additionalHeaderValue}
+                            <IconButton
+                                onClick={() => setIsOpen(false)}
+                            >
+                                <Close/>
+                            </IconButton>
+                        </header>
+                        <Box sx={{
+                            maxHeight: 'calc(70vh - 104px)',
+                            overflowX: 'hidden',
+                            overflowY: 'auto',
+                            ...scrollBar,
+                            pr: '20px',
+                            mr: '-20px',
+                            ...contentStyle
+                        }}>
+                            {children}
+                            <Box sx={{
+                                width: '100%',
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(2, 1fr)',
+                                borderTop: '0.5px solid silver'
+                            }}>
+                                <Button
+                                    sx={{
+                                        textTransform: 'inherit',
+                                        p: '8px 16px',
+                                        fontSize: '16px',
+                                        borderRight: '0.5px solid silver',
+                                        borderRadius: '0 0 0 4px'
+                                    }}
+                                    color={'error'}
+                                    variant={'text'}
+                                    onClick={() => setIsOpen(false)}
+                                >
+                                    {translate('buttons.cancel')}
+                                </Button>
+                                <Button
+                                    sx={{
+                                        textTransform: 'inherit',
+                                        p: '8px 16px',
+                                        fontSize: '16px'
+                                    }}
+                                    color={'info'}
+                                    variant={'text'}
+                                    onClick={onClick}
+                                >
+                                    {onSuccessText || translate('buttons.save')}
+                                </Button>
+                            </Box>
+                        </Box>
                     </Box>
-                </Box>
-            </Modal>
+                </Modal>
+            {/*</Portal>*/}
         </>
     );
 };

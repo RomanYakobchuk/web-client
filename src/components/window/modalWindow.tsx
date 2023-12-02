@@ -41,6 +41,7 @@ const ModalWindow = ({children, open, setOpen, title, titleStyle, bodyProps, con
 
     const handleModalClick = (event: MouseEvent<HTMLDivElement>) => {
         event.stopPropagation();
+        event.preventDefault();
     }
 
     useEffect(() => {
@@ -108,7 +109,10 @@ const ModalWindow = ({children, open, setOpen, title, titleStyle, bodyProps, con
                     maxWidth: '700px',
                     boxShadow: 'rgba(67, 77, 91, 0.2) 0px 4px 20px',
                     borderRadius: 'clamp(0px, (100vw - 750px) * 9999, 12px)',
-                    height: width < 700 ? '100%' : '70vh',
+                    height: '70vh',
+                    "@media screen and (max-width: 700px)":{
+                        height: '100%'
+                    },
                     bgcolor: 'common.black',
                     ...contentProps
                 }}>

@@ -12,28 +12,23 @@ import {
 } from "@mui/icons-material";
 import React, {useContext, useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
-import {useGetIdentity, useTranslate} from "@refinedev/core";
+import {useTranslate} from "@refinedev/core";
 
-import {BookMarkButton, ShowMap, SubscribeButton} from "../index";
+import {ShowMap} from "../index";
 import {ImageGalleryV1} from "../gallery"
-import {IGetIdentity, ISubscribe, ProfileProps, PropertyProps} from "../../interfaces/common";
-import {ColorModeContext} from "../../contexts";
-import {useMobile} from "../../hook";
-import {useStore} from "../../store";
-import SharedComponent from "../common/shared/sharedComponent";
-import ObserverComponent from "./utills/observerComponent";
+import {PropertyProps} from "@/interfaces/common";
+import {ColorModeContext} from "@/contexts";
+import {useMobile} from "@/hook";
+import {useStore} from "@/store";
 import MDEditor from "@uiw/react-md-editor";
 
 
 interface IProps {
     establishment: PropertyProps,
-    subscribe: ISubscribe
 }
 
-const MainEstablishmentInfo = ({establishment, subscribe}: IProps) => {
+const MainEstablishmentInfo = ({establishment}: IProps) => {
 
-    const {data: identity} = useGetIdentity<IGetIdentity>();
-    const user: ProfileProps = identity?.user as ProfileProps;
     const translate = useTranslate();
     const {mode} = useContext(ColorModeContext);
     const navigate = useNavigate();
@@ -81,7 +76,10 @@ const MainEstablishmentInfo = ({establishment, subscribe}: IProps) => {
                     <Box sx={{
                         display: 'flex',
                         width: '100%',
-                        alignItems: (width < 800 && width >= 600) ? 'start' : 'center',
+                        alignItems: 'center',
+                        "@media screen and (max-width: 800px && min-width: 600px)":{
+                            alignItems: 'start'
+                        },
                         justifyContent: 'space-between',
                         flexWrap: 'wrap',
                         gap: 1
@@ -120,65 +118,6 @@ const MainEstablishmentInfo = ({establishment, subscribe}: IProps) => {
                                     translate(`home.create.type.${establishment.type}`)
                                 }
                             </Link>
-                        </Box>
-                        <Box sx={{
-                            display: 'flex',
-                            gap: 2,
-                            alignItems: 'start'
-                        }}>
-                            {
-                                (establishment?.createdBy !== user?._id
-                                    && establishment?._id && establishment?.sendNotifications) &&
-                                <SubscribeButton
-                                    createdBy={establishment?.createdBy}
-                                    showText={width > 600}
-                                    subscribe={subscribe}
-                                    establishmentId={establishment?._id}
-                                    style={{
-                                        p: '5px',
-                                        "& svg": {
-                                            fontSize: {xs: '26px', sm: '30px'}
-                                        }
-                                    }}
-                                />
-                            }
-                            <Box sx={{
-                                display: 'flex',
-                                alignItems: (width < 800 && width >= 600) ? 'end' : 'center',
-                                gap: 1,
-                                flexDirection: (width < 800 && width >= 600) ? 'column' : 'row',
-                            }}>
-                                <BookMarkButton
-                                    showText={width > 600}
-                                    color={'common.white'}
-                                    bgColor={'transparent'}
-                                    style={{
-                                        p: '5px',
-                                        borderRadius: '5px',
-                                        minWidth: '20px',
-                                        bgcolor: mode === 'dark' ? '#86a8cf' : '#e6f2ff',
-                                        "& svg": {
-                                            fontSize: {xs: '26px', sm: '30px'},
-                                            order: -1
-                                        }
-                                    }}
-                                    type={'institution'} id={establishment?._id}
-                                />
-                                <Box sx={{
-                                    backdropFilter: 'blur(7px)',
-                                    bgcolor: mode === 'dark' ? 'rgba(255,255,255,0.7)' : 'rgba(0, 0, 0, 0.4)',
-                                    borderRadius: '5px'
-                                }}>
-                                    <SharedComponent
-                                        type={'institution'}
-                                        color={'common.white'}
-                                        url={window.location.href}
-                                        isShowSharedText={width > 600}
-                                        title={translate('buttons.share')}
-                                        isOnlyShared={true}
-                                    />
-                                </Box>
-                            </Box>
                         </Box>
                     </Box>
                     <Box sx={{
@@ -316,7 +255,7 @@ const MainEstablishmentInfo = ({establishment, subscribe}: IProps) => {
                     <ImageGalleryV1 photos={establishment?.pictures}/>
                 }
                 <Box sx={{
-                    bgcolor: 'modern.modern_2.main',
+                    bgcolor: 'modern.modern_1.second',
                     p: '10px',
                     borderRadius: '15px',
                 }}>
@@ -362,7 +301,7 @@ const MainEstablishmentInfo = ({establishment, subscribe}: IProps) => {
                     p: '10px',
                     borderRadius: '15px',
                     justifyContent: 'start',
-                    bgcolor: 'modern.modern_1.main',
+                    bgcolor: 'modern.modern_1.second',
                     alignItems: 'start',
                     color: 'common.white'
                 }}>
@@ -456,7 +395,10 @@ const MainEstablishmentInfo = ({establishment, subscribe}: IProps) => {
                             }
                         </Box>
                     </Box>
-                    <>
+                    <Box sx={{
+                        diaply: 'flex',
+                        flexDirection: 'column'
+                    }}>
                         <Typography>
                             {translate("home.create.tags")}
                         </Typography>
@@ -472,20 +414,24 @@ const MainEstablishmentInfo = ({establishment, subscribe}: IProps) => {
                                 establishment?.tags?.map((tag: any, index: number) => (
                                     <Chip
                                         onClick={() => navigate(`/all_institutions?pageSize=10&current=1&sorters[0][field]=createdAt_desc&sorters[0][order]=desc&filters[0][field]=title&filters[0][value]=${'#' + tag.value}&filters[0][operator]=contains`,
-                                            {state: {value: tag.value, isTag: true}})} key={index} label={tag.value}
+                                            {state: {value: tag.value, isTag: true}})}
+                                        key={index}
+                                        label={'#' + tag.value}
                                         sx={{
-                                            cursor: 'pointer'
+                                            cursor: 'pointer',
+                                            bgcolor: 'common.white',
+                                            color: 'common.black'
                                         }}/>
                                 ))
                             }
                         </Box>
-                    </>
+                    </Box>
                 </Box>
                 <Box sx={{
                     p: '15px',
                     borderRadius: '15px',
                     color: 'common.white',
-                    bgcolor: 'modern.modern_2.main'
+                    bgcolor: 'modern.modern_1.second',
                 }}>
                     <Typography>
                         {translate('home.create.features')}

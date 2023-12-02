@@ -8,10 +8,9 @@ import VariantComponent from "./common/buttons/variantComponent";
 import Variant1EstablishmentCard from "./establishment/cards/variant1EstablishmentCard";
 import Variant2EstablishmentCard from "./establishment/cards/variant2EstablishmentCard";
 import CustomAccordion from "./common/custom/customAccordion";
-import CustomDrawer from "./common/custom/customDrawer";
+import CustomDrawer from "./drawer/customDrawer";
 import ScrollContent from "./common/scroll/scrollContent";
 import PaginationComponent from "./common/paginationComponent";
-import TitleTextItem from "./common/TitleTextItem";
 import ReviewsList from "./common/reviews-list";
 import CommentsList from "./common/lists/comments-list";
 import ImageSlider from "./common/imageSlider";
@@ -30,7 +29,7 @@ import {openGoogleMaps} from "./common/google/openGoogleMaps";
 import CustomShow from "./common/custom/customShow";
 import CustomEdit from "./common/custom/customEdit";
 import CustomCreate from "./common/custom/customCreate";
-import NewComponentButton from "./common/custom/newComponentButton";
+import NewComponentButton from "./common/buttons/newComponentButton";
 import CustomOpenContentBtn from "./common/custom/CustomOpenContentBtn";
 
 // google
@@ -50,7 +49,7 @@ import {FavoritePlaces, UserReviews, UserComments, UserInstitutions} from "./pro
 // institution
 import FilterInstitutions from "./establishment/filter";
 import InstitutionsUserList from "./establishment/userList";
-import InstitutionsAdminList from "./establishment/adminList";
+import InstitutionsAdminList from "../dashboard/properties/establishment/adminList";
 import EditUpdateStatus from "./establishment/editUpdateStatus";
 import {FormDataSeats} from "./establishment/seats";
 
@@ -62,10 +61,10 @@ import CaplManagerPage from "./capl/caplManagerPage";
 import CaplForm from "./capl/caplForm";
 
 // news
-import NewsCard from "./news/utills/NewsCard";
+import NewsCard from "./news/cards/NewsCard";
 import FilterNews from "./news/utills/filter";
 import NewsUserList from './news/userList';
-import NewsAdminList from './news/adminList';
+import NewsAdminList from '../dashboard/properties/news/adminList';
 import OtherNews from "./news/utills/otherNews";
 
 // search
@@ -105,7 +104,6 @@ export {
     CommentsList,
     CustomAccordion,
     ListChats,
-    TitleTextItem,
     NewsCard,
     FilterInstitutions,
     FilterNews,

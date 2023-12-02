@@ -1,9 +1,10 @@
-import {createContext, Dispatch, FC, PropsWithChildren, SetStateAction, useContext, useEffect, useState} from "react";
-import {useUserInfo} from "../hook";
+import {createContext, Dispatch, FC, PropsWithChildren, SetStateAction, useEffect, useState} from "react";
+
+import {useUserInfo} from "@/hook";
 import {usePermissions} from "@refinedev/core";
-import {PropertyProps} from "../interfaces/common";
-import {axiosInstance} from "../authProvider";
-import {localKeyEstablishment, localKeyLeaveCommentAs} from "../config/const";
+import {PropertyProps} from "@/interfaces/common";
+import {axiosInstance} from "@/authProvider";
+import {localKeyEstablishment, localKeyLeaveCommentAs} from "@/config/const";
 
 export type TSelectOption = {
     _id: string,
@@ -13,10 +14,8 @@ export type TSelectOption = {
 }
 export type TPropsCommentCreatorContext = {
     selectedInfo: TSelectOption,
-    // setSelectedInfo: Dispatch<SetStateAction<TProps['selectedInfo']>>
     setSelectedInfo: (value: TSelectOption) => void,
     managerRole: "user" | "establishment",
-    // setManagerRole: Dispatch<SetStateAction<TProps['managerRole']>>
     setManagerRole: (value: TPropsCommentCreatorContext['managerRole']) => void,
     managerEstablishment: PropertyProps[],
     setManagerEstablishment: Dispatch<SetStateAction<PropertyProps[]>>,

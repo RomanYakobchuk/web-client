@@ -1,37 +1,48 @@
 import {Input} from "antd";
 import {Box, Button, IconButton, SxProps} from "@mui/material";
 import {ClearOutlined, SearchOutlined} from "@mui/icons-material";
-import React, {useContext} from "react";
+import React, {useContext, useEffect} from "react";
 import {useTranslate} from "@refinedev/core";
 
-import {antdInputStyle} from "../../../styles";
-import {useMobile} from "../../../hook";
-import {ColorModeContext} from "../../../contexts";
-import {SetFilterType} from "../../../interfaces/types";
+import {antdInputStyle} from "@/styles";
+import {useMobile} from "@/hook";
+import {ColorModeContext} from "@/contexts";
+import {SetFilterType} from "@/interfaces/types";
+import {useDebounce} from "use-debounce";
 
 type TProps = {
     searchValue: string,
     setSearchValue: (value: string) => void,
-    defaultSetFilters: SetFilterType,
+    defaultSetFilters?: SetFilterType,
     isButton?: boolean,
+    fieldName?: string,
     styleSx?: SxProps
 }
-const SearchInputComponent = ({setSearchValue, searchValue, defaultSetFilters, styleSx, isButton = true}: TProps) => {
+const SearchInputComponent = ({setSearchValue, searchValue, defaultSetFilters, styleSx, isButton = true, fieldName = 'title'}: TProps) => {
     const translate = useTranslate();
     const {width} = useMobile();
     const {mode} = useContext(ColorModeContext);
 
+    const [useDebounce1] = useDebounce(searchValue, 500);
     const search = () => {
-        defaultSetFilters([
-            {
-                field: 'title',
-                value: searchValue ?? '',
-                operator: 'contains'
-            }
-        ])
+        if (defaultSetFilters) {
+            defaultSetFilters([
+                {
+                    field: fieldName,
+                    value: searchValue ?? '',
+                    operator: 'contains'
+                }
+            ])
+        }
     }
 
     const bRButtonFilter = '7px';
+
+    useEffect(() => {
+        if (!isButton) {
+            search()
+        }
+    }, [isButton, useDebounce1]);
     return (
         <Box
             sx={{
@@ -42,7 +53,8 @@ const SearchInputComponent = ({setSearchValue, searchValue, defaultSetFilters, s
                 gap: width > 500 ? 1 : 0,
                 margin: '10px 0',
                 "& button": {
-                    borderRadius: bRButtonFilter
+                    borderRadius: bRButtonFilter,
+                    display: (width > 500 && isButton) ? 'flex' : 'none'
                 },
                 "& > span": {
                     borderRadius: bRButtonFilter,
@@ -87,21 +99,23 @@ const SearchInputComponent = ({setSearchValue, searchValue, defaultSetFilters, s
                 <Button
                     onClick={() => {
                         setSearchValue('');
-                        defaultSetFilters([
-                            {
-                                field: 'title',
-                                value: '',
-                                operator: 'contains'
-                            }
-                        ])
+                        if (defaultSetFilters) {
+                            defaultSetFilters([
+                                {
+                                    field: 'title',
+                                    value: '',
+                                    operator: 'contains'
+                                }
+                            ])
+                        }
                     }}
                     variant={'contained'}
                     sx={{
                         textTransform: 'capitalize',
                         bgcolor: 'common.black',
                         color: 'common.white',
-                        border: `1px solid ${mode === 'dark' ? '#fff' : '#000'}`,
-                        boxShadow: '0px 0px 1px 1px #000',
+                        border: `1px solid ${mode === 'dark' ? '#fff' : 'transparent'}`,
+                        // boxShadow: '0px 0px 1px 1px #000',
                         "&:hover": {
                             bgcolor: 'common.black',
                             color: 'common.white',

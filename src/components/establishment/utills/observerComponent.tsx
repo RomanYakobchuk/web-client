@@ -100,29 +100,29 @@ const ObserverComponent = ({children, defaultHeight, maxWindowWidth = 1200, prop
             >
                 {children}
             </Box>
-            {
-                !isContentTrimmed && !openFull &&
-                <ModalShowContent
-                    setIsOpen={setOpenFullModal}
-                    isOpen={openFullModal}
-                    openComponent={
-                        <Box
-                            sx={{
-                                position: 'absolute',
-                                bottom: '7px',
-                                textTransform: 'lowercase',
-                                cursor: 'pointer'
-                            }}
-                            onClick={handleShowFull}
-                        >
-                            {translate('buttons.more') + '...'}
-                        </Box>
-                    }>
-                    {
-                        !isContentTrimmed && children
-                    }
-                </ModalShowContent>
-            }
+            {/*{*/}
+            {/*    !isContentTrimmed && !openFull &&*/}
+            {/*    <ModalShowContent*/}
+            {/*        setIsOpen={setOpenFullModal}*/}
+            {/*        isOpen={openFullModal}*/}
+            {/*        openComponent={*/}
+            {/*            <Box*/}
+            {/*                sx={{*/}
+            {/*                    position: 'absolute',*/}
+            {/*                    bottom: '7px',*/}
+            {/*                    textTransform: 'lowercase',*/}
+            {/*                    cursor: 'pointer'*/}
+            {/*                }}*/}
+            {/*                onClick={handleShowFull}*/}
+            {/*            >*/}
+            {/*                {translate('buttons.more') + '...'}*/}
+            {/*            </Box>*/}
+            {/*        }>*/}
+            {/*        {*/}
+            {/*            !isContentTrimmed && children*/}
+            {/*        }*/}
+            {/*    </ModalShowContent>*/}
+            {/*}*/}
             {
                 openFull &&
                 <Box

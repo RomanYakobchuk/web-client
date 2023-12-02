@@ -9,7 +9,7 @@ import {useNavigate} from "react-router-dom";
 import {ItemType} from "antd/es/breadcrumb/Breadcrumb";
 
 import './custom.css';
-import {ColorModeContext} from "../../../contexts";
+import {ColorModeContext} from "@/contexts";
 
 type TProps = {
     isLoading: boolean,

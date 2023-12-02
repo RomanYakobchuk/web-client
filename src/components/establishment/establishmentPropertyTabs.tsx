@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useParams} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import Box from '@mui/material/Box';
 import {MessageOutlined, NewspaperOutlined, ReviewsOutlined} from "@mui/icons-material";
 import {useOne, useTranslate} from "@refinedev/core";
@@ -9,9 +9,9 @@ import Tab from "@mui/material/Tab";
 
 import EstablishmentReviews from "./utills/establishment-reviews";
 import EstablishmentNews from "./utills/establishment-news";
-import {useMobile} from "../../hook";
+import {useMobile} from "@/hook";
 import EstablishmentComments from "./utills/establishment-comments";
-import {PropertyProps} from "../../interfaces/common";
+import {PropertyProps} from "@/interfaces/common";
 import {CircularProgress} from "@mui/material";
 
 type tabType = 'reviews' | 'news' | 'comments';
@@ -19,7 +19,9 @@ type tabType = 'reviews' | 'news' | 'comments';
 interface IButtons {
     label: tabType,
     icon: ReactElement,
-    count: number | ReactNode
+    count: number | ReactNode,
+    link: string,
+    index: string
 }
 
 type TNumberOfProperties = {
@@ -32,9 +34,11 @@ type TProps = {
     institution: PropertyProps
 }
 const EstablishmentPropertyTabs = ({institution}: TProps) => {
-    const translate = useTranslate();
-    const {id} = useParams();
     const {width} = useMobile();
+    const {id} = useParams();
+    const {hash} = useLocation();
+    const navigate = useNavigate();
+    const translate = useTranslate();
 
     const [value, setValue] = useState('2');
 
@@ -63,20 +67,34 @@ const EstablishmentPropertyTabs = ({institution}: TProps) => {
     const buttons: IButtons[] = [
         {
             label: 'reviews',
+            link: 'reviews',
             icon: <ReviewsOutlined/>,
-            count: showCount ?? numberOfProperties?.reviewCount
+            count: showCount ?? numberOfProperties?.reviewCount,
+            index: '1'
         },
         {
             label: 'news',
+            link: '',
             icon: <NewspaperOutlined/>,
-            count: showCount ?? numberOfProperties?.newsCount
+            count: showCount ?? numberOfProperties?.newsCount,
+            index: '2'
         },
         {
             label: 'comments',
+            link: 'comments',
             icon: <MessageOutlined/>,
-            count: showCount ?? numberOfProperties?.commentCount
+            count: showCount ?? numberOfProperties?.commentCount,
+            index: '3'
         },
-    ]
+    ];
+
+    useEffect(() => {
+        const currentTab = hash ? hash?.split('#')[1] : '';
+        const tab = buttons.find((value) => value?.link === currentTab)?.index;
+        if (tab) {
+            setValue(tab)
+        }
+    }, [hash, buttons]);
 
     return (
         <Box sx={{
@@ -97,6 +115,8 @@ const EstablishmentPropertyTabs = ({institution}: TProps) => {
                         variant={'fullWidth'}
                         aria-label="nav tabs example"
                         sx={{
+                            maxWidth: '800px',
+                            margin: '0 auto',
                             "& button": {
                                 minHeight: {xs: '36px', md: '48px'},
                                 bgcolor: 'silver',
@@ -119,12 +139,13 @@ const EstablishmentPropertyTabs = ({institution}: TProps) => {
                         }}
                     >
                         {
-                            buttons?.map(({label, icon, count}, index) => (
+                            buttons?.map(({label, icon, count, link, index}) => (
                                 <Tab
                                     key={index}
                                     icon={width > 600 ? icon : <></>}
                                     iconPosition={'start'}
-                                    value={`${index + 1}`}
+                                    value={index}
+                                    onClick={() => navigate(`#${link}`)}
                                     label={
                                         <Box sx={{
                                             display: 'flex',
@@ -147,7 +168,7 @@ const EstablishmentPropertyTabs = ({institution}: TProps) => {
                 </Box>
                 <TabPanel value={'1'}>
                     {
-                        value === '1' && id && (
+                        value === '1' && id && institution?._id && (
                             <EstablishmentReviews id={id}/>
                         )
                     }
@@ -160,14 +181,14 @@ const EstablishmentPropertyTabs = ({institution}: TProps) => {
                     }}
                 >
                     {
-                        value === '2' && id && (
+                        value === '2' && id && institution?._id && (
                             <EstablishmentNews id={id}/>
                         )
                     }
                 </TabPanel>
                 <TabPanel value={'3'}>
                     {
-                        value === '3' && id && (
+                        value === '3' && id && institution?._id && (
                             <EstablishmentComments institution={institution}/>
                         )
                     }

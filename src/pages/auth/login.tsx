@@ -96,7 +96,7 @@ const Login = () => {
         })
     };
 
-    const size = 'small';
+    const size = 'small', variant: "outlined" | "filled" | "standart" = 'outlined';
 
     return (
         <ContainerComponent>
@@ -202,8 +202,11 @@ const Login = () => {
                         fullWidth
                         id="email"
                         size={size}
-                        sx={textFieldStyle}
                         color={"secondary"}
+                        variant={variant}
+                        sx={{
+                            ...textFieldStyle
+                        }}
                         label={translate("pages.login.fields.email")}
                         {...register("email", {required: true})}
                         autoComplete="email"
@@ -214,14 +217,17 @@ const Login = () => {
                     }}>
                         <TextField
                             required
+                            variant={variant}
                             size={size}
                             fullWidth
-                            sx={textFieldStyle}
                             color={"secondary"}
                             {...register("password", {required: true})}
                             label={translate("pages.login.fields.password")}
                             type={showPass ? 'text' : 'password'}
                             id="password"
+                            sx={{
+                                ...textFieldStyle
+                            }}
                             autoComplete="current-password"
                         />
                         <Box sx={{
@@ -265,7 +271,7 @@ const Login = () => {
                                 sx={{
                                     ...buttonStyle,
                                     fontSize: '20px',
-                                    textTransform: 'uppercase',
+                                    textTransform: 'inherit',
                                     width: '100%',
                                 }}>
                             {

@@ -1,9 +1,9 @@
 import {useNavigate} from "react-router-dom";
-import {useUserInfo} from "../../hook";
+import {useUserInfo} from "@/hook";
 import React, {useEffect, useState} from "react";
-import ProfileDataForm, {INewUserData} from "../../components/profile/utills/profileDataForm";
+import ProfileDataForm, {INewUserData} from "@/components/profile/utills/profileDataForm";
 import {useForm} from "@refinedev/react-hook-form";
-import {CustomEdit} from "../../components";
+import {CustomEdit} from "@/components";
 
 const EditProfile = () => {
     const navigate = useNavigate();
@@ -35,7 +35,8 @@ const EditProfile = () => {
                 currentId: user?._id,
                 dOB: user?.dOB ? user?.dOB : '',
                 name: user?.name,
-                phone: user?.phone
+                phone: user?.phone,
+                _id: user?._id
             })
         }
     }, [user])
@@ -73,7 +74,7 @@ const EditProfile = () => {
 
     return (
         <CustomEdit
-            isLoading={formLoading}
+            isLoading={false}
             bgColor={'transparent'}
             style={{
                 maxWidth: '700px',

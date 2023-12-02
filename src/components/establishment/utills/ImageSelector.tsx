@@ -324,8 +324,9 @@ const ImageSelector = ({
                                     alignItems: "center",
                                     cursor: "pointer",
                                     borderRadius: {xs: '10px', sm: '15px'},
-                                    width: {xs: '150px', md: '195px'},
-                                    height: {xs: '150px', md: '195px'},
+                                    width: '100%',
+                                    height: '100%',
+                                    minHeight: '120px',
                                     mb: 2,
                                     transition: "300ms linear",
                                     "&:hover": {
@@ -335,7 +336,7 @@ const ImageSelector = ({
                                 }}>
                                     <AddCircleOutline sx={{
                                         color: mode === "dark" ? "#fcfcfc" : "#9ba5c9",
-                                        fontSize: {xs: "70px", md: "160px"}
+                                        fontSize: {xs: "70px", sm: '90px', md: "100px", lg: '120px'}
                                     }}/>
                                     <input
                                         hidden

@@ -12,11 +12,11 @@ import {useTranslate} from "@refinedev/core";
 import MDEditor from "@uiw/react-md-editor";
 
 import ImageSelector from "../../establishment/utills/ImageSelector";
-import {ColorModeContext} from "../../../contexts";
-import {IMDEditor, INewsDateEvent, IPicture} from "interfaces/common";
+import {ColorModeContext} from "@/contexts";
+import {IMDEditor, INewsDateEvent, IPicture} from "@/interfaces/common";
 import SearchInstitutions from "../../search/searchInstitutions";
 import DateTimeList from "./dateTimeList";
-import {INewsDataProps} from "../../../interfaces/formData";
+import {INewsDataProps} from "@/interfaces/formData";
 import {ChangeLocation, CustomOpenContentBtn} from "../../index";
 
 const NewsFormData = (props: INewsDataProps) => {

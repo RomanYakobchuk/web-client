@@ -3,9 +3,9 @@ import {Box, Button, ButtonGroup, IconButton, Popover} from "@mui/material";
 import {Apartment, ModeSharp, PersonSharp, RadioButtonChecked, RadioButtonUnchecked} from "@mui/icons-material";
 import {useTranslate} from "@refinedev/core";
 
-import {ColorModeContext} from "../../../contexts";
-import {useLeaveManagerCommentAs, useManagerEstablishment, useUserInfo} from "../../../hook";
-import { TSelectOption } from "../../../contexts/CommentCreatorDataContext";
+import {ColorModeContext} from "@/contexts";
+import {useLeaveManagerCommentAs, useManagerEstablishment, useUserInfo} from "@/hook";
+import { TSelectOption } from "@/contexts/CommentCreatorDataContext";
 
 export type TChooseManagerRoleProps = {
     currentEstablishment: string

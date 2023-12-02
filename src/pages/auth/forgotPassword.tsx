@@ -69,9 +69,7 @@ const ForgotPassword = () => {
         }
     }, [width])
     return (
-        <ContainerComponent pictureProps={{
-            order: 1
-        }}>
+        <ContainerComponent>
             <Box
                 sx={{
                     marginTop: 8,

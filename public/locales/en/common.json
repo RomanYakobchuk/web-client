@@ -15,7 +15,8 @@
       },
       "errors": {
         "validEmail": "Invalid email address",
-        "active": "It looks like your account is inactive"
+        "active": "It looks like your account is inactive",
+        "passValid": "The password must consist of the Latin alphabet and contain at least 8 characters, including 1 upper and lower case letter, 1 number and 1 special character"
       },
       "buttons": {
         "submit": "Login",
@@ -51,7 +52,13 @@
         "name": "Name",
         "phone": "Phone",
         "dOB": "Date of Birth",
-        "password": "Password"
+        "password": "Password",
+        "role": "Role"
+      },
+      "steps": {
+        "first": "First",
+        "second": "Second",
+        "last": "Last"
       },
       "errors": {
         "validEmail": "Invalid email address"
@@ -136,6 +143,10 @@
     "facebook": {
       "signin_with": "Sign in with Facebook",
       "signup_with": "Sign up with Facebook"
+    },
+    "steps": {
+      "next": "Next",
+      "previous": "Previous"
     }
   },
   "warnWhenUnsavedChanges": "Are you sure you want to leave? You have unsaved changes.",
@@ -151,14 +162,103 @@
     "editError": "Error when editing {{resource}} (status code: {{statusCode}})",
     "importProgress": "Importing: {{processed}}/{{total}}",
     "addSuccess": "Successfully added {{resource}}",
-    "allField": "All fields must be filled"
+    "allField": "All fields must be filled",
+    "page": {
+      "info": {
+        "read": "Readings",
+        "notRead": "Not read",
+        "all": "All"
+      },
+      "deleted": {
+        "title": "Deleted"
+      },
+      "newReservation": {
+        "title": {
+          "title": "Reservation",
+          "type": "New reservation"
+        },
+        "message": {
+          "accepted": "The establishment accepted the reservation",
+          "rejected": "The establishment rejected the reservation",
+          "message": "User reserved seats",
+          "reasonForRefusal": "Reason for refusal"
+        }
+      },
+      "newEstablishment": {
+        "title": {
+          "title": "Establishment",
+          "type": "New establishment"
+        },
+        "message": {
+          "message": "Manager created establishment",
+          "accepted": "Administrator accepted the establishment",
+          "rejected": "Administrator rejected the establishment"
+        }
+      },
+      "newNews": {
+        "title": {
+          "title": "News",
+          "type": "New news"
+        },
+        "message": {
+          "accepted": "",
+          "rejected": "",
+          "message": "Establishment add news"
+        }
+      },
+      "newMessage": {
+        "title": {
+          "title": "Message",
+          "type": "New message"
+        },
+        "message": {
+          "accepted": "Заклад прийняв бронювання",
+          "rejected": "Заклад відхилив бронювання",
+          "message": "You have new message"
+        }
+      },
+      "newNotification": {
+        "title": {
+          "title": "Notification",
+          "type": "New notification"
+        },
+        "message": {
+          "message": "You have received a new notification",
+          "accepted": "Заклад прийняв бронювання",
+          "rejected": "Заклад відхилив бронювання"
+        }
+      },
+      "newEvent": {
+        "title": {
+          "title": "Event",
+          "type": "New event"
+        },
+        "message": {
+          "message": "User reserved seats",
+          "accepted": "Заклад прийняв бронювання",
+          "rejected": "Заклад відхилив бронювання"
+        }
+      },
+      "newUser": {
+        "title": {
+          "title": "User",
+          "type": "New user"
+        },
+        "message": {
+          "message": "New user registered",
+          "accepted": "Заклад прийняв бронювання",
+          "rejected": "Заклад відхилив бронювання"
+        }
+      }
+    }
   },
   "loading": "Loading...",
   "tags": {
     "clone": "Clone"
   },
   "dashboard": {
-    "title": "Dashboard"
+    "title": "Dashboard",
+    "dashboard": "Dashboard"
   },
   "posts": {
     "posts": "Posts",
@@ -314,7 +414,7 @@
         "leaveAs": "Leave a commet as "
       },
       "addToFav": "Save {{type}}",
-      "delFromFav": "Remove from favorites",
+      "delFromFav": "Remove from saved",
       "reviews": {
         "title": "Reviews",
         "notHave": "There are no reviews",
@@ -338,6 +438,10 @@
   },
   "all_institutions": {
     "all_institutions": "Establishments",
+    "tile": "All establishments",
+    "similar": {
+      "title": "Similar establishment"
+    },
     "freeSeats": {
       "title": "Free seats",
       "create": "Add free seats",
@@ -393,6 +497,9 @@
     "main": {
       "yourReserve": "Your reservations: {{length}}"
     },
+    "edit": {
+      "isAccepted": "Since the establishment has confirmed the reservation, editing is not allowed, please get permission to edit"
+    },
     "create": {
       "fullName": "Full name",
       "date": "Date of reservation",
@@ -401,14 +508,27 @@
       "writeMe": "Write to me",
       "desiredAmount": "The desired amount of expenses, grn",
       "numberPeople": "Number of people",
-      "whoPay": "Who will pay"
+      "whoPay": "Who will pay",
+      "minDateReserve": {
+        "isError": "You can reserve a place one hour before the event",
+        "message": "Reserve a place one hour before the event"
+      }
     },
     "status": {
       "userStatus": "Client status",
       "institutionStatus": "Establishment status",
       "accepted": "Accepted",
       "draft": "Is waiting",
-      "rejected": "Rejected"
+      "rejected": "Rejected",
+      "valid": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "all": "All"
+      },
+      "clientAppeared": {
+        "true": "Appeared",
+        "false": "Did not appear"
+      }
     },
     "required": "Field: {{field}} - required",
     "fullNameError": "The name must include 2 fields",
@@ -420,6 +540,9 @@
   "all-places": {
     "all-places": "All establishments",
     "title": "All establishments"
+  },
+  "all-capl": {
+    "title": "All reservations"
   },
   "my-institution": {
     "my-institution": "My establishments",
@@ -448,15 +571,20 @@
     "title": "All news"
   },
   "favorite-places": {
-    "favorite-places": "Favorite places",
-    "title": "Favorite places"
+    "favorite-places": "Saved places",
+    "title": "Saved places",
+    "type": {
+      "all": "All",
+      "establishment": "Establishments",
+      "news": "News"
+    }
   },
   "profile": {
     "profile": "Profile",
     "title": "Profile",
     "my_comments": "My comments: {{length}}",
     "my_places": "My establishments: {{length}}",
-    "my_fav_places": "Favorite establishments: {{length}}",
+    "my_fav_places": "Saved establishments: {{length}}",
     "my_reviews": "My reviews: {{length}}",
     "email": "Email: ",
     "edit": {
@@ -521,11 +649,13 @@
   "roles": {
     "manager": "Manager",
     "admin": "Administrator",
-    "user": "User"
+    "user": "User",
+    "ordinaryUser": "Ordinary user"
   },
   "text": {
     "yes": "Yes",
     "no": "No",
+    "nothing": "Nothing",
     "notResult": "Nothing found",
     "home": {
       "searchPlace1": "Looking for a relaxing place to have ",
@@ -533,9 +663,11 @@
       "byPlace": "Welcome to our platform, where your time will always have a special place. We understand the importance of finding the perfect spot for relaxation and a casual atmosphere.",
       "findYourSelf": "Choose an establishment specifically for you and find the ideal place yourself.",
       "byType": "We offer a variety of atmospheres and types of entertainment. Do you enjoy upscale restaurants with gastronomic masterpieces, or are you looking to treat yourself and friends in cozy cafes? Perhaps you're seeking nightlife at vibrant bars, where the rhythm of the night comes alive."
-    }
+    },
+    "current": "Current value"
   },
   "list": {
+    "list": "List",
     "institution": "List of establishments",
     "capl": "List of reservations",
     "news": "News list",
@@ -583,6 +715,23 @@
     "BICYCLING": "Bicycling",
     "DRIVING": "Driving",
     "TRANSIT": "Transit",
-    "WALKING":  "Walking"
+    "WALKING": "Walking"
+  },
+  "stat": {
+    "createdInLastMonth": "Created in last month",
+    "users": {
+      "blocked": "Blocked accounts",
+      "activatedByEmail": "Activated by email",
+      "notActivatedByEmail": "Not activated by email",
+      "activeAccountsInLastMonth": "Activated accounts for the last month",
+      "verifiedByPhone": "Verified by phone",
+      "notVerifiedByPhone": "Not verified by phone",
+      "role": "Role",
+      "status": {
+        "name": "Status",
+        "online": "Online",
+        "offline": "Offline"
+      }
+    }
   }
 }

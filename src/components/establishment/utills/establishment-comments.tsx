@@ -1,18 +1,15 @@
 import {useInfiniteList, usePermissions, useTranslate} from "@refinedev/core";
-import {Box, Button} from "@mui/material";
-import React, {useContext, useEffect, useState} from "react";
-import {Close} from "@mui/icons-material";
+import {Box} from "@mui/material";
+import React, {useEffect, useState} from "react";
 
-import CommentInput from "./comment-input";
+import CommentInput from "../../comments/comment-input";
 import {CommentsList, Loading} from "../../index";
-import {IComment, PropertyProps} from "../../../interfaces/common";
+import {IComment, PropertyProps} from "@/interfaces/common";
 import ChooseManagerRole from "../../common/choose/chooseManagerRole";
-import {useLeaveManagerCommentAs, useMobile} from "../../../hook";
+import {useLeaveManagerCommentAs} from "@/hook";
 import {IDataList} from "../../common/lists/comments-list";
 import MoreButton from "../../common/buttons/MoreButton";
-import CommentAnswers, {INewComment} from "./commentAnswers";
-import CommentCard from "./commentCard";
-import {SchemaContext} from "../../../settings/schema";
+import {INewComment} from "../../comments/commentAnswers";
 
 type IProps = {
     institution: PropertyProps,
@@ -21,16 +18,11 @@ type IProps = {
 const EstablishmentComments = ({institution}: IProps) => {
     const translate = useTranslate();
     const {data: permissionsData} = usePermissions();
-    const {width} = useMobile();
-    const {schema} = useContext(SchemaContext);
 
     const {_id: institutionId} = institution;
 
     const {selectedInfo} = useLeaveManagerCommentAs();
 
-    const [newCommentFromShowComments, setNewCommentFromShowComments] = useState<INewComment | null>(null);
-    const [isLoadCommentAnswers, setIsLoadCommentAnswers] = useState<boolean>(false);
-    const [commentForShowAnswers, setCommentForShowAnswers] = useState<IComment>({} as IComment);
     const [newComment, setNewComment] = useState<INewComment | null>(null);
 
     const [comments, setComments] = useState<IComment[]>([] as IComment[]);
@@ -66,15 +58,6 @@ const EstablishmentComments = ({institution}: IProps) => {
         }
     }, [newComment]);
 
-    console.log(newCommentFromShowComments)
-    if (isLoading) {
-        return <Loading height={'200px'}/>
-    }
-    if (isError) {
-        return <Box>
-            Something went wrong (((
-        </Box>
-    }
     return (
         <Box
             sx={{
@@ -142,7 +125,7 @@ const EstablishmentComments = ({institution}: IProps) => {
             }}>
                 <Box sx={{
                     width: '100%',
-                    maxWidth: commentForShowAnswers?._id ? 'calc(60% - 8px)' : '800px',
+                    maxWidth: '800px',
                 }}>
 
                     <Box sx={{
@@ -154,13 +137,18 @@ const EstablishmentComments = ({institution}: IProps) => {
                         justifyContent: 'start',
                     }}>
                         {
-                            comments?.length > 0 && (
-                                <CommentsList
-                                    setCommentForShowAnswers={setCommentForShowAnswers}
-                                    comments={comments}
-                                    setComments={setComments}
-                                />
-                            )
+                            isLoading
+                                ? <Loading height={'200px'}/>
+                                : isError
+                                    ? <Box>
+                                        Something went wrong (((
+                                    </Box>
+                                    : comments?.length > 0 && (
+                                        <CommentsList
+                                            comments={comments}
+                                            setComments={setComments}
+                                        />
+                                    )
                         }
                         <MoreButton
                             hasNextPage={hasNextPage}
@@ -171,68 +159,68 @@ const EstablishmentComments = ({institution}: IProps) => {
                     </Box>
 
                 </Box>
-                {
-                    width > 1000 && commentForShowAnswers?._id && commentForShowAnswers?.repliesLength > 0 && (
-                        <Box sx={{
-                            minWidth: '350px',
-                            maxWidth: 'calc(40% - 8px)',
-                            p: 1,
-                            bgcolor: 'modern.modern_1.second',
-                            borderRadius: '10px',
-                            ml: 2,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: 2,
-                            maxHeight: '80vh',
-                            height: 'fit-content',
-                            overflowX: 'hidden',
-                            overflowY: 'auto',
-                            position: 'sticky',
-                            top: schema === 'schema_1' ? '100px' : '30px'
-                        }}>
-                            <Box sx={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'end',
-                                gap: 2,
-                                pb: '15px',
-                                borderBottom: '1px solid siver'
-                            }}>
-                                <Button
-                                    onClick={() => {
-                                        setIsLoadCommentAnswers(false)
-                                        setCommentForShowAnswers({} as IComment)
-                                    }}
-                                    variant={'outlined'}
-                                    color={'error'}
-                                    startIcon={<Close/>}
-                                    sx={{
-                                        minWidth: '40px',
-                                        textTransform: 'inherit',
-                                        display: 'flex',
-                                        justifyContent: 'end',
-                                        p: '3px 16px'
-                                    }}
-                                >
-                                    {translate('buttons.close')}
-                                </Button>
-                                <CommentCard
-                                    isShowAnswer={false}
-                                    isShowDelete={false}
-                                    comment={commentForShowAnswers}
-                                    setNewComment={setNewCommentFromShowComments}
-                                />
-                            </Box>
-                            <CommentAnswers
-                                newComment={newCommentFromShowComments}
-                                comment={commentForShowAnswers}
-                                setComment={setCommentForShowAnswers}
-                                isLoadAnswers={isLoadCommentAnswers}
-                                setIsLoadAnswers={setIsLoadCommentAnswers}
-                            />
-                        </Box>
-                    )
-                }
+                {/*{*/}
+                {/*    width > 1000 && commentForShowAnswers?._id && commentForShowAnswers?.repliesLength > 0 && (*/}
+                {/*        <Box sx={{*/}
+                {/*            minWidth: '350px',*/}
+                {/*            maxWidth: 'calc(40% - 8px)',*/}
+                {/*            p: 1,*/}
+                {/*            bgcolor: 'modern.modern_1.second',*/}
+                {/*            borderRadius: '10px',*/}
+                {/*            ml: 2,*/}
+                {/*            display: 'flex',*/}
+                {/*            flexDirection: 'column',*/}
+                {/*            gap: 2,*/}
+                {/*            maxHeight: '80vh',*/}
+                {/*            height: 'fit-content',*/}
+                {/*            overflowX: 'hidden',*/}
+                {/*            overflowY: 'auto',*/}
+                {/*            position: 'sticky',*/}
+                {/*            top: schema === 'schema_1' ? '100px' : '30px'*/}
+                {/*        }}>*/}
+                {/*            <Box sx={{*/}
+                {/*                display: 'flex',*/}
+                {/*                flexDirection: 'column',*/}
+                {/*                alignItems: 'end',*/}
+                {/*                gap: 2,*/}
+                {/*                pb: '15px',*/}
+                {/*                borderBottom: '1px solid siver'*/}
+                {/*            }}>*/}
+                {/*                <Button*/}
+                {/*                    onClick={() => {*/}
+                {/*                        setIsLoadCommentAnswers(false)*/}
+                {/*                        setCommentForShowAnswers({} as IComment)*/}
+                {/*                    }}*/}
+                {/*                    variant={'outlined'}*/}
+                {/*                    color={'error'}*/}
+                {/*                    startIcon={<Close/>}*/}
+                {/*                    sx={{*/}
+                {/*                        minWidth: '40px',*/}
+                {/*                        textTransform: 'inherit',*/}
+                {/*                        display: 'flex',*/}
+                {/*                        justifyContent: 'end',*/}
+                {/*                        p: '3px 16px'*/}
+                {/*                    }}*/}
+                {/*                >*/}
+                {/*                    {translate('buttons.close')}*/}
+                {/*                </Button>*/}
+                {/*                <CommentCard*/}
+                {/*                    isShowAnswer={false}*/}
+                {/*                    isShowDelete={false}*/}
+                {/*                    comment={commentForShowAnswers}*/}
+                {/*                    setNewComment={setNewCommentFromShowComments}*/}
+                {/*                />*/}
+                {/*            </Box>*/}
+                {/*            <CommentAnswers*/}
+                {/*                newComment={newCommentFromShowComments}*/}
+                {/*                comment={commentForShowAnswers}*/}
+                {/*                setComment={setCommentForShowAnswers}*/}
+                {/*                isLoadAnswers={isLoadCommentAnswers}*/}
+                {/*                setIsLoadAnswers={setIsLoadCommentAnswers}*/}
+                {/*            />*/}
+                {/*        </Box>*/}
+                {/*    )*/}
+                {/*}*/}
             </Box>
         </Box>
     );

@@ -1,13 +1,14 @@
-import {ProfileProps} from "../../../interfaces/common";
 import {Avatar, Box, Button, FormControl, FormHelperText, TextField} from "@mui/material";
 import {ImageField} from "@refinedev/antd";
-import {buttonStyle, textFieldStyle} from "../../../styles";
-import {DeleteForeverOutlined, Edit} from "@mui/icons-material";
+import {Image} from "antd";
 import React, {ChangeEvent, Dispatch, SetStateAction, useContext, useEffect, useState} from "react";
-import {CustomButton} from "../../index";
-import {ColorModeContext} from "../../../contexts";
+import {DeleteForeverOutlined, Edit} from "@mui/icons-material";
 import {useTranslate} from "@refinedev/core";
 import dayjs from "dayjs";
+
+import {buttonStyle, textFieldStyle} from "@/styles";
+import {CustomButton} from "../../index";
+import {ColorModeContext} from "@/contexts";
 
 export interface INewUserData {
     avatar: string | File,
@@ -15,7 +16,8 @@ export interface INewUserData {
     phone: string | number,
     changeAva: boolean | undefined,
     currentId: string,
-    dOB: Date | string
+    dOB: Date | string,
+    _id: string
 }
 
 type TProps = {
@@ -44,15 +46,17 @@ const ProfileDataForm = ({userInfo, setUserInfo}: TProps) => {
         setUserInfo(prevState => ({...prevState, avatar: previousUserInfo?.avatar}))
     }
 
+    const imageSize = {xs: "150px", md: "200px"};
+
     return (
         <Box
             sx={{
                 maxWidth: '550px',
-                bgcolor: mode === "dark" ? "#2e424d" : "#fcfcfc",
-                p: '20px',
+                // bgcolor: mode === "dark" ? "#2e424d" : "#fcfcfc",
+                // p: '20px',
                 mt: 2.5,
                 margin: 'auto',
-                borderRadius: '15px'
+                // borderRadius: '15px'
             }}
         >
             <form
@@ -75,42 +79,42 @@ const ProfileDataForm = ({userInfo, setUserInfo}: TProps) => {
                     {
                         userInfo?.avatar
                             ? <Box sx={{
-                                width: {xs: "160px", md: "340px"},
-                                height: {xs: "150px", md: "320px"},
+                                width: imageSize,
+                                height: imageSize,
                             }}>
-                                <ImageField alt={"image"}
-                                            width={"100%"}
-                                            height={"100%"}
-                                            preview={{zIndex: 10000}}
-                                            style={{
-                                                objectFit: "cover",
-                                                borderRadius: '5px'
-                                            }} value={userInfo?.avatar instanceof File ? URL.createObjectURL(userInfo?.avatar) : userInfo?.avatar ?? ''}/>
+                                <Image alt={"image"}
+                                       width={"100%"}
+                                       height={"100%"}
+                                       preview={{zIndex: 10000}}
+                                       style={{
+                                           objectFit: "cover",
+                                           borderRadius: '5px'
+                                       }}
+                                       src={userInfo?.avatar instanceof File ? URL.createObjectURL(userInfo?.avatar) : userInfo?.avatar ?? ''}/>
                             </Box>
                             : <Box sx={{
-                                width: {xs: "160px", md: "340px"},
-                                height: {xs: "150px", md: "320px"},
+                                width: imageSize,
+                                height: imageSize,
                             }}>
                                 {
                                     typeof userInfo?.avatar === 'string' ?
-                                        <ImageField alt={"image"}
-                                                    value={userInfo?.avatar}
-                                                    width={"100%"}
-                                                    preview={{zIndex: 10000}}
-                                                    height={"100%"}
-                                                    style={{
-                                                        objectFit: "cover",
-                                                        borderRadius: '5px'
-                                                    }}/> :
+                                        <Image alt={"image"}
+                                               src={userInfo?.avatar}
+                                               width={"100%"}
+                                               preview={{zIndex: 10000}}
+                                               height={"100%"}
+                                               style={{
+                                                   objectFit: "cover",
+                                                   borderRadius: '5px'
+                                               }}/> :
                                         <Avatar sx={{
-                                            width: {xs: "200px", md: "340px"},
-                                            height: {xs: "190px", md: "320px"},
+                                            width: imageSize,
+                                            height: imageSize,
                                             borderRadius: '5px'
                                         }}/>
                                 }
                             </Box>
                     }
-
                     <Box sx={{
                         display: 'flex',
                         flexDirection: 'column',
@@ -118,7 +122,6 @@ const ProfileDataForm = ({userInfo, setUserInfo}: TProps) => {
                         alignItems: 'center',
                         gap: 2
                     }}>
-
                         <Button
                             component="label"
                             variant={'contained'}
@@ -144,12 +147,11 @@ const ProfileDataForm = ({userInfo, setUserInfo}: TProps) => {
                             />
                         </Button>
                         {
-                            userInfo?.avatar
-                                ? <CustomButton handleClick={deleteImage} color={"#fcfcfc"}
+                            userInfo?.avatar !== previousUserInfo?.avatar &&
+                                <CustomButton handleClick={deleteImage} color={"#fcfcfc"}
                                                 title={translate("profile.edit.delete")}
                                                 backgroundColor={"red"}
                                                 icon={<DeleteForeverOutlined style={{color: '#fcfcfc'}}/>}/>
-                                : ''
                         }
 
                     </Box>

@@ -3,11 +3,11 @@ import React, {useContext, useEffect, useState} from "react";
 import {useDebounce} from "use-debounce";
 import {Box, Typography} from "@mui/material";
 
-import {INews} from "../../interfaces/common";
+import {INews} from "@/interfaces/common";
 import {FilterNews} from "../index";
 import ListForUsers from "./lists/listForUsers";
-import {useMobile} from "../../hook";
-import {SchemaContext} from "../../settings/schema";
+import {useMobile} from "@/hook";
+import {SchemaContext} from "@/settings/schema";
 
 const UserList = () => {
 
@@ -46,32 +46,33 @@ const UserList = () => {
         ])
     }, [debouncedSearchText]);
 
-    const isLarge =  width > 1100;
     if (isError) return <Typography>Error...</Typography>;
 
     return (
         <Box sx={{
-            maxWidth: '1200px',
+            maxWidth: {xs: '95%', lg: '1100px'},
             margin: '0 auto'
         }}>
             <Box sx={{
                 display: 'flex',
-                flexDirection: width > 1100 ? 'row' : 'column',
-                gap: 2,
-                alignItems: width > 1100 ? 'start' : 'center',
+                flexDirection: 'column',
+                gap: 4,
+                alignItems: 'start'
             }}>
                 <Box sx={{
                     display: 'flex',
                     flexDirection: 'column',
-                    width: isLarge ? '40%' : '100%',
+                    // width: isLarge ? '40%' : '100%',
+                    width: '100%',
                     alignItems: 'center',
-                    position: isLarge ? 'sticky' : 'unset',
-                    top: schema === 'schema_2' ? '20px' : '80px',
-                    maxWidth: {xs: '90%', sm: '700px'},
+                    // position: isLarge ? 'sticky' : 'unset',
+                    // top: schema === 'schema_2' ? '20px' : '80px',
+                    // maxWidth: {xs: '90%', sm: '700px'},
+                    maxWidth: {xs: '100%', sm: '700px'},
                     gap: 2,
-                    p: isLarge ? '20px': '0',
-                    bgcolor: isLarge ? 'modern.modern_1.main' : 'transparent',
-                    borderRadius: '15px'
+                    // p: isLarge ? '20px': '0',
+                    // bgcolor: isLarge ? 'modern.modern_1.main' : 'transparent',
+                    // borderRadius: '15px'
                 }}>
                     <FilterNews
                         filters={filters}
@@ -102,8 +103,10 @@ const UserList = () => {
                     }
                 </Box>
                 <Box sx={{
-                    width: width > 1100 ? '60%' : '100%',
-                    maxWidth: {xs: '700px', lg: '100%'}
+                    // width: width > 1100 ? '60%' : '100%',
+                    // maxWidth: {xs: '700px', lg: '100%'}
+                    width: '100%',
+                    // maxWidth: {xs: '90%', sm: '100%'}
                 }}>
                     <ListForUsers
                         isLoading={isLoading}

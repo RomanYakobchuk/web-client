@@ -3,10 +3,10 @@ import {useBack, useTranslate} from "@refinedev/core";
 import React, {useEffect, useState} from "react";
 import {useForm} from "@refinedev/react-hook-form";
 
-import {INews, INewsDateEvent, IPicture, PropertyProps} from "../../interfaces/common";
-import NewsFormData from "../../components/news/utills/newsFormData";
-import {CustomEdit} from "../../components";
-import {INewsDataProps} from "../../interfaces/formData";
+import {INews, INewsDateEvent, IPicture, PropertyProps} from "@/interfaces/common";
+import NewsFormData from "@/components/news/utills/newsFormData";
+import {CustomEdit} from "@/components";
+import {INewsDataProps} from "@/interfaces/formData";
 import {Button} from "antd";
 import {RestartAlt} from "@mui/icons-material";
 
@@ -19,6 +19,7 @@ const EditNews = () => {
         refineCore: {onFinish, queryResult},
         handleSubmit,
     } = useForm({
+        warnWhenUnsavedChanges: true,
         refineCoreProps: {
             resource: `news/infoById`,
             id: id as string,

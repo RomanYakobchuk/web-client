@@ -153,10 +153,28 @@ export const ColorModeContextProvider: React.FC<PropsWithChildren> = ({
             MuiPaper: {
                 styleOverrides: {
                     root: {
-                        backgroundImage:
-                            "linear-gradient(rgba(255, 255, 255, 0.01), rgba(255, 255, 255, 0.01))",
+                        backgroundColor: '#fff'
+                        // backgroundImage:
+                        //     "linear-gradient(rgba(255, 255, 255, 0.01), rgba(255, 255, 255, 0.01))",
                     },
                 },
+            },
+            // MuiSelect: {
+            //     styleOverrides: {
+            //         select: {
+            //             // backgroundColor: 'rgba(235, 235, 235, 1.08)'
+            //         },
+            //     },
+            // },
+            MuiButton:{
+                defaultProps: {
+                    color: 'secondary',
+                },
+            },
+            MuiSwitch: {
+                defaultProps: {
+                    color: 'success',
+                }
             },
             MuiTypography: {
                 styleOverrides: {
@@ -166,6 +184,11 @@ export const ColorModeContextProvider: React.FC<PropsWithChildren> = ({
                     },
                 },
             },
+            MuiCheckbox: {
+                defaultProps: {
+                    color: 'info'
+                }
+            }
         }
     });
     let customDarkTheme = createTheme({
@@ -228,15 +251,33 @@ export const ColorModeContextProvider: React.FC<PropsWithChildren> = ({
             MuiPaper: {
                 styleOverrides: {
                     root: {
-                        backgroundImage:
-                            "linear-gradient(rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0.025))",
+                        backgroundColor: '#000'
+                        // backgroundImage:
+                        //     "linear-gradient(rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0.025))",
                     },
                 },
+            },
+            // MuiSelect: {
+            //     styleOverrides: {
+            //         select: {
+            //             // backgroundColor: 'rgb(134,131,131)'
+            //         }
+            //     }
+            // },
+            MuiSwitch: {
+                defaultProps: {
+                    color: 'success',
+                }
             },
             MuiAppBar: {
                 defaultProps: {
                     color: "default",
                 },
+            },
+            MuiButton:{
+                defaultProps: {
+                    color: 'secondary'
+                }
             },
             MuiTypography: {
                 styleOverrides: {
@@ -246,6 +287,11 @@ export const ColorModeContextProvider: React.FC<PropsWithChildren> = ({
                     },
                 },
             },
+            MuiCheckbox: {
+                defaultProps: {
+                    color: 'info'
+                }
+            }
         },
     });
 

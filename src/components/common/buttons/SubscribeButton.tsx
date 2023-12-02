@@ -1,10 +1,10 @@
+import React, {useEffect, useState} from "react";
 import {useForm, useTranslate} from "@refinedev/core";
 import {Button, SxProps} from "@mui/material";
 import {Star, StarBorder} from "@mui/icons-material";
 
-import {ISubscribe} from "../../../interfaces/common";
-import React, {useEffect, useState} from "react";
-import {useUserInfo} from "../../../hook";
+import {ISubscribe} from "@/interfaces/common";
+import {useUserInfo} from "@/hook";
 
 type IProps = {
     establishmentId: string,
@@ -54,7 +54,6 @@ const SubscribeButton = ({establishmentId, style, subscribe, showText, createdBy
             setIsSubscribe((prevState) => (!prevState));
         }
     }
-    console.log(isSubscribe)
 
     return (
         <Button
@@ -73,6 +72,10 @@ const SubscribeButton = ({establishmentId, style, subscribe, showText, createdBy
                 bgcolor: '#ea2a4f',
                 color: '#f0f0f5',
                 minWidth: '20px',
+                p: '5px',
+                "& svg": {
+                    fontSize: {xs: '26px', sm: '30px'}
+                },
                 display: 'flex',
                 gap: showText ? 1 : 0,
                 alignItems: 'center',

@@ -1,15 +1,14 @@
 import {Box} from "@mui/material";
-import React, {Dispatch, SetStateAction, useEffect} from "react";
-import dayjs from "dayjs";
-import {useTranslation} from "react-i18next";
+import React, {Dispatch, SetStateAction, useContext} from "react";
 
-import CommentCard from "../../establishment/utills/commentCard";
-import {IComment} from "../../../interfaces/common";
-import { useMobile } from "../../../hook";
+
+import CommentCard from "../../comments/commentCard";
+import {IComment} from "@/interfaces/common";
+import { ColorModeContext } from "@/contexts";
+
 interface IProps {
     comments: IComment[],
     setComments?: Dispatch<SetStateAction<IComment[]>>,
-    setCommentForShowAnswers: Dispatch<SetStateAction<IComment>>
 }
 
 export interface IDataList {
@@ -24,20 +23,9 @@ export type IForDelete = {
     createdBy: string,
 }
 
-const CommentsList = ({comments, setComments, setCommentForShowAnswers}: IProps) => {
-    const {i18n} = useTranslation();
-    const {width} = useMobile();
+const CommentsList = ({comments, setComments}: IProps) => {
+    const {mode} = useContext(ColorModeContext);
 
-    useEffect(() => {
-        i18n.language === "ua" ? dayjs.locale('uk') : dayjs.locale('en')
-    }, [i18n.language]);
-
-
-    const handleChooseCommentForShowAnswers = (comment: IComment) => {
-        if (width > 1000 && comment?._id && comment?.repliesLength > 0) {
-            setCommentForShowAnswers(comment)
-        }
-    }
     return (
         <Box sx={{
             flex: 8,
@@ -47,19 +35,22 @@ const CommentsList = ({comments, setComments, setCommentForShowAnswers}: IProps)
             display: 'flex',
             flexDirection: 'column',
             gap: 2,
+            overflow: 'hidden'
         }}>
             {
                 comments?.map((comment, index) => (
                         <Box key={comment?._id + index}
                              sx={{
                                  width: '100%',
-                                 p: 1.5,
-                                 borderRadius: '7px',
-                                 bgcolor: 'modern.modern_2.second',
                              }}
                         >
                             <CommentCard
-                                handleChooseCommentForShowAnswers={handleChooseCommentForShowAnswers}
+                                style={{
+                                    width: '100%',
+                                    p: 1.5,
+                                    borderRadius: '7px',
+                                    bgcolor: mode === 'dark' ? '#53565b' : 'common.black',
+                                }}
                                 setComments={setComments}
                                 comment={comment}
                             />
