@@ -15,7 +15,7 @@ const NewComponentButton = ({link, title}: TProps) => {
 
     return (
         <CanAccess resource={"news"} action={"create"}>
-            <Stack direction={"row"} m={'10px auto'} maxWidth={'1200px'} justifyContent={"end"} alignItems={"center"}>
+            <Stack direction={"row"} m={'0 auto'} p={'10px'} maxWidth={'1200px'} justifyContent={"end"} alignItems={"center"}>
                 <Button
                     color={"info"} variant={"contained"}
                     startIcon={<Add/>}

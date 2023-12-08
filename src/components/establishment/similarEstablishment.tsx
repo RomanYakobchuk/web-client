@@ -51,14 +51,14 @@ const SimilarEstablishment = ({id}: TProps) => {
                 <Box sx={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: 2,
+                    gap: {xs: 1, sm: 2},
                     width: '100%'
                 }}>
                     {
                         similarItems?.length > 0 && similarItems?.map((item, index) => (
                             <Box
                                 sx={{
-                                    width: {xs: '250px', sm: '300px'},
+                                    width: {xs: '175px', sm: '250px'},
                                 }}
                                 key={item?._id}
                             >

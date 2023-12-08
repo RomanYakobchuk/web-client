@@ -7,7 +7,7 @@ import {
     ACCESS_TOKEN_KEY,
     localFavPlacesKey,
     localKeyEstablishment,
-    localKeyLeaveCommentAs, localSubscribedEstablishmentKey,
+    localKeyLeaveCommentAs,
     REFRESH_TOKEN_KEY, USER_PROPERTY
 } from "./config/const";
 

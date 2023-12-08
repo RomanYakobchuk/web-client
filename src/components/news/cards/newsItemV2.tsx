@@ -193,6 +193,7 @@ const NewsItemV2 = ({news}: TProps) => {
                                 p: 2,
                                 bgcolor: '#2f4496'
                             }}
+                            color={'common.white'}
                             id={news?._id}
                             type={"institutionNews"}
                             showText={false}

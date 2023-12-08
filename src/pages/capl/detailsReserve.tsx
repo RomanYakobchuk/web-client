@@ -18,6 +18,7 @@ import {CustomShow} from "@/components";
 import "@/components/capl/reserve_style.css";
 import {useMobile, useUserInfo} from "@/hook";
 import RenderTag from "@/components/common/statusTagRender";
+import {ShowTimeComponent} from "@/components/time";
 
 const {Title, Text} = Typography;
 
@@ -49,6 +50,9 @@ const DetailsReserve = () => {
     const {data, isLoading, isError} = queryResult;
 
     const reserve = data?.data as IReserve;
+
+    const isRejectedTextByRejected = reserve?.institutionStatus?.value === 'rejected' && reserve?.institutionStatus?.reasonRefusal && reserve?.institutionStatus?.reasonRefusal?.length > 5;
+    const isFreeDateByRejected = reserve?.institutionStatus?.value === 'rejected' && reserve?.institutionStatus?.freeDateFor && reserve?.institutionStatus?.freeDateFor?.length > 0;
 
     const items: GridItem[] = [
         {
@@ -101,7 +105,54 @@ const DetailsReserve = () => {
             title: translate('capl.status.userStatus')
         },
         {
-            value: <RenderTag value={reserve?.institutionStatus?.value}/>,
+            value: <Box
+                className={'institutionRejected'}
+            >
+                <RenderTag value={reserve?.institutionStatus?.value}/>
+                {
+                    (isFreeDateByRejected || isRejectedTextByRejected) && (
+                        <Box
+                            sx={{
+                                my: '5px'
+                            }}
+                            className={'institutionRejected'}
+                        >
+                            {
+                                isRejectedTextByRejected && (
+                                    <div
+                                        className={'institutionRejected'}
+                                    >
+                                        {reserve?.institutionStatus?.reasonRefusal}
+                                    </div>
+                                )
+                            }
+                            {
+                                isFreeDateByRejected && (
+                                    <div
+                                        className={'institutionRejected'}
+                                    >
+                                        {
+                                            reserve?.institutionStatus?.freeDateFor?.map((value, index) => (
+                                                <div
+                                                    className={'institutionRejected'}
+                                                    key={index}>
+                                                    <ShowTimeComponent
+
+                                                        style={{
+                                                            fontSize: '14px',
+                                                            p: '0 !important'
+                                                        }}
+                                                        date={value as Date} isFirstAgo={false}/>
+                                                </div>
+                                            ))
+                                        }
+                                    </div>
+                                )
+                            }
+                        </Box>
+                    )
+                }
+            </Box>,
             title: translate('capl.status.institutionStatus')
         },
         {
@@ -115,7 +166,7 @@ const DetailsReserve = () => {
         },
     ];
 
-    const gridItemWidth = `calc(${(width < 500 || (width >= 900 && width < 1100)) ? '100% / 2 - 8px' : (width < 900 || (width > 1100 && width <= 1300)) ? 'calc(100% / 4)' : 'calc(100% / 5)'})`
+    const gridItemWidth = `calc(${(width < 500 || (width >= 900 && width < 1100)) ? '100% / 2 - 8px' : (width < 900 || (width > 1100 && width <= 1300)) ? 'calc(100% / 3)' : 'calc(100% / 5)'})`
 
     if (isError) return <div>Error</div>
     return (
@@ -152,7 +203,7 @@ const DetailsReserve = () => {
                         gridTemplateColumns: `repeat(auto-fit, minmax(${gridItemWidth}, 1fr))`,
                         gap: '8px',
                         width: '100%',
-                        gridAutoRows: 'minmax(80px, 1fr)',
+                        gridAutoRows: 'minmax(80px, max-content)',
                         "& *": {
                             color: '#fff'
                         }
@@ -167,7 +218,7 @@ const DetailsReserve = () => {
                                         width: '100%',
                                         gridColumn: (item?.field === 'comment' && typeof item?.value === 'string' && item?.value?.length > 10) ? 'span 2' : 'span 1',
                                         gridRow: (item?.field === 'comment' && typeof item?.value === 'string' && item?.value?.length > 10) ? 'span 2' : 'span 1',
-                                        height: '100%',
+                                        height: 'auto',
                                         bgcolor: mode === 'dark' ? "#252525" : '#016AB9',
                                         borderRadius: '15px',
                                         // p: 2,
@@ -176,7 +227,7 @@ const DetailsReserve = () => {
                                         gap: 1,
                                         justifyContent: 'start',
                                         alignItems: 'start',
-                                        "& div": {
+                                        "& div:not(.institutionRejected)": {
                                             p: '8px 16px'
                                         }
                                     }}
@@ -198,6 +249,7 @@ const DetailsReserve = () => {
                                     <Box sx={{
                                         fontSize: {xs: '15px', sm: '17px'},
                                         fontWeight: 600,
+                                        height: 'fit-content',
                                         whiteSpace: typeof item?.value === 'string' ? 'break-space' : 'unset'
                                     }}>
                                         {item?.value ? item?.value : <span style={{

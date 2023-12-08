@@ -59,6 +59,7 @@ const CountType = () => {
                 p: '20px',
                 borderRadius: '15px',
                 transition: '300ms linear',
+                justifyContent: 'center',
                 "& a": {
                     textDecoration: 'none',
                     bgcolor: mode === 'dark' ? '#000' : '#fff',
@@ -100,6 +101,7 @@ const CountType = () => {
                                 cursor: 'pointer',
                                 width: '100%',
                                 flex: '1 0 200px',
+                                maxWidth: '300px',
                                 borderRadius: '10px',
                                 padding: '10px',
                                 paddingRight: '20px',

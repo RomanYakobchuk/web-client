@@ -114,13 +114,12 @@ const CommentCard = ({
     }, [newCurrentComment]);
 
     const getAnswers = () => {
-        if (isLoadAnswers) {
-            setIsLoadAnswers(false)
+        if (width <= 600 && device) {
+            setIsLoadAnswers(true)
         } else {
-            setIsLoadAnswers(true);
+            setIsLoadAnswers(prevState => !prevState)
         }
     }
-
     const handleCloseIsAnswer = () => {
         setIsAnswer(false)
         setParent({} as IComment)
@@ -271,7 +270,7 @@ const CommentCard = ({
                                     alignItems: 'flex-start',
                                     gap: 0.5
                                 }}>
-                                   <ShowTimeComponent date={currentComment?.createdAt}/>
+                                    <ShowTimeComponent date={currentComment?.createdAt}/>
                                 </Box>
                             </Box>
                             <Box sx={{
@@ -400,19 +399,16 @@ const CommentCard = ({
                         </Box>
                     )
                 }
-                {
-                    isShowAnswer && isLoadAnswers && (
-                        <Box>
-                            <CommentAnswers
-                                isLoadAnswers={isLoadAnswers}
-                                setIsLoadAnswers={setIsLoadAnswers}
-                                setComment={setCurrentComment}
-                                comment={currentComment}
-                                newComment={newCurrentComment}
-                            />
-                        </Box>
-                    )
-                }
+                <Box>
+                    <CommentAnswers
+                        isShowAnswers={isShowAnswer}
+                        isLoadAnswers={isLoadAnswers}
+                        setIsLoadAnswers={setIsLoadAnswers}
+                        setComment={setCurrentComment}
+                        comment={currentComment}
+                        newComment={newCurrentComment}
+                    />
+                </Box>
             </Box>
         </SwipeComponent>
     );

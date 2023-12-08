@@ -34,7 +34,8 @@ const Home: FC = () => {
             </Box>
             <Box sx={{
                 margin: '0 auto',
-                p: {xs: 1, md: 2},
+                width: '100%'
+                // p: {xs: 1, md: 2},
             }}>
                 <CountViews/>
             </Box>

@@ -22,7 +22,7 @@ const DetailsNews = () => {
     const {id} = useParams();
     const navigate = useNavigate();
     const {user} = useUserInfo();
-    const { width} = useMobile();
+    const { width, layoutWidth} = useMobile();
     const {mode, collapsed} = useContext(ColorModeContext);
     const translate = useTranslate();
 
@@ -52,7 +52,7 @@ const DetailsNews = () => {
         <CustomShow
             isLoading={isLoading}
             bgColor={'transparent'}
-            maxWidth={width < 900 ? '100%' : width < 1100 ? '1000px' : '95%'}
+            maxWidth={width < 900 ? '100%' : width < 1100 ? '1000px' : '1300px'}
             isShowButtons={user?._id === news?.createdBy || user?.status === 'admin'}
         >
             <Button
@@ -64,11 +64,17 @@ const DetailsNews = () => {
                 width: '100%',
                 display: 'flex',
                 flexDirection: {xs: 'column', lg: 'row'},
+                "@media screen and (min-width: 1100px)":{
+                    flexDirection: 'row'
+                },
                 gap: {xs: 2, lg: 4}
             }}>
                 <Box sx={{
                     width: '100%',
                     order: {xs: 1, lg: 2},
+                    "@media screen and (min-width: 1100px)":{
+                        order: 2
+                    },
                     maxWidth: '400px'
                 }}>
                     <NewsMainInfo news={news}/>
@@ -82,15 +88,17 @@ const DetailsNews = () => {
                     gap: {xs: 4, md: 5, lg: 6},
                     color: 'common.white',
                     maxWidth: '900px' ,
-                    "@media screen and (max-width: 1200px)":{
-                        maxWidth: '100%'
+                    "@media screen and (min-width: 1100px)":{
+                        order: 1,
+                        maxWidth: {md: `calc(${layoutWidth}px - 400px)`, lg: `calc(${layoutWidth}px - 450px)`}
+                        // maxWidth: collapsed ? '650xp' : '600px'
                     },
-                    "@media screen and (max-width: 1500px)":{
-                        maxWidth: collapsed ? '750xp' : '700px'
-                    },
-                    "@media screen and (max-width: 1800px)":{
-                        maxWidth: '800px'
-                    },
+                    // "@media screen and (min-width: 1300px)":{
+                    //     maxWidth: collapsed ? '750xp' : '700px'
+                    // },
+                    // "@media screen and (min-width: 1500px)":{
+                    //     maxWidth: collapsed ? '950xp' : '900px'
+                    // },
                 }}>
                     <ImageGalleryV2 images={news?.pictures}/>
                     <Box sx={{

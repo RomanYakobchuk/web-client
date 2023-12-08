@@ -100,6 +100,8 @@
   "buttons": {
     "copy": "Copy",
     "share": "To share:",
+    "change": "Change",
+    "choose": "Choose",
     "add": "Add",
     "create": "Create",
     "details": "Details",
@@ -181,7 +183,10 @@
           "accepted": "The establishment accepted the reservation",
           "rejected": "The establishment rejected the reservation",
           "message": "User reserved seats",
-          "reasonForRefusal": "Reason for refusal"
+          "reasonForRefusal": "Reason for refusal",
+          "chooseNewDateOrReject": "Choose a new date or cancel the reservation?",
+          "userAccepted": "The user changed the reservation",
+          "userRejected": "The user canceled the reservation"
         }
       },
       "newEstablishment": {
@@ -657,6 +662,7 @@
     "no": "No",
     "nothing": "Nothing",
     "notResult": "Nothing found",
+    "areYouSure": "Are you sure?",
     "home": {
       "searchPlace1": "Looking for a relaxing place to have ",
       "searchPlace2": "a drink with friends?",

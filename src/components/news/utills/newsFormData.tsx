@@ -121,9 +121,9 @@ const NewsFormData = (props: INewsDataProps) => {
         <Box>
             <Box
                 sx={{
-                    p: '5px',
-                    borderRadius: '15px',
-                    bgcolor: mode === "dark" ? "#2e424d" : "#fcfcfc",
+                    // p: '5px',
+                    // borderRadius: '15px',
+                    // bgcolor: mode === "dark" ? "#2e424d" : "#fcfcfc",
                     transition: 'all 300ms linear',
                 }}
             >
@@ -333,6 +333,7 @@ const NewsFormData = (props: INewsDataProps) => {
                             {
                                 status === 'published' && isDatePublished && (
                                     <TextField
+                                        size={'small'}
                                         color={'secondary'}
                                         type={'datetime-local'}
                                         value={datePublished ?? ''}

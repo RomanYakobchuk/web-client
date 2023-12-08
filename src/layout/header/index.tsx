@@ -70,7 +70,7 @@ export const Header: React.FC = () => {
     const buttonStyle = {
         border: '1px solid silver',
         borderRadius: '10px',
-        "@media screen and (max-width: 500px)": {
+        "@media screen and (max-width: 600px)": {
             width: '32px',
             minWidth: '32px',
             height: '32px',

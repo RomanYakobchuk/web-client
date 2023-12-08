@@ -1,4 +1,4 @@
-import Carousel from 'react-multi-carousel';
+import Carousel, {ResponsiveType} from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
 
 import './carousel.css';
@@ -11,29 +11,30 @@ type TProps = {
             breakpoint: {max: number, min: number},
             items: number
         }
-    }
+    },
+    autoPlay?: boolean
 }
 
 
-const defaultResponsive = {
-    superLargeDesktop: {
-        breakpoint: {max: 4000, min: 3000},
-        items: 5
-    },
-    desktop: {
-        breakpoint: {max: 3000, min: 1300},
-        items: 3
-    },
-    tablet: {
-        breakpoint: {max: 1300, min: 600},
-        items: 2
-    },
+const defaultResponsive: ResponsiveType = {
+    // superLargeDesktop: {
+    //     breakpoint: {max: 4000, min: 3000},
+    //     items: 1
+    // },
+    // desktop: {
+    //     breakpoint: {max: 3000, min: 1300},
+    //     items: 1
+    // },
+    // tablet: {
+    //     breakpoint: {max: 1300, min: 600},
+    //     items: 1
+    // },
     mobile: {
-        breakpoint: {max: 600, min: 0},
+        breakpoint: {max: 3000, min: 0},
         items: 1
     }
 };
-const CarouselComponent = ({children, responsive = defaultResponsive}: TProps) => {
+const CarouselComponent = ({children, responsive = defaultResponsive, autoPlay = true}: TProps) => {
 
 
     if (!children) {
@@ -51,6 +52,7 @@ const CarouselComponent = ({children, responsive = defaultResponsive}: TProps) =
                 responsive={responsive}
                 infinite
                 className={'carousel'}
+                autoPlay={autoPlay}
             >
                 {children}
             </Carousel>

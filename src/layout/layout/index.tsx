@@ -6,7 +6,7 @@ import {Outlet, useNavigate} from "react-router-dom";
 import {Sider as DefaultSider} from "../sider";
 import {Header as DefaultHeader} from "../header";
 import {Footer as DefaultFooter} from "../footer";
-import {useMobile, useScrollRestoration, useUserInfo} from "@/hook";
+import {useMobile, useUserInfo, useUserProperties} from "@/hook";
 import {useSchema} from "@/settings";
 import {SchemaContext} from "@/settings/schema";
 import {ColorModeContext} from "@/contexts";
@@ -38,6 +38,7 @@ export const Layout: React.FC<LayoutProps> = ({
     const FooterToRender = Footer ?? DefaultFooter;
 
     const {i18n} = useTranslation();
+    const {properties, setProperties} = useUserProperties();
     const {schema} = useContext(SchemaContext);
     const {device, width} = useMobile();
     const {styles} = useSchema();
@@ -54,11 +55,9 @@ export const Layout: React.FC<LayoutProps> = ({
                 message: 'New notification',
                 description: notification?.message
             })
+            setProperties({...properties, notReadNotifications: properties?.notReadNotifications + 1})
         })
-        return () => {
-            socket.off('newNotification');
-        }
-    }, [open]);
+    }, [socket, properties]);
 
     useEffect(() => {
         if (user?._id) {
@@ -71,7 +70,7 @@ export const Layout: React.FC<LayoutProps> = ({
             socket.off('addUser')
             socket.off('connect')
         }
-    }, [user?._id]);
+    }, [user?._id, socket]);
 
     const someStyle = !device ? {
         '&::-webkit-scrollbar': {
@@ -105,7 +104,7 @@ export const Layout: React.FC<LayoutProps> = ({
         }
     }, [user?.phone, user?._id, user?.dOB, window.location.href]);
 
-    const ref = useScrollRestoration(window.location.href);
+    // const ref = useScrollRestoration(window.location.href);
 
     useEffect(() => {
         i18n.language === "ua" ? dayjs.locale('uk') : dayjs.locale('en')
@@ -135,7 +134,7 @@ export const Layout: React.FC<LayoutProps> = ({
                     )
                 }
                 <Box
-                    ref={ref}
+                    // ref={ref}
                     component="main"
                     id={'mainLayout'}
                     sx={{
@@ -188,6 +187,18 @@ export const Layout: React.FC<LayoutProps> = ({
                         },
                         "& *:not(button).Mui-disabled": {
                             WebkitTextFillColor: '#514f4f !important'
+                        },
+                        "& div.w-md-editor-input": {
+                            width: '100%',
+                            height: 'fit-content'
+                        },
+                        "& div.w-md-editor-preview": {
+                            position: 'relative',
+                            width: '100%',
+                            whiteSpaceCollapse: 'break-spaces'
+                        },
+                        "& div.w-md-editor": {
+                            minHeight: '250px !important'
                         }
                     }}
                 >

@@ -70,8 +70,10 @@ function App() {
                                         i18nProvider={i18nProvider}
                                         options={{
                                             syncWithLocation: true,
+                                            mutationMode: 'undoable',
                                             liveMode: 'auto',
                                             warnWhenUnsavedChanges: true,
+                                            useNewQueryKeys: true
                                         }}
                                     >
                                         <CommentCreatorDataProvider>

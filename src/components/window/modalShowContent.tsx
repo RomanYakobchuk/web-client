@@ -17,9 +17,10 @@ type TProps = {
     headerStyle?: CSSProperties,
     additionalHeaderValue?: ReactNode,
     onClick: () => void,
-    onSuccessText?: string
+    onSuccessText?: string,
+    onCancelText?: string,
 }
-const ModalShowContent = ({children, openComponent, openComponentStyle, isOpen, setIsOpen, contentStyle, modalStyle, onClick, headerStyle, additionalHeaderValue, onSuccessText}: TProps) => {
+const ModalShowContent = ({children, openComponent, openComponentStyle, isOpen, setIsOpen, contentStyle, modalStyle, onClick, headerStyle, additionalHeaderValue, onSuccessText, onCancelText}: TProps) => {
 
     const {device} = useMobile();
     const translate = useTranslate();
@@ -83,7 +84,7 @@ const ModalShowContent = ({children, openComponent, openComponentStyle, isOpen, 
                         ...modalStyle
                     }}>
                         <header style={{
-                            margin: '-32px',
+                            // margin: '-32px',
                             marginBottom: '32px',
                             display: 'flex',
                             justifyContent: 'end',
@@ -124,7 +125,7 @@ const ModalShowContent = ({children, openComponent, openComponentStyle, isOpen, 
                                     variant={'text'}
                                     onClick={() => setIsOpen(false)}
                                 >
-                                    {translate('buttons.cancel')}
+                                    {onCancelText || translate('buttons.cancel')}
                                 </Button>
                                 <Button
                                     sx={{

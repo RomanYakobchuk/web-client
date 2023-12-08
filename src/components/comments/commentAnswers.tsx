@@ -20,86 +20,27 @@ type TProps = {
     setComment: Dispatch<SetStateAction<IComment>>,
     isLoadAnswers: boolean,
     setIsLoadAnswers: Dispatch<SetStateAction<boolean>>,
-    newComment?: INewComment | null
+    newComment?: INewComment | null,
+    isShowAnswers: boolean
 }
-const CommentAnswers = ({comment, setComment, isLoadAnswers, setIsLoadAnswers, newComment}: TProps) => {
+const CommentAnswers = ({comment, setComment, isLoadAnswers, setIsLoadAnswers, newComment, isShowAnswers}: TProps) => {
 
     const translate = useTranslate();
     const {data: dataPermission} = usePermissions();
-    const {id} = useParams();
     const {device, width} = useMobile();
 
-
-    const [currentComment, setCurrentComment] = useState<IComment>(comment);
     const [newAnswer, setNewAnswer] = useState<INewComment | null>(null);
-    const [answers, setAnswers] = useState<IComment[]>([]);
-
-
-    const {
-        data,
-        isLoading,
-        isError,
-        hasNextPage,
-        fetchNextPage,
-        isFetchingNextPage,
-    } = useInfiniteList<IComment>({
-        resource: `comment/allByInstitutionId/${id as string}`,
-        pagination: {
-            pageSize: 10
-        },
-        filters: [
-            {
-                value: comment?._id,
-                field: 'parentId',
-                operator: 'eq'
-            }
-        ]
-    });
-    const total = data?.pages?.length && data?.pages?.length > 0 ? data?.pages[0]?.total : 0;
+    const [currentComment, setCurrentComment] = useState<IComment>(comment);
 
     useEffect(() => {
         if (comment?._id) {
             setCurrentComment(comment)
         }
     }, [comment]);
-    useEffect(() => {
-        if (newAnswer?.comment?._id) {
-            setComment((prevState) => ({...prevState, repliesLength: newAnswer?.parentReviewsLength}))
-            setAnswers((prevState) => ([newAnswer?.comment, ...prevState]))
-        }
-    }, [newAnswer]);
-
-    useEffect(() => {
-        if (data?.pages) {
-            const list = [].concat(...((data?.pages as any ?? [])?.map((page: {
-                data: IDataList,
-                total: number
-            }) => page?.data?.items ?? [])));
-            setAnswers(list);
-        }
-    }, [data]);
-
-    useEffect(() => {
-        if (newAnswer?.comment?._id && newAnswer?.comment?.parentId === currentComment?._id) {
-            if (newAnswer?.parentReviewsLength) {
-                setComment((prevState) => ({...prevState, repliesLength: newAnswer?.parentReviewsLength}))
-            }
-            setNewAnswer({} as INewComment);
-        }
-    }, [newAnswer, currentComment?._id]);
-
-    useEffect(() => {
-        if (newComment?.comment?._id && newComment?.comment?.parentId === currentComment?._id) {
-            setAnswers((prevState) => [newComment?.comment, ...prevState])
-        }
-    }, [newComment]);
 
 
     const anchor = width < 600 && device ? 'bottom' : 'right';
 
-    if (isError) {
-        return <div>Something went wrong (((</div>
-    }
     return (
         <Box>
             {
@@ -118,18 +59,18 @@ const CommentAnswers = ({comment, setComment, isLoadAnswers, setIsLoadAnswers, n
                         //     maxWidth: {xs: '100%', lg: '40%'}
                         // },
                     }}>
-                    <CommentAnswersList
-                        answers={answers}
-                        setAnswers={setAnswers}
-                        setNewComment={setNewAnswer}
-                        isLoading={isLoading}
-                    />
-                    <MoreButton
-                        hasNextPage={hasNextPage}
-                        isFetchingNextPage={isFetchingNextPage}
-                        fetchNextPage={fetchNextPage}
-                        total={total}
-                    />
+                    {
+                        isShowAnswers && isLoadAnswers && (
+                            <AnswersComponent
+                                comment={comment}
+                                setComment={setComment}
+                                currentComment={currentComment}
+                                newAnswer={newAnswer}
+                                newComment={newComment}
+                                setNewAnswer={setNewAnswer}
+                            />
+                        )
+                    }
                 </Box>
             }
             {
@@ -148,6 +89,7 @@ const CommentAnswers = ({comment, setComment, isLoadAnswers, setIsLoadAnswers, n
                         <Box sx={{
                             display: 'flex',
                             alignItems: 'center',
+                            p: 1,
                             gap: dataPermission === 'manager' ? 3 : 0
                         }}>
                             <Box sx={{
@@ -191,23 +133,18 @@ const CommentAnswers = ({comment, setComment, isLoadAnswers, setIsLoadAnswers, n
                                 setNewComment={setNewAnswer}
                             />
                         </Box>
-                        <Box sx={{
-                            width: '100%',
-                            p: '0 0 0 20px'
-                        }}>
-                            <CommentAnswersList
-                                answers={answers}
-                                setAnswers={setAnswers}
-                                setNewComment={setNewAnswer}
-                                isLoading={isLoading}
-                            />
-                        </Box>
-                        <MoreButton
-                            hasNextPage={hasNextPage}
-                            isFetchingNextPage={isFetchingNextPage}
-                            fetchNextPage={fetchNextPage}
-                            total={total}
-                        />
+                        {
+                            isShowAnswers && isLoadAnswers && (
+                                <AnswersComponent
+                                    comment={comment}
+                                    setComment={setComment}
+                                    currentComment={currentComment}
+                                    newAnswer={newAnswer}
+                                    newComment={newComment}
+                                    setNewAnswer={setNewAnswer}
+                                />
+                            )
+                        }
                     </Box>
                 </CustomDrawer>
             }
@@ -215,6 +152,101 @@ const CommentAnswers = ({comment, setComment, isLoadAnswers, setIsLoadAnswers, n
     );
 };
 
+type TAnswersComment = {
+    newComment?: INewComment | null,
+    comment: IComment,
+    setComment: Dispatch<SetStateAction<IComment>>,
+    currentComment: IComment,
+    newAnswer: INewComment | null,
+    setNewAnswer: Dispatch<SetStateAction<INewComment | null>>
+}
+const AnswersComponent = ({comment, newComment, setComment, currentComment, newAnswer, setNewAnswer}: TAnswersComment) => {
+
+    const {id} = useParams();
+
+    const [answers, setAnswers] = useState<IComment[]>([]);
+
+    const {
+        data,
+        isLoading,
+        isError,
+        hasNextPage,
+        fetchNextPage,
+        isFetchingNextPage,
+    } = useInfiniteList<IComment>({
+        resource: `comment/allByInstitutionId/${id as string}`,
+        pagination: {
+            pageSize: 10
+        },
+        filters: [
+            {
+                value: comment?._id,
+                field: 'parentId',
+                operator: 'eq'
+            }
+        ]
+    });
+    const total = data?.pages?.length && data?.pages?.length > 0 ? data?.pages[0]?.total : 0;
+
+    useEffect(() => {
+        if (newAnswer?.comment?._id) {
+            setComment((prevState) => ({...prevState, repliesLength: newAnswer?.parentReviewsLength}))
+            setAnswers((prevState) => ([newAnswer?.comment, ...prevState]))
+        }
+    }, [newAnswer]);
+
+    useEffect(() => {
+        if (data?.pages) {
+            const list = [].concat(...((data?.pages as any ?? [])?.map((page: {
+                data: IDataList,
+                total: number
+            }) => page?.data?.items ?? [])));
+            setAnswers(list);
+        }
+    }, [data]);
+
+
+    useEffect(() => {
+        if (newAnswer?.comment?._id && newAnswer?.comment?.parentId === currentComment?._id) {
+            if (newAnswer?.parentReviewsLength) {
+                setComment((prevState) => ({...prevState, repliesLength: newAnswer?.parentReviewsLength}))
+            }
+            setNewAnswer({} as INewComment);
+        }
+    }, [newAnswer, currentComment?._id]);
+
+    useEffect(() => {
+        if (newComment?.comment?._id && newComment?.comment?.parentId === currentComment?._id) {
+            setAnswers((prevState) => [newComment?.comment, ...prevState])
+        }
+    }, [newComment]);
+
+
+    if (isError) {
+        return <div>Something went wrong (((</div>
+    }
+    return (
+        <>
+            <Box sx={{
+                width: '100%',
+                p: '0 0 0 20px'
+            }}>
+                <CommentAnswersList
+                    answers={answers}
+                    setAnswers={setAnswers}
+                    setNewComment={setNewAnswer}
+                    isLoading={isLoading}
+                />
+            </Box>
+            <MoreButton
+                hasNextPage={hasNextPage}
+                isFetchingNextPage={isFetchingNextPage}
+                fetchNextPage={fetchNextPage}
+                total={total}
+            />
+        </>
+    )
+}
 type TCommentAnswerList = {
     answers: IComment[],
     setAnswers: Dispatch<SetStateAction<IComment[]>>,
@@ -238,7 +270,7 @@ const CommentAnswersList = ({answers, setAnswers, setNewComment, isLoading}: TCo
                             key={answer?._id + index}
                             sx={{
                                 position: 'relative',
-                                "&:not(:last-child)::after":{
+                                "&:not(:last-child)::after": {
                                     position: 'absolute',
                                     content: "''",
                                     width: '100%',

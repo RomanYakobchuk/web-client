@@ -3,7 +3,7 @@ import BookMarkButton from "./common/buttons/BookMarkButton";
 import NearbyEstablishmentBtn from "./common/buttons/NearbyEstablishmentBtn";
 
 import CustomButton from "./common/custom/CustomButton";
-import CustomProfile from "./common/custom/CustomProfile";
+import CustomProfile from "./profile/CustomProfile";
 import VariantComponent from "./common/buttons/variantComponent";
 import Variant1EstablishmentCard from "./establishment/cards/variant1EstablishmentCard";
 import Variant2EstablishmentCard from "./establishment/cards/variant2EstablishmentCard";

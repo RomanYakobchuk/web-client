@@ -1,5 +1,9 @@
-import NewReservation from "./newReservation";
+import NewReservation from "./newReservation/newReservation";
+import NewNews from "./newNews/newNews";
+import DetailsButton from "./detailsButton";
 
 export {
-    NewReservation
+    NewReservation,
+    NewNews,
+    DetailsButton
 }

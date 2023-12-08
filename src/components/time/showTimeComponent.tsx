@@ -1,13 +1,14 @@
 import React, {useState, MouseEvent} from "react";
-import {Box} from "@mui/material";
+import {Box, SxProps} from "@mui/material";
 import dayjs from "dayjs";
 
 type TProps = {
     date: Date,
-    isFirstAgo?: boolean
+    isFirstAgo?: boolean,
+    style?: SxProps
 }
-const ShowTimeComponent = ({date, isFirstAgo = true}: TProps) => {
-    const [isShowTimeFromNow, setIsShowTimeFromNow] = useState<boolean>(true);
+const ShowTimeComponent = ({date, isFirstAgo = true, style}: TProps) => {
+    const [isShowTimeFromNow, setIsShowTimeFromNow] = useState<boolean>( isFirstAgo);
 
     const handleChange = (event: MouseEvent<HTMLDivElement | HTMLButtonElement>) => {
         event.stopPropagation();
@@ -20,12 +21,13 @@ const ShowTimeComponent = ({date, isFirstAgo = true}: TProps) => {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'end',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            ...style
         }}
              onClick={handleChange}
         >
             {
-                isShowTimeFromNow && isFirstAgo ? (
+                isShowTimeFromNow ? (
                     dayjs(date).fromNow()
                 ) : (
                     <Box sx={{

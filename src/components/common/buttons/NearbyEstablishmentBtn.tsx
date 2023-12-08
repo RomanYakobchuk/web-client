@@ -129,6 +129,7 @@ const NearbyEstablishmentBtn = ({
                     mt: '20px'
                 }}
                 toggleDrawer={setOpenDrawer}
+                isScaleRoot={true}
             >
                 {
                     !error ? (openDrawer && location?.lng && location?.lat && (

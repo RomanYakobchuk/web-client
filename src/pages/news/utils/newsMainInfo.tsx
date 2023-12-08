@@ -5,10 +5,10 @@ import {useTranslate} from "@refinedev/core";
 import dayjs from "dayjs";
 import {Link} from "react-router-dom";
 
-import {INews, PropertyProps} from "../../../interfaces/common";
-import {BookMarkButton} from "../../../components";
-import SharedComponent from "../../../components/common/shared/sharedComponent";
-import {ColorModeContext} from "../../../contexts";
+import {INews, PropertyProps} from "@/interfaces/common";
+import {BookMarkButton} from "@/components";
+import SharedComponent from "@/components/common/shared/sharedComponent";
+import {ColorModeContext} from "@/contexts";
 
 type TProps = {
     news: INews

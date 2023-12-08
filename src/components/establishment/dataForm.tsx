@@ -97,7 +97,7 @@ const DataForm = (props: IEstablishmentFormProps) => {
         <Box
             sx={{
                 // borderRadius: '15px',
-                p: 1,
+                p: {sm: 1},
                 // paddingBottom: '30px',
                 // bgcolor: 'primary.main',
             }}
@@ -235,9 +235,11 @@ const DataForm = (props: IEstablishmentFormProps) => {
                     >
                         {translate("home.create.description")}
                     </FormHelperText>
-                    <MDEditor data-color-mode={mode === "dark" ? 'dark' : 'light'}
-                              value={description ? description : ''}
-                              onChange={setDescription}
+                    <MDEditor
+
+                        data-color-mode={mode === "dark" ? 'dark' : 'light'}
+                        value={description ? description : ''}
+                        onChange={setDescription}
                     />
                 </FormControl>
                 <FormControl fullWidth>

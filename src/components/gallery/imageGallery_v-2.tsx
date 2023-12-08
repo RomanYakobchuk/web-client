@@ -39,7 +39,8 @@ const ImageGalleryV2 = ({images, styles}: TProps) => {
 
     const height = width < 600 ? '200px' : width < 900 ? '350px' : width > 1500 ? '450px' : '350px';
     const isMoreOne = gallery?.length > 1;
-    const changeImageWidth = gallery?.length === 2 ? 'calc(50% - 4px)' : gallery?.length === 3 ? 'calc(100% / 3 - 4px)' : width < 600 ? '150px' : '200px';
+    const changeImageWidth = gallery?.length === 2 ? 'calc(50% - 4px)' : gallery?.length === 3 ? 'calc(100% / 3 - 4px)' : '150px';
+    const changeImageHeight = gallery?.length === 2 ? '100px' : '80px';
 
     const maxWidth = width > 900 ? (collapsed ? 'calc(100vw - 104px)' : 'calc(100vw - 240px)') : 'calc(100vw - 30px)';
 
@@ -121,7 +122,7 @@ const ImageGalleryV2 = ({images, styles}: TProps) => {
                                         key={index}
                                         sx={{
                                             width: changeImageWidth,
-                                            height: {xs: '100px', sm: '130px', md: '150px'},
+                                            height: {xs: changeImageHeight, md: '100px'},
                                             borderRadius: '12px',
                                             border: `5px solid ${index === currentImage ? '#3ebafa' : 'transparent'}`,
                                             cursor: 'pointer',

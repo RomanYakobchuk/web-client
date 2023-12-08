@@ -139,7 +139,7 @@ const ImageSelector = ({
                             },
                             "& button": {
                                 flex: {xs: '1 0 100px', sm: '1 0 160px'},
-                                fontSize: {xs: '10px', sm: '14px'},
+                                fontSize: {xs: '14px', md: '16px'},
                                 p: {xs: '3px 5px', sm: 'unset'},
                                 display: 'flex',
                                 alignItems: 'center',
@@ -150,7 +150,7 @@ const ImageSelector = ({
                             },
                             "& label": {
                                 flex: {xs: '1 0 100px', sm: '1 0 160px'},
-                                fontSize: {xs: '10px', sm: '14px'},
+                                fontSize: {xs: '14px', md: '16px'},
                                 p: {xs: '3px 5px', sm: 'unset'},
                                 display: 'flex',
                                 alignItems: 'center',

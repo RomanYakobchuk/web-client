@@ -12,9 +12,10 @@ import {INotification} from "@/interfaces/common";
 import {SchemaContext} from "@/settings/schema";
 import {socket} from "@/socketClient";
 import {Loading} from "@/components";
-
 import "./notification.css";
 import {axiosInstance} from "@/authProvider";
+import LottieComponent from "@/lotties/LottieComponent";
+import NotificationLottie from "@/lotties/properties/notification.json"
 
 const {Text} = Typography;
 type TProps = {
@@ -61,10 +62,10 @@ const Page = ({userId, isCurrentUser = true}: TProps) => {
         socket?.on('newNotification', (notification: INotification) => {
             setNewNotification(notification)
         })
-        return () => {
-            socket.off('newNotification');
-        }
-    }, []);
+        // return () => {
+        //     socket.off('newNotification');
+        // }
+    }, [socket]);
     useEffect(() => {
         if (newNotification) {
             setNotifications((prevState) => ([newNotification, ...prevState]))
@@ -250,75 +251,100 @@ const Page = ({userId, isCurrentUser = true}: TProps) => {
                         top: schema === 'schema_1' ? '145px' : '80px'
                     },
                     height: 'fit-content',
-                    minWidth: '200px',
-                    maxWidth: 'fit-content',
-                    display: 'flex',
-                    flexWrap: 'wrap',
-                    gap: 1,
-                    "& h5, & h4, & span": {
-                        // color: 'common.white'
-                    },
-                    "& h5, & h4": {
-                        width: 'fit-content',
-                        mt: '10px'
-                    },
-                    "& span": {
-                        fontWeight: 600,
-                        fontSize: {xs: '14px', md: '16px'}
-                    },
-                    "& div": {
-                        display: 'flex',
-                        alignItems: 'baseline',
-                        gap: 1,
-                        p: '4px 16px',
-                        borderRadius: '10px'
-                    }
                 }}>
+                    <Box sx={{
+
+                        height: 'fit-content',
+                        minWidth: '200px',
+                        maxWidth: 'fit-content',
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        gap: 1,
+                        "& h5, & h4, & span": {
+                            // color: 'common.white'
+                        },
+                        "& h5, & h4": {
+                            width: 'fit-content',
+                            mt: '10px'
+                        },
+                        "& span": {
+                            fontWeight: 600,
+                            fontSize: {xs: '14px', md: '16px'}
+                        },
+                        "& div": {
+                            display: 'flex',
+                            alignItems: 'baseline',
+                            gap: 1,
+                            p: '4px 16px',
+                            borderRadius: '10px'
+                        }
+                    }}>
+                        {
+                            [
+                                {
+                                    title: translate('notifications.page.info.all'),
+                                    count: count || 0,
+                                    value: 'null'
+                                },
+                                {
+                                    title: translate('notifications.page.info.read'),
+                                    count: (count - countIsNotRead <= 0 ? 0 : count - countIsNotRead) || 0,
+                                    value: 'true'
+                                },
+                                {
+                                    title: translate('notifications.page.info.notRead'),
+                                    count: countIsNotRead || 0,
+                                    value: 'false'
+                                }
+                            ]?.map((value) => (
+                                <Box
+                                    key={value?.value}
+                                    sx={{
+                                        transition: '200ms linear',
+                                        cursor: 'pointer',
+                                        bgcolor: isReading === value?.value ? "info.main" : 'modern.modern_1.second',
+                                        "& span": {
+                                            color: isReading === value?.value ? "#f1f1f1" : 'common.white',
+                                        },
+                                        "&:hover": {
+                                            bgcolor: 'info.main'
+                                        },
+                                        "& span:nth-of-type(2)": {
+                                            fontSize: {xs: '18px', md: '20px'},
+                                            fontWeight: 600
+                                        }
+                                    }}
+                                    onClick={() => setIsReadingFilter(value?.value as TIsReadings)}
+                                >
+                                    <Text>
+                                        {value?.title}
+                                    </Text>
+                                    <CountUp
+                                        end={value?.count}
+                                    />
+                                </Box>
+                            ))
+                        }
+                    </Box>
                     {
-                        [
-                            {
-                                title: translate('notifications.page.info.all'),
-                                count: count || 0,
-                                value: 'null'
-                            },
-                            {
-                                title: translate('notifications.page.info.read'),
-                                count: (count - countIsNotRead <= 0 ? 0 : count - countIsNotRead) || 0,
-                                value: 'true'
-                            },
-                            {
-                                title: translate('notifications.page.info.notRead'),
-                                count: countIsNotRead || 0,
-                                value: 'false'
-                            }
-                        ]?.map((value) => (
-                            <Box
-                                key={value?.value}
-                                sx={{
-                                    transition: '200ms linear',
-                                    cursor: 'pointer',
-                                    bgcolor: isReading === value?.value ? "info.main" : 'modern.modern_1.second',
-                                    "& span": {
-                                        color: isReading === value?.value ? "#f1f1f1" : 'common.white',
-                                    },
-                                    "&:hover": {
-                                        bgcolor: 'info.main'
-                                    },
-                                    "& span:nth-of-type(2)": {
-                                        fontSize: {xs: '18px', md: '20px'},
-                                        fontWeight: 600
-                                    }
-                                }}
-                                onClick={() => setIsReadingFilter(value?.value as TIsReadings)}
-                            >
-                                <Text>
-                                    {value?.title}
-                                </Text>
-                                <CountUp
-                                    end={value?.count}
-                                />
+                        ((width >= 700 && width <= 900) || width >= 1000) && (
+                            <Box sx={{
+                                display: 'none',
+                                m: '60px auto',
+                                "@media screen and (min-width: 700px)": {
+                                    display: 'flex'
+                                },
+                                "@media screen and (min-width: 900px)": {
+                                    display: 'none'
+                                },
+                                "@media screen and (min-width: 1000px)": {
+                                    display: 'flex',
+                                    m: '100px auto',
+                                },
+                            }}>
+                                <LottieComponent size={(width >= 700 && width <= 900) ? 200 : 300} loop={true} isClickToStartAnimation={false} item={NotificationLottie}/>
                             </Box>
-                        ))
+                        )
                     }
                 </Box>
                 <Box sx={{

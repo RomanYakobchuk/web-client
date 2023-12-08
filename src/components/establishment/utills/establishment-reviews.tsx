@@ -6,7 +6,6 @@ import {
     InputAdornment,
     Rating,
     TextField,
-    TextareaAutosize
 } from "@mui/material";
 import React, {Dispatch, SetStateAction, useContext, useEffect, useState} from "react";
 import dayjs from "dayjs";
@@ -29,6 +28,7 @@ import {IReviews} from "@/interfaces/common";
 import ReviewCard from "../cards/reviewCard";
 import MoreButton from "../../common/buttons/MoreButton";
 import {useMobile} from "@/hook";
+import {handleKeyDownBlockEnter} from "@/keys";
 
 
 dayjs.extend(relativeTime);
@@ -244,6 +244,7 @@ const EstablishmentReviews = ({id}: IProps) => {
                         }}
                         placeholder={'*' + translate("home.show.reviews.like")}
                         onChange={(event) => setLike(event.target.value)}
+                        onKeyDown={(event) => handleKeyDownBlockEnter(event, like)}
                     />
                     <TextField
                         value={notLike}
@@ -260,6 +261,7 @@ const EstablishmentReviews = ({id}: IProps) => {
                         }}
                         placeholder={translate("home.show.reviews.notLike")}
                         onChange={(event) => setNotLike(event.target.value)}
+                        onKeyDown={(event) => handleKeyDownBlockEnter(event, notLike)}
                     />
                     <Box sx={{
                         width: '100%',

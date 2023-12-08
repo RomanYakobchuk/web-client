@@ -10,7 +10,7 @@ import {ProfileProps} from "@/interfaces/common";
 import {ColorModeContext} from "@/contexts";
 import dayjs from "dayjs";
 import {useUserInfo} from "@/hook";
-import {TabsUserProperties} from "@/components/profile";
+import {TabsUserProperties} from "@/components/profile/index";
 import {SchemaContext} from "@/settings/schema";
 
 
@@ -30,7 +30,7 @@ const CustomProfile = ({user}: TProps) => {
 
     return (
         <Box sx={{
-            p: 1,
+            p: 3,
             margin: '0 auto',
             maxWidth: '1400px',
             // "& *":{

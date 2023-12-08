@@ -440,10 +440,7 @@ export interface IReserve {
     institutionStatus: {
         value: "accepted" | "rejected" | "draft",
         reasonRefusal?: string,
-        freeDateFor: [{
-            day: Date,
-            time: Date
-        }] | null
+        freeDateFor: [Date | null] | null
     }
 }
 

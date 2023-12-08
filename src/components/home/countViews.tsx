@@ -35,13 +35,15 @@ const CountViews = () => {
                 <Typography sx={{
                     fontSize: {xs: '18px', sm: '22px'},
                     fontWeight: 900,
+                    mx: 6,
                     color: (theme: any) => theme.palette.secondary.main
                 }}>
                     {translate("home.sortByType.popularPlace")}
                 </Typography>
             }
             <Box sx={{
-                width: {xs: '80vw', md: `calc(${layoutWidth}px - 160px)`},
+                // width: {xs: '80vw', md: `calc(${layoutWidth}px - 160px)`},
+                width: {xs: '100vw', md: `${layoutWidth}px`},
                 margin: '0 auto',
                 position: 'relative'
             }}>
@@ -50,8 +52,8 @@ const CountViews = () => {
                         dataViews?.data?.map((item, index) => (
                             <Box key={index} sx={{
                                 width: '100%',
-                                height: {xs: '180px', lg: '220px'},
-                                padding: '0 10px',
+                                height: {xs: '250px', sm: '350px', lg: '450px', xl: '550px'},
+                                // padding: '0 10px',
                                 display: 'flex',
                                 position: 'relative'
                             }}>
@@ -59,7 +61,7 @@ const CountViews = () => {
                                     sx={{
                                         width: '100%',
                                         height: '100%',
-                                        borderRadius: '10px',
+                                        // borderRadius: '10px',
                                         backgroundImage: `url("${item?.url}")`,
                                         backgroundPosition: 'center',
                                         backgroundSize: 'cover',
@@ -120,11 +122,12 @@ const CountViews = () => {
                                     </Link>
                                     <Box sx={{
                                         position: 'absolute',
-                                        right: '9px',
-                                        bottom: '10px',
+                                        right: {xs: '0px', md: 'unset'},
+                                        left: {xs: 'unset', md: '0px'},
+                                        bottom: {xs: '10px', md: '60px'},
                                         p: '5px 10px',
                                         bgcolor: 'common.black',
-                                        borderRadius: '15px 0 0 15px',
+                                        borderRadius: '15px',
                                         "& span": {
                                             color: 'common.white',
                                         }

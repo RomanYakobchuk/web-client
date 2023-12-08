@@ -10,3 +10,4 @@ export * from './useLeaveManagerCommentAs';
 export * from './useScrollRestoration';
 export * from './useNavigateWithTransition';
 export * from './useUserProperties';
+export * from './useSendNotification';

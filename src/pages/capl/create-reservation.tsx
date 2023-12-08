@@ -28,7 +28,7 @@ const CreateReservation = () => {
     const [numberPeople, setNumberPeople] = useState<number>(0);
     const [whoPay, setWhoPay] = useState<string>(currentUser?.name);
     const [userStatus, setUserStatus] = useState<IReserve['userStatus']>({value: 'draft', reasonRefusal: ''});
-    const [institutionStatus, setInstitutionStatus] = useState<IReserve['institutionStatus']>({value: 'draft', reasonRefusal: '', freeDateFor: [{}] as IReserve['institutionStatus']['freeDateFor']});
+    const [institutionStatus, setInstitutionStatus] = useState<IReserve['institutionStatus']>({value: 'draft', reasonRefusal: '', freeDateFor: [null] as IReserve['institutionStatus']['freeDateFor']});
 
     useEffect(() => {
         if (searchEstablishment) {
@@ -118,12 +118,12 @@ const CreateReservation = () => {
         try {
             const res = await onFinish({...requestData, institutionId: searchPlace?._id, userId: user, managerId: manager});
             if (res?.data?.notification && res?.data?.reservation?.manager) {
-                socket?.emit('createdNewReservation', {
+                socket?.emit('createNewNotification', {
                     userId: res?.data?.reservation?.manager,
                     notification: res?.data?.notification
                 })
             }
-            // goBack();
+            goBack();
         } catch (e) {
 
         }

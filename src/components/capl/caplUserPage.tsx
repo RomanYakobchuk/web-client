@@ -46,6 +46,7 @@ const CaplUserPage = () => {
         setCurrent
     } = useTable({
         resource: `capl/allByUser`,
+        syncWithLocation: true
     })
     const reservations: IReserve[] | any = data?.data ?? [];
 

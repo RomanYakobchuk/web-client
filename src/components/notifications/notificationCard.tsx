@@ -6,11 +6,13 @@ import {AccessTime, CloseRounded, Delete, EastRounded, RestartAltRounded, SwipeL
 
 import {INotification} from "@/interfaces/common";
 import {ColorModeContext} from "@/contexts";
-import {useMobile} from "@/hook";
+import {useMobile, useUserProperties} from "@/hook";
 import {ModalShowContent} from "@/components";
 import SwipeComponent from "@/components/swipe/swipeComponent";
 import {axiosInstance} from "@/authProvider";
 import {ShowTimeComponent} from "@/components/time";
+import {getNewNotificationStatus} from "./getNewNotificationStatus";
+import {newNotificationIcon} from "@/components/notifications/newNotificationIcon";
 
 type TProps = {
     notification: INotification,
@@ -25,14 +27,11 @@ const type = {
     type: "type",
     title: 'title'
 }
-const status = {
-    usual: 'message',
-    accepted: 'accepted',
-    rejected: 'rejected',
-}
+
 const NotificationCard = ({notification, handleClear, isClear = true, bgColor, handleRecall, isSwipe = false, setNotifications}: TProps) => {
     const {width} = useMobile();
     const {mode} = useContext(ColorModeContext);
+    const {setProperties} = useUserProperties();
     const navigate = useNavigate();
     const translate = useTranslate();
     const {open} = useNotification();
@@ -65,7 +64,13 @@ const NotificationCard = ({notification, handleClear, isClear = true, bgColor, h
         if (!isSwipe) {
             navigate(`/notifications/show/${notification?._id}`)
         }
-        setIsRead(true);
+        setIsRead(true)
+        if (!notification?.isRead) {
+            setProperties(prevState => ({
+                ...prevState,
+                notReadNotifications: prevState?.notReadNotifications <= 0 ? 0 : prevState?.notReadNotifications - 1
+            }))
+        }
     }
 
     useEffect(() => {
@@ -163,7 +168,6 @@ const NotificationCard = ({notification, handleClear, isClear = true, bgColor, h
                     sx={{
                         overflow: 'hidden',
                         display: 'flex',
-                        gap: 1,
                         alignItems: 'start',
                         width: '100%',
                     }}>
@@ -212,21 +216,6 @@ const NotificationCard = ({notification, handleClear, isClear = true, bgColor, h
                                 {translate(`buttons.${isClear ? 'delete' : 'restore'}`)}?
                             </Box>
                         </ModalShowContent>
-                        {/*{*/}
-                        {/*    isClear ? (*/}
-                        {/*        <IconButton*/}
-                        {/*            onClick={handleOpenModal}*/}
-                        {/*        >*/}
-                        {/*            <CloseRounded/>*/}
-                        {/*        </IconButton>*/}
-                        {/*    ) : (*/}
-                        {/*        <IconButton*/}
-                        {/*            onClick={handleOpenModal}*/}
-                        {/*        >*/}
-                        {/*            <RestartAltRounded/>*/}
-                        {/*        </IconButton>*/}
-                        {/*    )*/}
-                        {/*}*/}
                     </Box>
                     <Box
                         sx={{
@@ -240,13 +229,19 @@ const NotificationCard = ({notification, handleClear, isClear = true, bgColor, h
                             p: '5px 16px',
                             pl: 0,
                             pr: '24px',
-                            borderBottom: '1px solid silver'
+                            borderBottom: '1px solid silver',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
                         }}>
                             <Box sx={{
                                 fontWeight: 600,
                                 color: isRead ? "silver" : 'cornflowerblue'
                             }}>
                                 {translate(`notifications.page.${notification.type}.title.${type[notification?.status === 'usual' ? 'type' : 'title']}`)}
+                            </Box>
+                            <Box>
+                                {newNotificationIcon(notification?.type)}
                             </Box>
                         </Box>
                         <Box sx={{
@@ -257,7 +252,7 @@ const NotificationCard = ({notification, handleClear, isClear = true, bgColor, h
                             justifyContent: 'space-between',
                             alignItems: 'center'
                         }}>
-                            {translate(`notifications.page.${notification.type}.message.${status[notification?.status]}`)}
+                            {translate(`notifications.page.${notification.type}.message.${getNewNotificationStatus(notification?.status, notification?.forUser?.role as "user" | "manager")}`)}
                             {
                                 isSwipe
                                     ? <SwipeLeftRounded sx={{
@@ -293,7 +288,6 @@ const NotificationCard = ({notification, handleClear, isClear = true, bgColor, h
                                 sx={{
                                     color: isRead ? 'silver' : (mode === 'dark' ? "#f9f9f9" : '#666464'),
                                 }}/>
-                            {/*{dayjs(notification?.createdAt).format('DD.MM.YYYY HH:mm')}*/}
                             <ShowTimeComponent date={notification?.createdAt} isFirstAgo={false}/>
                         </Box>
                     </Box>

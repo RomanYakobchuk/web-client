@@ -9,6 +9,7 @@ import {useLeaveManagerCommentAs, useMobile} from "@/hook";
 import {IComment} from "@/interfaces/common";
 import {axiosInstance} from "@/authProvider";
 import {INewComment} from "./commentAnswers";
+import {handleKeyDownBlockEnter} from "@/keys";
 
 
 interface IProps {
@@ -159,7 +160,7 @@ const CommentInput = ({institutionId, setNewComment, parent = {} as IComment, is
                 multiline
                 fullWidth={true}
                 variant={'standard'}
-                value={value ? value : ''}
+                value={value || ''}
                 minRows={1}
                 maxRows={10}
                 inputProps={{
@@ -172,6 +173,7 @@ const CommentInput = ({institutionId, setNewComment, parent = {} as IComment, is
                 onChange={(event) => {
                     setValue(event.target.value)
                 }}
+                onKeyDown={(event) => handleKeyDownBlockEnter(event, value)}
                 sx={{
                     "& textarea": {
                         color: 'common.white',

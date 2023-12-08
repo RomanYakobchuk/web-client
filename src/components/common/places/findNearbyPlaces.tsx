@@ -5,15 +5,17 @@ import {useDebounce} from "use-debounce";
 import {Input, Select, Space} from "antd";
 import {Close, Delete, Edit} from "@mui/icons-material";
 
-import {PropertyProps} from "../../../interfaces/common";
-import {useMobile} from "../../../hook";
+import {PropertyProps} from "@/interfaces/common";
+import {useMobile} from "@/hook";
 import Loading from "../../loading/loading";
-import {scrollBarStyle} from "../../../styles";
+import {scrollBarStyle} from "@/styles";
 import CustomOpenContentBtn from "../custom/CustomOpenContentBtn";
 import ChangeLocation from "../google/changeLocation";
 import PropertiesList from "../../establishment/utills/lists/propertiesList";
 import MoreButton from "../buttons/MoreButton";
 import VariantComponent from "../buttons/variantComponent";
+import LottieComponent from "@/lotties/LottieComponent";
+import RadarLottie from "@/lotties/properties/radar.json";
 
 type TProps = {
     location: {
@@ -319,7 +321,11 @@ const FindNearbyPlaces = ({location, establishment, setOpenDrawer}: TProps) => {
             }}>
                 {
                     (isLoading || isFetching)
-                        ? <Loading height={'200px'}/>
+                        ?
+                        <Box>
+                            <LottieComponent size={250} loop={true} isClickToStartAnimation={false} item={RadarLottie}/>
+                        </Box>
+                        // <Loading height={'200px'}/>
                         : isError ? <div>Something went wrong (((</div>
                             : establishmentList?.length > 0 && (
                             <PropertiesList

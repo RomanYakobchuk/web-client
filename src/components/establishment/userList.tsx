@@ -26,6 +26,9 @@ const UserList = () => {
     } = useTable({
         resource: "institution/all",
         syncWithLocation: true,
+        queryOptions: {
+            enabled: true
+        }
     });
 
     useEffect(() => {
