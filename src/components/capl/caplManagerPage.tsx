@@ -68,6 +68,7 @@ const CaplManagerPage = () => {
     >({
         resource: `capl/allByUser`,
         initialPageSize: 10,
+        syncWithLocation: true,
         onSearch: (params) => {
             const filters: CrudFilters = [];
             const {search, institutionStatus, userStatus, institution, day} = params;

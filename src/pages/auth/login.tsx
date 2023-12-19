@@ -15,14 +15,14 @@ import {useNotification} from "@refinedev/core";
 import {useLogin, useTranslate} from "@refinedev/core";
 import {PriorityHigh, VisibilityOffOutlined, VisibilityOutlined} from "@mui/icons-material";
 
-import {IData} from "../../interfaces/common";
-import {ColorModeContext} from "../../contexts";
-import {parseJwt} from "../../utils";
-import {axiosInstance} from "../../authProvider";
-import {buttonStyle, textFieldStyle} from "../../styles";
+import {IData} from "@/interfaces/common";
+import {ColorModeContext} from "@/contexts";
+import {parseJwt} from "@/utils";
+import {axiosInstance} from "@/authProvider";
+import {buttonStyle, textFieldStyle} from "@/styles";
 import ContainerComponent from "./utills/containerComponent";
 import OrPart from "./utills/orPart";
-import {ModalWindow} from "../../components";
+import {ModalWindow} from "@/components";
 
 const Login = () => {
 
@@ -48,26 +48,30 @@ const Login = () => {
             onMutationError: (data) => {
                 setError(data?.response?.data)
             },
+            onMutationSuccess: (data) => {
+                const dataRes = data?.data as IData;
+                const user = dataRes?.user ? parseJwt(dataRes?.user) : null
+                if (user?.isActivated) {
+                    login(dataRes)
+                }
+            },
             successNotification: (data: any) => {
                 return {
                     type: "success",
                     message: data?.data?.message
                 }
-            }
+            },
+            redirect: false
         }
     },);
 
     const onFinishHandler = async (formData: FieldValues) => {
         if (!formData?.email || !formData?.password) return alert(translate("pages.login.notHave"))
-        const {data}: IData | any = await onFinish({
+        await onFinish({
             email: formData?.email,
             password: formData?.password,
             registerBy: 'Email'
         });
-        const user = data?.user ? parseJwt(data?.user) : null
-        if (user?.isActivated) {
-            login(data)
-        }
     };
 
 

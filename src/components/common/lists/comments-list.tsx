@@ -35,7 +35,6 @@ const CommentsList = ({comments, setComments}: IProps) => {
             display: 'flex',
             flexDirection: 'column',
             gap: 2,
-            overflow: 'hidden'
         }}>
             {
                 comments?.map((comment, index) => (

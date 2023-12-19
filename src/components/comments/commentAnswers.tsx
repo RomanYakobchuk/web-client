@@ -229,7 +229,7 @@ const AnswersComponent = ({comment, newComment, setComment, currentComment, newA
         <>
             <Box sx={{
                 width: '100%',
-                p: '0 0 0 20px'
+                pl: '20px'
             }}>
                 <CommentAnswersList
                     answers={answers}
@@ -260,7 +260,6 @@ const CommentAnswersList = ({answers, setAnswers, setNewComment, isLoading}: TCo
             display: 'flex',
             flexDirection: 'column',
             gap: {xs: 1, md: 2},
-            overflow: 'hidden'
         }}>
             {
                 isLoading ? <Loading height={'200px'}/> :
@@ -270,20 +269,20 @@ const CommentAnswersList = ({answers, setAnswers, setNewComment, isLoading}: TCo
                             key={answer?._id + index}
                             sx={{
                                 position: 'relative',
-                                "&:not(:last-child)::after": {
-                                    position: 'absolute',
-                                    content: "''",
-                                    width: '100%',
-                                    height: '1px',
-                                    bgcolor: 'silver',
-                                    bottom: 0,
-                                }
+                                // "&:not(:last-child)::after": {
+                                //     position: 'absolute',
+                                //     content: "''",
+                                //     width: '100%',
+                                //     height: '1px',
+                                //     bgcolor: 'silver',
+                                //     bottom: 0,
+                                // }
                             }}
                         >
                             <CommentCard
                                 style={{
                                     p: 1,
-                                    // bgcolor: 'modern.modern_3.second',
+                                    bgcolor: 'common.black',
                                     borderRadius: '10px',
                                 }}
                                 setNewComment={setNewComment}

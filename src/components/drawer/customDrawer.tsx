@@ -1,10 +1,8 @@
-import {Box, IconButton, SxProps} from "@mui/material";
+import {SxProps} from "@mui/material";
 import React, {Dispatch, ReactNode, SetStateAction, useEffect, useState} from "react";
-import {Close, CloseOutlined} from "@mui/icons-material";
 import 'react-spring-bottom-sheet/dist/style.css'
 
 import {useMobile} from "@/hook";
-import {Puller, drawerBleeding, StyledBox} from "./utills";
 import SwipeDrawer from "./swipeDrawer/swipeDrawer";
 import Drawer from "./drawer/drawer";
 import HeaderDrawer from "./headerDrawer";
@@ -18,15 +16,17 @@ type TProps = {
     toggleDrawer: Dispatch<SetStateAction<boolean>>,
     title: string | ReactNode,
     button?: ReactNode,
-    closeWithOtherData?: any,
+    closeWithOtherData?: () => void,
     maxWidth?: string,
     contentStyle?: SxProps,
     bgColor?: string,
-    isScaleRoot?: boolean
+    isScaleRoot?: boolean,
+    drawerHeight?: string,
+    showDefaultHeader?: boolean
 }
 
 
-const CustomDrawer = ({children, anchor, toggleDrawer, title, button, open, closeWithOtherData, maxWidth = '725px', contentStyle, bgColor = '', isScaleRoot = false}: TProps) => {
+const CustomDrawer = ({children, anchor, toggleDrawer, title, button, open, closeWithOtherData, maxWidth = '725px', contentStyle, bgColor = '', isScaleRoot = false, drawerHeight, showDefaultHeader = true}: TProps) => {
     const {device, width} = useMobile();
 
     const [isVisible, setIsVisible] = useState<boolean>(false);
@@ -55,15 +55,17 @@ const CustomDrawer = ({children, anchor, toggleDrawer, title, button, open, clos
     return (
         <>
             {
-                (width <= 600 && device)
+                (width <= 600 && device && anchor === 'bottom')
                     ? <SwipeDrawer
                         isVisible={isVisible}
                         toggleDrawer={toggleDrawer}
                         header={
                             <HeaderDrawer
+                                anchor={'bottom'}
                                 title={title}
                                 toggleDrawer={toggleDrawer}
                                 button={button}
+                                onClick={closeWithOtherData}
                             />
                         }
                     >
@@ -72,17 +74,22 @@ const CustomDrawer = ({children, anchor, toggleDrawer, title, button, open, clos
                     : <Drawer
                         header={
                             <HeaderDrawer
+                                anchor={'right'}
                                 title={title}
                                 toggleDrawer={toggleDrawer}
                                 button={button}
+                                onClick={closeWithOtherData}
                             />
                         }
+                        showDefaultHeader={showDefaultHeader}
+                        drawerHeight={drawerHeight}
                         bgColor={bgColor}
                         maxWidth={maxWidth}
                         contentStyle={contentStyle}
                         anchor={anchor}
                         isVisible={isVisible}
                         toggleDrawer={toggleDrawer}
+                        closeWithOtherData={closeWithOtherData}
                     >
                         {children}
                     </Drawer>

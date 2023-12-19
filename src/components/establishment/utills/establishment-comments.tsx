@@ -108,9 +108,8 @@ const EstablishmentComments = ({institution}: IProps) => {
                     )
                 }
                 <Box sx={{
-                    border: '2px solid cornflowerblue',
-                    borderRadius: '7px',
-                    p: '16px 8px',
+                    // border: '2px solid cornflowerblue',
+
                     maxWidth: '800px'
                 }}>
                     <CommentInput

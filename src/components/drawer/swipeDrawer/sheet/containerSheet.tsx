@@ -24,7 +24,7 @@ export default function ContainerSheet({
     return (
         <div
             className={cx(
-                'grid place-content-evenly min-h-screen bg-white',
+                'grid bg place-content-evenly min-h-screen fixed',
                 className
             )}
         >

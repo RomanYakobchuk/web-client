@@ -32,6 +32,7 @@ export interface IUser {
 
 export interface IData {
     user: IUser | any,
+    message?: string,
     access_token: string,
     refresh_token: string,
     error?: any,
@@ -61,14 +62,18 @@ export interface CustomButtonProps {
 }
 
 export interface ProfileProps {
-    _id: any,
+    _id: string,
     name: string,
-    status: string,
+    status: "admin" | "manager" | "user",
     avatar: string,
     email: string,
     allInstitutions?: Array | undefined,
     isActivated: boolean,
     dOB: Date | any,
+    uniqueIndicator: {
+        value: string,
+        type: "public" | "private"
+    },
     phone: number,
     phoneVerify: boolean,
     isAdmin?: boolean,
@@ -388,7 +393,7 @@ export interface IConv {
 export interface IMessage {
     _id?: string,
     conversationId?: string,
-    sender: ProfileProps,
+    sender: ProfileProps | string,
     text: string,
     pictures?: [],
     replyTo?: IMessage | any,
@@ -399,21 +404,34 @@ export interface IMessage {
     isRead: boolean,
     isError: boolean
 }
-
+export interface IConvMembers {
+    user: ProfileProps | string,
+    connectedAt: Date,
+    indicator?: null | string,
+    role: "admin" | "manager" | "user",
+    conversationTitle: string
+}
 export interface IConversation {
     _id: string,
-    userId: ProfileProps,
-    managerId: ProfileProps,
-    institutionId: PropertyProps,
-    userName: string,
-    institutionTitle: string,
-    createdAt?: Date | any,
+    members: IConvMembers[],
     lastMessage: {
         sender: string,
         text: string,
         updatedAt: Date
     },
-    updatedAt: Date
+    chatInfo: {
+        status: "public" | "private",
+        type: "group" | "oneByOne",
+        field?: {
+            name: "institution" | "user" | "capl",
+            id: string
+        },
+        chatName: string,
+        picture: string,
+        creator: string | ProfileProps
+    },
+    createdAt?: Date,
+    updatedAt?: Date
 }
 
 

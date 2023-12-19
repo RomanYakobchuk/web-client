@@ -1,6 +1,7 @@
-import {FormControl, MenuItem, Select, SxProps} from "@mui/material";
+import {SxProps} from "@mui/material";
 import React, {useMemo} from "react";
 import {CrudSorting, useTranslate} from "@refinedev/core";
+import {HeadlessSelect} from "@/components/common/search/utils/headlessSelect";
 
 type TProps = {
     setSortBy: (value: string) => void,
@@ -40,80 +41,115 @@ const SortCapl = ({setSortBy, setSorters, sorters, sortBy, styles}: TProps) => {
             },
         ]);
     };
+    const options = [
+        {
+            title: translate("home.default"),
+            value: ''
+        },
+        {
+            title: translate('home.oldest'),
+            value: 'createdAt_asc',
+        },
+        {
+            title: translate('home.newest'),
+            value: 'createdAt_desc',
+        },
+        {
+            title: translate("capl.create.fullName") + '  ' + '↑',
+            value: 'fullName_asc'
+        },
+        {
+            title: translate("capl.create.fullName") + '  ' + '↓',
+            value: 'fullName_desc'
+        },
+        {
+            title: translate("capl.create.date") + '  ' + '↑',
+            value: 'date_asc'
+        },
+        {
+            title: translate("capl.create.date") + '  ' + '↓',
+            value: 'date_desc'
+        },
+    ];
 
     return (
-        <FormControl
-            sx={{
-                width: '100%',
-                maxWidth: '200px',
-                ...styles
-            }}
-        >
-            <Select
-                variant={"outlined"}
-                size="small"
-                color={"info"}
-                fullWidth
-                displayEmpty
-                required
-                inputProps={{'aria-label': 'Without label'}}
-                value={sorters[0]?.field ? sorters[0]?.field : sortBy ? sortBy : ""}
-                sx={{
-                    fontSize: {xs: '14px', sm: '16px'},
-                    borderRadius: '7px',
-                    borderColor: 'common.white',
-                    borderWidth: '1px',
-                    borderStyle: 'solid'
-                }}
-                onChange={
-                    (e: any) => {
-                        setSortBy(e.target.value)
-                        toggleSort(e.target.value)
-                    }
-                }
-            >
-                <MenuItem value={""}>{translate("home.default")}</MenuItem>
-                {
-                    [
-                        {
-                            title: translate('home.oldest'),
-                            value: 'createdAt_asc',
-                        },
-                        {
-                            title: translate('home.newest'),
-                            value: 'createdAt_desc',
-                        },
-                        // {
-                        //     title: translate("home.sortByABC.title") + ' ' + translate("home.sortByABC.a-z"),
-                        //     value: 'title_asc'
-                        // },
-                        // {
-                        //     title: translate("home.sortByABC.title") + ' ' + translate("home.sortByABC.z-a"),
-                        //     value: 'title_desc'
-                        // },
-                        {
-                            title: translate("capl.create.fullName") + '  ' + '↑',
-                            value: 'fullName_asc'
-                        },
-                        {
-                            title: translate("capl.create.fullName") + '  ' + '↓',
-                            value: 'fullName_desc'
-                        },
-                        {
-                            title: translate("capl.create.date") + '  ' + '↑',
-                            value: 'date_asc'
-                        },
-                        {
-                            title: translate("capl.create.date") + '  ' + '↓',
-                            value: 'date_desc'
-                        },
-                    ].map((type) => (
-                        <MenuItem key={type.value}
-                                  value={type.value}>{type.title}</MenuItem>
-                    ))
-                }
-            </Select>
-        </FormControl>
+        <HeadlessSelect
+            options={options}
+            setSortBy={setSortBy}
+            toggleSort={toggleSort}
+            />
+        // <FormControl
+        //     sx={{
+        //         width: '100%',
+        //         maxWidth: '200px',
+        //         ...styles
+        //     }}
+        // >
+        //     <Select
+        //         variant={"outlined"}
+        //         size="small"
+        //         color={"info"}
+        //         fullWidth
+        //         displayEmpty
+        //         required
+        //         inputProps={{'aria-label': 'Without label'}}
+        //         value={sorters[0]?.field ? sorters[0]?.field : sortBy ? sortBy : ""}
+        //         sx={{
+        //             fontSize: {xs: '14px', sm: '16px'},
+        //             borderRadius: '7px',
+        //             borderColor: 'common.white',
+        //             borderWidth: '1px',
+        //             borderStyle: 'solid'
+        //         }}
+        //         onChange={
+        //             (e: any) => {
+        //                 setSortBy(e.target.value)
+        //                 toggleSort(e.target.value)
+        //             }
+        //         }
+        //     >
+        //         <MenuItem value={""}>{translate("home.default")}</MenuItem>
+        //         {
+        //             [
+        //                 {
+        //                     title: translate('home.oldest'),
+        //                     value: 'createdAt_asc',
+        //                 },
+        //                 {
+        //                     title: translate('home.newest'),
+        //                     value: 'createdAt_desc',
+        //                 },
+        //                 // {
+        //                 //     title: translate("home.sortByABC.title") + ' ' + translate("home.sortByABC.a-z"),
+        //                 //     value: 'title_asc'
+        //                 // },
+        //                 // {
+        //                 //     title: translate("home.sortByABC.title") + ' ' + translate("home.sortByABC.z-a"),
+        //                 //     value: 'title_desc'
+        //                 // },
+        //                 {
+        //                     title: translate("capl.create.fullName") + '  ' + '↑',
+        //                     value: 'fullName_asc'
+        //                 },
+        //                 {
+        //                     title: translate("capl.create.fullName") + '  ' + '↓',
+        //                     value: 'fullName_desc'
+        //                 },
+        //                 {
+        //                     title: translate("capl.create.date") + '  ' + '↑',
+        //                     value: 'date_asc'
+        //                 },
+        //                 {
+        //                     title: translate("capl.create.date") + '  ' + '↓',
+        //                     value: 'date_desc'
+        //                 },
+        //             ].map((type) => (
+        //                 <MenuItem key={type.value}
+        //                           value={type.value}>{type.title}</MenuItem>
+        //             ))
+        //         }
+        //     </Select>
+        // </FormControl>
     );
 };
 export default SortCapl;

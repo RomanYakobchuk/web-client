@@ -171,9 +171,9 @@ const CaplForm = (props: TProps) => {
                     inputProps={{
                         min: dayjs(new Date())?.format('YYYY-MM-DDTHH:mm'),
                     }}
-                    InputLabelProps={{
-                        shrink: true,
-                    }}
+                    // InputLabelProps={{
+                    //     shrink: true,
+                    // }}
                     InputProps={{
                         sx: {
                             "&:invalid": {

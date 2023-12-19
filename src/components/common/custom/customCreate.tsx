@@ -86,7 +86,7 @@ const CustomCreate = ({isLoading, children, bgColor, onClick, breadCrumbItems, h
                                 display: 'flex',
                                 gap: 1,
                                 alignItems: 'center',
-                                justifyContent: 'center'
+                                justifyContent: 'center',
                             }}
                             onClick={() => navigate(-1)}
                             icon={<Close/>}
@@ -94,7 +94,9 @@ const CustomCreate = ({isLoading, children, bgColor, onClick, breadCrumbItems, h
                             {translate('buttons.cancel')}
                         </Button>
                         {saveButtonProps && (
-                            <SaveButton size={"large"} {...saveButtonProps} onClick={onClick}>{saveButtonText && saveButtonText}</SaveButton>
+                            <SaveButton size={"large"} style={{
+                                background: '#2874CB'
+                            }} {...saveButtonProps} onClick={onClick}>{saveButtonText && saveButtonText}</SaveButton>
                         )}
                     </Box>
                 )}

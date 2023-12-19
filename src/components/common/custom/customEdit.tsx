@@ -101,7 +101,9 @@ const CustomEdit = ({children, isLoading, bgColor, onClick, style, maxWidth = '1
                             <DeleteButton size={"large"} {...deleteButtonProps}/>
                         )}
                         {(saveButtonProps) && (
-                            <SaveButton size={"large"} {...saveButtonProps} onClick={onClick}/>
+                            <SaveButton style={{
+                                background: '#2874CB'
+                            }} size={"large"} {...saveButtonProps} onClick={onClick}/>
                         )}
                     </Box>
                 )}

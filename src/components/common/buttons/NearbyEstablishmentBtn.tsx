@@ -104,8 +104,11 @@ const NearbyEstablishmentBtn = ({
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    gap: 1,
+                    gap: {sm: 1},
                     textTransform: 'inherit',
+                    "& svg":{
+                        display: {xs: 'none', sm: 'flex'}
+                    },
                     // marginTop: {xs: '10px', sm: 0},
                     ...style
                 }}

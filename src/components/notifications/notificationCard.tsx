@@ -110,8 +110,10 @@ const NotificationCard = ({notification, handleClear, isClear = true, bgColor, h
             })
         }
     }
+
     return (
         <SwipeComponent
+            uniqueKey={notification?._id}
             isSwipeRight={false}
             isSwipeLeft={isSwipe}
             isSwipeable={isSwipe}
@@ -211,7 +213,7 @@ const NotificationCard = ({notification, handleClear, isClear = true, bgColor, h
                                 fontSize: '22px',
                                 width: '100%',
                                 fontWeight: 600,
-                                color: '#f1f1f1'
+                                color: 'common.white'
                             }}>
                                 {translate(`buttons.${isClear ? 'delete' : 'restore'}`)}?
                             </Box>

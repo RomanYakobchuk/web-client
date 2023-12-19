@@ -22,18 +22,32 @@ const NewsItem1 = ({itemNews}: IProps) => {
     return (
         <Box sx={{
             width: '100%',
+            position: 'relative',
+            "&::before": {
+                content: '""',
+                position: 'absolute',
+                width: '10px',
+                height: '100%',
+                bgcolor: 'common.white',
+                // left: {xs: '-28px', sm: '-26px', md: '-22px', lg: '-20px'},
+                left: 0,
+                // transform: 'translateX(-50%)',
+                top: 0,
+                borderRadius: '0 7px 7px 0'
+            },
+            pl: '20px',
             // bgcolor: 'modern.modern_1.main',
-            backgroundImage: mode === 'dark' ? 'radial-gradient(circle, rgba(62,71,97,1) 0%, rgba(34,29,57,1) 100%)' : 'radial-gradient(circle, rgba(181,184,226,1) 0%, rgba(206,221,238,1) 100%)',
-            borderRadius: '10px',
-            boxShadow: `0px 0px 5px 0px ${mode === 'dark' ? '#000' : '#fff'}`,
+            // backgroundImage: mode === 'dark' ? 'radial-gradient(circle, rgba(62,71,97,1) 0%, rgba(34,29,57,1) 100%)' : 'radial-gradient(circle, rgba(181,184,226,1) 0%, rgba(206,221,238,1) 100%)',
+            // borderRadius: '10px',
+            // boxShadow: `0px 0px 5px 0px ${mode === 'dark' ? '#000' : '#fff'}`,
             // backgroundSize: '400% 400%',
-            WebkitAnimation: 'bgcolorGradientAnimation 10s ease infinite',
-            MozAnimation: 'bgcolorGradientAnimation 10s ease infinite',
-            animation: 'bgcolorGradientAnimation 10s ease infinite',
+            // WebkitAnimation: 'bgcolorGradientAnimation 10s ease infinite',
+            // MozAnimation: 'bgcolorGradientAnimation 10s ease infinite',
+            // animation: 'bgcolorGradientAnimation 10s ease infinite',
             // maxWidth: '600px',
         }}>
             <Box sx={{
-                padding: '10px',
+                // padding: '10px',
                 display: 'flex',
                 flexDirection: 'column',
                 // bgcolor: 'common.black',
@@ -59,8 +73,8 @@ const NewsItem1 = ({itemNews}: IProps) => {
                                 src={establishmentInfo?.pictures[0]?.url}
                                 alt={establishmentInfo?.pictures[0]?.name}
                                 sx={{
-                                    width: {xs: 48, sm: 56, md: 64, lg: 72},
-                                    height: {xs: 48, sm: 56, md: 64, lg: 72},
+                                    width: {xs: 38, sm: 42, md: 48, lg: 52},
+                                    height: {xs: 38, sm: 42, md: 48, lg: 52},
                                 }}
                             />
                         )
@@ -76,7 +90,7 @@ const NewsItem1 = ({itemNews}: IProps) => {
                         <Typography
                             variant={'h5'}
                             sx={{
-                                fontSize: {xs: '16px', md: '22px'}
+                                fontSize: {xs: '15px', md: '17px'}
                             }}
                         >
                             {titleEstablishment}
@@ -88,7 +102,7 @@ const NewsItem1 = ({itemNews}: IProps) => {
                                 borderRadius: '10px',
                                 color: 'common.black',
                                 p: '1px 7px',
-                                fontSize: {xs: '14px', md: '16px'}
+                                fontSize: {xs: '13px', md: '15px'}
                             }}
                         >
                             {translate(`home.sortByType.${establishmentInfo?.type}`)}
@@ -96,8 +110,11 @@ const NewsItem1 = ({itemNews}: IProps) => {
                     </Box>
                 </Link>
                 <Box sx={{
-                    pl: {xs: 6, sm: 8, md: 10},
-                    width: '100%'
+                    p: 2,
+                    borderRadius: '10px',
+                    width: '100%',
+                    // position: 'relative',
+                    bgcolor: mode === 'dark' ? '#050505' : '#f5f5f5',
                 }}>
                     <NewsItem1Info news={itemNews}/>
                 </Box>

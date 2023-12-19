@@ -13,14 +13,17 @@ type TDrawerProps = {
     contentStyle?: SxProps,
     bgColor?: string,
     toggleDrawer: Dispatch<SetStateAction<boolean>>,
-    children: ReactNode
+    children: ReactNode,
+    closeWithOtherData?: () => void,
+    drawerHeight?: string,
+    showDefaultHeader?: boolean
 }
-const Drawer = ({header, anchor, isVisible, maxWidth, bgColor, contentStyle, toggleDrawer, children}: TDrawerProps) => {
+const Drawer = ({header, anchor, isVisible, maxWidth, bgColor, contentStyle, toggleDrawer, children, closeWithOtherData, drawerHeight, showDefaultHeader = true}: TDrawerProps) => {
     const {device, width} = useMobile();
 
     const iOS = typeof navigator !== 'undefined' && /iPad|iPhone|iPod/i.test(navigator.userAgent) && true;
 
-    const height = (device && width < 600) ? `calc(100% - ${drawerBleeding}px)` : "100%";
+    const height = (device && width < 600 && anchor === 'bottom') ? `calc(100% - ${drawerBleeding}px)` : drawerHeight ? drawerHeight : "100%";
 
     return (
         <StyledEngineProvider injectFirst>
@@ -28,7 +31,7 @@ const Drawer = ({header, anchor, isVisible, maxWidth, bgColor, contentStyle, tog
                 <CssBaseline/>
                 <Global styles={{
                     '.MuiDrawer-root > .MuiPaper-root': {
-                        overflow: (width < 600 && device) ? 'visible' : 'hidden',
+                        overflow: (width < 600 && device) ? 'hidden' : 'hidden',
                         zIndex: 150,
                     },
                 }}
@@ -37,32 +40,36 @@ const Drawer = ({header, anchor, isVisible, maxWidth, bgColor, contentStyle, tog
                     id={'customDrawer'}
                     anchor={anchor as Anchor}
                     open={isVisible as boolean}
-                    hysteresis={0.72}
-                    minFlingVelocity={650}
+                    // hysteresis={0.72}
+                    // minFlingVelocity={650}
                     onOpen={() => {
                         toggleDrawer(true);
                     }}
-                    disableBackdropTransition={!iOS}
-                    disableDiscovery={iOS}
-                    swipeAreaWidth={drawerBleeding}
+                    // disableBackdropTransition={!iOS}
+                    // disableDiscovery={iOS}
+                    // swipeAreaWidth={drawerBleeding}
                     disableSwipeToOpen={true}
                     ModalProps={{
                         keepMounted: true,
                     }}
                     onClose={() => {
                         toggleDrawer(false)
+                        if (closeWithOtherData) {
+                            closeWithOtherData()
+                        }
                     }}
                     PaperProps={{
                         sx: {
                             width: "100%",
                             maxWidth: (width < 600 && device) ? '100%' : maxWidth,
-                            p: 1,
                             bgcolor: bgColor,
-                            height: height
+                            height: height,
+                            bottom: 0,
+                            top: 'unset'
                         },
                     }}
                 >
-                    {header}
+                    {showDefaultHeader && header}
                     <StyledBox
                         sx={{
                             p: {xs: 1, sm: 2},

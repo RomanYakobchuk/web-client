@@ -6,6 +6,8 @@ import SheetContent from "@/components/drawer/swipeDrawer/sheet/sheetContent";
 import SnapMarker from "@/components/drawer/swipeDrawer/snapMarker";
 import {ColorModeContext} from "@/contexts";
 import './style.css'
+import ReactDOM from "react-dom";
+import {Box} from "@mui/material";
 
 type TSwipeProps = {
     isVisible: boolean,
@@ -25,7 +27,7 @@ const SwipeDrawer = ({isVisible, toggleDrawer, header, children}: TSwipeProps) =
         toggleDrawer(false)
     }
 
-    return (
+    return ReactDOM.createPortal(
         <ContainerSheet>
             <SnapMarker
                 className="text-white text-opacity-50"
@@ -42,6 +44,20 @@ const SwipeDrawer = ({isVisible, toggleDrawer, header, children}: TSwipeProps) =
                 style={{top: '75vh'}}
             />
             <SnapMarker style={{top: '75vh', ['--size' as any]: '0.5vh'}}/>
+            {
+                isVisible && (
+                    <Box sx={{
+                        position: 'fixed',
+                        inset: 0,
+                        width: '100vw',
+                        height: '100vh',
+                        bgcolor: mode === 'light' ? 'rgba(0, 0, 0, 0.2)' : 'rgba(220, 220, 220, 0.2)',
+                        backdropFilter: 'blur(3px)'
+                    }}
+                    onClick={onDismiss}
+                    />
+                )
+            }
             <BottomSheet
                 skipInitialTransition
                 open={isVisible}
@@ -74,7 +90,7 @@ const SwipeDrawer = ({isVisible, toggleDrawer, header, children}: TSwipeProps) =
                     {children}
                 </SheetContent>
             </BottomSheet>
-        </ContainerSheet>
+        </ContainerSheet>, document.body
     )
 };
 export default SwipeDrawer;

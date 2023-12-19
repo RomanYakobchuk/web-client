@@ -81,6 +81,7 @@ const EstablishmentNews = ({id}: IProps) => {
                             <NewsItem1Info
                                 style={{
                                     width: '100%',
+                                    flexDirection: 'row !important',
                                     "&::before": {
                                         display: 'none'
                                     },
@@ -96,7 +97,6 @@ const EstablishmentNews = ({id}: IProps) => {
                                         width: 'calc(40% - 8px)',
                                         height: {xs: '140px', sm: '200px', lg: '220px'}
                                     },
-                                    flexDirection: 'row',
                                     marginLeft: 0,
                                     "& .newsTitleCard": {
                                         order: -1,

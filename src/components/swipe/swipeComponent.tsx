@@ -19,7 +19,8 @@ type TProps = {
     isSwipeLeft?: boolean,
     isSwipeRight?: boolean,
     style?: SxProps,
-    ref?: RefObject<CountdownHandle>
+    ref?: RefObject<CountdownHandle>,
+    uniqueKey?: string
 }
 const SwipeComponent = forwardRef<CountdownHandle, TProps>(({
                                                                 rightItem,
@@ -30,7 +31,8 @@ const SwipeComponent = forwardRef<CountdownHandle, TProps>(({
                                                                 isSwipeable = true,
                                                                 isSwipeRight = true,
                                                                 isSwipeLeft = true,
-                                                                style
+                                                                style,
+                                                                uniqueKey
                                                             }, ref) => {
 
         return (
@@ -42,10 +44,12 @@ const SwipeComponent = forwardRef<CountdownHandle, TProps>(({
                 isSwipeable={isSwipeable}
                 style={style}
                 ref={ref}
+                uniqueKey={uniqueKey}
             >
                 {
                     leftItem && (
                         <LeftElement
+                            className={`LeftElement${uniqueKey}`}
                             sx={{
                                 position: 'absolute',
                                 left: leftItemWidth ? `${-leftItemWidth}px` : '-100%',
@@ -63,6 +67,7 @@ const SwipeComponent = forwardRef<CountdownHandle, TProps>(({
                 {
                     rightItem && (
                         <RightElement
+                            className={`RightElement${uniqueKey}`}
                             sx={{
                                 position: 'absolute',
                                 right: rightItemWidth ? `${-rightItemWidth}px` : '-100%',
@@ -82,9 +87,13 @@ export default SwipeComponent;
 
 const RightElement = styled('div')({
     minWidth: '55px',
+    transition: 'all 200ms linear',
+    scale: 0
 })
 const LeftElement = styled('div')({
-    minWidth: '55px'
+    minWidth: '55px',
+    transition: 'all 200ms linear',
+    scale: 0
 })
 
 type TItem = {
@@ -96,7 +105,8 @@ type TItem = {
     isSwipeRight: boolean,
     style?: SxProps,
     childRef?: RefObject<CountdownHandle>,
-    timer?: number
+    timer?: number,
+    uniqueKey?: string
 }
 export type CountdownHandle = {
     currentHandleCenter: () => void;
@@ -109,15 +119,24 @@ const ItemSwipe = React.forwardRef<CountdownHandle, TItem>(({
                                                                 isSwipeRight,
                                                                 isSwipeable,
                                                                 style,
-                                                                timer = 5000
+                                                                timer = 5000,
+                                                                uniqueKey
                                                             }, ref) => {
         const childRef = useRef<HTMLDivElement | null>(null);
 
         let downX: number;
+        const LeftElement = document.querySelector(`div.LeftElement${uniqueKey}`) as HTMLDivElement | null;
+        const RightElement = document.querySelector(`div.RightElement${uniqueKey}`) as HTMLDivElement | null;
         const defaultByPoint = () => {
             if (childRef.current) {
                 const timerDefault = setTimeout(() => {
-                    if (childRef.current) childRef.current.style.transform = "translate(0px)"
+                    if (childRef.current) childRef.current.style.transform = "translate(0px)";
+                    if (LeftElement) {
+                        LeftElement.style.scale = '0';
+                    }
+                    if (RightElement) {
+                        RightElement.style.scale = '0';
+                    }
                 }, timer);
                 return () => {
                     clearTimeout(timerDefault);
@@ -140,11 +159,29 @@ const ItemSwipe = React.forwardRef<CountdownHandle, TItem>(({
             if (childRef.current) {
                 if (isSwipeLeft && e.movementX < 0 && (newX - downX) < -70) {
                     childRef.current.style.transform = `translate(-${itemRightWidth ? itemRightWidth : 55}px)`;
+                    if (RightElement) {
+                        setTimeout(() => {
+                            RightElement.style.scale = '1';
+                        }, 300)
+                    }
                     defaultByPoint();
                 } else if (isSwipeRight && e.movementX >= 0 && (newX - downX) >= -70) {
                     childRef.current.style.transform = `translate(${itemLeftWidth ? itemLeftWidth : 55}px)`;
+                    if (LeftElement) {
+                        setTimeout(() => {
+                            LeftElement.style.scale = '1';
+                        }, 300)
+                    }
                     defaultByPoint();
-                } else childRef.current.style.transform = "translate(0px)"
+                } else {
+                    childRef.current.style.transform = "translate(0px)"
+                    if (LeftElement) {
+                        LeftElement.style.scale = '0';
+                    }
+                    if (RightElement) {
+                        RightElement.style.scale = '0';
+                    }
+                }
             }
         }
         const onPointerUp = () => childRef.current?.removeEventListener('pointermove', onPointerMove);
@@ -161,6 +198,12 @@ const ItemSwipe = React.forwardRef<CountdownHandle, TItem>(({
             if (childRef.current) {
                 const timerDefault = setTimeout(() => {
                     if (childRef.current) childRef.current.style.transform = "translate(0px)"
+                    if (LeftElement) {
+                        LeftElement.style.scale = '0';
+                    }
+                    if (RightElement) {
+                        RightElement.style.scale = '0';
+                    }
                 }, 5000);
                 return () => {
                     clearTimeout(timerDefault);
@@ -182,13 +225,31 @@ const ItemSwipe = React.forwardRef<CountdownHandle, TItem>(({
                     if (childRef.current) {
                         if (isSwipeLeft && toLeft && (newX - downX) < -70) {
                             childRef.current.style.transform = `translate(-${itemRightWidth}px)`;
+                            if (RightElement) {
+                                setTimeout(() => {
+                                    RightElement.style.scale = '1';
+                                }, 300)
+                            }
                             onVibrate();
                             defaultByTouch();
                         } else if (isSwipeRight && toRight && (newX - downX) >= -70) {
                             childRef.current.style.transform = `translate(${itemLeftWidth}px)`;
+                            if (LeftElement) {
+                                setTimeout(() => {
+                                    LeftElement.style.scale = '1';
+                                }, 300)
+                            }
                             onVibrate();
                             defaultByTouch();
-                        } else childRef.current.style.transform = "translate(0px)"
+                        } else {
+                            childRef.current.style.transform = "translate(0px)"
+                            if (LeftElement) {
+                                LeftElement.style.scale = '0';
+                            }
+                            if (RightElement) {
+                                RightElement.style.scale = '0';
+                            }
+                        }
                     }
                 });
             }
@@ -208,6 +269,12 @@ const ItemSwipe = React.forwardRef<CountdownHandle, TItem>(({
             currentHandleCenter: () => {
                 if (childRef.current) {
                     childRef.current.style.transform = "translate(0px)"
+                    if (LeftElement) {
+                        LeftElement.style.scale = '0';
+                    }
+                    if (RightElement) {
+                        RightElement.style.scale = '0';
+                    }
                 }
             }
         }))

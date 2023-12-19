@@ -65,7 +65,7 @@ const ProfileDataForm = ({userInfo, setUserInfo}: TProps) => {
                     width: "100%",
                     display: "flex",
                     flexDirection: "column",
-                    gap: "20px",
+                    gap: "8px",
                 }}
             >
                 <FormControl sx={{
@@ -128,6 +128,7 @@ const ProfileDataForm = ({userInfo, setUserInfo}: TProps) => {
                             color={'info'}
                             sx={{
                                 ...buttonStyle,
+                                color: '#f9f9f9 !important',
                                 width: '130px',
                             }}
                             startIcon={

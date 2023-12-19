@@ -1,13 +1,16 @@
-import {Box, Menu, MenuItem} from "@mui/material";
 import {ContentCopy, ReplyOutlined, DoneOutlined, DoneAllOutlined, ErrorOutlined} from "@mui/icons-material";
-import {MouseEvent, useEffect, useRef, useState} from "react";
 import {useGetIdentity, useTranslate} from "@refinedev/core";
+import {FC, useContext, useEffect, useRef, useState} from "react";
+import {useInView} from "react-intersection-observer";
+import {Box, Menu, MenuItem, SxProps} from "@mui/material";
+import CryptoJS from "crypto-js";
 
-
-import {IGetIdentity, IMessage, ProfileProps} from "../../../interfaces/common";
+import {IGetIdentity, IMessage, ProfileProps} from "@/interfaces/common";
+import {secretKeyCryptMessage} from "@/config/const";
+import useLongPress from "@/hook/useLongPress";
+import {socket} from "@/socketClient";
 import dayjs from "dayjs";
-import useLongPress from "../../../hook/useLongPress";
-import {socket} from "../../../socketClient";
+import {ColorModeContext} from "@/contexts";
 
 interface IProps {
     item: IMessage,
@@ -17,11 +20,16 @@ interface IProps {
     index: number
 }
 
-const MessagesCardGroup = ({item: message, receiver, setReplyTo, lengthGroup, index}: IProps) => {
+const MessagesCard = ({item: message, receiver, setReplyTo, lengthGroup, index}: IProps) => {
 
         const translate = useTranslate();
+        const {mode} = useContext(ColorModeContext);
         const {data: identity} = useGetIdentity<IGetIdentity>();
         const user: ProfileProps = identity?.user as ProfileProps;
+        const {ref: refCard, inView: inViewCard} = useInView({
+            threshold: 0.5
+        })
+        const urlRegex = /(https?:\/\/[^\s]+)/g;
 
         const [currentMessage, setCurrentMessage] = useState<IMessage>(message);
         const [item, setItem] = useState<IMessage>(currentMessage);
@@ -73,24 +81,24 @@ const MessagesCardGroup = ({item: message, receiver, setReplyTo, lengthGroup, in
 
         const senderBorder = () => {
             if (lengthGroup === 1) {
-                return `20px 0px 20px 20px`
+                return `15px 0px 15px 15px`
             } else if ((lengthGroup === 2 && index === 0) || (lengthGroup >= 3 && index === 0)) {
-                return `20px 0px 5px 15px`
+                return `15px 0px 5px 12px`
             } else if ((lengthGroup === 2 && index === 1) || (lengthGroup >= 3 && index === (lengthGroup - 1))) {
-                return `15px 5px 15px 20px`
+                return `12px 5px 12px 15px`
             } else if (lengthGroup >= 3 && index !== 0 && index !== (lengthGroup - 1)) {
-                return '15px 5px 5px 15px'
+                return '12px 5px 5px 12px'
             }
         }
         const receiverBorder = () => {
             if (lengthGroup === 1) {
-                return `0px 20px 20px 20px`
+                return `0px 15px 15px 15px`
             } else if ((lengthGroup === 2 && index === 0) || (lengthGroup >= 3 && index === 0)) {
-                return `0px 20px 15px 5px`
+                return `0px 15px 12px 5px`
             } else if ((lengthGroup === 2 && index === 1) || (lengthGroup >= 3 && index === (lengthGroup - 1))) {
-                return `5px 15px 20px 15px`
+                return `5px 12px 15px 12px`
             } else if (lengthGroup >= 3 && index !== 0 && index !== (lengthGroup - 1)) {
-                return '5px 15px 15px 5px'
+                return '5px 12px 12px 5px'
             }
         };
 
@@ -125,9 +133,46 @@ const MessagesCardGroup = ({item: message, receiver, setReplyTo, lengthGroup, in
                 socket.off('isDelivered')
             }
         }, []);
+
+        const encryptedText = item?.text?.length > 5 ? JSON?.parse(CryptoJS.AES.decrypt(item?.text, secretKeyCryptMessage)?.toString(CryptoJS.enc.Utf8)) : "";
+
+        const theSameUser = user?._id === receiver?._id;
+        const chatPrev: SxProps = index === 0 ? theSameUser ? {
+            "&::after": {
+                content: "''",
+                position: 'absolute',
+                top: 0,
+                right: '1px',
+                bgcolor: 'info.main',
+                width: '15px',
+                height: '15px',
+                transform: 'translateX(100%)',
+                clipPath: 'polygon(0% 0%, 100% 0%, 90% 5%, 80% 10%, 70% 15%, 60% 20%, 30% 50%, 45% 35%, 35% 45%, 50% 30%, 20% 60%, 15% 70%, 10% 80%, 5% 90%, 0% 100%)',
+            }
+            // || 30% 50%, 20% 60%, 10% 70%, 0% 100%)
+        } : {
+            "&::before": {
+                content: "''",
+                position: 'absolute',
+                top: 0,
+                left: '1px',
+                // bgcolor: 'modern.modern_1.main',
+                bgcolor: mode === 'dark' ? 'modern.modern_2.second' : 'common.black',
+                width: '15px',
+                height: '15px',
+                transform: 'translateX(-100%) rotateY(-180deg)',
+                clipPath: 'polygon(0% 0%, 100% 0%, 90% 5%, 80% 10%, 70% 15%, 60% 20%, 30% 50%, 45% 35%, 35% 45%, 50% 30%, 20% 60%, 15% 70%, 10% 80%, 5% 90%, 0% 100%)'
+            }
+        } : {};
         return (
-            <>
+            <Box sx={{
+                width: 'fit-content',
+                height: 'fit-content',
+                pr: theSameUser ? '10px' : '0',
+                // pl: !theSameUser ? '10px' : '0',
+            }}>
                 <Box
+                    ref={refCard}
                     key={item?._id}
                     id={`demo-positioned-button${item?._id}`}
                     aria-controls={open ? `demo-positioned-menu${item?._id}` : undefined}
@@ -135,41 +180,70 @@ const MessagesCardGroup = ({item: message, receiver, setReplyTo, lengthGroup, in
                     aria-expanded={open ? 'true' : undefined}
                     {...longPressEvent}
                     sx={{
-                        bgcolor: item?.sender === receiver?._id ? '#FF842B' : 'info.main',
-                        padding: '10px',
-                        borderRadius: item?.sender === receiver?._id ? receiverBorder : senderBorder,
+                        width: '100%',
+                        // bgcolor: !theSameUser ? 'modern.modern_1.main' : 'info.main',
+                        bgcolor: !theSameUser ? (mode === 'dark' ? 'modern.modern_2.second' : 'common.black') : 'info.main',
+                        // padding: '10px 10px 5px 15px',
+                        borderRadius: !theSameUser ? receiverBorder : senderBorder,
                         display: 'flex',
                         flexDirection: 'column',
-                        gap: 1,
+                        // gap: 1,
                         position: 'relative',
                         textTransform: 'none',
+                        cursor: 'pointer',
+                        // boxShadow: '0px 4px 8px 0px rgba(125, 125, 125, 0.2)',
+                        // boxShadow: '0px 0px 7px 0px rgba(175, 175, 175, 0.4)',
+                        ...chatPrev
                     }}
                 >
+                    {
+                        index === 0 && (
+                            <Box sx={{
+                                fontSize: '14px',
+                                fontWeight: 600,
+                                display: 'flex',
+                                m: '5px 5px 0 5px',
+                                justifyContent: theSameUser ? 'end' : 'start',
+                                color: theSameUser ? "#f9f9f9" : 'cornflowerblue'
+                            }}>
+                                {
+                                    receiver?.name
+                                }
+                            </Box>
+                        )
+                    }
                     <Box
                         ref={textRef}
                         sx={{
                             whiteSpace: 'break-spaces',
                             fontSize: '14px',
-                            color: item?.sender === receiver?._id ? '#2a2a2a' : '#D0E7FE',
+                            fontWeight: 500,
+                            color: !theSameUser ? 'common.white' : '#f1f1f1',
+                            alignItems: !theSameUser ? 'start' : 'end',
+                            width: '100%',
                             textAlign: 'start',
-                            width: '100%'
+                            p: !theSameUser ? '7px 12px 7px 7px' : '7px 7px 7px 12px'
                         }}
                     >
-                        {item?.text}
+                        {/*{encryptedText}*/}
+                        <TextWithLinks text={encryptedText}/>
                     </Box>
                     <Box sx={{
-                        fontSize: '10px',
-                        color: 'info.contrastText',
+                        fontSize: '9px',
+                        // color: 'info.contrastText',
                         display: 'flex',
                         width: '100%',
                         gap: 0.5,
                         alignItems: 'center',
-                        justifyContent: item?.sender === receiver?._id ? 'end' : 'start'
+                        p: '3px 10px 3px 10px',
+                        color: theSameUser ? '#d1d1d1' : '#9c9c9c',
+                        justifyContent: theSameUser ? 'end' : 'start'
                     }}>
                         {
-                            diffInHour < 1 ?
-                                dayjs(item?.createdAt).fromNow()
-                                : dayjs(item?.createdAt).format('HH:mm')
+                            // diffInHour < 1 ?
+                            //     dayjs(item?.createdAt).fromNow()
+                            //     :
+                            dayjs(item?.createdAt).format('HH:mm')
                         }
                         {
                             item?.sender === user?._id && (
@@ -200,11 +274,11 @@ const MessagesCardGroup = ({item: message, receiver, setReplyTo, lengthGroup, in
                     onClose={handleClose}
                     anchorOrigin={{
                         vertical: 'center',
-                        horizontal: item?.sender === receiver?._id ? 'left' : 'right'
+                        horizontal: theSameUser ? 'left' : 'right'
                     }}
                     transformOrigin={{
                         vertical: 'center',
-                        horizontal: item?.sender === receiver?._id ? 'left' : 'right',
+                        horizontal: theSameUser ? 'left' : 'right',
                     }}
                     sx={{
                         width: '180px',
@@ -250,8 +324,44 @@ const MessagesCardGroup = ({item: message, receiver, setReplyTo, lengthGroup, in
                         ))
                     }
                 </Menu>
-            </>
+            </Box>
         );
     }
 ;
-export default MessagesCardGroup
+export default MessagesCard
+
+interface TextWithLinksProps {
+    text: string;
+}
+
+const TextWithLinks: FC<TextWithLinksProps> = ({text}) => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const parts = text.split(urlRegex);
+
+    return (
+        <p style={{
+            padding: 0,
+            margin: 0
+        }}>
+            {parts.map((part, index) => (
+                urlRegex.test(part) ? (
+                    <a
+                        key={index}
+                        href={part}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                            textDecoration: 'underline',
+                            color: 'silver'
+                        }}
+                        onTouchStart={(e) => e.stopPropagation()}
+                    >
+                        {part}
+                    </a>
+                ) : (
+                    part
+                )
+            ))}
+        </p>
+    );
+};

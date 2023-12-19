@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 import {
-    useGetLocale, useList,
+    useGetLocale,
     useSetLocale, useTranslate,
 } from "@refinedev/core";
 import {
@@ -16,26 +16,20 @@ import {
     Typography, SelectChangeEvent, Button, Box
 } from "@mui/material";
 import {
-    ClearOutlined,
     DarkModeOutlined,
     LightModeOutlined, MenuRounded,
     Notifications,
     SearchOutlined,
     SettingsOutlined
 } from "@mui/icons-material";
-import {useDebounce} from "use-debounce";
-import {Input} from "antd";
 import {useTranslation} from "react-i18next";
 import {useLocation, useNavigate} from "react-router-dom";
 
 import {ColorModeContext} from "@/contexts";
-import {INews, IOptions, PropertyProps} from "@/interfaces/common";
 import {useSchema} from "@/settings";
 import {useMobile, useUserInfo, useUserProperties} from "@/hook";
-import {Loading, ModalWindow} from "@/components";
-import {renderTitle, renderItem} from "@/components/render"
-import {antdInputStyle} from "@/styles";
 import {SchemaContext} from "@/settings/schema";
+import HeaderSearch from "./headerSearch";
 
 export const Header: React.FC = () => {
     const {mode, setMode, setOpen} = useContext(ColorModeContext);
@@ -79,66 +73,9 @@ export const Header: React.FC = () => {
         minWidth: '40px',
         height: '40px',
     };
-    const [value, setValue] = useState<string>("");
-    const [options, setOptions] = useState<IOptions[]>([]);
-    const [debounceValue, _] = useDebounce(value ?? '', 500);
-
-    const {refetch: refetchPlaces, isRefetching: isRefetchPlace, isLoading: isLoadPlace} = useList<PropertyProps>({
-        resource: "institution/all",
-        filters: [{field: "title", operator: "contains", value: value}],
-        queryOptions: {
-            enabled: false,
-            onSuccess: (data) => {
-                const postOptionGroup = data.data.map((item, index) =>
-                    renderItem(item, "all_institutions", index, mode, setOpenModal, data.data.length, translate),
-                );
-                if (postOptionGroup.length > 0) {
-                    setOptions((prevOptions) => [
-                        ...prevOptions,
-                        {
-                            label: renderTitle(translate("all_institutions.all_institutions"), mode),
-                            options: postOptionGroup,
-                        },
-                    ] as IOptions[]);
-                }
-            },
-        },
-    });
-
-    const {refetch: refetchNews, isRefetching: isRefetchNews, isLoading: isLoadNews} = useList<INews>({
-        resource: "news/all",
-        filters: [{field: "title", operator: "contains", value: value}],
-        queryOptions: {
-            enabled: false,
-            onSuccess: (data) => {
-                const categoryOptionGroup = data.data.map((item, index) =>
-                    renderItem(item, "news", index, mode, setOpenModal, data.data.length),
-                );
-                if (categoryOptionGroup.length > 0) {
-                    setOptions((prevOptions) => [
-                        ...prevOptions,
-                        {
-                            label: renderTitle(translate("news.news"), mode),
-                            options: categoryOptionGroup,
-                        },
-                    ] as IOptions[]);
-                }
-            },
-        },
-    });
-
-    useEffect(() => {
-        if (openModal && user?._id) {
-            (async () => {
-                setOptions([]);
-                await Promise.all([refetchNews(), refetchPlaces()])
-            })()
-        }
-    }, [debounceValue, openModal, user]);
 
     const bgColor = schema === 'schema_2' ? 'common.black' : mode === 'dark' ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.2)'
 
-    const isLoading = isLoadNews || isLoadPlace || isRefetchNews || isRefetchPlace;
 
     const HandleOpenModal = () => {
         setOpenModal(true)
@@ -227,95 +164,7 @@ export const Header: React.FC = () => {
                             </Button>
                         )
                     }
-                    <ModalWindow
-                        open={openModal}
-                        setOpen={setOpenModal}
-                        title={
-                            <Box sx={{
-                                width: '80%',
-                                ml: '20px',
-                                ...antdInputStyle
-                            }}>
-                                <Input
-                                    style={{
-                                        width: '100%',
-                                        fontSize: '20px',
-                                        gap: 2,
-                                        color: mode === 'dark' ? 'white' : 'black',
-                                        background: 'transparent',
-                                    }}
-                                    value={value ?? ''}
-                                    onChange={(e) => setValue(e.target.value)}
-                                    suffix={
-                                        <Box sx={{
-                                            display: 'flex',
-                                            flexDirection: 'row',
-                                            justifyContent: 'center',
-                                            alignItems: 'center',
-                                            gap: value?.length > 0 ? 1 : 0
-                                        }}>
-                                            <SearchOutlined/>
-                                            {
-                                                value?.length > 0 && (
-                                                    <IconButton size={"small"} onClick={() => setValue('')}>
-                                                        <ClearOutlined/>
-                                                    </IconButton>
-                                                )
-                                            }
-                                        </Box>
-                                    }
-                                    size={'middle'}
-                                    placeholder={`${translate('buttons.search')}...`}
-                                />
-                            </Box>
-                        }
-                    >
-                        <Box sx={{
-                            p: '10px'
-                        }}>
-                            {
-                                isLoading ?
-                                    <Box sx={{
-                                        width: '100%',
-                                        height: '200px'
-                                    }}>
-                                        <Loading/>
-                                    </Box>
-                                    :
-                                    options?.length > 0 ? (
-                                        options?.map((option, index) => (
-                                            <Box key={index} sx={{
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                                gap: 1
-                                            }}>
-                                                {option.label}
-                                                {
-                                                    option?.options?.map((item) => (
-                                                        <Box key={item.key} sx={{
-                                                            pl: '10px',
-                                                            height: '70px'
-                                                        }}>
-                                                            {item.label}
-                                                        </Box>
-                                                    ))
-                                                }
-                                            </Box>
-                                        ))
-                                    ) : <Box sx={{
-                                        height: '150px',
-                                        width: '100%',
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        fontSize: '22px',
-                                        color: (theme) => theme.palette.common.white
-                                    }}>
-                                        {translate('text.notResult')}
-                                    </Box>
-                            }
-                        </Box>
-                    </ModalWindow>
+                    <HeaderSearch openModal={openModal} setOpenModal={setOpenModal}/>
                     {
                         showUserInfo &&
                         <IconButton

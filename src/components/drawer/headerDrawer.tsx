@@ -8,9 +8,11 @@ import {useMobile} from "@/hook";
 type TProps = {
     toggleDrawer: Dispatch<SetStateAction<boolean>>,
     title: ReactNode,
-    button: ReactNode
+    button: ReactNode,
+    anchor: "left" | "top" | "bottom" | "right",
+    onClick?: () => void
 }
-const HeaderDrawer = ({toggleDrawer, button, title}: TProps) => {
+const HeaderDrawer = ({toggleDrawer, button, title, anchor, onClick}: TProps) => {
     const {width, device} = useMobile();
     return (
         <>
@@ -20,7 +22,7 @@ const HeaderDrawer = ({toggleDrawer, button, title}: TProps) => {
                     top: -drawerBleeding,
                     borderTopLeftRadius: 16,
                     borderTopRightRadius: 16,
-                    visibility: (width < 600 && device) ? 'inherit' : 'hidden',
+                    visibility: (width < 600 && device && anchor === 'bottom') ? 'inherit' : 'hidden',
                     right: 0,
                     left: 0,
                 }}
@@ -33,7 +35,7 @@ const HeaderDrawer = ({toggleDrawer, button, title}: TProps) => {
                     justifyContent: 'space-between',
                     mt: '10px'
                 }}>
-                    <Box sx={{p: 1}}>
+                    <Box sx={{p: 1, minHeight: '30px'}}>
                         {title}
                     </Box>
                     <Box sx={{
@@ -44,16 +46,22 @@ const HeaderDrawer = ({toggleDrawer, button, title}: TProps) => {
                     }}>
                         {button}
                         <CloseOutlined
-                            onClick={() => toggleDrawer(false)}/>
+                            onClick={() => {
+                                toggleDrawer(false)
+                                if (onClick) {
+                                    onClick();
+                                }
+                            }}/>
                     </Box>
                 </Box>
             </StyledBox>
             <Box sx={{
-                visibility: (!device || (device && width >= 600)) ? 'inherit' : 'hidden',
+                visibility: (!device || (device && width >= 600)) || anchor === 'right' ? 'inherit' : 'hidden',
                 position: 'relative',
-                display: (width < 600 && device) ? 'none' : 'flex',
+                display: (width < 600 && device && anchor === 'bottom') ? 'none' : 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
+                minHeight: '30px'
             }}>
                         <span>
                         {title}
@@ -64,7 +72,12 @@ const HeaderDrawer = ({toggleDrawer, button, title}: TProps) => {
                         top: '0',
                         left: '0'
                     }}
-                    onClick={() => toggleDrawer(false)}>
+                    onClick={() => {
+                        toggleDrawer(false)
+                        if (onClick) {
+                            onClick();
+                        }
+                    }}>
                     <Close/>
                 </IconButton>
             </Box>

@@ -91,7 +91,6 @@ const List = ({deletedNotifications, isLoading, hasNextPage, fetchNextPage, isFe
             gap: 2,
             height: 'fit-content',
             margin: '0 auto',
-            overflow: 'hidden'
         }}>
             {
                 isLoading

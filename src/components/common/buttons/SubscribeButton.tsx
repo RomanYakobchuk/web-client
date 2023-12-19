@@ -20,7 +20,7 @@ const SubscribeButton = ({establishmentId, style, subscribe, showText, createdBy
 
     const [isSubscribe, setIsSubscribe] = useState<boolean>(subscribe?.institutionId === establishmentId);
 
-    const {onFinish} = useForm({
+    const {onFinish, mutationResult: {data}} = useForm({
         resource: `subscribe/updateOne/${establishmentId}`,
         action: 'create',
         errorNotification: (data: any) => {
@@ -46,9 +46,9 @@ const SubscribeButton = ({establishmentId, style, subscribe, showText, createdBy
     const updateSubscribe = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
         try {
-            const res = await onFinish({});
-            if (res?.data) {
-                setIsSubscribe(res?.data?.isSubscribe);
+            await onFinish({});
+            if (data?.data) {
+                setIsSubscribe(data?.data?.isSubscribe);
             }
         } catch (e) {
             setIsSubscribe((prevState) => (!prevState));

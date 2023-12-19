@@ -6,7 +6,7 @@ import {Outlet, useNavigate} from "react-router-dom";
 import {Sider as DefaultSider} from "../sider";
 import {Header as DefaultHeader} from "../header";
 import {Footer as DefaultFooter} from "../footer";
-import {useMobile, useUserInfo, useUserProperties} from "@/hook";
+import {useMobile, useScrollRestoration, useUserInfo, useUserProperties} from "@/hook";
 import {useSchema} from "@/settings";
 import {SchemaContext} from "@/settings/schema";
 import {ColorModeContext} from "@/contexts";
@@ -40,7 +40,7 @@ export const Layout: React.FC<LayoutProps> = ({
     const {i18n} = useTranslation();
     const {properties, setProperties} = useUserProperties();
     const {schema} = useContext(SchemaContext);
-    const {device, width} = useMobile();
+    const {device} = useMobile();
     const {styles} = useSchema();
     const {user} = useUserInfo();
     const {mode} = useContext(ColorModeContext);
@@ -60,16 +60,29 @@ export const Layout: React.FC<LayoutProps> = ({
     }, [socket, properties]);
 
     useEffect(() => {
+        const handleConnect = () => {
+            socket.emit("addUser", user?._id);
+        };
+
         if (user?._id) {
             socket.connect();
-            socket.on('connect', () => {
-            });
-            socket?.emit("addUser", user?._id);
+            socket.on('connect', handleConnect);
         }
+
         return () => {
-            socket.off('addUser')
-            socket.off('connect')
-        }
+            socket.off('addUser');
+            socket.off('connect', handleConnect);
+        };
+        // if (user?._id) {
+        //     socket.connect();
+        //     socket.on('connect', () => {
+        //     });
+        //     socket?.emit("addUser", user?._id);
+        // }
+        // return () => {
+        //     socket.off('addUser')
+        //     socket.off('connect')
+        // }
     }, [user?._id, socket]);
 
     const someStyle = !device ? {
@@ -104,7 +117,7 @@ export const Layout: React.FC<LayoutProps> = ({
         }
     }, [user?.phone, user?._id, user?.dOB, window.location.href]);
 
-    // const ref = useScrollRestoration(window.location.href);
+    const ref = useScrollRestoration(window.location.pathname);
 
     useEffect(() => {
         i18n.language === "ua" ? dayjs.locale('uk') : dayjs.locale('en')
@@ -134,7 +147,7 @@ export const Layout: React.FC<LayoutProps> = ({
                     )
                 }
                 <Box
-                    // ref={ref}
+                    ref={ref}
                     component="main"
                     id={'mainLayout'}
                     sx={{
@@ -195,7 +208,8 @@ export const Layout: React.FC<LayoutProps> = ({
                         "& div.w-md-editor-preview": {
                             position: 'relative',
                             width: '100%',
-                            whiteSpaceCollapse: 'break-spaces'
+                            whiteSpaceCollapse: 'break-spaces',
+                            borderTop: '1px solid silver'
                         },
                         "& div.w-md-editor": {
                             minHeight: '250px !important'

@@ -18,7 +18,6 @@ import {ShowMap} from "../index";
 import {ImageGalleryV1} from "../gallery"
 import {PropertyProps} from "@/interfaces/common";
 import {ColorModeContext} from "@/contexts";
-import {useMobile} from "@/hook";
 import {useStore} from "@/store";
 import MDEditor from "@uiw/react-md-editor";
 
@@ -32,7 +31,6 @@ const MainEstablishmentInfo = ({establishment}: IProps) => {
     const translate = useTranslate();
     const {mode} = useContext(ColorModeContext);
     const navigate = useNavigate();
-    const {width} = useMobile();
 
 
     const {addEstablishment} = useStore(state => {
@@ -77,7 +75,7 @@ const MainEstablishmentInfo = ({establishment}: IProps) => {
                         display: 'flex',
                         width: '100%',
                         alignItems: 'center',
-                        "@media screen and (max-width: 800px && min-width: 600px)":{
+                        "@media screen and (max-width: 800px && min-width: 600px)": {
                             alignItems: 'start'
                         },
                         justifyContent: 'space-between',
@@ -259,14 +257,6 @@ const MainEstablishmentInfo = ({establishment}: IProps) => {
                     p: '10px',
                     borderRadius: '15px',
                 }}>
-                    {/*<ObserverComponent*/}
-                    {/*    defaultHeight={width < 600 ? '100%' : '295px'}*/}
-                    {/*    style={{*/}
-                    {/*        bgcolor: 'modern.modern_2.main'*/}
-                    {/*    }}*/}
-                    {/*    maxWindowWidth={600}*/}
-                    {/*    isShowFull={true}*/}
-                    {/*>*/}
                     <Typography variant={'h5'} sx={{
                         color: 'common.white'
                     }}>
@@ -284,16 +274,7 @@ const MainEstablishmentInfo = ({establishment}: IProps) => {
                                                color: mode === 'dark' ? '#fff' : '#000'
                                            }}/>
                     </Box>
-                    {/*</ObserverComponent>*/}
                 </Box>
-                {/*<ObserverComponent*/}
-                {/*    defaultHeight={width < 600 ? '100%' : '295px'}*/}
-                {/*    style={{*/}
-                {/*        bgcolor: 'modern.modern_1.main'*/}
-                {/*    }}*/}
-                {/*    maxWindowWidth={600}*/}
-                {/*    isShowFull={true}*/}
-                {/*>*/}
                 <Box sx={{
                     display: 'flex',
                     width: '100%',

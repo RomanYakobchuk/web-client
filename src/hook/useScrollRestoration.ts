@@ -127,10 +127,17 @@
 //
 //     useEffect(() => {
 //         if (tracked.current) {
+//             const scrollInfo = scrolls[key];
+//             if (scrollInfo) {
+//                 tracked.current.scrollTop = scrollInfo.top;
+//             } else {
+//                 tracked.current.scrollTop = 0;
+//             }
 //             connectRef(tracked.current);
 //         }
 //         return disconnect;
 //     }, [connectRef]);
+//
 //
 //     return connectRef;
 // }
@@ -150,7 +157,7 @@ try {
     scrolls = JSON.parse(sessionStorage.getItem(KEY) ?? "{}");
 } catch (e) {
     const params = new URLSearchParams(
-        new URL(window.location.href).searchParams
+        new URL(window.location.pathname).searchParams
     );
     storageAvailable = false;
     scrolls = JSON.parse(params.get("__scrollInfo") ?? "{}");
@@ -161,6 +168,7 @@ try {
  */
 function noop(): void {
 }
+
 
 function removeScrollParameter(href: string): string {
     href = href.replace(/__scrollInfo=[^&]+/gi, "");
@@ -173,7 +181,7 @@ function removeScrollParameter(href: string): string {
  * Custom hook for restoring scroll position based on a unique key. The hook returns a callback function
  * that should be set on the JSX element's ref attribute to manage scroll restoration.
  *
- * @param {string} [key=window.location.href] - A unique key to identify the scroll position, defaults to current URL.
+ * @param {string} [key=window.location.pathname] - A unique key to identify the scroll position, defaults to current URL.
  * @param {number} [timeout=500] - A timeout after which the scroll will not be restored, defaults to 1/2 a second.
  * @returns {Function} A callback function to set as the `ref` on a scrollable JSX element.
  *
@@ -183,7 +191,7 @@ function removeScrollParameter(href: string): string {
  */
 
 export function useScrollRestoration(
-    key: string = window.location.href,
+    key: string = window.location.pathname,
     timeout: number = 1500
 ): (ref: HTMLElement | null) => void {
     key = removeScrollParameter(key);
@@ -213,7 +221,7 @@ export function useScrollRestoration(
                         if (storageAvailable) {
                             sessionStorage.setItem(KEY, JSON.stringify(scrolls));
                         } else {
-                            const url = new URL(window.location.href);
+                            const url = new URL(window.location.pathname);
                             const params = new URLSearchParams(url.searchParams);
                             params.set("__scrollInfo", JSON.stringify(scrolls));
                             url.search = params.toString();
@@ -265,14 +273,13 @@ export function useScrollRestoration(
         if (tracked.current) {
             const scrollInfo = scrolls[key];
             if (scrollInfo) {
-                tracked.current.scrollTop = scrollInfo.top;
-                // tracked.current.scrollLeft = scrollInfo.left;
+                setTimeout(() => {
+                    if (tracked.current) {
+                        tracked.current.scrollTop = scrollInfo.top;
+                    }
+                }, 100)
             } else {
-                // Якщо немає збереженої інформації про прокрутку,
-                // прокрутити сторінку вгору
                 tracked.current.scrollTop = 0;
-                // tracked.current.scrollLeft = 0;
-
             }
             connectRef(tracked.current);
         }

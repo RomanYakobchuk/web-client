@@ -1,13 +1,12 @@
-import {IConversation, IMessage, ProfileProps} from "../../../interfaces/common";
-import MessageCard from "./message-card";
+import {IConversation, IMessage} from "@/interfaces/common";
+import MessageCardGroup from "../utils/message-card-group";
 import React, {useEffect, useState} from "react";
 import dayjs from "dayjs";
 
 interface IProps {
     items: IMessage[],
-    scrollRef: any,
+    scrollRef?: any,
     setReplyTo: (item: IMessage) => void,
-    receiver: ProfileProps,
     conversation: IConversation,
 }
 
@@ -64,7 +63,7 @@ const shouldCombineMessages = (prevMessage: IMessage, currentMessage: IMessage) 
     return false;
 };
 
-const ChatBoxItems = ({items, scrollRef, receiver, setReplyTo, conversation}: IProps) => {
+const MessagesBoxItems = ({items, scrollRef, setReplyTo, conversation}: IProps) => {
     const [itemsGroups, setItemsGroups] = useState<IMessage[][]>([[]] as IMessage[][]);
 
     useEffect(() => {
@@ -81,14 +80,15 @@ const ChatBoxItems = ({items, scrollRef, receiver, setReplyTo, conversation}: IP
         <>
             {
                 itemsGroups?.map((group: IMessage[], index: number) =>
-                    <MessageCard
+                    <MessageCardGroup
                         key={index}
                         conversation={conversation}
-                        group={group} receiver={receiver}
-                        setReplyTo={setReplyTo}/>
+                        group={group}
+                        setReplyTo={setReplyTo}
+                    />
                 )
             }
         </>
     );
 };
-export default ChatBoxItems
+export default MessagesBoxItems

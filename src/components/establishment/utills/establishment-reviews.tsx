@@ -242,9 +242,9 @@ const EstablishmentReviews = ({id}: IProps) => {
                         InputProps={{
                             endAdornment: <AdornmentBtn value={like} setValue={setLike} maxValueLength={maxLikeLength}/>
                         }}
+                        onKeyDown={(event) => handleKeyDownBlockEnter(event, like)}
                         placeholder={'*' + translate("home.show.reviews.like")}
                         onChange={(event) => setLike(event.target.value)}
-                        onKeyDown={(event) => handleKeyDownBlockEnter(event, like)}
                     />
                     <TextField
                         value={notLike}
@@ -319,9 +319,10 @@ const EstablishmentReviews = ({id}: IProps) => {
 type TAdornmentBtnProps = {
     value: string,
     setValue: Dispatch<SetStateAction<string>>,
-    maxValueLength: number
+    maxValueLength: number,
+    isCanClear?: boolean
 }
-export const AdornmentBtn = ({value, setValue, maxValueLength}: TAdornmentBtnProps) => {
+export const AdornmentBtn = ({value, setValue, maxValueLength, isCanClear = true}: TAdornmentBtnProps) => {
     return (
         <Box sx={{
             display: 'flex',
@@ -329,13 +330,15 @@ export const AdornmentBtn = ({value, setValue, maxValueLength}: TAdornmentBtnPro
             alignItems: 'center'
         }}>
             {
-                value?.length > 0 && (
+                value?.length > 0 && isCanClear && (
                     <IconButton onClick={() => setValue('')}>
                         <Close/>
                     </IconButton>
                 )
             }
-            <InputAdornment position={'end'}>{value?.length}/{maxValueLength}</InputAdornment>
+            <InputAdornment sx={{
+                fontSize: {xs: '12px', md: '14px'}
+            }} position={'end'}>{value?.length}/{maxValueLength}</InputAdornment>
         </Box>
     )
 }

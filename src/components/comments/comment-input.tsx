@@ -1,7 +1,7 @@
 import {Box, Button, CircularProgress, InputAdornment, TextField,} from "@mui/material";
 import {SentimentSatisfiedAltSharp, SendOutlined} from "@mui/icons-material";
 import React, {Dispatch, SetStateAction, useContext, useEffect, useRef, useState} from "react";
-import {useNotification} from "@refinedev/core";
+import {useNotification, useTranslate} from "@refinedev/core";
 import Picker, {EmojiStyle} from "emoji-picker-react";
 
 import {ColorModeContext} from "@/contexts";
@@ -21,7 +21,15 @@ interface IProps {
     setParent?: Dispatch<SetStateAction<IComment>>,
 }
 
-const CommentInput = ({institutionId, setNewComment, parent = {} as IComment, isAnswer = false, setParent, setIsAnswer}: IProps) => {
+const CommentInput = ({
+                          institutionId,
+                          setNewComment,
+                          parent = {} as IComment,
+                          isAnswer = false,
+                          setParent,
+                          setIsAnswer
+                      }: IProps) => {
+    const translate = useTranslate();
     const {mode} = useContext(ColorModeContext);
 
     const showPickerRef = useRef<HTMLDivElement | null>(null)
@@ -109,18 +117,67 @@ const CommentInput = ({institutionId, setNewComment, parent = {} as IComment, is
             sx={{
                 width: '100%',
                 display: 'flex',
-                flexDirection: 'row',
-                gap: {xs: 1, md: 2},
+                flexDirection: 'column',
+                gap: 0.5,
                 alignItems: "end",
                 flex: 1,
                 order: device ? 2 : 1
             }}>
-            {
-                !device &&
+            <Box sx={{
+                borderRadius: '15px 15px 3px 3px',
+                bgcolor: 'common.black',
+                p: 2,
+                width: '100%'
+            }}>
+                <TextField
+                    placeholder="Type something here…"
+                    multiline
+                    fullWidth={true}
+                    variant={'standard'}
+                    value={value || ''}
+                    minRows={3}
+                    maxRows={10}
+                    inputProps={{
+                        maxLength: 300,
+                    }}
+                    InputProps={{
+                        endAdornment: <InputAdornment position={'start'}>{value?.length}/300</InputAdornment>
+                    }}
+                    color={'secondary'}
+                    onChange={(event) => {
+                        setValue(event.target.value)
+                    }}
+                    onKeyDown={(event) => handleKeyDownBlockEnter(event, value)}
+                    sx={{
+                        width: '100%',
+                        "& textarea": {
+                            color: 'common.white',
+                            "&::placeholder": {
+                                color: 'common.white',
+                            }
+                        }
+                    }}
+                />
+            </Box>
+            <Box sx={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'start',
+                justifyContent: 'space-between',
+                // borderRadius: '3px 3px 15px 15px',
+                // bgcolor: 'common.black',
+                // p: 2,
+                gap: 0.5
+            }}>
                 <Box sx={{
-                    flex: 1,
                     position: 'relative',
-                    display: 'flex'
+                    display: 'flex',
+                    borderRadius: '3px 3px 3px 15px',
+                    bgcolor: 'common.black',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '60px',
+                    width: '60px'
                 }}>
                     <SentimentSatisfiedAltSharp sx={{
                         fontSize: '30px',
@@ -137,14 +194,13 @@ const CommentInput = ({institutionId, setNewComment, parent = {} as IComment, is
                             ref={showPickerRef}
                             sx={{
                                 position: 'absolute',
-                                "@media screen and (max-width: 1260px)":{
-                                    bottom: '60px',
-                                    left: '0',
-                                    right: 'unset'
-                                },
-                                bottom: 'unset',
-                                left: 'unset',
-                                right:  "0",
+                                // "@media screen and (max-width: 1260px)": {
+                                //     bottom: '60px',
+                                //     left: '0',
+                                //     right: 'unset'
+                                // },
+                                top: '60px',
+                                left: "0",
                                 zIndex: 2000
                             }}>
                             <Picker
@@ -154,75 +210,71 @@ const CommentInput = ({institutionId, setNewComment, parent = {} as IComment, is
                         </Box>
                     }
                 </Box>
-            }
-            <TextField
-                placeholder="Type something here…"
-                multiline
-                fullWidth={true}
-                variant={'standard'}
-                value={value || ''}
-                minRows={1}
-                maxRows={10}
-                inputProps={{
-                    maxLength: 300,
-                }}
-                InputProps={{
-                    endAdornment: <InputAdornment position={'start'}>{value?.length}/300</InputAdornment>
-                }}
-                color={'secondary'}
-                onChange={(event) => {
-                    setValue(event.target.value)
-                }}
-                onKeyDown={(event) => handleKeyDownBlockEnter(event, value)}
-                sx={{
-                    "& textarea": {
-                        color: 'common.white',
-                        "&::placeholder": {
-                            color: 'common.white',
-                        }
-                    }
-                }}
-            />
-            <Box
-                sx={{
-                    display: 'flex',
-                    gap: 2,
-                    flex: 1,
-                    pt: 1,
-                    borderTop: '1px solid',
-                    borderColor: 'divider',
-                }}
-            >
-                <Button
-                    onClick={handleSendComment}
+                <Box
                     sx={{
-                        minWidth: '30px',
-                        width: {xs: '36px', sm: '54px'},
-                        height: {xs: '36px'},
-                        borderRadius: {xs: '50%', sm: '7px'},
-                        ml: 'auto',
-                        "& span": {
-                            width: '2em !important',
-                            height: '2em !important',
-                        },
-                        p: isLoading ? '4px' : '6px 16px',
-                        bgcolor: '#1e36e8',
-                        "&:hover": {
-                            bgcolor: "#4f5cc3"
-                        }
+                        display: 'flex',
+                        height: '60px',
+                        borderRadius: '3px 3px 15px 3px',
+                        bgcolor: 'common.black',
+                        width: 'calc(100% - 60px)',
+                        alignItems: 'center',
+                        justifyContent: value?.length > 0 ? 'space-evenly' : 'center'
+                        // pt: 1,
+                        // borderTop: '1px solid',
+                        // borderColor: 'divider',
                     }}
-                    variant={"contained"}>
+                >
                     {
-                        isLoading
-                            ? <CircularProgress
+                        value?.length > 0 && (
+                            <Button
+                                variant={'text'}
+                                color={'error'}
                                 sx={{
-                                    width: {xs: '0.8em', sm: '1em'},
-                                    height: {xs: '0.8em', sm: '1em'},
+                                    textTransform: 'inherit'
                                 }}
-                            />
-                            : <SendOutlined sx={{color: '#fcfcfc'}}/>
+                                onClick={() => setValue('')}
+                            >
+                                {translate('buttons.clear')}
+                            </Button>
+                        )
                     }
-                </Button>
+                    <Button
+                        onClick={handleSendComment}
+                        sx={{
+                            minWidth: '30px',
+                            // width: {xs: '36px', sm: '54px'},
+                            width: 'fit-content',
+                            textTransform: 'inherit',
+                            fontSize: {xs: '14px', lg: '16px'},
+                            height: {xs: '36px'},
+                            // borderRadius: {xs: '50%', sm: '7px'},
+                            borderRadius: '7px',
+                            // ml: 'auto',
+                            // "& span": {
+                            //     width: '2em !important',
+                            //     height: '2em !important',
+                            // },
+                            // p: isLoading ? '4px' : '6px 16px',
+                            bgcolor: '#1e36e8',
+                            "&:hover": {
+                                bgcolor: "#4f5cc3"
+                            }
+                        }}
+                        variant={"contained"}
+                        endIcon={
+                            isLoading
+                                ? <CircularProgress
+                                    sx={{
+                                        width: {xs: '0.8em', sm: '1em'},
+                                        height: {xs: '0.8em', sm: '1em'},
+                                    }}
+                                />
+                                : <SendOutlined sx={{color: '#fcfcfc'}}/>
+                        }
+                    >
+                        {translate('home.show.comments.leave')}
+                    </Button>
+                </Box>
             </Box>
         </Box>
     );

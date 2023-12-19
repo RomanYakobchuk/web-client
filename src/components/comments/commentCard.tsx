@@ -1,8 +1,7 @@
-import React, {Dispatch, SetStateAction, useEffect, useRef, useState} from "react";
-import {Box, Button, IconButton, SxProps} from "@mui/material";
+import React, {Dispatch, SetStateAction, useContext, useEffect, useRef, useState} from "react";
+import {Box, Button, SxProps} from "@mui/material";
 import {useNotification, usePermissions, useTranslate} from "@refinedev/core";
 import {
-    Close,
     Delete,
     ExpandLess,
     ExpandMore,
@@ -10,14 +9,17 @@ import {
     SwipeLeftRounded, SwipeRightRounded,
     SwipeRounded
 } from "@mui/icons-material";
+import ReactDOM from "react-dom";
+import {MouseEvent} from "react";
 
-import {IComment} from "@/interfaces/common";
+import {IComment, ProfileProps} from "@/interfaces/common";
 import {useLeaveManagerCommentAs, useManagerEstablishment, useMobile, useUserInfo} from "@/hook";
 import CommentAnswers from "./commentAnswers";
 import CommentInput from "./comment-input";
 import {axiosInstance} from "@/authProvider";
 import SwipeComponent, {CountdownHandle} from "@/components/swipe/swipeComponent";
 import {ShowTimeComponent} from "@/components/time";
+import {ColorModeContext} from "@/contexts";
 
 type INewComment = {
     comment: IComment,
@@ -60,7 +62,7 @@ const CommentCard = ({
     const [isAnswer, setIsAnswer] = useState<boolean>(false);
     const [parent, setParent] = useState<IComment>({} as IComment);
     const [newCurrentComment, setNewCurrentComment] = useState<INewComment | null>(null);
-
+    const [isVisibleInput, setIsVisibleInput] = useState<boolean>(false);
     const isCanDelete = comment?.createdBy?._id === selectedInfo?._id || comment?.createdBy?._id === user?._id || dataPermissions === 'admin' || dataPermissions === 'manager' && managerEstablishment?.some((item) => item?._id === comment?.createdBy?._id);
 
     useEffect(() => {
@@ -136,8 +138,18 @@ const CommentCard = ({
         }
     }
 
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setIsVisibleInput(isAnswer)
+        }, 500);
+        return () => {
+            clearTimeout(timer)
+        }
+    }, [isAnswer]);
+
     return (
         <SwipeComponent
+            uniqueKey={comment?._id}
             isSwipeLeft={isAllowedDelete}
             isSwipeRight={isAllowedReply && !isAnswers}
             rightItemWidth={70}
@@ -251,12 +263,13 @@ const CommentCard = ({
                             display: 'flex',
                             flexDirection: 'column',
                             gap: 1,
-                            width: '100%'
+                            width: 'calc(100% - 58px)'
                         }}>
                             <Box sx={{
                                 display: 'flex',
                                 width: '100%',
                                 justifyContent: 'space-between',
+                                gap: 1
                             }}>
                                 <Box sx={{
                                     fontSize: '16px',
@@ -278,22 +291,26 @@ const CommentCard = ({
                                 display: 'flex',
                                 alignItems: 'start',
                                 justifyContent: 'end',
-                                gap: 2
+                                gap: 0.5
                             }}>
                                 <Box sx={{
                                     width: '100%',
                                     fontSize: '14px',
                                     whiteSpace: 'break-spaces',
-                                    bgcolor: 'modern.modern_1.second',
-                                    p: 1,
-                                    borderRadius: '5px'
+                                    // bgcolor: 'modern.modern_1.second',
+                                    // p: 1,
+                                    // borderRadius: '5px'
                                 }}>
                                     {currentComment?.text}
                                 </Box>
                                 {
                                     isSwipe && (
                                         <Box sx={{
-                                            width: 'fit-content'
+                                            width: 'fit-content',
+                                            "& svg": {
+                                                fontSize: '20px',
+                                                color: 'silver'
+                                            }
                                         }}>
                                             {
                                                 (isAllowedDelete && isAllowedReply)
@@ -372,34 +389,22 @@ const CommentCard = ({
                     }
                 </Box>
                 {
-                    isShowReply && isAnswer && parent?._id && (
-                        <Box sx={{
-                            margin: '10px 0',
-                            p: 1,
-                            borderRadius: '7px',
-                            border: '2px solid cornflowerblue',
-                            display: 'flex',
-                            width: '100%',
-                            flexDirection: 'column',
-                            alignItems: 'end'
-                        }}>
-                            <IconButton
-                                onClick={handleCloseIsAnswer}
-                            >
-                                <Close/>
-                            </IconButton>
-                            <CommentInput
-                                parent={parent}
-                                isAnswer={isAnswer}
-                                setIsAnswer={setIsAnswer}
-                                setParent={setParent}
-                                institutionId={currentComment?.establishmentId as string}
-                                setNewComment={setNewComment ?? setNewCurrentComment}
-                            />
-                        </Box>
+                    isShowReply && isVisibleInput && (
+                        <ShowCommentInput
+                            parent={parent}
+                            currentComment={currentComment}
+                            handleCloseIsAnswer={handleCloseIsAnswer}
+                            setNewCurrentComment={setNewCurrentComment}
+                            isAnswer={isAnswer}
+                            setIsAnswer={setIsAnswer}
+                            setParent={setParent}
+                            setNewComment={setNewComment}
+                        />
                     )
                 }
-                <Box>
+                <Box sx={{
+                    display: isLoadAnswers ? 'block' : 'none'
+                }}>
                     <CommentAnswers
                         isShowAnswers={isShowAnswer}
                         isLoadAnswers={isLoadAnswers}
@@ -413,4 +418,145 @@ const CommentCard = ({
         </SwipeComponent>
     );
 };
-export default CommentCard
+export default CommentCard;
+
+type TShowCommentInput = {
+    handleCloseIsAnswer: () => void,
+    isAnswer: boolean,
+    setIsAnswer: Dispatch<SetStateAction<boolean>>,
+    setParent: Dispatch<SetStateAction<IComment>>,
+    parent: IComment,
+    currentComment: IComment,
+    setNewCurrentComment: Dispatch<SetStateAction<INewComment | null>>,
+    setNewComment?: Dispatch<SetStateAction<INewComment | null>>,
+}
+export const ShowCommentInput = ({
+                                     handleCloseIsAnswer,
+                                     setIsAnswer,
+                                     isAnswer,
+                                     setParent,
+                                     currentComment,
+                                     setNewCurrentComment,
+                                     setNewComment,
+                                     parent
+                                 }: TShowCommentInput) => {
+    const translate = useTranslate();
+    const {mode} = useContext(ColorModeContext);
+
+    const [scale, setScale] = useState<number>(0);
+
+    const createdBy = parent?.createdBy as ProfileProps;
+
+    useEffect(() => {
+        setScale(isAnswer ? 1 : 0);
+    }, [isAnswer]);
+    const handleClose = (event: MouseEvent<HTMLDivElement>) => {
+        event.stopPropagation();
+        event.preventDefault();
+    }
+
+    return ReactDOM.createPortal(
+        <Box sx={{
+            position: 'fixed',
+            width: '100%',
+            height: '100%',
+            zIndex: 2000,
+            inset: 0,
+            bgcolor: mode === 'dark' ? 'rgba(100, 100, 100, 0.2)' : 'rgba(0, 0, 0, 0.2)',
+            backdropFilter: 'blur(10px)',
+            transform: `scale(${scale})`,
+            transition: 'all 0.3s linear'
+        }}
+             onClick={() => setIsAnswer(false)}
+        >
+            <Box sx={{
+                position: 'absolute',
+                top: '45%',
+                left: '50%',
+                zIndex: 1200,
+                transform: `translate(-50%, -50%)`,
+                width: '100%',
+                p: 2,
+                maxWidth: '550px',
+            }}
+                 onClick={handleClose}
+            >
+                <Box>
+                    <Box sx={{
+                        margin: '10px 0',
+                        // p: 1,
+                        // borderRadius: '7px',
+                        // border: '2px solid cornflowerblue',
+                        display: 'flex',
+                        width: '100%',
+                        flexDirection: 'column',
+                        alignItems: 'end',
+                        gap: 1
+                    }}>
+                        <Box sx={{
+                            width: '100%',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            gap: 2,
+                            p: 1,
+                            bgcolor: 'modern.modern_1.main',
+                            borderRadius: '15px',
+                            border: `2px solid ${mode === 'dark' ? '#d3e930' : 'cornflowerblue'}`
+                        }}>
+                            {
+                                parent?._id && (
+                                    <Box>
+                                        <Box sx={{
+                                            display: 'flex',
+                                            alignItems: 'baseline',
+                                            gap: 1,
+                                            fontSize: {xs: '16px', md: '18px'},
+                                            fontWeight: 600
+                                        }}>
+                                            <Box>
+                                                {translate('buttons.reply')}:
+                                            </Box>
+                                            <Box sx={{
+                                                color: 'cornflowerblue'
+                                            }}>
+                                                {createdBy?.name}
+                                            </Box>
+                                        </Box>
+                                        <Box sx={{
+                                            fontSize: '14px'
+                                        }}>
+                                            {parent?.text?.substring(0, 40)}
+                                        </Box>
+                                    </Box>
+                                )
+                            }
+                            <Button
+                                variant={'text'}
+                                // color={'error'}
+                                sx={{
+                                    textTransform: 'inherit',
+                                    color: 'secondary.main'
+                                }}
+                                onClick={handleCloseIsAnswer}
+                            >
+                                {translate('buttons.close')}
+                                {/*<Close/>*/}
+                            </Button>
+                        </Box>
+                        <CommentInput
+                            parent={parent}
+                            isAnswer={isAnswer}
+                            setIsAnswer={setIsAnswer}
+                            setParent={setParent}
+                            institutionId={currentComment?.establishmentId as string}
+                            setNewComment={setNewComment || setNewCurrentComment}
+                        />
+                    </Box>
+                </Box>
+            </Box>
+        </Box>, document.body
+    );
+};
+
+

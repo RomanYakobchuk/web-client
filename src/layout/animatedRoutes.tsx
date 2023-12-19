@@ -1,4 +1,3 @@
-import React from "react";
 import {Outlet, Route, Routes} from "react-router-dom";
 import {Authenticated, CanAccess} from "@refinedev/core";
 import {CatchAllNavigate, NavigateToResource} from "@refinedev/react-router-v6";
@@ -42,15 +41,15 @@ import {
 } from "@/components";
 import CreateUser from "@/dashboard/properties/user/createUser";
 
-// import {AnimatePresence} from "framer-motion";
 
 const AnimatedRoutes = () => {
+
     return (
-        // <AnimatePresence>
         <Routes>
             <Route
                 element={
                     <Authenticated
+                        appendCurrentPathToQuery={true}
                         key={'navigateToLogin'}
                         v3LegacyAuthProviderCompatible={true}
                         fallback={<CatchAllNavigate
@@ -77,8 +76,6 @@ const AnimatedRoutes = () => {
                         <DashboardPage/>
                     </CanAccess>
                 }>
-                    {/*<Route index element={<General/>}/>*/}
-                    {/*<Route index element={<NavigateToResource resource={"dashboard"}/>}/>*/}
                     <Route path={'establishment'} element={<InstitutionsAdminList/>}/>
                     <Route path={'user/create'} element={<CreateUser/>}/>
                     <Route path={'news'} element={<NewsAdminList/>}/>
@@ -253,6 +250,7 @@ const AnimatedRoutes = () => {
             <Route
                 element={
                     <Authenticated
+                        appendCurrentPathToQuery={true}
                         key={'navigateToHome'}
                         v3LegacyAuthProviderCompatible={true}
                         fallback={<Outlet/>}>
@@ -302,6 +300,7 @@ const AnimatedRoutes = () => {
             <Route
                 element={
                     <Authenticated
+                        appendCurrentPathToQuery={true}
                         key={'navigateToPage'}
                         v3LegacyAuthProviderCompatible={true}>
                         <Layout Header={Header} Sider={Sider} Title={Title}>

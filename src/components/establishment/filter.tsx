@@ -95,9 +95,9 @@ const FilterInstitutions = ({
         if (!isShowAllFilters) {
             defaultSetFilters([
                 {
-                    field: 'title',
+                    field: 'title_like',
                     value: searchValue ?? '',
-                    operator: 'contains'
+                    operator: 'eq'
                 }
             ])
         }
@@ -116,9 +116,9 @@ const FilterInstitutions = ({
                 value: valueGte ? valueGte : 20
             },
             {
-                field: 'title',
+                field: 'title_like',
                 value: searchValue?.length > 0 ? searchValue : "",
-                operator: 'contains'
+                operator: 'eq'
             },
             {
                 field: "propertyType",
@@ -276,12 +276,14 @@ const FilterInstitutions = ({
                             display: 'flex',
                             flexDirection: 'row',
                             justifyContent: 'space-between',
-                            alignItems: 'center'
+                            alignItems: 'start',
+                            gap: 1
                         }}>
                             <Box sx={{
                                 display: 'flex',
                                 flexDirection: 'row',
-                                alignItems: 'center',
+                                alignItems: 'start',
+                                flexWrap: 'wrap',
                                 gap: {xs: 2, sm: 1, md: 2},
                             }}>
                                 <SearchByTypeComponent
@@ -337,9 +339,13 @@ const FilterInstitutions = ({
                     )
                 }
             </Box>
-            <NearbyEstablishmentBtn
-                error={error}
-                location={position as PropertyProps['location']}/>
+            <Box sx={{
+                mt: {xs: 1, sm: 0}
+            }}>
+                <NearbyEstablishmentBtn
+                    error={error}
+                    location={position as PropertyProps['location']}/>
+            </Box>
             <ModalWindow open={openFilter} setOpen={setOpenFilter} title={
                 <Box sx={{
                     fontSize: {xs: '20px', md: '24px'},
@@ -363,6 +369,7 @@ const FilterInstitutions = ({
                                 display: 'flex',
                                 flexDirection: 'column',
                                 gap: 3,
+                                alignItems: 'start'
                             }}>
                                 {
                                     !isShowAllFilters && (
@@ -397,10 +404,10 @@ const FilterInstitutions = ({
                                 />
                             </Box>
                             <Box sx={{
-                                position: isFilterBtnAbsolute ? 'absolute' : 'unset',
-                                bottom: '15px',
-                                left: 0,
-                                right: 0,
+                                // position: isFilterBtnAbsolute ? 'absolute' : 'unset',
+                                // bottom: '15px',
+                                // left: 0,
+                                // right: 0,
                                 width: '90%',
                                 margin: '0 auto'
                             }}>

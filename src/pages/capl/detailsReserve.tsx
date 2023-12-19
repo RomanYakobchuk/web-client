@@ -19,6 +19,7 @@ import "@/components/capl/reserve_style.css";
 import {useMobile, useUserInfo} from "@/hook";
 import RenderTag from "@/components/common/statusTagRender";
 import {ShowTimeComponent} from "@/components/time";
+import LoadingCaplDetails from "@/components/capl/whileLoading/loadingCaplDetails";
 
 const {Title, Text} = Typography;
 
@@ -33,7 +34,7 @@ const DetailsReserve = () => {
     const {id} = useParams();
     const {user} = useUserInfo();
     const navigate = useNavigate();
-    const {width} = useMobile();
+    const {width, device} = useMobile();
     const {mode} = useContext(ColorModeContext);
     const translate = useTranslate();
 
@@ -60,7 +61,14 @@ const DetailsReserve = () => {
             title: translate('capl.create.fullName')
         },
         {
-            value: dayjs(reserve?.date).format('DD/MM/YYYY HH:mm') + ' ' + dayjs(reserve?.date)?.fromNow(),
+            // value: dayjs(reserve?.date).format('DD/MM/YYYY HH:mm') + ' ' + dayjs(reserve?.date)?.fromNow(),
+            value: <ShowTimeComponent
+                date={reserve?.date as Date}
+                style={{
+                    alignItems: 'start',
+                    fontSize: {xs: '15px', sm: '17px', lg: '19px'}
+                }}
+                isFirstAgo={false}/>,
             title: translate('capl.create.date')
         },
         {
@@ -171,180 +179,235 @@ const DetailsReserve = () => {
     if (isError) return <div>Error</div>
     return (
         <CustomShow
-            isLoading={isLoading}
+            isLoading={false}
             bgColor={'transparent'}
+            maxWidth={'800px'}
             isShowButtons={user?._id === reserve?.user || user?._id === reserve?.manager || user?.status === 'admin'}
         >
-            <Box sx={{
-                width: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 2
-            }}>
-                <div style={{
-                    width: '100%',
-                    display: 'flex',
-                    justifyContent: 'end'
-                }}>
-                    <Box sx={{
-                        p: '8px 16px',
-                        bgcolor: reserve?.isActive ? '#00be65' : '#ff6464',
-                        color: '#010101',
-                        borderRadius: '10px',
-                        fontSize: {xs: '16px', sm: '18px'},
-                        width: 'fit-content'
-                    }}>
-                        {translate(`capl.status.valid.${reserve?.isActive ? 'active' : 'inactive'}`)}
-                    </Box>
-                </div>
-                <Box
-                    sx={{
-                        display: 'grid',
-                        gridTemplateColumns: `repeat(auto-fit, minmax(${gridItemWidth}, 1fr))`,
-                        gap: '8px',
-                        width: '100%',
-                        gridAutoRows: 'minmax(80px, max-content)',
-                        "& *": {
-                            color: '#fff'
-                        }
-                    }}
-                >
-                    {
-                        items.map((item, index) => (
-                                <Box
-                                    key={index + 1}
-                                    // onClick={() => handleClick(index)}
-                                    sx={{
-                                        width: '100%',
-                                        gridColumn: (item?.field === 'comment' && typeof item?.value === 'string' && item?.value?.length > 10) ? 'span 2' : 'span 1',
-                                        gridRow: (item?.field === 'comment' && typeof item?.value === 'string' && item?.value?.length > 10) ? 'span 2' : 'span 1',
-                                        height: 'auto',
-                                        bgcolor: mode === 'dark' ? "#252525" : '#016AB9',
-                                        borderRadius: '15px',
-                                        // p: 2,
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        gap: 1,
-                                        justifyContent: 'start',
-                                        alignItems: 'start',
-                                        "& div:not(.institutionRejected)": {
-                                            p: '8px 16px'
-                                        }
-                                    }}
-                                    // className={`grid-item ${selectedItem === index ? 'selected' : 'shrink'}`}
-                                >
-                                    <Box sx={{
-                                        fontSize: {xs: '14px', sm: '16px'},
-                                        fontWeight: 400,
-                                        height: {xs: '45px', sm: '35px'},
-                                        display: 'flex',
-                                        alignItems: 'center'
-                                    }}>
-                                        {item?.title}
-                                    </Box>
-                                    <Divider sx={{
-                                        bgcolor: 'silver',
-                                        width: '100%'
-                                    }}/>
-                                    <Box sx={{
-                                        fontSize: {xs: '15px', sm: '17px'},
-                                        fontWeight: 600,
-                                        height: 'fit-content',
-                                        whiteSpace: typeof item?.value === 'string' ? 'break-space' : 'unset'
-                                    }}>
-                                        {item?.value ? item?.value : <span style={{
-                                            fontWeight: 400,
-                                            fontSize: '15px',
-                                            color: 'silver'
-                                        }}>{translate('text.nothing')}</span>}
-                                    </Box>
-                                </Box>
-                            )
-                        )
-                    }
-                </Box>
-            </Box>
-            <Grid
-                sx={{
-                    "& *, & *.ant-typography": {
-                        color: 'common.white'
-                    },
-                    mt: 4,
-                    maxWidth: '500px'
-                }}
-                container spacing={2}>
-                <Grid sx={{width: '100%'}} item xs={12} p={4}>
-                    <Box sx={{
-                        width: '100%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        flexWrap: 'wrap',
-                        gap: 2
-                    }}>
-                        <CardHeader
-                            title={translate('home.one')}/>
-                        <Button
-                            sx={{
-                                fontSize: {xs: '14px', sm: '16px'},
-                                width: 'fit-content',
-                                textTransform: 'inherit'
-                            }}
-                            onClick={() => navigate(`/all_institutions/show/${reserve?.institution?._id}`)}
-                            color={"secondary"}
-                            endIcon={<EastOutlined/>}
-                            variant={"outlined"}>
-                            {translate("buttons.details")}
-                        </Button>
-                    </Box>
-                    <CardContent sx={{
-                        width: '100%',
-                        p: '16px 0 16px 16px',
-                        "& div.ant-image": {
-                            width: '100%'
-                        }
-                    }}>
-                        <Image
-                            width={'100%'}
-                            src={reserve?.institution?.pictures[0].url}
-                            alt={reserve?.institution?.title}
-                            style={{
+            {
+                isLoading
+                    ? <LoadingCaplDetails/>
+                    : <>
+                        <Box sx={{
+                            width: '100%',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: 2
+                        }}>
+                            <div style={{
                                 width: '100%',
-                                // maxWidth: '400px',
-                                height: '250px',
-                                borderRadius: '10px',
-                                objectFit: 'cover'
-                            }}
-                        />
-                        <Title level={4}>{reserve?.institution?.title}</Title>
-                        <Text>{translate(`home.sortByType.${reserve?.institution?.type}`)}</Text>
-                        {
-                            reserve?.institution?.place?.city && (
+                                display: 'flex',
+                                justifyContent: 'end'
+                            }}>
                                 <Box sx={{
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                    gap: 1,
-                                    my: 0.5
+                                    p: '8px 16px',
+                                    bgcolor: reserve?.isActive ? '#00be65' : '#ff6464',
+                                    color: '#010101',
+                                    borderRadius: '10px',
+                                    fontSize: {xs: '16px', sm: '18px'},
+                                    width: 'fit-content'
                                 }}>
-                                    <Place/>
-                                    <Box sx={{
-                                        display: 'flex',
-                                        flexDirection: 'column'
-                                    }}>
+                                    {translate(`capl.status.valid.${reserve?.isActive ? 'active' : 'inactive'}`)}
+                                </Box>
+                            </div>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    // borderRadius: '10px',
+                                    // bgcolor: 'modern.modern_1.second',
+                                    gap: 1,
+                                    // display: 'grid',
+                                    // gridTemplateColumns: `repeat(auto-fit, minmax(${gridItemWidth}, 1fr))`,
+                                    // width: '100%',
+                                    // gridAutoRows: 'minmax(80px, max-content)',
+                                    "& *": {
+                                        color: 'common.white'
+                                    }
+                                }}
+                            >
+                                {
+                                    items.map((item, index) => (
+                                            <Box
+                                                key={index + 1}
+                                                sx={{
+                                                    width: '100%',
+                                                    display: 'grid',
+                                                    gridTemplateColumns: {xs: 'repeat(1, 1fr)', sm: '1fr 3fr'},
+                                                    // "&:not(:last-child)": {
+                                                    //     borderBottom: '1px solid silver',
+                                                    // },
+                                                    // display: 'flex',
+                                                    // flexDirection: {xs: 'row', sm: 'column'},
+                                                    gap: 0.5,
+                                                    p: 2,
+                                                    alignItems: {xs: 'center', sm: 'start'},
+                                                    borderRadius: '10px',
+                                                    // borderRadius: index === 0 ? '10px 10px 0px 0px' : (index === items?.length - 1 ? '0px 0px 10px 10px' : 0),
+                                                    bgcolor: index % 2 === 0 ? 'modern.modern_1.main' : 'modern.modern_1.second',
+                                                    transition: 'all 0.2s linear',
+                                                    "&:hover": {
+                                                        transform: device ? 'unset' : 'scale(1.1)'
+                                                    }
+                                                }}
+                                            >
+                                                <Box sx={{
+                                                    fontSize: {xs: '13px', sm: '15px', lg: '17px'}
+                                                }}>
+                                                    {item?.title}:
+                                                </Box>
+                                                <Box
+                                                    sx={{
+                                                        ml: {xs: 2, sm: 0},
+                                                        fontSize: {xs: '15px', sm: '17px', lg: '19px'},
+                                                        fontWeight: 600,
+                                                        "& *": {
+                                                            fontSize: {xs: '15px', sm: '17px', lg: '19px'},
+                                                            fontWeight: 600
+                                                        }
+                                                    }}>
+                                                    {item?.value ? item?.value : <span style={{
+                                                        fontWeight: 400,
+                                                        fontSize: '15px',
+                                                        color: 'silver'
+                                                    }}>{translate('text.nothing')}</span>}
+                                                </Box>
+                                            </Box>
+                                            // <Box
+                                            //     key={index + 1}
+                                            //     // onClick={() => handleClick(index)}
+                                            //     sx={{
+                                            //         width: '100%',
+                                            //         gridColumn: (item?.field === 'comment' && typeof item?.value === 'string' && item?.value?.length > 10) ? 'span 2' : 'span 1',
+                                            //         gridRow: (item?.field === 'comment' && typeof item?.value === 'string' && item?.value?.length > 10) ? 'span 2' : 'span 1',
+                                            //         height: 'auto',
+                                            //         bgcolor: mode === 'dark' ? "#252525" : '#016AB9',
+                                            //         borderRadius: '15px',
+                                            //         // p: 2,
+                                            //         display: 'flex',
+                                            //         flexDirection: 'column',
+                                            //         gap: 1,
+                                            //         justifyContent: 'start',
+                                            //         alignItems: 'start',
+                                            //         "& div:not(.institutionRejected)": {
+                                            //             p: '8px 16px'
+                                            //         }
+                                            //     }}
+                                            // >
+                                            //     <Box sx={{
+                                            //         fontSize: {xs: '14px', sm: '16px'},
+                                            //         fontWeight: 400,
+                                            //         height: {xs: '45px', sm: '35px'},
+                                            //         display: 'flex',
+                                            //         alignItems: 'center'
+                                            //     }}>
+                                            //         {item?.title}
+                                            //     </Box>
+                                            //     <Divider sx={{
+                                            //         bgcolor: 'silver',
+                                            //         width: '100%'
+                                            //     }}/>
+                                            //     <Box sx={{
+                                            //         fontSize: {xs: '15px', sm: '17px'},
+                                            //         fontWeight: 600,
+                                            //         height: 'fit-content',
+                                            //         whiteSpace: typeof item?.value === 'string' ? 'break-space' : 'unset'
+                                            //     }}>
+                                            //         {item?.value ? item?.value : <span style={{
+                                            //             fontWeight: 400,
+                                            //             fontSize: '15px',
+                                            //             color: 'silver'
+                                            //         }}>{translate('text.nothing')}</span>}
+                                            //     </Box>
+                                            // </Box>
+                                        )
+                                    )
+                                }
+                            </Box>
+                        </Box>
+                        <Grid
+                            sx={{
+                                "& *, & *.ant-typography": {
+                                    color: 'common.white'
+                                },
+                                mt: 4,
+                                maxWidth: '500px'
+                            }}
+                            container spacing={2}>
+                            <Grid sx={{width: '100%'}} item xs={12} p={4}>
+                                <Box sx={{
+                                    width: '100%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    flexWrap: 'wrap',
+                                    gap: 2
+                                }}>
+                                    <CardHeader
+                                        title={translate('home.one')}/>
+                                    <Button
+                                        sx={{
+                                            fontSize: {xs: '14px', sm: '16px'},
+                                            width: 'fit-content',
+                                            textTransform: 'inherit'
+                                        }}
+                                        onClick={() => navigate(`/all_institutions/show/${reserve?.institution?._id}`)}
+                                        color={"secondary"}
+                                        endIcon={<EastOutlined/>}
+                                        variant={"outlined"}>
+                                        {translate("buttons.details")}
+                                    </Button>
+                                </Box>
+                                <CardContent sx={{
+                                    width: '100%',
+                                    p: '16px 0 16px 16px',
+                                    "& div.ant-image": {
+                                        width: '100%'
+                                    }
+                                }}>
+                                    <Image
+                                        width={'100%'}
+                                        src={reserve?.institution?.pictures[0].url}
+                                        alt={reserve?.institution?.title}
+                                        style={{
+                                            width: '100%',
+                                            // maxWidth: '400px',
+                                            height: '250px',
+                                            borderRadius: '10px',
+                                            objectFit: 'cover'
+                                        }}
+                                    />
+                                    <Title level={4}>{reserve?.institution?.title}</Title>
+                                    <Text>{translate(`home.sortByType.${reserve?.institution?.type}`)}</Text>
+                                    {
+                                        reserve?.institution?.place?.city && (
+                                            <Box sx={{
+                                                display: 'flex',
+                                                flexDirection: 'row',
+                                                alignItems: 'center',
+                                                gap: 1,
+                                                my: 0.5
+                                            }}>
+                                                <Place/>
+                                                <Box sx={{
+                                                    display: 'flex',
+                                                    flexDirection: 'column'
+                                                }}>
                                         <span>
                                             {reserve?.institution?.place?.city}
                                         </span>
-                                        <span>
+                                                    <span>
                                             {reserve?.institution?.place?.address}
                                         </span>
-                                    </Box>
-                                </Box>
-                            )
-                        }
-                    </CardContent>
-                </Grid>
-            </Grid>
+                                                </Box>
+                                            </Box>
+                                        )
+                                    }
+                                </CardContent>
+                            </Grid>
+                        </Grid>
+                    </>
+            }
         </CustomShow>
     );
 };

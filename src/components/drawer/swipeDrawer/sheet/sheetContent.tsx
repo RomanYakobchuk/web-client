@@ -1,8 +1,7 @@
 import cx from 'classnames'
-import {forwardRef, ReactNode, PropsWithoutRef, useContext} from 'react'
+import {forwardRef, ReactNode, PropsWithoutRef} from 'react'
 import styles from './sheetContent.module.css'
 import {Box} from "@mui/material";
-import {ColorModeContext} from "@/contexts";
 
 type Props = {
     children: ReactNode
@@ -14,7 +13,7 @@ const SheetContent = forwardRef<HTMLDivElement, Props>(
             <Box
                 className={cx(
                     styles.spacing,
-                    'grid grid-flow-row place-items-start text-gray-900 text-xl',
+                    'grid grid-flow-row place-items-start',
                     'pb-8 px-8 pt-4 gap-4',
                     className
                 )}

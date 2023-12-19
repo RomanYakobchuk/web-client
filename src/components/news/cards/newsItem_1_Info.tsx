@@ -57,7 +57,6 @@ const NewsItem1Info = ({news, style}: TProps) => {
     const titleNews = title?.length > l ? title?.slice(0, l) : title;
     const isSplicedNewsTitle = title?.length > l;
 
-    const xtraSmall = width < 500;
     return (
         <Link to={`/news/show/${_id}`}>
             <Box sx={{
@@ -65,7 +64,10 @@ const NewsItem1Info = ({news, style}: TProps) => {
                 width: '100%',
                 height: '100%',
                 display: 'flex',
-                flexDirection: xtraSmall ? 'column' : 'row',
+                flexDirection: 'row',
+                "@media screen and (max-width: 500px)":{
+                    flexDirection: 'column'
+                },
                 gap: {xs: 2, md: 4, lg: 6},
                 justifyContent: 'space-between',
                 ...style
@@ -78,17 +80,24 @@ const NewsItem1Info = ({news, style}: TProps) => {
                     sx={{
                         // order: 1,
                         borderRadius: "10px",
-                        height: xtraSmall ? '200px' : {xs: '130px', sm: '170px', md: '200px'},
-                        width: xtraSmall ? '100%' : {xs: 'calc(45% - 8px)', lg: 'calc(35% - 8px)'},
+                        height: {xs: '130px', sm: '170px', md: '200px'},
+                        width: {xs: 'calc(45% - 8px)', lg: 'calc(35% - 8px)'},
+                        "@media screen and (max-width: 500px)":{
+                            height: '200px',
+                            width: '100%'
+                        },
                     }}
                 />
                 <Box
                     className={'newsTextContentCard'}
                     sx={{
                         display: 'flex',
-                        width: xtraSmall ? '100%' : {xs: 'calc(55% - 8px)', lg: 'calc(65% - 8px)'},
+                        width: {xs: 'calc(55% - 8px)', lg: 'calc(65% - 8px)'},
+                        "@media screen and (max-width: 500px)":{
+                            width: '100%'
+                        },
                         flexDirection: 'column',
-                        p: '0 0 10px 0',
+                        // p: '0 0 10px 0',
                         justifyContent: 'space-between'
                     }}>
                     <Box sx={{

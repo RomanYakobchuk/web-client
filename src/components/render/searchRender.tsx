@@ -1,23 +1,39 @@
 import {Typography as TypographyAntd} from "antd";
-import {Box} from "@mui/material";
+import {Box, Button} from "@mui/material";
 import {Link} from "react-router-dom";
 import MDEditor from "@uiw/react-md-editor";
 import React from "react";
 
 const {Text} = TypographyAntd;
-const renderTitle = (title: string, mode: string) => {
+const renderTitle = (title: string, mode: string, onClick?: () => void) => {
     return (
-        <Text strong
-              style={{
-                  fontSize: "16px",
-                  color: mode === 'dark' ? '#fcfcfc' : '#000'
-              }}>
-            {title}
-        </Text>
+        <Button
+            variant={'text'}
+            sx={{
+                minWidth: '30px',
+                p: 0,
+                textTransform: 'inherit'
+            }}
+            onClick={(event) => {
+                if (onClick) {
+                    event.preventDefault();
+                    onClick();
+                }
+            }}
+        >
+            <Text
+                strong
+                style={{
+                    fontSize: "16px",
+                    color: mode === 'dark' ? '#fcfcfc' : '#000'
+                }}>
+                {title}
+            </Text>
+        </Button>
     );
 };
 
-const renderItem = (item: any, resource: string, index: number, mode: string, setOpen: (value: boolean) => void, length: number, t?: any) => {
+const renderItem = (item: any, resource: string, index: number, mode: string, setOpen: (value: boolean) => void, length: number, t?: any, link?: string) => {
 
     const text2 = item?.description ?? item?.text ?? '';
 
@@ -26,7 +42,7 @@ const renderItem = (item: any, resource: string, index: number, mode: string, se
         key: item?._id,
         label: (
             <Box component={Link}
-                 to={`/${resource}/show/${item?._id}`}
+                 to={link || '#'}
                  onClick={() => {
                      setTimeout(() => {
                          setOpen(false)

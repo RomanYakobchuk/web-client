@@ -1,6 +1,6 @@
-import React, {useEffect, useMemo, useState} from "react";
+import React, {useMemo, useState} from "react";
 import {Box, Button, Typography} from "@mui/material";
-import {CanAccess, CrudFilter, LogicalFilter, useTable, useTranslate} from "@refinedev/core";
+import {CanAccess, CrudFilter, useTable, useTranslate} from "@refinedev/core";
 import {useNavigate} from "react-router-dom";
 import {Edit} from "@mui/icons-material";
 
@@ -8,7 +8,6 @@ import {Loading, PaginationComponent, ReservedCard} from "../index";
 import {IReserve} from "@/interfaces/common";
 import {useMobile} from "@/hook";
 import {SearchByTypeComponent, SearchInputComponent, SortCapl, SortNewsComponent} from "@/components/common/search";
-import {useDebounce} from "use-debounce";
 
 const types = [
     {
@@ -33,7 +32,6 @@ const CaplUserPage = () => {
     const [sortBy, setSortBy] = useState("");
     const [type, setType] = useState<string>("")
     const [searchValue, setSearchValue] = useState<string>("");
-    const [debounceSearchValue] = useDebounce(searchValue, 500);
     const {
         tableQueryResult: {data, isLoading, isError},
         sorters,

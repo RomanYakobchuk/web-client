@@ -75,8 +75,8 @@ import SearchCity from "./search/searchCity";
 
 // chats
 import ShowChats from "./chats/show-chats";
-import CurrentChatContainer from "./chats/current-chat-container";
-import ListChats from "./chats/list-chats";
+import CurrentChatContainer from "./chats/chatBox/current-chat-container";
+import ListChats from "./chats/list/list-chats";
 
 
 // settings

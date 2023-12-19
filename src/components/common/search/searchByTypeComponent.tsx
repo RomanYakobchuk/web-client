@@ -94,6 +94,7 @@ const SearchByTypeComponent = <T, >({
                 height: '30px !important',
                 borderRadius: '5px !important',
                 p: '0 10px !important',
+                textTransform: 'inherit',
                 "&:not(:last-of-type)": {
                     position: 'relative',
                     borderRight: 'unset !important',

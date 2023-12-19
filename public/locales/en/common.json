@@ -416,7 +416,8 @@
       "comments": {
         "title": "Comments",
         "notHave": "There are no comments",
-        "leaveAs": "Leave a commet as "
+        "leaveAs": "Leave a comment as ",
+        "leave": "Leave a comment"
       },
       "addToFav": "Save {{type}}",
       "delFromFav": "Remove from saved",
@@ -683,7 +684,34 @@
     "title": "Views"
   },
   "chats": {
-    "chats": "All chats"
+    "chats": "All chats",
+    "one": "Chat",
+    "create": {
+      "title": "Create",
+      "type": {
+        "title": "Chat type",
+        "group": "Group",
+        "oneByOne": "One by one"
+      },
+      "status": {
+        "title": "Status",
+        "private": "Private",
+        "public": "Public"
+      },
+      "load": {
+        "uploadFile": "Click to upload or drag and drop"
+      }
+    },
+    "show": {
+      "load": {
+        "file": {
+          "sizeError": "File size exceeds 50MB. Choose a smaller file",
+          "type": "Type",
+          "name": "Name",
+          "size": "Size"
+        }
+      }
+    }
   },
   "dates": {
     "today": "Today",

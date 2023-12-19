@@ -11,9 +11,9 @@ import {
 } from "@mui/icons-material";
 import {useTranslate} from "@refinedev/core";
 
-import {ColorModeContext} from "../../../contexts";
-import {antdInputStyle} from "../../../styles";
-import {IPicture} from "../../../interfaces/common";
+import {ColorModeContext} from "@/contexts";
+import {antdInputStyle} from "@/styles";
+import {IPicture} from "@/interfaces/common";
 import {Input} from "antd";
 
 type Props = {
@@ -286,7 +286,7 @@ const ImageSelector = ({
                                         />
                                         <Box sx={{
                                             position: 'absolute',
-                                            bottom: '5px',
+                                            bottom: '0px',
                                             borderRadius: {xs: '0 0 10px 10px', sm: '0 0 15px 15px'},
                                             bgcolor: 'rgba(255, 255, 255, 0.5)',
                                             left: 0,

@@ -166,33 +166,39 @@ const EstablishmentPropertyTabs = ({institution}: TProps) => {
                         }
                     </TabList>
                 </Box>
-                <TabPanel value={'1'}>
-                    {
-                        value === '1' && id && institution?._id && (
-                            <EstablishmentReviews id={id}/>
-                        )
-                    }
-                </TabPanel>
-                <TabPanel
-                    value={'2'}
-                    sx={{
-                        margin: '0 auto',
-                        maxWidth: '800px',
-                    }}
-                >
-                    {
-                        value === '2' && id && institution?._id && (
-                            <EstablishmentNews id={id}/>
-                        )
-                    }
-                </TabPanel>
-                <TabPanel value={'3'}>
-                    {
-                        value === '3' && id && institution?._id && (
-                            <EstablishmentComments institution={institution}/>
-                        )
-                    }
-                </TabPanel>
+                <Box sx={{
+                    width: '100%',
+                    margin: '0 auto',
+                    maxWidth: '750px',
+                }}>
+                    <TabPanel value={'1'}>
+                        {
+                            value === '1' && id && institution?._id && (
+                                <EstablishmentReviews id={id}/>
+                            )
+                        }
+                    </TabPanel>
+                    <TabPanel
+                        value={'2'}
+                        sx={{
+                            // margin: '0 auto',
+                            // maxWidth: '800px',
+                        }}
+                    >
+                        {
+                            value === '2' && id && institution?._id && (
+                                <EstablishmentNews id={id}/>
+                            )
+                        }
+                    </TabPanel>
+                    <TabPanel value={'3'}>
+                        {
+                            value === '3' && id && institution?._id && (
+                                <EstablishmentComments institution={institution}/>
+                            )
+                        }
+                    </TabPanel>
+                </Box>
             </TabContext>
         </Box>
     );

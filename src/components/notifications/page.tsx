@@ -1,7 +1,7 @@
 import {useInfiniteList, useNotification, useOne, useTranslate} from "@refinedev/core";
 import {Close, DeleteOutlined} from "@mui/icons-material";
 import {useContext, useEffect, useState} from "react";
-import {Box, IconButton} from "@mui/material";
+import {Box, IconButton, Typography as MuiTypography} from "@mui/material";
 import CountUp from "react-countup";
 import {Typography} from "antd";
 
@@ -45,7 +45,7 @@ const Page = ({userId, isCurrentUser = true}: TProps) => {
         id: userId as string
     });
 
-    const {data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage} = useInfiniteList({
+    const {data, refetch: reFetchNotifications, isRefetching, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage} = useInfiniteList({
         resource: `notification/allByUser/${userId}`,
         pagination: {
             pageSize: 20
@@ -62,9 +62,6 @@ const Page = ({userId, isCurrentUser = true}: TProps) => {
         socket?.on('newNotification', (notification: INotification) => {
             setNewNotification(notification)
         })
-        // return () => {
-        //     socket.off('newNotification');
-        // }
     }, [socket]);
     useEffect(() => {
         if (newNotification) {
@@ -84,10 +81,18 @@ const Page = ({userId, isCurrentUser = true}: TProps) => {
     const MainLayout = document.getElementById('mainLayout') as HTMLElement;
 
     useEffect(() => {
+        handleUpdateNotRead();
+    }, [isReading]);
+    const handleUpdate = () => {
+        (async () => {
+            await reFetchNotifications();
+        })();
+    }
+    const handleUpdateNotRead = () => {
         (async () => {
             await reFetchCountIsNotRead();
         })();
-    }, [isReading]);
+    }
     const handleScroll = () => {
         if (MainLayout) {
             const scrollTop = MainLayout.scrollTop;
@@ -202,12 +207,14 @@ const Page = ({userId, isCurrentUser = true}: TProps) => {
                 transition: '200ms linear',
                 borderBottom: scrolled ? '1px solid silver' : '1px solid transparent'
             }}>
-                <h2 style={{
+                <MuiTypography
+                    variant={'h5'}
+                    style={{
                     margin: '5px 0',
                     width: 'fit-content'
                 }}>
                     {translate('notifications.page.newNotification.title.title')}
-                </h2>
+                </MuiTypography>
                 <IconButton
                     id={'deleteNotificationButton'}
                     onClick={() => setOpenDeleted(prevState => !prevState)}
@@ -217,6 +224,11 @@ const Page = ({userId, isCurrentUser = true}: TProps) => {
                     }
                 </IconButton>
             </Box>
+            <IconButton
+                onClick={handleUpdate}
+            >
+                Reload
+            </IconButton>
             <Box sx={{
                 display: 'flex',
                 width: '100%',
@@ -233,7 +245,7 @@ const Page = ({userId, isCurrentUser = true}: TProps) => {
                 gap: 2,
                 margin: '0 auto',
                 p: '0px 16px 16px 16px',
-                maxWidth: {xs: '750px', lg: '90%'}
+                maxWidth: {xs: '750px', lg: '900px'}
             }}>
                 <Box sx={{
                     position: 'unset',
@@ -339,7 +351,7 @@ const Page = ({userId, isCurrentUser = true}: TProps) => {
                                 },
                                 "@media screen and (min-width: 1000px)": {
                                     display: 'flex',
-                                    m: '100px auto',
+                                    m: '80px auto',
                                 },
                             }}>
                                 <LottieComponent size={(width >= 700 && width <= 900) ? 200 : 300} loop={true} isClickToStartAnimation={false} item={NotificationLottie}/>

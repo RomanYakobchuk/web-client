@@ -172,7 +172,7 @@ const SharedComponent = ({url, title, id, isOnlyShared = false, color, type, isS
                             color: color
                         }}/>
                         {
-                            isShowSharedText && translate(`buttons.${!navigator.share ? 'copy' : 'share'}`)
+                            isShowSharedText && translate(`buttons.share`)
                         }
                     </Button>
                 ) : (

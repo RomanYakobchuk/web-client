@@ -177,7 +177,7 @@ export const authProvider: AuthBindings = {
                     error: new Error("Not authenticated"),
                     logout: true,
                     success: false,
-                    redirectTo: '/login'
+                    // redirectTo: '/login'
                 }
             } else if (access_token || refresh_token) {
                 return {
@@ -186,7 +186,7 @@ export const authProvider: AuthBindings = {
             }
             return {
                 authenticated: false,
-                redirectTo: '/login',
+                // redirectTo: '/login',
                 logout: true
             };
 

@@ -54,7 +54,7 @@ const Variant2EstablishmentCard = ({establishment}: IProps) => {
                     padding: {xs: 0, sm: 2},
                     display: 'flex',
                     flexDirection: {xs: 'column', sm: 'row'},
-                    boxShadow: {xs: 'unset', sm: '0px 0px 3px 0px silver'},
+                    boxShadow: {xs: 'unset', sm: '0px 4px 8px 0px rgba(125, 125, 125, 0.2)'},
                     bgcolor: 'common.black',
                     borderRadius: {xs: '0', sm: '20px'},
                     width: '100%',

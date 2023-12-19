@@ -177,7 +177,6 @@ const FilterNews = ({
     )
 
     const isShowAllFilters = width > 600;
-    const isHorizontalContent = width > 1100;
 
     const isFilterBtnAbsolute = height - 100 >= 400;
 
@@ -266,11 +265,18 @@ const FilterNews = ({
                     flexDirection: 'row',
                     alignItems: 'center',
                     gap: 2,
-                    justifyContent: 'space-between'
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap'
                 }}>
                     {
                         isShowAllFilters && (
-                            <>
+                            <Box sx={{
+                                width: 'fit-content',
+                                display: "block",
+                                "@media screen and (max-width: 600px)":{
+                                    display: 'none'
+                                }
+                            }}>
                                 <SearchByTypeComponent
                                     arrayType={arrayType}
                                     fieldName={'category'}
@@ -282,7 +288,7 @@ const FilterNews = ({
                                     setType={setCategory}
                                     setCurrent={setCurrent}
                                 />
-                            </>
+                            </Box>
                         )
                     }
                     <SortNewsComponent

@@ -35,7 +35,10 @@ const SimilarEstablishment = ({id}: TProps) => {
             alignItems: 'start',
             width: '100%',
             flexDirection: 'column',
-            gap: 2
+            gap: 2,
+            "& > div":{
+                margin: '0 auto'
+            }
         }}>
             <Typography
                 sx={{
@@ -52,7 +55,7 @@ const SimilarEstablishment = ({id}: TProps) => {
                     display: 'flex',
                     alignItems: 'center',
                     gap: {xs: 1, sm: 2},
-                    width: '100%'
+                    width: '100%',
                 }}>
                     {
                         similarItems?.length > 0 && similarItems?.map((item, index) => (

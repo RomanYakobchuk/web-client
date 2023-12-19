@@ -191,7 +191,7 @@ const NewsItemV2 = ({news}: TProps) => {
                                 borderRadius: '5px',
                                 minWidth: '20px',
                                 p: 2,
-                                bgcolor: '#2f4496'
+                                bgcolor: mode === 'dark' ? '#2f4496' : '#9cabe3'
                             }}
                             color={'common.white'}
                             id={news?._id}
