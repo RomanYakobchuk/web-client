@@ -20,8 +20,18 @@ const NewsList = ({news}: IProps) => {
         alignItems: 'start',
     } : {
         display: 'grid',
-        gridTemplateColumns: `repeat(auto-fit, minmax(270px, 1fr))`,
-        gap: {xs: 1.5, sm: 2}
+        // gridTemplateColumns: `repeat(auto-fit, minmax(160px, 1fr))`,
+        gridTemplateColumns: `repeat(2, 1fr)`,
+        "@media screen and (min-width: 600px)": {
+            gridTemplateColumns: `repeat(3, 1fr)`,
+        },
+        "@media screen and (min-width: 1200px)": {
+            gridTemplateColumns: `repeat(4, 1fr)`,
+        },
+        "@media screen and (min-width: 1500px)": {
+            gridTemplateColumns: `repeat(5, 1fr)`,
+        },
+        gap: {xs: 1, sm: 1.5}
     }
 
     return (

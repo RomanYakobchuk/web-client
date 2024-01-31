@@ -1,13 +1,11 @@
 import {createContext, Dispatch, FC, PropsWithChildren, SetStateAction, useEffect, useState} from "react";
 import {localFavPlacesKey, USER_PROPERTY} from "@/config/const";
+import { IFavPlaces } from "@/interfaces/types";
 
 
-type IFavPlaces = {
-    type: string,
-    item: string
-}
 type TProperties = {
-    notReadNotifications: number
+    notReadNotifications: number,
+    isShowUserDontHaveUniqueIndicator: boolean
 }
 export type AppContextType = {
     properties: TProperties,
@@ -20,13 +18,12 @@ export const AppContext = createContext<AppContextType>(
     {} as AppContextType
 );
 
-
 export const AppContextProvider: FC<PropsWithChildren> = ({children}) => {
 
     const localFavPlaces = JSON.parse(localStorage.getItem(localFavPlacesKey) as string);
     const userProperties = JSON.parse(localStorage.getItem(USER_PROPERTY) as string);
 
-    const [properties, setProperties] = useState<TProperties>(userProperties || {notReadNotifications: 0} as TProperties);
+    const [properties, setProperties] = useState<TProperties>(userProperties || {notReadNotifications: 0, isShowUserDontHaveUniqueIndicator: true} as TProperties);
     const [favoritePlaces, setFavoritePlaces] = useState(localFavPlaces || [])
 
     useEffect(() => {

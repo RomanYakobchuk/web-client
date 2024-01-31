@@ -19,7 +19,8 @@ type TProps = {
     onClick: () => void,
     onSuccessText?: string,
     onCancelText?: string,
-    onClose?: () => void
+    onClose?: () => void,
+    disabledSuccess?: boolean
 }
 const ModalShowContent = ({
                               children,
@@ -34,7 +35,8 @@ const ModalShowContent = ({
                               additionalHeaderValue,
                               onSuccessText,
                               onCancelText,
-                              onClose
+                              onClose,
+                              disabledSuccess = false
                           }: TProps) => {
 
     const {device} = useMobile();
@@ -167,7 +169,11 @@ const ModalShowContent = ({
                             <Button
                                 color={'info'}
                                 variant={'contained'}
-                                onClick={onClick}
+                                onClick={(event) => {
+                                    event.preventDefault();
+                                    onClick();
+                                }}
+                                disabled={disabledSuccess}
                             >
                                 {onSuccessText || translate('buttons.save')}
                             </Button>

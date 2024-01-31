@@ -1,21 +1,18 @@
-import {Header} from "../../layout";
-import {Avatar, Box, Button, Container, CssBaseline, Typography} from "@mui/material";
-import React, {FC, useContext} from "react";
-import {useTranslate} from "@refinedev/core";
-import {ColorModeContext} from "../../contexts";
+import {Avatar, Box, Typography} from "@mui/material";
 import {Link, useNavigate} from "react-router-dom";
-import {buttonStyle} from "../../styles";
+import {useTranslate} from "@refinedev/core";
+import React, {FC} from "react";
+
 import ContainerComponent from "./utills/containerComponent";
 
 
 const Welcome: FC = () => {
-    const {mode} = useContext(ColorModeContext);
     const translate = useTranslate();
-    const navigate = useNavigate();
 
     return (
         <ContainerComponent childrenProps={{
-            maxWidth: '90%'
+            maxWidth: '90%',
+            width: 'fit-content'
         }}>
             <Box
                 sx={{
@@ -23,6 +20,20 @@ const Welcome: FC = () => {
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'start',
+                    "& a":{
+                        textDecoration: 'none',
+                        color: '#f1f1f1',
+                        fontSize: {xs: 16, sm: 18, md: 20},
+                        p: '8px 16px',
+                        borderRadius: '10px',
+                        bgcolor: 'info.main',
+                        cursor: 'pointer',
+                        transition: '300ms linear',
+                        ":hover":{
+                            bgcolor: 'cornflowerblue',
+                            color: '#f9f9f9',
+                        }
+                    }
                 }}
             >
                 <Box sx={{
@@ -72,9 +83,6 @@ const Welcome: FC = () => {
                     flexDirection: {xs: 'column', sm: 'row'},
                     gap: {xs: 2, sm: 4},
                     alignItems: {xs: 'start', sm: 'end'},
-                    "& a":{
-                        fontSize: {xs: 16, sm: 18, md: 20}
-                    }
                 }}>
                     <Typography sx={{
                         fontSize: {xs: 16, sm: 18, md: 20},

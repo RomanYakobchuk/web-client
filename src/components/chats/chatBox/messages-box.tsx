@@ -1,5 +1,5 @@
 import {Box, Button} from "@mui/material";
-import React, {useContext, useEffect, useRef, useState} from "react";
+import React, {useContext, useEffect, useRef} from "react";
 import {useTranslate} from "@refinedev/core";
 
 import {IConversation, IMessage} from "@/interfaces/common";
@@ -21,9 +21,11 @@ interface IProps {
     fetchNextPage: any,
     isFetchingNextPage: boolean,
     setReplyTo: (item: IMessage) => void,
+    replyTo: IMessage | null,
     isSending: boolean,
     error: string,
-    total: number
+    total: number,
+    localCount: number
 }
 
 const MessagesBox = ({
@@ -35,7 +37,9 @@ const MessagesBox = ({
                          hasNextPage,
                          fetchNextPage,
                          setReplyTo,
-                         total
+                         total,
+                         replyTo,
+                         localCount
                      }: IProps) => {
     const scrollRef = useRef<HTMLDivElement | null>(null);
 
@@ -46,28 +50,18 @@ const MessagesBox = ({
         threshold: 0.5
     });
 
-    const [messagesId, setMessagesId] = useState<number>(0);
-
-    useEffect(() => {
-        if (messages.length > 0 && messages[messages.length - 1][1]?.length > 0) {
-            scrollRef.current?.scrollIntoView({behavior: 'smooth'});
-        }
-    }, [messages]);
-    useEffect(() => {
-        // Оновлюємо messagesId разом зі змінами в messages
-        setMessagesId(messagesId => messagesId + 1);
-    }, [messages]);
-
     const scrollToBottom = () => {
         if (scrollRef.current) {
             scrollRef.current?.scrollIntoView({behavior: 'smooth'})
         }
     }
     useEffect(() => {
-        scrollToBottom();
-    }, []);
-    const currentDate = dayjs(new Date()).format("DD-M-YYYY");
-
+        if (conversation?._id) {
+            setTimeout(() => {
+                scrollToBottom();
+            }, 1000)
+        }
+    }, [conversation?._id]);
     const scrollBar = !device ? {
         "&::-webkit-scrollbar": {
             width: '5px',
@@ -79,14 +73,27 @@ const MessagesBox = ({
             borderRadius: '5px',
         }
     } : {};
+
+    const messagesDate = (day: string) => {
+        const currentDate1 = dayjs(new Date()).format("D-M-YYYY");
+        const currentDate2 = dayjs(new Date()).format("DD-M-YYYY");
+        const yesterday = dayjs().subtract(1, 'day').format("D-M-YYYY");
+        if (day === currentDate1 || day === currentDate2) {
+            return translate('dates.today')
+        } else if (day === yesterday) {
+            return translate('dates.yesterday')
+        } else {
+            return day.split('-')[0] + ' ' + translate(`dates.months.${day.split('-')[1]}`) + ' ' + day.split('-')[2]
+        }
+    }
     return (
         <Box
             sx={{
                 width: '100%',
-                // height: '100%',
+                // height: 'auto',
                 overflowY: 'auto',
                 maxHeight: '100%',
-                position: 'relative',
+                // position: 'relative',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: 2,
@@ -97,7 +104,7 @@ const MessagesBox = ({
             }}
         >
             <MoreButton
-                hasNextPage={hasNextPage}
+                hasNextPage={hasNextPage && localCount < total}
                 isFetchingNextPage={isFetchingNextPage}
                 fetchNextPage={fetchNextPage}
                 total={total}
@@ -137,10 +144,7 @@ const MessagesBox = ({
                                                 backdropFilter: 'blur(4px)',
                                                 fontSize: '14px'
                                             }}>
-                                                {
-                                                    day === currentDate ? translate('dates.today') :
-                                                        day.split('-')[0] + ' ' + translate(`dates.months.${day.split('-')[1]}`) + ' ' + day.split('-')[2]
-                                                }
+                                                {messagesDate(day)}
                                             </div>
                                         </Box>
                                         <MessagesBoxItems
@@ -148,13 +152,6 @@ const MessagesBox = ({
                                             setReplyTo={setReplyTo}
                                             items={items}
                                         />
-                                    </Box>
-                                    <Box sx={{
-                                        mt: '-10px',
-                                        mb: '10px'
-                                    }}>
-                                        <div ref={inViewRef}/>
-                                        <div ref={scrollRef}/>
                                     </Box>
                                 </Box>
                             )
@@ -183,6 +180,13 @@ const MessagesBox = ({
                         Send message for start communication
                     </Box>
             }
+            <Box sx={{
+                mt: '-10px',
+                mb: '10px'
+            }}>
+                <div ref={inViewRef}/>
+                <div ref={scrollRef}/>
+            </Box>
             {
                 messages?.length > 0 && !inView && (
                     <Button
@@ -190,8 +194,8 @@ const MessagesBox = ({
                         variant={'contained'}
                         color={'secondary'}
                         sx={{
-                            position: 'fixed',
-                            bottom: {xs: '70px', lg: '85px'},
+                            position: 'absolute',
+                            bottom: '10px',
                             right: {xs: '10px', lg: '40px'},
                             width: '36px',
                             minWidth: '36px',

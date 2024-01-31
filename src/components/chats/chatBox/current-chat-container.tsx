@@ -17,13 +17,13 @@ interface IProps {
 }
 
 
-const CurrentChatContainer = ({conversation, closeChat, header}: IProps) => {
+const CurrentChatContainer = ({conversation, closeChat, header, setOpenDrawer}: IProps) => {
 
     const {width} = useMobile();
 
     return (
         <Box sx={{
-            // height: '100%',
+            height: '100%',
             display: 'flex',
             flexDirection: 'column',
             gap: 1,
@@ -48,6 +48,9 @@ const CurrentChatContainer = ({conversation, closeChat, header}: IProps) => {
                                     if (closeChat) {
                                         closeChat();
                                     }
+                                    if (setOpenDrawer) {
+                                        setOpenDrawer(false);
+                                    }
                                 }}
                             >
                                 <Close/>
@@ -57,34 +60,38 @@ const CurrentChatContainer = ({conversation, closeChat, header}: IProps) => {
                     {header}
                 </>
             </Box>
-            {
-                conversation?._id ? (
-                    <MessagesInputContainer conversation={conversation}/>
-                ) : (
-                    <Box sx={{
-                        width: '100%',
-                        // height: '100%',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        fontSize: {xs: '20px', md: '24px'},
-                        fontWeight: 600,
-                        // flex: 8
-                    }}>
+            <Box sx={{
+                height: 'calc(100% - 60px)'
+            }}>
+                {
+                    conversation?._id ? (
+                        <MessagesInputContainer conversation={conversation}/>
+                    ) : (
                         <Box sx={{
-                            p: 2,
-                            bgcolor: 'common.black',
-                            borderRadius: '15px'
+                            width: '100%',
+                            // height: '100%',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            fontSize: {xs: '20px', md: '24px'},
+                            fontWeight: 600,
+                            // flex: 8
                         }}>
-                            <LottieComponent
-                                item={RobotHiLottie}
-                                loop={true}
-                                size={width < 600 ? 300 : 400}
-                            />
+                            <Box sx={{
+                                p: 2,
+                                bgcolor: 'common.black',
+                                borderRadius: '15px'
+                            }}>
+                                <LottieComponent
+                                    item={RobotHiLottie}
+                                    loop={true}
+                                    size={width < 600 ? 300 : 400}
+                                />
+                            </Box>
                         </Box>
-                    </Box>
-                )
-            }
+                    )
+                }
+            </Box>
         </Box>
     );
 };

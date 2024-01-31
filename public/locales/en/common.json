@@ -98,6 +98,7 @@
     "confirmDelete": "Are you sure you want to delete {{value}}?"
   },
   "buttons": {
+    "goTo": "Go to",
     "copy": "Copy",
     "share": "To share:",
     "change": "Change",
@@ -659,6 +660,7 @@
     "ordinaryUser": "Ordinary user"
   },
   "text": {
+    "info": "Information",
     "yes": "Yes",
     "no": "No",
     "nothing": "Nothing",
@@ -687,6 +689,14 @@
     "chats": "All chats",
     "one": "Chat",
     "create": {
+      "uniqueIndicator": {
+        "title": "Identifier",
+        "type": {
+          "title": "Type of identifier"
+        },
+        "isExist": "Such an identifier already exists",
+        "create": "Create a unique identifier to be able to create chats and communicate"
+      },
       "title": "Create",
       "type": {
         "title": "Chat type",
@@ -705,6 +715,7 @@
     "show": {
       "load": {
         "file": {
+          "file": "File",
           "sizeError": "File size exceeds 50MB. Choose a smaller file",
           "type": "Type",
           "name": "Name",
@@ -715,6 +726,7 @@
   },
   "dates": {
     "today": "Today",
+    "yesterday": "Yesterday",
     "months": {
       "1": "January",
       "2": "February",

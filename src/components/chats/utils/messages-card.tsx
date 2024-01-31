@@ -2,25 +2,27 @@ import {ContentCopy, ReplyOutlined, DoneOutlined, DoneAllOutlined, ErrorOutlined
 import {useGetIdentity, useTranslate} from "@refinedev/core";
 import {FC, useContext, useEffect, useRef, useState} from "react";
 import {useInView} from "react-intersection-observer";
-import {Box, Menu, MenuItem, SxProps} from "@mui/material";
+import {Box, Menu, MenuItem, Popover, SxProps} from "@mui/material";
 import CryptoJS from "crypto-js";
 
-import {IGetIdentity, IMessage, ProfileProps} from "@/interfaces/common";
+import {IConversation, IGetIdentity, IMessage, ProfileProps} from "@/interfaces/common";
 import {secretKeyCryptMessage} from "@/config/const";
 import useLongPress from "@/hook/useLongPress";
 import {socket} from "@/socketClient";
 import dayjs from "dayjs";
 import {ColorModeContext} from "@/contexts";
+import MDEditor from "@uiw/react-md-editor";
 
 interface IProps {
     item: IMessage,
     receiver: ProfileProps,
     setReplyTo: (item: IMessage) => void,
     lengthGroup: number,
-    index: number
+    index: number,
+    conversation: IConversation
 }
 
-const MessagesCard = ({item: message, receiver, setReplyTo, lengthGroup, index}: IProps) => {
+const MessagesCard = ({item: message, receiver, setReplyTo, lengthGroup, index, conversation}: IProps) => {
 
         const translate = useTranslate();
         const {mode} = useContext(ColorModeContext);
@@ -79,26 +81,26 @@ const MessagesCard = ({item: message, receiver, setReplyTo, lengthGroup, index}:
         };
         const longPressEvent = useLongPress(onLongPress, onClick, defaultOptions);
 
-        const senderBorder = () => {
+        const senderBorder = ({first = '3px', second = '5px', third = '7px', fourth = '10px'}: {first?: string, second?: string, third?: string, fourth?: string}) => {
             if (lengthGroup === 1) {
-                return `15px 0px 15px 15px`
+                return `${fourth} ${second} ${fourth} ${fourth}`
             } else if ((lengthGroup === 2 && index === 0) || (lengthGroup >= 3 && index === 0)) {
-                return `15px 0px 5px 12px`
+                return `${fourth} ${second} ${first} ${third}`
             } else if ((lengthGroup === 2 && index === 1) || (lengthGroup >= 3 && index === (lengthGroup - 1))) {
-                return `12px 5px 12px 15px`
+                return `${third} ${first} ${fourth} ${fourth}`
             } else if (lengthGroup >= 3 && index !== 0 && index !== (lengthGroup - 1)) {
-                return '12px 5px 5px 12px'
+                return `${third} ${first} ${first} ${third}`
             }
         }
-        const receiverBorder = () => {
+        const receiverBorder = ({first = '3px', second = '5px', third = '7px', fourth = '10px'}: {first?: string, second?: string, third?: string, fourth?: string}) => {
             if (lengthGroup === 1) {
-                return `0px 15px 15px 15px`
+                return `${second} ${fourth} ${fourth} ${fourth}`
             } else if ((lengthGroup === 2 && index === 0) || (lengthGroup >= 3 && index === 0)) {
-                return `0px 15px 12px 5px`
+                return `${second} ${fourth} ${third} ${first}`
             } else if ((lengthGroup === 2 && index === 1) || (lengthGroup >= 3 && index === (lengthGroup - 1))) {
-                return `5px 12px 15px 12px`
+                return `${second} ${third} ${fourth} ${fourth}`
             } else if (lengthGroup >= 3 && index !== 0 && index !== (lengthGroup - 1)) {
-                return '5px 12px 12px 5px'
+                return `${fourth} ${third} ${third} ${second}`
             }
         };
 
@@ -144,10 +146,11 @@ const MessagesCard = ({item: message, receiver, setReplyTo, lengthGroup, index}:
                 top: 0,
                 right: '1px',
                 bgcolor: 'info.main',
-                width: '15px',
+                width: '10px',
                 height: '15px',
                 transform: 'translateX(100%)',
-                clipPath: 'polygon(0% 0%, 100% 0%, 90% 5%, 80% 10%, 70% 15%, 60% 20%, 30% 50%, 45% 35%, 35% 45%, 50% 30%, 20% 60%, 15% 70%, 10% 80%, 5% 90%, 0% 100%)',
+                // clipPath: 'polygon(0% -3%, 100% 0%, 90% 5%, 80% 10%, 70% 15%, 60% 20%, 30% 50%, 45% 35%, 35% 45%, 50% 30%, 20% 60%, 15% 70%, 10% 80%, 5% 90%, 0% 100%)',
+                clipPath: 'polygon(0% 20%, 60% 5%, 100% 0%, 90% 5%, 80% 10%, 70% 15%, 60% 20%, 30% 50%, 45% 35%, 35% 45%, 50% 30%, 20% 60%, 15% 70%, 10% 80%, 5% 90%, 0% 100%)',
             }
             // || 30% 50%, 20% 60%, 10% 70%, 0% 100%)
         } : {
@@ -157,19 +160,21 @@ const MessagesCard = ({item: message, receiver, setReplyTo, lengthGroup, index}:
                 top: 0,
                 left: '1px',
                 // bgcolor: 'modern.modern_1.main',
-                bgcolor: mode === 'dark' ? 'modern.modern_2.second' : 'common.black',
-                width: '15px',
+                // bgcolor: mode === 'dark' ? 'modern.modern_2.second' : 'common.black',
+                bgcolor: 'success.main',
+                width: '10px',
                 height: '15px',
                 transform: 'translateX(-100%) rotateY(-180deg)',
-                clipPath: 'polygon(0% 0%, 100% 0%, 90% 5%, 80% 10%, 70% 15%, 60% 20%, 30% 50%, 45% 35%, 35% 45%, 50% 30%, 20% 60%, 15% 70%, 10% 80%, 5% 90%, 0% 100%)'
+                // clipPath: 'polygon(0% -3%, 100% 0%, 90% 5%, 80% 10%, 70% 15%, 60% 20%, 30% 50%, 45% 35%, 35% 45%, 50% 30%, 20% 60%, 15% 70%, 10% 80%, 5% 90%, 0% 100%)'
+                clipPath: 'polygon(0% 20%, 60% 5%, 100% 0%, 90% 5%, 80% 10%, 70% 15%, 60% 20%, 30% 50%, 45% 35%, 35% 45%, 50% 30%, 20% 60%, 15% 70%, 10% 80%, 5% 90%, 0% 100%)'
             }
         } : {};
         return (
             <Box sx={{
                 width: 'fit-content',
                 height: 'fit-content',
-                pr: theSameUser ? '10px' : '0',
-                // pl: !theSameUser ? '10px' : '0',
+                pr: theSameUser ? '5px' : '0',
+                pl: !theSameUser && conversation?.chatInfo?.type === 'oneByOne' ? '10px' : '0',
             }}>
                 <Box
                     ref={refCard}
@@ -182,9 +187,10 @@ const MessagesCard = ({item: message, receiver, setReplyTo, lengthGroup, index}:
                     sx={{
                         width: '100%',
                         // bgcolor: !theSameUser ? 'modern.modern_1.main' : 'info.main',
-                        bgcolor: !theSameUser ? (mode === 'dark' ? 'modern.modern_2.second' : 'common.black') : 'info.main',
+                        // bgcolor: !theSameUser ? (mode === 'dark' ? 'modern.modern_2.second' : 'common.black') : 'info.main',
+                        bgcolor: !theSameUser ? 'success.main' : 'info.main',
                         // padding: '10px 10px 5px 15px',
-                        borderRadius: !theSameUser ? receiverBorder : senderBorder,
+                        borderRadius: !theSameUser ? receiverBorder({}) : senderBorder({}),
                         display: 'flex',
                         flexDirection: 'column',
                         // gap: 1,
@@ -196,76 +202,104 @@ const MessagesCard = ({item: message, receiver, setReplyTo, lengthGroup, index}:
                         ...chatPrev
                     }}
                 >
-                    {
-                        index === 0 && (
-                            <Box sx={{
-                                fontSize: '14px',
-                                fontWeight: 600,
-                                display: 'flex',
-                                m: '5px 5px 0 5px',
-                                justifyContent: theSameUser ? 'end' : 'start',
-                                color: theSameUser ? "#f9f9f9" : 'cornflowerblue'
-                            }}>
-                                {
-                                    receiver?.name
-                                }
-                            </Box>
-                        )
-                    }
-                    <Box
-                        ref={textRef}
-                        sx={{
-                            whiteSpace: 'break-spaces',
-                            fontSize: '14px',
-                            fontWeight: 500,
-                            color: !theSameUser ? 'common.white' : '#f1f1f1',
-                            alignItems: !theSameUser ? 'start' : 'end',
-                            width: '100%',
-                            textAlign: 'start',
-                            p: !theSameUser ? '7px 12px 7px 7px' : '7px 7px 7px 12px'
-                        }}
-                    >
-                        {/*{encryptedText}*/}
-                        <TextWithLinks text={encryptedText}/>
-                    </Box>
                     <Box sx={{
-                        fontSize: '9px',
-                        // color: 'info.contrastText',
-                        display: 'flex',
-                        width: '100%',
-                        gap: 0.5,
-                        alignItems: 'center',
-                        p: '3px 10px 3px 10px',
-                        color: theSameUser ? '#d1d1d1' : '#9c9c9c',
-                        justifyContent: theSameUser ? 'end' : 'start'
+                        m: 0.5,
+                        borderRadius: !theSameUser ? receiverBorder({fourth: '7px', third: '5px', second: '3px', first: '2px'}) : senderBorder({fourth: '7px', third: '5px', second: '3px', first: '2px'}),
+                        bgcolor: 'common.black',
                     }}>
                         {
-                            // diffInHour < 1 ?
-                            //     dayjs(item?.createdAt).fromNow()
-                            //     :
-                            dayjs(item?.createdAt).format('HH:mm')
-                        }
-                        {
-                            item?.sender === user?._id && (
+                            index === 0 && conversation?.chatInfo?.type === 'group' && (
                                 <Box sx={{
-                                    display: 'grid',
-                                    placeItems: 'center',
-                                    "& svg": {
-                                        fontSize: '12px'
-                                    }
+                                    fontSize: '14px',
+                                    fontWeight: 600,
+                                    display: 'flex',
+                                    m: '5px 5px 0 5px',
+                                    justifyContent: theSameUser ? 'end' : 'start',
+                                    color: theSameUser ? "#f9f9f9" : 'cornflowerblue'
                                 }}>
                                     {
-                                        item?.isError && !item?.isSent && !item?.isDelivered ? <ErrorOutlined/>
-                                            : item?.isSent && !item?.isDelivered ? <DoneOutlined/>
-                                                : item?.isSent && item?.isDelivered ? <DoneAllOutlined color={'disabled'}/>
-                                                    : item?.isRead ? <DoneAllOutlined color={'info'}/>
-                                                        : <DoneOutlined/>
+                                        receiver?.name
                                     }
                                 </Box>
                             )
                         }
+                        <Box
+                            ref={textRef}
+                            sx={{
+                                whiteSpace: 'break-spaces',
+                                fontSize: '14px',
+                                fontWeight: 500,
+                                color: 'common.white',
+                                // color: !theSameUser ? 'common.white' : '#f1f1f1',
+                                alignItems: !theSameUser ? 'start' : 'end',
+                                width: '100%',
+                                textAlign: 'start',
+                                p: !theSameUser ? '3px 12px 0px 7px' : '3px 7px 0px 12px',
+                                "& a": {
+                                    // color: !theSameUser ? 'var(--color-accent-fg)' : '#fffb00 !important',
+                                    textDecoration: 'underline'
+                                },
+                                "& div.wmde-markdown": {
+                                    // color: !theSameUser ? 'common.white' : '#f1f1f1',
+                                    color: 'common.white',
+                                    fontSize: {xs: "15px", sm: '17px'},
+                                }
+                            }}
+                        >
+                            {/*{encryptedText}*/}
+                            <MDEditor.Markdown
+                                source={encryptedText}
+                                style={{
+                                    whiteSpace: 'break-spaces',
+                                    padding: "5px 0",
+                                    background: 'transparent',
+                                }}
+                            />
+                            {/*<TextWithLinks text={encryptedText}/>*/}
+                        </Box>
+                        <Box sx={{
+                            fontSize: '9px',
+                            // color: 'info.contrastText',
+                            display: 'flex',
+                            width: '100%',
+                            gap: 0.5,
+                            alignItems: 'flex-start',
+                            p: '0px 10px 3px 10px',
+                            color: theSameUser ? '#d1d1d1' : '#9c9c9c',
+                            justifyContent: 'end',
+                            mt: '-3px'
+                        }}>
+                            {
+                                item?.sender === user?._id && (
+                                    <Box sx={{
+                                        display: 'grid',
+                                        placeItems: 'center',
+                                        "& svg": {
+                                            fontSize: '12px'
+                                        }
+                                    }}>
+                                        {
+                                            item?.isError && !item?.isSent && !item?.isDelivered ? <ErrorOutlined/>
+                                                : item?.isSent && !item?.isDelivered ? <DoneOutlined/>
+                                                    : item?.isSent && item?.isDelivered ? <DoneAllOutlined color={'disabled'}/>
+                                                        : item?.isRead ? <DoneAllOutlined color={'info'}/>
+                                                            : <DoneOutlined/>
+                                        }
+                                    </Box>
+                                )
+                            }
+                            {
+                                // diffInHour < 1 ?
+                                //     dayjs(item?.createdAt).fromNow()
+                                //     :
+                                dayjs(item?.createdAt).format('HH:mm')
+                            }
+                        </Box>
                     </Box>
                 </Box>
+                {/*<Popover>*/}
+
+                {/*</Popover>*/}
                 <Menu
                     id={`demo-positioned-menu${item?._id}`}
                     aria-labelledby={`demo-positioned-button${item?._id}`}
@@ -341,7 +375,10 @@ const TextWithLinks: FC<TextWithLinksProps> = ({text}) => {
     return (
         <p style={{
             padding: 0,
-            margin: 0
+            margin: 0,
+            // width: 'min-content',
+            minWidth: '60px',
+            whiteSpace: 'pre-wrap'
         }}>
             {parts.map((part, index) => (
                 urlRegex.test(part) ? (

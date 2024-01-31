@@ -1,32 +1,24 @@
 import {useSearchParams} from "react-router-dom";
-import React, {useContext, useEffect, useState} from "react";
-import {Add} from "@mui/icons-material";
-import {useTranslate} from "@refinedev/core";
-import {Box, Button, Divider} from "@mui/material";
+import React, {useEffect, useState} from "react";
+import {Box, Divider} from "@mui/material";
 
-import {CreateChatBox} from "@/components/chats/create/createChatBox";
 import {ChatBox} from "@/components/chats/chatBox/chatBox";
 import {IConversation} from "@/interfaces/common";
 import {axiosInstance} from "@/authProvider";
-import {ColorModeContext} from "@/contexts";
 import {ListChats} from "@/components";
 import {useMobile} from "@/hook";
+import {useNotification} from "@refinedev/core";
 
 const Chat = () => {
     const {width} = useMobile();
-    const {collapsed} = useContext(ColorModeContext);
     const [params, setParams] = useSearchParams();
-    const translate = useTranslate();
+    const {open} = useNotification();
 
-    const [isVisible, setIsVisible] = useState<boolean>(false);
-
-    const [isOpenCreateNewChat, setIsOpenCreateNewChat] = useState<boolean>(false);
     const [currentPlace, setCurrentPlace] = useState<{ _id: string, title: string }>({} as {
         _id: string,
         title: string
     });
 
-    const [newChat, setNewChat] = useState<IConversation | null>(null);
     const [openDrawer, setOpenDrawer] = useState(false);
     const [currentChat, setCurrentChat] = useState<IConversation | null>(null);
     const [userId, setUserId] = useState<string>('');
@@ -62,10 +54,18 @@ const Chat = () => {
             })();
         } else if (conversationId) {
             (async () => {
-                const data = await axiosInstance.get(`/conversation/findById/${conversationId}`);
+                try {
+                    const data = await axiosInstance.get(`/conversation/findById/${conversationId}`);
 
-                if (data?.data) {
-                    setCurrentChat(data?.data)
+                    if (data?.data) {
+                        setCurrentChat(data?.data)
+                    }
+                } catch (e: any) {
+                    open?.({
+                        type: 'error',
+                        message: 'Error',
+                        description: e?.response?.data?.error
+                    })
                 }
             })()
         }
@@ -83,25 +83,11 @@ const Chat = () => {
         }
     }, [institutionId]);
 
-    useEffect(() => {
-        if (newChat) {
-            setCurrentChat(newChat)
-        }
-    }, [newChat]);
-
     const closeChat = () => {
         setCurrentChat(null)
         setParams({})
         setOpenDrawer(false)
     }
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setIsVisible(isOpenCreateNewChat)
-        }, 500);
-        return () => {
-            clearTimeout(timer)
-        }
-    }, [isOpenCreateNewChat]);
     return (
         <Box
             sx={{
@@ -112,58 +98,12 @@ const Chat = () => {
                 width: '100%',
                 minHeight: 'calc(100% - 90px)',
                 height: 'fit-content',
-                "@media screen and (min-width: 1200px)":{
+                "@media screen and (min-width: 1200px)": {
                     height: 'calc(100% - 90px)'
                 },
                 p: 2
             }}
         >
-            <Box sx={{
-                position: 'fixed',
-                bottom: '20px',
-                zIndex: 1,
-                right: '20px',
-                height: 'fit-content',
-                width: 'fit-content',
-                // "@media screen and (min-width: 800px)": {
-                //     right: 'unset',
-                //     left: '30%'
-                // },
-                "@media screen and (min-width: 1200px)": {
-                    left: `calc(${collapsed ? '150px' : '250px'} + 20%)`
-                },
-            }}>
-                <Button
-                    color={'info'}
-                    variant={'contained'}
-                    sx={{
-                        textTransform: 'inherit',
-                        fontSize: {xs: '16px', md: '18px'},
-                        display: 'flex',
-                        minWidth: '30px',
-                        alignItems: 'center',
-                        width: {xs: '48px', sm: '56px', md: '64px'},
-                        height: {xs: '48px', sm: '56px', md: '64px'},
-                        borderRadius: '50%',
-                        p: 0
-                    }}
-                    onClick={() => setIsOpenCreateNewChat(true)}
-                >
-                    <Add fontSize={'large'}/>
-                    {/*{translate('buttons.add')}*/}
-                    {/*<span style={{*/}
-                    {/*    textTransform: 'lowercase',*/}
-                    {/*    marginLeft: '5px'*/}
-                    {/*}}>*/}
-                    {/*        {translate('chats.one')}*/}
-                    {/*    </span>*/}
-                </Button>
-                {
-                    isVisible && (
-                        <CreateChatBox setNewChat={setNewChat} isOpen={isOpenCreateNewChat} setIsOpen={setIsOpenCreateNewChat}/>
-                    )
-                }
-            </Box>
             <Box
                 sx={{
                     display: 'flex',

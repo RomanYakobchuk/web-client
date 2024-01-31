@@ -346,16 +346,20 @@ const FilterInstitutions = ({
                     error={error}
                     location={position as PropertyProps['location']}/>
             </Box>
-            <ModalWindow open={openFilter} setOpen={setOpenFilter} title={
-                <Box sx={{
-                    fontSize: {xs: '20px', md: '24px'},
-                    fontWeight: 600,
-                    width: '100%',
-                    textAlign: 'center'
-                }}>
-                    {translate('buttons.filter')}
-                </Box>
-            }>
+            <ModalWindow
+                timeOut={700}
+                open={openFilter}
+                setOpen={setOpenFilter}
+                title={
+                    <Box sx={{
+                        fontSize: {xs: '20px', md: '24px'},
+                        fontWeight: 600,
+                        width: '100%',
+                        textAlign: 'center'
+                    }}>
+                        {translate('buttons.filter')}
+                    </Box>
+                }>
                 {
                     openFilter && (
                         <Box sx={{

@@ -1,4 +1,4 @@
-import React, {FC, useContext} from "react";
+import React, {FC, useContext, useState} from "react";
 import {
     Box, Button,
 } from "@mui/material";
@@ -16,6 +16,8 @@ import {SchemaContext} from "@/settings/schema";
 
 import "@/hook/transition.css"
 import LoadingDetails from "@/components/establishment/whileLoading/loadingDetails";
+import {MessageRounded} from "@mui/icons-material";
+import {CustomChatShowContainer} from "@/components/chats/customChatShow/customChatShowContainer";
 
 const EstablishmentDetails: FC = () => {
     const translate = useTranslate();
@@ -24,6 +26,8 @@ const EstablishmentDetails: FC = () => {
     const {width} = useMobile();
     const navigate = useNavigate();
     const {user} = useUserInfo();
+
+    const [isOpenChat, setIsOpenChat] = useState<boolean>(false);
 
     const {queryResult} = useShow<{ institution: PropertyProps, subscribe: ISubscribe }>({
         resource: 'institution/infoById',
@@ -151,6 +155,53 @@ const EstablishmentDetails: FC = () => {
                                         </Box>
                                     </Box>
                                 </Box>
+                                {
+                                    user?._id !== institution?.createdBy && (
+                                        <Box>
+                                            <Button
+                                                onClick={() => setIsOpenChat(true)}
+                                                sx={{
+                                                    textTransform: 'inherit'
+                                                }}
+                                                startIcon={
+                                                    <MessageRounded
+                                                        sx={{
+                                                            fontSize: '28px !important'
+                                                        }}
+                                                    />
+                                                }
+                                            >
+                                                {translate('capl.list.write')}
+                                            </Button>
+                                            {
+                                                isOpenChat && institution?._id && (
+                                                    <CustomChatShowContainer
+                                                        chatFieldName={'institution'}
+                                                        chatFieldId={institution?._id}
+                                                        chatType={'oneByOne'}
+                                                        isOpen={isOpenChat}
+                                                        setIsOpen={setIsOpenChat}
+                                                        chatName={''}
+                                                        members={[
+                                                            {
+                                                                user: user?._id,
+                                                                role: user?.status,
+                                                                connectedAt: new Date(),
+                                                                conversationTitle: institution?.title
+                                                            },
+                                                            {
+                                                                user: institution?.createdBy,
+                                                                role: 'manager',
+                                                                connectedAt: new Date(),
+                                                                conversationTitle: user?.name
+                                                            }
+                                                        ]}
+                                                    />
+                                                )
+                                            }
+                                        </Box>
+                                    )
+                                }
                             </Box>
                             <Box sx={{
                                 display: 'flex',

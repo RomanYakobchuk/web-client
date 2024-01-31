@@ -3,7 +3,7 @@ import {ReactNode, MouseEvent, useState, useEffect} from "react";
 import {CloseOutlined} from "@mui/icons-material";
 import ReactDOM from "react-dom";
 
-import {useMobile} from "../../hook";
+import {useMobile} from "@/hook";
 import './modalWindow.css';
 
 interface IProps {
@@ -13,10 +13,11 @@ interface IProps {
     title: ReactNode,
     titleStyle?: SxProps,
     bodyProps?: SxProps,
-    contentProps?: SxProps
+    contentProps?: SxProps,
+    timeOut?: 100 | 200 | 300 | 400 | 500 | 700 | 1000 | 1500 | number
 }
 
-const ModalWindow = ({children, open, setOpen, title, titleStyle, bodyProps, contentProps}: IProps) => {
+const ModalWindow = ({children, open, setOpen, title, titleStyle, bodyProps, contentProps, timeOut = 1000}: IProps) => {
 
     const [isVisible, setIsVisible] = useState(open);
 
@@ -50,10 +51,10 @@ const ModalWindow = ({children, open, setOpen, title, titleStyle, bodyProps, con
         } else {
             const timeoutId = setTimeout(() => {
                 setIsVisible(false)
-            }, 1000);
+            }, timeOut);
             return () => clearTimeout(timeoutId);
         }
-    }, [open]);
+    }, [open, timeOut]);
 
     if (!isVisible) {
         return null;
@@ -74,8 +75,8 @@ const ModalWindow = ({children, open, setOpen, title, titleStyle, bodyProps, con
                 top: open ? 0 : '100%',
                 p: 0,
                 m: 0,
-                transition: 'top 1s linear',
-                animation: `${open ? 'OpenModalWindow' : 'CloseModalWindow'} 1s linear forwards`,
+                transition: `top ${timeOut}ms linear`,
+                animation: `${open ? 'OpenModalWindow' : 'CloseModalWindow'} ${timeOut}ms linear forwards`,
                 bgcolor: 'rgba(107, 122, 144, 0.2)',
                 backdropFilter: 'blur(4px)',
                 display: 'flex',
@@ -130,6 +131,7 @@ const ModalWindow = ({children, open, setOpen, title, titleStyle, bodyProps, con
                         display: 'flex',
                         justifyContent: 'center',
                         position: 'relative',
+                        minHeight: '50px'
                     }}>
                         <Box sx={{
                             width: '100%',

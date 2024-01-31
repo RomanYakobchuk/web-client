@@ -391,7 +391,7 @@ export interface IConv {
 }
 
 export interface IMessage {
-    _id?: string,
+    _id: string,
     conversationId?: string,
     sender: ProfileProps | string,
     text: string,
@@ -399,6 +399,7 @@ export interface IMessage {
     replyTo?: IMessage | any,
     memberType?: 'user' | 'institution',
     createdAt?: Date | any,
+    updatedAt?: Date | any,
     isSent: boolean,
     isDelivered: boolean,
     isRead: boolean,
@@ -422,9 +423,9 @@ export interface IConversation {
     chatInfo: {
         status: "public" | "private",
         type: "group" | "oneByOne",
-        field?: {
+        field: {
             name: "institution" | "user" | "capl",
-            id: string
+            id: string | {_id: string, avatar: string, name: string} | PropertyProps
         },
         chatName: string,
         picture: string,

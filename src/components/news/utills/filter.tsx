@@ -310,6 +310,7 @@ const FilterNews = ({
             <ModalWindow
                 open={openFilter}
                 setOpen={setOpenFilter}
+                timeOut={700}
                 title={
                     <Box sx={{
                         fontSize: {xs: '20px', md: '24px'},

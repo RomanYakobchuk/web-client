@@ -19,7 +19,7 @@ const MoreButton: FC<IMoreButton> = ({isFetchingNextPage, hasNextPage, fetchNext
                 m: '10px auto',
                 borderRadius: '20px',
                 backdropFilter: 'blur(4px)',
-                color: '#474747 !important'
+                color: '#fff !important'
             }}
             variant={'contained'}
             color={'info'}

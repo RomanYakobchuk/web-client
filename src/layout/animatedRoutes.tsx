@@ -49,7 +49,7 @@ const AnimatedRoutes = () => {
             <Route
                 element={
                     <Authenticated
-                        appendCurrentPathToQuery={true}
+                        appendCurrentPathToQuery={false}
                         key={'navigateToLogin'}
                         v3LegacyAuthProviderCompatible={true}
                         fallback={<CatchAllNavigate
@@ -250,7 +250,7 @@ const AnimatedRoutes = () => {
             <Route
                 element={
                     <Authenticated
-                        appendCurrentPathToQuery={true}
+                        appendCurrentPathToQuery={false}
                         key={'navigateToHome'}
                         v3LegacyAuthProviderCompatible={true}
                         fallback={<Outlet/>}>
@@ -300,7 +300,7 @@ const AnimatedRoutes = () => {
             <Route
                 element={
                     <Authenticated
-                        appendCurrentPathToQuery={true}
+                        appendCurrentPathToQuery={false}
                         key={'navigateToPage'}
                         v3LegacyAuthProviderCompatible={true}>
                         <Layout Header={Header} Sider={Sider} Title={Title}>

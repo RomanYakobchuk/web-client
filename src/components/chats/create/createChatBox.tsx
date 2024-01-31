@@ -1,17 +1,16 @@
-import {Dispatch, SetStateAction, MouseEvent, useEffect, DragEvent, useState, useContext, ChangeEvent} from "react";
+import {Dispatch, SetStateAction, MouseEvent, useEffect, DragEvent, useState, ChangeEvent} from "react";
 import {useNotification, usePermissions, useTranslate, useForm} from "@refinedev/core";
 import {Box, Button, CircularProgress, IconButton, InputAdornment, TextField, Typography} from "@mui/material";
 import {ChangeCircleOutlined, Close, DeleteOutlined} from "@mui/icons-material";
-import ReactDOM from "react-dom";
 
 import {HeadlessSelect} from "@/components/common/search/utils/headlessSelect";
 import {SearchByTypeComponent} from "@/components/common/search";
 import {IConversation, IConvMembers, ProfileProps} from "@/interfaces/common"
-import {ColorModeContext} from "@/contexts";
 import {useUserInfo} from "@/hook";
 import LottieComponent from "@/lotties/LottieComponent";
 import SuccessArrowLottie from "@/lotties/accepted.json"
 import {ImageField} from "@refinedev/antd";
+import {ScaleWindow} from "@/components/window/scaleWindow";
 
 type TProps = {
     isOpen: boolean,
@@ -21,7 +20,6 @@ type TProps = {
 export const CreateChatBox = ({isOpen, setIsOpen, setNewChat}: TProps) => {
 
     const {open} = useNotification();
-    const {mode} = useContext(ColorModeContext);
     const {data: role} = usePermissions();
     const {user} = useUserInfo();
     const translate = useTranslate();
@@ -29,7 +27,6 @@ export const CreateChatBox = ({isOpen, setIsOpen, setNewChat}: TProps) => {
     const [searchValue, setSearchValue] = useState<string>("");
     const [connectedUser, setConnectedUser] = useState<ProfileProps | null>(null);
     const [file, setFile] = useState<File | null>(null);
-    const [scale, setScale] = useState<number>(0);
     const [type, setType] = useState<IConversation['chatInfo']['type']>('oneByOne');
     const [status, setStatus] = useState<IConversation['chatInfo']['status']>('private');
     const [chatName, setChatName] = useState<string>("");
@@ -52,13 +49,6 @@ export const CreateChatBox = ({isOpen, setIsOpen, setNewChat}: TProps) => {
         }
     })
 
-    useEffect(() => {
-        setScale(isOpen ? 1 : 0)
-    }, [isOpen]);
-
-    const handleStop = (event: MouseEvent<HTMLDivElement>) => {
-        event.stopPropagation();
-    }
     const handleClose = () => {
         setIsOpen(false)
     };
@@ -126,158 +116,97 @@ export const CreateChatBox = ({isOpen, setIsOpen, setNewChat}: TProps) => {
 
     const disabled = type === "group" ? (chatName?.length <= 0 || !status) : !connectedUser;
 
-    return ReactDOM.createPortal(
-        <Box sx={{
-            position: 'fixed',
-            zIndex: 500,
-            inset: 0,
-            width: '100%',
-            height: '100%',
-            transform: `scale(${scale})`,
-            transition: 'all 0.3s linear',
-            bgcolor: mode === 'dark' ? 'rgba(200, 200, 200, 0.2)' : 'rgba(20, 20, 20, 0.2)',
-            backdropFilter: 'blur(10px)',
-            "& div.MuiInputBase-root": {
-                borderRadius: '7px',
-                color: 'common.white',
-                "&::placeholder": {
-                    color: 'silver'
-                },
-                "& > fieldset": {
-                    borderColor: `${mode === 'dark' ? '#fff' : '#000'} !important`
-                }
-            },
-            "& .ant-select-auto-complete input": {
-                borderColor: 'common.white'
-            },
-            '& label': {
-                color: 'secondary.main',
-            },
-            '& .MuiOutlinedInput-root': {
-                '& fieldset': {
-                    borderColor: 'common.white',
-                },
-                '&:hover fieldset': {
-                    borderColor: 'common.white',
-                },
-                '&.Mui-focused fieldset': {
-                    borderColor: 'common.white',
-                },
-            },
-            "& label, & label.Mui-focused": {
-                color: 'common.white'
-            },
-            "& *:not(button).Mui-disabled": {
-                WebkitTextFillColor: '#514f4f !important'
-            },
-        }}
-             onClick={handleClose}
-        >
+    return (
+        <ScaleWindow isOpen={isOpen} setIsOpen={setIsOpen}>
             <Box
-                sx={{
-                    position: 'absolute',
-                    zIndex: 1,
-                    top: '45%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    borderRadius: '10px',
-                    bgcolor: 'common.black',
-                    color: 'common.white',
-                    width: '95%',
-                    maxWidth: '600px',
-                }}
-                onClick={handleStop}
+                component={'form'}
+                onSubmit={handleCreate}
             >
-                <Box
-                    component={'form'}
-                    onSubmit={handleCreate}
-                >
-                    <header style={{
-                        width: '100%',
-                        display: 'flex',
-                        justifyContent: 'end'
-                    }}>
-                        <IconButton onClick={handleClose}>
-                            <Close/>
-                        </IconButton>
-                    </header>
+                <header style={{
+                    width: '100%',
+                    display: 'flex',
+                    justifyContent: 'end'
+                }}>
+                    <IconButton onClick={handleClose}>
+                        <Close/>
+                    </IconButton>
+                </header>
+                <Box sx={{
+                    width: '100%',
+                    p: {xs: 2, sm: 3, md: 4},
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 2
+                }}>
                     <Box sx={{
-                        width: '100%',
-                        p: {xs: 2, sm: 3, md: 4},
                         display: 'flex',
                         flexDirection: 'column',
-                        gap: 2
+                        gap: 2,
+                        width: '100%'
                     }}>
-                        <Box sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: 2,
-                            width: '100%'
-                        }}>
-                            <Box sx={{
-                                width: '100%',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                gap: 0.5
-                            }}>
-                                <Typography>
-                                    {translate('chats.create.type.title')}
-                                </Typography>
-                                <SearchByTypeComponent
-                                    type={type}
-                                    setType={setType}
-                                    styleSx={{
-                                        width: 'fit-content',
-                                    }}
-                                    sortTranslatePath={'chats.create.type'}
-                                    arrayType={[
-                                        {
-                                            value: 'oneByOne',
-                                            title: 'oneByOne'
-                                        },
-                                        {
-                                            value: 'group',
-                                            title: 'group'
-                                        },
-                                    ]}
-                                />
-                            </Box>
-                            <Box sx={{
-                                p: 2,
-                                borderRadius: '10px',
-                                border: '2px solid cornflowerblue'
-                            }}>
-                                {byType[type]}
-                            </Box>
-                        </Box>
                         <Box sx={{
                             width: '100%',
                             display: 'flex',
-                            justifyContent: 'end',
-                            gap: 2,
-                            "& button": {
-                                textTransform: 'inherit',
-                                fontSize: {xs: '16px', md: '18px'}
-                            }
+                            flexDirection: 'column',
+                            gap: 0.5
                         }}>
-                            <Button
-                                color={'error'}
-                                onClick={handleClose}
-                            >
-                                {translate('buttons.cancel')}
-                            </Button>
-                            <Button
-                                disabled={disabled}
-                                color={'info'}
-                                type={'submit'}
-                            >
-                                {translate('actions.create')}
-                            </Button>
+                            <Typography>
+                                {translate('chats.create.type.title')}
+                            </Typography>
+                            <SearchByTypeComponent
+                                type={type}
+                                setType={setType}
+                                styleSx={{
+                                    width: 'fit-content',
+                                }}
+                                sortTranslatePath={'chats.create.type'}
+                                arrayType={[
+                                    {
+                                        value: 'oneByOne',
+                                        title: 'oneByOne'
+                                    },
+                                    {
+                                        value: 'group',
+                                        title: 'group'
+                                    },
+                                ]}
+                            />
                         </Box>
+                        <Box sx={{
+                            p: 2,
+                            borderRadius: '10px',
+                            border: '2px solid cornflowerblue'
+                        }}>
+                            {byType[type]}
+                        </Box>
+                    </Box>
+                    <Box sx={{
+                        width: '100%',
+                        display: 'flex',
+                        justifyContent: 'end',
+                        gap: 2,
+                        "& button": {
+                            textTransform: 'inherit',
+                            fontSize: {xs: '16px', md: '18px'}
+                        }
+                    }}>
+                        <Button
+                            color={'error'}
+                            onClick={handleClose}
+                        >
+                            {translate('buttons.cancel')}
+                        </Button>
+                        <Button
+                            disabled={disabled}
+                            color={'info'}
+                            type={'submit'}
+                        >
+                            {translate('actions.create')}
+                        </Button>
                     </Box>
                 </Box>
             </Box>
-        </Box>, document.body
+        </ScaleWindow>
     )
 };
 
@@ -292,19 +221,15 @@ const CreateGroup = ({chatName, setChatName, setStatus, setFile, file}: TCreateG
 
     const translate = useTranslate();
 
-    const [isDragOver, setIsDragOver] = useState<boolean>(false);
 
     const handleDragOver = (e: DragEvent<HTMLInputElement>) => {
         e.preventDefault();
-        setIsDragOver(true);
     };
 
     const handleDragLeave = () => {
-        setIsDragOver(false);
     };
     const handleDrop = (event: DragEvent<HTMLInputElement>) => {
         event.preventDefault();
-        setIsDragOver(false);
         const file = event.dataTransfer.files?.[0];
 
         if (file) {
@@ -587,7 +512,6 @@ const CreateOneByOne = ({setUser, user, setSearchValue, searchValue}: TCreateOne
                                                 objectFit: 'cover',
                                                 zIndex: 200
                                             }}
-
                                         />
                                     </Box>
                                     {user?.name}

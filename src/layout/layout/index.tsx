@@ -22,6 +22,7 @@ import "dayjs/locale/uk";
 import "dayjs/locale/en";
 import {socket} from "@/socketClient";
 import {INotification} from "@/interfaces/common";
+import {CreateUniqueIndicator} from "@/components/chats/create/createUniqueIndicator";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -60,29 +61,21 @@ export const Layout: React.FC<LayoutProps> = ({
     }, [socket, properties]);
 
     useEffect(() => {
-        const handleConnect = () => {
-            socket.emit("addUser", user?._id);
-        };
-
         if (user?._id) {
+
+            const handleConnect = () => {
+                socket.emit("addUser", user?._id);
+            };
+
             socket.connect();
             socket.on('connect', handleConnect);
-        }
+            handleConnect();
 
-        return () => {
-            socket.off('addUser');
-            socket.off('connect', handleConnect);
-        };
-        // if (user?._id) {
-        //     socket.connect();
-        //     socket.on('connect', () => {
-        //     });
-        //     socket?.emit("addUser", user?._id);
-        // }
-        // return () => {
-        //     socket.off('addUser')
-        //     socket.off('connect')
-        // }
+            return () => {
+                socket.off('addUser');
+                socket.off('connect');
+            };
+        }
     }, [user?._id, socket]);
 
     const someStyle = !device ? {
@@ -116,6 +109,12 @@ export const Layout: React.FC<LayoutProps> = ({
             navigate(`/profile/edit`)
         }
     }, [user?.phone, user?._id, user?.dOB, window.location.href]);
+
+    useEffect(() => {
+        if (!user?.uniqueIndicator?.value && !properties?.isShowUserDontHaveUniqueIndicator) {
+            setProperties({...properties, isShowUserDontHaveUniqueIndicator: true});
+        }
+    }, [properties?.isShowUserDontHaveUniqueIndicator, user?.uniqueIndicator?.value]);
 
     const ref = useScrollRestoration(window.location.pathname);
 
@@ -217,22 +216,16 @@ export const Layout: React.FC<LayoutProps> = ({
                     }}
                 >
                     {
+                        !user?.uniqueIndicator?.value && properties?.isShowUserDontHaveUniqueIndicator &&
+                        <CreateUniqueIndicator/>
+                    }
+                    {
                         schema === 'schema_1' && (
                             <HeaderToRender/>
                         )
                     }
-                    {/*<ScrollManager/>*/}
                     <Outlet/>
                     <FooterToRender/>
-                    {/*<ModalWindow*/}
-                    {/*    open={openModal}*/}
-                    {/*    setOpen={setOpenModal}*/}
-                    {/*    title={*/}
-                    {/*        <Box>List items</Box>*/}
-                    {/*    }*/}
-                    {/*>*/}
-                    {/*    Content*/}
-                    {/*</ModalWindow>*/}
                 </Box>
             </Box>
             {OffLayoutArea && <OffLayoutArea/>}

@@ -31,7 +31,7 @@ const ContainerComponent = ({children, childrenProps}: IProps) => {
                 width: '100vw',
                 position: 'relative',
                 height: 'fit-content',
-                minHeight: '100%',
+                minHeight: {xs: 'calc(100% - 57px)', sm: 'calc(100% - 65px)'},
                 zIndex: 0,
                 p: '0',
                 // mt: 2,

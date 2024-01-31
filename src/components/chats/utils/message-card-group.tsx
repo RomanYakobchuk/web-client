@@ -58,7 +58,7 @@ const MessageCardGroup = ({conversation, setReplyTo, group, message}: IProps) =>
                  onContextMenu={onContextMenu}
             >
                 {
-                    user?._id !== receiver?._id && (
+                    user?._id !== receiver?._id && conversation?.chatInfo?.type === 'group' && (
                         <Box sx={{
                             width: {xs: '32px', sm: '38px', lg: '42px'},
                             height: {xs: '32px', sm: '38px', lg: '42px'},
@@ -100,7 +100,9 @@ const MessageCardGroup = ({conversation, setReplyTo, group, message}: IProps) =>
                                     lengthGroup={group?.length}
                                     setReplyTo={setReplyTo}
                                     receiver={receiver}
-                                    item={item} key={index}/>
+                                    item={item} key={index}
+                                    conversation={conversation as IConversation}
+                                />
                             ))
                         }
                     </Box>

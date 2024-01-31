@@ -1,4 +1,4 @@
-import {Avatar, Box, Button, FormControl, FormHelperText, TextField} from "@mui/material";
+import {Avatar, Box, Button, FormControl, FormHelperText, IconButton, TextField} from "@mui/material";
 import {ImageField} from "@refinedev/antd";
 import {Image} from "antd";
 import React, {ChangeEvent, Dispatch, SetStateAction, useContext, useEffect, useState} from "react";
@@ -9,6 +9,7 @@ import dayjs from "dayjs";
 import {buttonStyle, textFieldStyle} from "@/styles";
 import {CustomButton} from "../../index";
 import {ColorModeContext} from "@/contexts";
+import {CreateUniqueIndicator} from "@/components/chats/create/createUniqueIndicator";
 
 export interface INewUserData {
     avatar: string | File,
@@ -29,6 +30,7 @@ const ProfileDataForm = ({userInfo, setUserInfo}: TProps) => {
     const {mode} = useContext(ColorModeContext);
     const translate = useTranslate();
 
+    const [isOpenModalUnique, setIsOpenModalUnique] = useState<boolean>(false);
     const [previousUserInfo, setPreviousUserInfo] = useState<INewUserData>(userInfo);
 
     useEffect(() => {
@@ -54,7 +56,6 @@ const ProfileDataForm = ({userInfo, setUserInfo}: TProps) => {
                 maxWidth: '550px',
                 // bgcolor: mode === "dark" ? "#2e424d" : "#fcfcfc",
                 // p: '20px',
-                mt: 2.5,
                 margin: 'auto',
                 // borderRadius: '15px'
             }}
@@ -68,6 +69,21 @@ const ProfileDataForm = ({userInfo, setUserInfo}: TProps) => {
                     gap: "8px",
                 }}
             >
+                <FormControl sx={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'start'
+                }}>
+                    <IconButton
+                        onClick={() => setIsOpenModalUnique(true)}
+                    >
+                        @
+                    </IconButton>
+                    {/*<CreateUniqueIndicator*/}
+                    {/*    // isShow={isOpenModalUnique}*/}
+                    {/*    // setIsShow={setIsOpenModalUnique}*/}
+                    {/*/>*/}
+                </FormControl>
                 <FormControl sx={{
                     width: '100%',
                     display: 'flex',

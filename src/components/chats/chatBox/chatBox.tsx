@@ -1,10 +1,10 @@
-import {CurrentChatContainer, CustomDrawer} from "@/components";
-import {Box, IconButton} from "@mui/material";
 import React, {Dispatch, SetStateAction} from "react";
-import {useMobile, useUserInfo} from "@/hook";
-import {IConversation, ProfileProps} from "@/interfaces/common";
-import {usePermissions} from "@refinedev/core";
-import {Close} from "@mui/icons-material";
+import {Box} from "@mui/material";
+
+import {CurrentChatContainer, CustomDrawer} from "@/components";
+import ChatBoxInfo from "@/components/chats/chatBox/chatBoxInfo";
+import {IConversation} from "@/interfaces/common";
+import {useMobile} from "@/hook";
 
 type TProps = {
     openDrawer: boolean,
@@ -14,68 +14,16 @@ type TProps = {
     closeChat: () => void
 }
 export const ChatBox = ({openDrawer, setOpenDrawer, currentChat, closeChat, setCurrentChat}: TProps) => {
-    const {user} = useUserInfo();
     const {width} = useMobile();
-    const {data: role} = usePermissions();
 
-    const chatUserAllInfo = currentChat?.members?.find((obj) => {
-        const u = obj?.user as ProfileProps;
-        if (u._id === user?._id) {
-            return obj;
-        }
-    });
-    const header = (
-        <Box sx={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 2,
-            width: '100%',
-            flex: 2
-        }}>
-            {
-                currentChat?._id ?
-                    <>
-                        <Box sx={{
-                            width: '46px',
-                            height: '46px',
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            bgcolor: 'common.white',
-                            borderRadius: '50%',
-                        }}>
-                            {
-                                currentChat?.chatInfo?.picture
-                                    ? <img
-                                        src={currentChat?.chatInfo?.picture}
-                                        alt={currentChat?.chatInfo?.chatName}
-                                        style={{
-                                            width: '100%',
-                                            height: '100%',
-                                            borderRadius: '50%',
-                                            objectFit: 'cover'
-                                        }}
-                                    />
-                                    : <Box sx={{
-                                        textTransform: 'capitalize',
-                                        fontSize: '20px',
-                                        color: 'common.black',
-                                    }}>
-                                        {currentChat?.chatInfo?.chatName?.substring(0, 1)}
-                                    </Box>
-                            }
-                        </Box>
-                        {currentChat?.chatInfo?.chatName}
-                    </> : <Box sx={{
-                        fontSize: '23px'
-                    }}>
-                        Choose chat
-                    </Box>
-            }
-        </Box>
-    )
-    const chatUser = chatUserAllInfo?.user as ProfileProps;
+    // const chatUserAllInfo = currentChat?.members?.find((obj) => {
+    //     const u = obj?.user as ProfileProps;
+    //     if (u._id === user?._id) {
+    //         return obj;
+    //     }
+    // });
+    //
+    // const chatUser = chatUserAllInfo?.user as ProfileProps;
     return (
         <>
             {
@@ -84,9 +32,9 @@ export const ChatBox = ({openDrawer, setOpenDrawer, currentChat, closeChat, setC
                         contentStyle={{
                             minWidth: '100%',
                             p: 0,
-                            "& > div":{
+                            "& > div": {
                                 overflow: 'hidden',
-                                "& > div":{
+                                "& > div": {
                                     height: '100%'
                                 }
                             }
@@ -117,7 +65,7 @@ export const ChatBox = ({openDrawer, setOpenDrawer, currentChat, closeChat, setC
                                                 py: 1,
                                                 width: '100%'
                                             }}>
-                                                {header}
+                                                <ChatHeader currentChat={currentChat}/>
                                             </Box>
                                         }
                                     />
@@ -150,7 +98,7 @@ export const ChatBox = ({openDrawer, setOpenDrawer, currentChat, closeChat, setC
                                 setCurrentChat={setCurrentChat}
                                 conversation={currentChat}
                                 closeChat={closeChat}
-                                header={header}
+                                header={<ChatHeader currentChat={currentChat}/>}
                             />
                         </Box>
                     </Box>
@@ -160,3 +108,72 @@ export const ChatBox = ({openDrawer, setOpenDrawer, currentChat, closeChat, setC
     );
 };
 
+type TChatHeaderProps = {
+    currentChat: IConversation | null
+}
+export const ChatHeader = ({currentChat}: TChatHeaderProps) => {
+    return (
+        <Box sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 2,
+            width: '100%',
+            flex: 2,
+            justifyContent: 'space-between',
+        }}>
+            {
+                currentChat?._id ?
+                    <Box sx={{
+                        width: 'fit-content',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 2
+                    }}>
+                        <Box sx={{
+                            width: '46px',
+                            height: '46px',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            bgcolor: 'common.white',
+                            borderRadius: '50%',
+                        }}>
+                            {
+                                currentChat?.chatInfo?.picture
+                                    ? <img
+                                        src={currentChat?.chatInfo?.picture}
+                                        alt={currentChat?.chatInfo?.chatName}
+                                        style={{
+                                            width: '100%',
+                                            height: '100%',
+                                            borderRadius: '50%',
+                                            objectFit: 'cover'
+                                        }}
+                                    />
+                                    : <Box sx={{
+                                        textTransform: 'capitalize',
+                                        fontSize: '20px',
+                                        color: 'common.black',
+                                    }}>
+                                        {currentChat?.chatInfo?.chatName?.substring(0, 1)}
+                                    </Box>
+                            }
+                        </Box>
+                        {currentChat?.chatInfo?.chatName}
+                    </Box> : <Box sx={{
+                        fontSize: '23px'
+                    }}>
+                        Choose chat
+                    </Box>
+            }
+            {
+                currentChat?._id && (
+                    <>
+                        <ChatBoxInfo conversation={currentChat}/>
+                    </>
+                )
+            }
+        </Box>
+    )
+}

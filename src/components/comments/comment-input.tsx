@@ -1,15 +1,14 @@
 import {Box, Button, CircularProgress, InputAdornment, TextField,} from "@mui/material";
-import {SentimentSatisfiedAltSharp, SendOutlined} from "@mui/icons-material";
-import React, {Dispatch, SetStateAction, useContext, useEffect, useRef, useState} from "react";
+import {SendOutlined} from "@mui/icons-material";
+import React, {Dispatch, SetStateAction, useState} from "react";
 import {useNotification, useTranslate} from "@refinedev/core";
-import Picker, {EmojiStyle} from "emoji-picker-react";
 
-import {ColorModeContext} from "@/contexts";
 import {useLeaveManagerCommentAs, useMobile} from "@/hook";
 import {IComment} from "@/interfaces/common";
 import {axiosInstance} from "@/authProvider";
 import {INewComment} from "./commentAnswers";
 import {handleKeyDownBlockEnter} from "@/keys";
+import {EmojiPicker} from "@/components/picker/emojiPicker";
 
 
 interface IProps {
@@ -29,32 +28,14 @@ const CommentInput = ({
                           setParent,
                           setIsAnswer
                       }: IProps) => {
-    const translate = useTranslate();
-    const {mode} = useContext(ColorModeContext);
-
-    const showPickerRef = useRef<HTMLDivElement | null>(null)
-
-    const [value, setValue] = useState<string>('');
-    const {open} = useNotification();
     const {device} = useMobile();
-
+    const translate = useTranslate();
+    const {open} = useNotification();
     const {managerRole, selectedInfo} = useLeaveManagerCommentAs();
 
+    const [value, setValue] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-    const handleEmojiPickerHideShow = (event: React.MouseEvent) => {
-        if (event.target) {
-            event.stopPropagation();
-            if (showPickerRef.current && showPickerRef.current?.contains(event.target as Node)) {
-                return;
-            }
-            setShowEmojiPicker(!showEmojiPicker);
-        }
-    }
 
-    const handleEmojiClick = (_: any, emoji: any) => {
-        setValue((prevValue: string) => prevValue + emoji.emoji)
-    }
 
     const handleSendComment = async () => {
         if (value && value.length > 0) {
@@ -94,22 +75,6 @@ const CommentInput = ({
             }
         }
     }
-
-    useEffect(() => {
-        function clickOutside(event: MouseEvent) {
-            if (event.target && showEmojiPicker) {
-                if (showPickerRef.current && !showPickerRef.current?.contains(event.target as Node)) {
-                    setShowEmojiPicker(false)
-                }
-            }
-        }
-
-        document.addEventListener('click', clickOutside)
-
-        return () => {
-            document.removeEventListener('click', clickOutside)
-        }
-    }, [showPickerRef, showEmojiPicker]);
 
     return (
         <Box
@@ -170,45 +135,15 @@ const CommentInput = ({
                 gap: 0.5
             }}>
                 <Box sx={{
-                    position: 'relative',
                     display: 'flex',
+                    height: '60px',
+                    width: '60px',
                     borderRadius: '3px 3px 3px 15px',
                     bgcolor: 'common.black',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    height: '60px',
-                    width: '60px'
+                    justifyContent: 'center'
                 }}>
-                    <SentimentSatisfiedAltSharp sx={{
-                        fontSize: '30px',
-                        transition: '300ms linear',
-                        cursor: 'pointer',
-                        color: showEmojiPicker ? 'blue' : mode === "dark" ? '#fcfcfc' : '#000',
-                        "&:hover": {
-                            color: 'blue'
-                        }
-                    }} onClick={handleEmojiPickerHideShow}/>
-                    {
-                        showEmojiPicker &&
-                        <Box
-                            ref={showPickerRef}
-                            sx={{
-                                position: 'absolute',
-                                // "@media screen and (max-width: 1260px)": {
-                                //     bottom: '60px',
-                                //     left: '0',
-                                //     right: 'unset'
-                                // },
-                                top: '60px',
-                                left: "0",
-                                zIndex: 2000
-                            }}>
-                            <Picker
-                                emojiStyle={EmojiStyle.NATIVE}
-                                onEmojiClick={(emoji, event) => handleEmojiClick(event, emoji)}
-                            />
-                        </Box>
-                    }
+                    <EmojiPicker setValue={setValue}/>
                 </Box>
                 <Box
                     sx={{
@@ -216,8 +151,8 @@ const CommentInput = ({
                         height: '60px',
                         borderRadius: '3px 3px 15px 3px',
                         bgcolor: 'common.black',
-                        width: 'calc(100% - 60px)',
                         alignItems: 'center',
+                        width: 'calc(100% - 60px)',
                         justifyContent: value?.length > 0 ? 'space-evenly' : 'center'
                         // pt: 1,
                         // borderTop: '1px solid',

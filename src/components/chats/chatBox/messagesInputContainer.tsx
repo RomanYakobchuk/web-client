@@ -11,25 +11,27 @@ import React, {
 } from "react";
 import dayjs from "dayjs";
 import CryptoJS from "crypto-js";
-import {Box, Button, CircularProgress, IconButton, TextField} from "@mui/material";
+import {Box, Button, CircularProgress, IconButton, InputAdornment, TextField} from "@mui/material";
 import {
-    AddRounded,
     Clear,
     NorthRounded,
-    CachedOutlined
+    CachedOutlined,
+    AttachFileRounded
 } from "@mui/icons-material";
 import {FileWordOutlined, FilePdfOutlined, FileJpgOutlined, FileImageOutlined} from "@ant-design/icons";
 
 
-import {IConversation, IMessage, ProfileProps} from "@/interfaces/common";
+import {IConversation, IConvMembers, IMessage, IUser, ProfileProps} from "@/interfaces/common";
 import {socket} from "@/socketClient";
 import {useUserInfo} from "@/hook";
 import {Loading, ModalShowContent} from "@/components";
 import MessagesBox from "@/components/chats/chatBox/messages-box";
 import {handleKeyDownBlockEnter} from "@/keys";
 import {ColorModeContext} from "@/contexts";
-import {secretKeyCryptMessage} from "@/config/const";
+import {ACCESS_TOKEN_KEY, secretKeyCryptMessage} from "@/config/const";
 import {axiosInstance} from "@/authProvider";
+import {EmojiPicker} from "@/components/picker/emojiPicker";
+import {useMessages} from "@/indexedDB";
 
 
 type TProps = {
@@ -49,20 +51,25 @@ const iconByType = {
     png: <FileImageOutlined/>,
 }
 const SOCKET_API = import.meta.env.VITE_APP_SOCKET_API;
+const access_token = localStorage.getItem(ACCESS_TOKEN_KEY);
 export const MessagesInputContainer = ({conversation}: TProps) => {
 
     const {user} = useUserInfo();
     const translate = useTranslate();
     const {mode} = useContext(ColorModeContext);
     const inputFileRef = useRef<HTMLInputElement | null>(null);
+    const {messages: messagesDB, addManyMessages, addMessage} = useMessages({
+        chatId: conversation?._id as string
+    });
 
+    const [total, setTotal] = useState<number>(messagesDB?.length || 0);
     const [openModalForSendFile, setOpenModalForSendFile] = useState<boolean>(false);
     const [fileInfo, setFileInfo] = useState<TInfoFile | null>(null);
     const [file, setFile] = useState<File | null>(null);
     const [updatedMessageStatus, setUpdatedMessageStatus] = useState<IMessage | null>(null);
     const [isSending, setIsSending] = useState(false);
     const [error, setError] = useState('');
-    const [replyTo, setReplyTo] = useState<IMessage>({} as IMessage);
+    const [replyTo, setReplyTo] = useState<IMessage | null>(null);
     const [messageText, setMessageText] = useState<string>('');
     const [messages, setMessages] = useState<Array<[string, IMessage[]]>>([] as Array<[string, IMessage[]]>);
     const [arivialMessages, setArivialMessages] = useState<IMessage | null>(null);
@@ -96,16 +103,19 @@ export const MessagesInputContainer = ({conversation}: TProps) => {
             const currentDate = dayjs.utc().format('');
             const encryptedMessage = CryptoJS.AES.encrypt(JSON.stringify(text), secretKeyCryptMessage).toString();
 
-            if (file) {
+            if (file && access_token) {
                 const formData = new FormData();
                 formData.append('file', file)
                 // socket?.emit('sendFile', formData)
-                await axiosInstance.post(`${SOCKET_API}/socket/api/v1/message/file`, formData)
+                await axiosInstance.post(`${SOCKET_API}/socket/api/v1/message/file`, formData, {
+                    headers: {
+                        Authorization: access_token
+                    }
+                })
             } else {
-
                 const messageData = {
                     sender: user?._id,
-                    receiver: [...receiversIds],
+                    receivers: [...receiversIds],
                     text: encryptedMessage,
                     chatId: conversation?._id,
                     createdAt: currentDate,
@@ -130,8 +140,10 @@ export const MessagesInputContainer = ({conversation}: TProps) => {
         }
     }
     useEffect(() => {
-        socket?.emit('joinChat', conversation?._id);
-    }, []);
+        if (conversation?._id) {
+            socket?.emit('joinChat', conversation?._id);
+        }
+    }, [conversation?._id]);
 
     useEffect(() => {
         socket?.on('isSent', (data: any) => {
@@ -166,27 +178,11 @@ export const MessagesInputContainer = ({conversation}: TProps) => {
         const updateMessages = async () => {
             try {
                 if (data?.pages) {
-                    const list: Array<[string, IMessage[]]> = [].concat(...(data?.pages as any ?? [])?.map((page: GetListResponse<IMessage>) => Object.entries(page?.data))).sort(([dateA]: [string], [dateB]: [string]) => {
-                        const [dayA, monthA, yearA] = dateA?.split('-');
-                        const [dayB, monthB, yearB] = dateB?.split('-');
-
-                        const dateObjA = new Date(Number(yearA), Number(monthA) - 1, Number(dayA));
-                        const dateObjB = new Date(Number(yearB), Number(monthB) - 1, Number(dayB));
-
-                        return dateObjA.getTime() - dateObjB.getTime();
-                    });
-                    if (list) {
-                        const mergedObjects = list.reduce((acc: Record<string, IMessage[]>, [key, arr]) => {
-                            if (acc[key]) {
-                                acc[key] = acc[key].concat(arr);
-                            } else {
-                                acc[key] = arr;
-                            }
-                            return acc;
-                        }, {} as Record<string, IMessage[]>);
-                        const mergedArray: [string, IMessage[]][] = Object.entries(mergedObjects);
-                        setMessages(mergedArray);
-                    }
+                    setTotal(data?.pages?.length && data?.pages?.length > 0 ? data?.pages[0]?.total : 0)
+                    const list = [].concat(...(data?.pages as any ?? [])?.map((page: GetListResponse<IMessage>) => {
+                        return page?.data
+                    }));
+                    await addManyMessages(list as IMessage[])
                 }
             } catch (e) {
                 setError('Error')
@@ -195,28 +191,70 @@ export const MessagesInputContainer = ({conversation}: TProps) => {
         updateMessages();
     }, [data?.pages]);
     useEffect(() => {
+        if (messagesDB && messagesDB?.length > 0) {
+            const list = (): Array<[string, IMessage[]]> => {
+                return Object.entries(messagesDB?.reduce((acc: any, obj: IMessage) => {
+                    const createdAt = new Date(obj?.createdAt as Date);
+
+                    const dayMonthYear = `${createdAt.getDate()}-${createdAt.getMonth() + 1}-${createdAt.getFullYear()}`;
+
+                    if (!acc[dayMonthYear]) {
+                        acc[dayMonthYear] = [];
+                    }
+                    acc[dayMonthYear].push(obj);
+                    return acc;
+                }, {}));
+            }
+            const sorted = list()?.sort((a, b) => {
+                const [dateA] = a;
+                const [dateB] = b;
+                const [dayA, monthA, yearA] = dateA?.split('-');
+                const [dayB, monthB, yearB] = dateB?.split('-');
+
+                const dateObjA = new Date(Number(yearA), Number(monthA) - 1, Number(dayA));
+                const dateObjB = new Date(Number(yearB), Number(monthB) - 1, Number(dayB));
+
+                return dateObjA.getTime() - dateObjB.getTime();
+            });
+            if (sorted) {
+                const mergedObjects = sorted?.reduce((acc: Record<string, IMessage[]>, [key, arr]) => {
+                    if (acc[key]) {
+                        acc[key] = acc[key].concat(arr);
+                    } else {
+                        acc[key] = arr;
+                    }
+                    return acc;
+                }, {} as Record<string, IMessage[]>);
+                const mergedArray: [string, IMessage[]][] = Object.entries(mergedObjects);
+                setMessages(mergedArray);
+            }
+        }
+    }, [messagesDB]);
+    useEffect(() => {
         if (arivialMessages?._id) {
             setMessages(prevState => {
                 const messagesCopy = [...prevState];
                 const lastObject = messagesCopy[messagesCopy.length - 1];
-                const currentDate = dayjs(arivialMessages.createdAt).format('DD-M-YYYY');
+                const currentDate1 = dayjs(arivialMessages.createdAt).format('DD-M-YYYY');
+                const currentDate2 = dayjs(arivialMessages.createdAt).format('D-M-YYYY');
 
                 if (lastObject && Array.isArray(lastObject[1]) && lastObject[1].includes(arivialMessages)) {
                     return prevState;
                 }
-                if (lastObject && Array.isArray(lastObject[1]) && currentDate === lastObject[0]) {
+                if (lastObject && Array.isArray(lastObject[1]) && (currentDate1 === lastObject[0] || currentDate2 === lastObject[0])) {
                     lastObject[1] = [...lastObject[1], arivialMessages];
                 } else {
                     messagesCopy.push([dayjs(new Date()).format('DD-M-YYYY'), [arivialMessages]]);
                 }
-
+                (async () => {
+                    await addMessage(arivialMessages);
+                })();
                 return messagesCopy;
             });
-
+            setTotal(total + 1);
             setArivialMessages(null);
         }
     }, [arivialMessages?._id]);
-    const total = data?.pages?.length && data?.pages?.length > 0 ? data?.pages[0]?.total : 0;
 
     const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -243,30 +281,43 @@ export const MessagesInputContainer = ({conversation}: TProps) => {
             inputFileRef.current.value = '';
         }
     }
+
+    const bytes = replyTo && replyTo?.text?.length > 5 ? CryptoJS.AES.decrypt(replyTo?.text, secretKeyCryptMessage) : '';
+    const encryptedReplyText = bytes ? JSON.parse(bytes.toString(CryptoJS.enc.Utf8)) : '';
+
+    const repliedUser = conversation?.members?.find((member) => {
+        const m = member?.user as IUser;
+        const isSame = m?._id === replyTo?.sender;
+        return isSame;
+    }) as IConvMembers & { user: ProfileProps };
+    const repliedUserName = repliedUser?.role === 'manager' ? conversation?.chatInfo?.chatName : repliedUser?.user?.name;
     return (
         <Box sx={{
-            flex: 1,
             display: 'flex',
             flexDirection: 'column',
-            gap: 1,
-            maxHeight: 'calc(100% - 60px)',
+            gap: {lg: 1},
+            maxHeight: 'calc(100% )',
             height: '100%'
         }}>
             <Box sx={{
-                flex: 20,
-                // borderRadius: '15px',
-                maxHeight: '100%',
-                height: 'calc(100% - 100px)',
+                maxHeight: 'calc(100% - 60px)',
+                height: '100%',
                 bgcolor: 'background.paper',
-                backgroundImage: `url('images/chats/${mode === 'dark' ? 'bg-black.png' : 'bg-white.jpg'}')`,
+                backgroundImage: `url('/images/chats/${mode === 'dark' ? 'bg-black.png' : 'bg-white.jpg'}')`,
                 backgroundPosition: 'center',
-                backgroundSize: mode === 'dark' ? 'cover' : 'auto'
+                backgroundSize: mode === 'dark' ? 'cover' : 'auto',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: total > 0 ? 'end' : 'center',
+                position: 'relative',
+                overflow: 'hidden'
             }}
             >
                 {
                     !isError ?
-                        isLoading ? <Loading height={'300px'}/> :
+                        isLoading && messages?.length <= 0 ? <Loading height={'300px'}/> :
                             <MessagesBox
+                                replyTo={replyTo}
                                 error={error}
                                 isSending={isSending}
                                 hasNextPage={hasNextPage}
@@ -276,130 +327,214 @@ export const MessagesInputContainer = ({conversation}: TProps) => {
                                 setReplyTo={setReplyTo}
                                 total={total}
                                 conversation={conversation}
+                                localCount={messagesDB ? messagesDB?.length: 0}
                             /> : <div>Error</div>
                 }
             </Box>
-            {
-                replyTo?._id && (
-                    <Box sx={{
-                        width: '100%',
-                        display: 'flex',
-                        maxWidth: '400px',
-                        m: 'auto',
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        borderLeft: '2px solid silver',
-                        pl: '10px',
-                        flex: 1
-                    }}>
-                        <Box sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                        }}>
-                            <Box sx={{
-                                fontSize: '14px',
-                                fontWeight: 600
-                            }}>
-                                {/*{*/}
-                                {/*    replyTo?.sender !== chatUser?._id*/}
-                                {/*        ? chatUser?.name*/}
-                                {/*        : conversation?.institutionId?.title*/}
-                                {/*}*/}
-                            </Box>
-                            <Box sx={{
-                                fontSize: '12px',
-                            }}>
-                                {
-                                    replyTo?.text?.length > 40 ? `${replyTo?.text?.substring(0, 40)}...` : replyTo?.text
-                                }
-                            </Box>
-                        </Box>
-                        <IconButton onClick={() => setReplyTo({} as IMessage)}>
-                            <Clear/>
-                        </IconButton>
-                    </Box>
-                )
-            }
             <Box sx={{
-                // flex: 1,
                 display: 'flex',
-                gap: 1,
-                minHeight: '36px',
+                gap: 0,
+                flexDirection: 'column',
                 height: 'fit-content',
                 alignItems: 'end',
-                width: {xs: 'calc(100% - 20px)', lg: '100%'},
-                m: {xs: '10px', lg: 0},
-                mt: 0,
+                width: '100%',
+                // m: {xs: '10px', lg: 0},
+                pb: {xs: '5px', lg: 0},
             }}>
-                <Box
-                    sx={{
+                {
+                    replyTo?._id && (
+                        <Box sx={{
+                            width: '100%',
+                            // borderLeft: '2px solid silver',
+                            bgcolor: 'modern.modern_3.second',
+                            p: 0.5,
+                            height: 'fit-content',
+                            borderBottom: '1px solid silver'
+                        }}>
+                            <Box sx={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                width: '100%',
+                                justifyContent: 'space-between',
+                                bgcolor: 'rgba(200, 200, 200, 0.4)',
+                            }}>
+                                <Box sx={{
+                                    width: '100%',
+                                    // maxWidth: '400px',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    pl: '5px',
+                                    borderLeft: '2px solid silver'
+                                }}>
+                                    <Box sx={{
+                                        fontSize: '14px',
+                                        fontWeight: 600
+                                    }}>
+                                        {
+                                            repliedUserName
+                                        }
+                                    </Box>
+                                    <Box sx={{
+                                        fontSize: '12px',
+                                    }}>
+                                        {
+                                            encryptedReplyText?.length > 40 ? `${encryptedReplyText?.substring(0, 40)}...` : encryptedReplyText
+                                        }
+                                    </Box>
+                                </Box>
+                                <IconButton onClick={() => setReplyTo({} as IMessage)}>
+                                    <Clear/>
+                                </IconButton>
+                            </Box>
+                        </Box>
+                    )
+                }
+                <Box sx={{
+                    display: 'flex',
+                    gap: 1,
+                    height: 'fit-content',
+                    alignItems: 'end',
+                    width: {xs: 'calc(100% - 20px)', lg: '100%'},
+                    m: {xs: '10px', lg: 0},
+                }}>
+                    <Box
+                        sx={{
+                            width: {xs: '30px', md: '36px'},
+                            height: {xs: '30px', md: '36px'},
+                        }}
+                    >
+                        <Button
+                            component="label"
+                            sx={{
+                                minWidth: '30px',
+                                width: '100%',
+                                height: '100%',
+                                // p: {xs: 0, md: 1},
+                                // border: `2px solid ${mode === 'light' ? '#151515' : '#f1f1f1'}`
+                            }}
+                        >
+                            <AttachFileRounded/>
+                            <input
+                                ref={inputFileRef}
+                                hidden
+                                value={''}
+                                type="file"
+                                accept={".jpg, .jpeg, .png, .doc, .docx, .pdf"}
+                                id={'changeFileForSend'}
+                                onChange={handleFileChange}
+                            />
+                        </Button>
+                    </Box>
+                    {/*<SpeedDeal*/}
+                    {/*    actions={[*/}
+                    {/*        {*/}
+                    {/*            icon: <Box*/}
+                    {/*                sx={{*/}
+                    {/*                    width: {xs: '30px', md: '36px'},*/}
+                    {/*                    height: {xs: '30px', md: '36px'},*/}
+                    {/*                    position: 'relative'*/}
+                    {/*                }}>*/}
+                    {/*               */}
+                    {/*            </Box>,*/}
+                    {/*            name: translate('buttons.add') + ' ' + translate('chats.show.load.file.file')?.toLowerCase()*/}
+                    {/*        },*/}
+                    {/*        {*/}
+                    {/*            icon: <Box sx={{*/}
+                    {/*                position: 'relative'*/}
+                    {/*            }}>*/}
+                    {/*                <EmojiPicker*/}
+                    {/*                    styleSx={{*/}
+                    {/*                        top: 'unset',*/}
+                    {/*                        bottom: '60px'*/}
+                    {/*                    }}*/}
+                    {/*                    emojiIconSx={{*/}
+                    {/*                        color: 'common.white'*/}
+                    {/*                    }}*/}
+                    {/*                    setValue={setMessageText}/>*/}
+                    {/*            </Box>,*/}
+                    {/*            name: ''*/}
+                    {/*        }*/}
+                    {/*    ]}*/}
+                    {/*    styleSx={{*/}
+                    {/*        height: 'auto',*/}
+                    {/*        transform: 'unset',*/}
+                    {/*        "& div.MuiSpeedDial-root": {*/}
+                    {/*            position: 'unset',*/}
+                    {/*            width: '36px',*/}
+                    {/*            "& > button": {*/}
+                    {/*                width: '36px',*/}
+                    {/*                height: '36px'*/}
+                    {/*            },*/}
+                    {/*            "& div#SpeedDialcontrolledopenexample-actions": {*/}
+                    {/*                position: 'absolute',*/}
+                    {/*                bottom: '40px',*/}
+                    {/*                zIndex: 10*/}
+                    {/*            }*/}
+                    {/*        }*/}
+                    {/*    }}*/}
+                    {/*/>*/}
+                    <Box sx={{
+                        width: '100%'
+                    }}>
+                        <TextField
+                            fullWidth
+                            value={!openModalForSendFile && messageText ? messageText : '' || ""}
+                            variant={'standard'}
+                            onChange={(event) => setMessageText(event.target.value)}
+                            size={'small'}
+                            multiline
+                            minRows={1}
+                            maxRows={10}
+                            placeholder={'Type a message'}
+                            onKeyDown={(event) => handleKeyDownBlockEnter(event, messageText)}
+                            InputProps={{
+                                endAdornment: <InputAdornment position={'end'}>
+                                    <Box sx={{
+                                        position: 'relative'
+                                    }}>
+                                        <EmojiPicker
+                                            styleSx={{
+                                                top: 'unset',
+                                                bottom: '60px',
+                                                right: '-30px'
+                                            }}
+                                            position={'right'}
+                                            emojiIconSx={{
+                                                color: 'common.white'
+                                            }}
+                                            setValue={setMessageText}/>
+                                    </Box>
+                                </InputAdornment>
+                            }}
+                        />
+                    </Box>
+                    <Box sx={{
                         width: {xs: '30px', md: '36px'},
                         height: {xs: '30px', md: '36px'},
-                        position: 'relative'
                     }}>
-                    <Button
-                        component="label"
-                        sx={{
-                            minWidth: '30px',
-                            width: '100%',
-                            height: '100%',
-                            p: {xs: 0, md: 1},
-                            border: `2px solid ${mode === 'light' ? '#151515' : '#f1f1f1'}`
-                        }}
-                    >
-                        <AddRounded/>
-                        <input
-                            ref={inputFileRef}
-                            hidden
-                            type="file"
-                            accept={".jpg, .jpeg, .png, .doc, .docx, .pdf"}
-                            id={'changeFileForSend'}
-                            onChange={handleFileChange}
-                        />
-                    </Button>
-                </Box>
-                <Box sx={{
-                    width: '100%'
-                }}>
-                    <TextField
-                        fullWidth
-                        value={!openModalForSendFile && messageText ? messageText : '' || ""}
-                        variant={'standard'}
-                        onChange={(event) => setMessageText(event.target.value)}
-                        size={'small'}
-                        multiline
-                        minRows={1}
-                        maxRows={3}
-                        placeholder={'Type a message'}
-                        onKeyDown={(event) => handleKeyDownBlockEnter(event, messageText)}
-                    />
-                </Box>
-                <Box sx={{
-                    width: {xs: '30px', md: '36px'},
-                    height: {xs: '30px', md: '36px'},
-                }}>
-                    <Button
-                        variant={'contained'}
-                        color={'info'}
-                        sx={{
-                            width: '100%',
-                            height: '100%',
-                            minWidth: '30px',
-                            p: {xs: 0, md: 1},
-                            borderRadius: '7px',
-                        }}
-                        disabled={messageText?.length <= 0}
-                        onClick={() => sendMessage(messageText)}
-                    >
-                        {
-                            isSending
-                                ? <CircularProgress
-                                    color={'secondary'}
-                                    size={'20px'}
-                                />
-                                : <NorthRounded/>
-                        }
-                    </Button>
+                        <Button
+                            variant={'contained'}
+                            color={'info'}
+                            sx={{
+                                width: '100%',
+                                height: '100%',
+                                minWidth: '30px',
+                                p: {xs: 0, md: 1},
+                                borderRadius: '7px',
+                            }}
+                            disabled={messageText?.length <= 0}
+                            onClick={() => sendMessage(messageText)}
+                        >
+                            {
+                                isSending
+                                    ? <CircularProgress
+                                        color={'secondary'}
+                                        size={'20px'}
+                                    />
+                                    : <NorthRounded/>
+                            }
+                        </Button>
+                    </Box>
                 </Box>
             </Box>
             <SendMessageWithFile
@@ -469,14 +604,15 @@ const SendMessageWithFile = ({
                         <Box sx={{
                             p: 1,
                             // bgcolor: '',
-                            boxShadow: '0px 4px 8px 0px rgba(125, 125, 125, 0.2)',
+                            boxShadow: '0px 0px 8px 0px rgba(200, 200, 200, 0.4)',
                             borderRadius: '7px',
                             display: 'flex',
                             alignItems: 'center',
                             gap: 1,
                             "& svg": {
                                 fontSize: '50px'
-                            }
+                            },
+                            justifyContent: 'space-between'
                         }}>
                             {iconByType[fileInfo?.type as keyof typeof iconByType]}
                             <Box sx={{
@@ -487,7 +623,15 @@ const SendMessageWithFile = ({
                                 {
                                     [
                                         {
-                                            value: <a href={URL.createObjectURL(file)} target="_blank">{(fileInfo ? fileInfo?.name?.split('.')?.[0]?.substring(0, 10) : '') + `${fileInfo?.name?.split('.')?.[0]?.length > 10 ? '[...]' : ''}.` + (fileInfo ? fileInfo?.name?.split('.').pop() : '')}</a>,
+                                            value: <Box sx={{
+                                                // "& a":{
+                                                //     color: ''
+                                                // }
+                                            }}>
+                                                <a href={URL.createObjectURL(file)}
+                                                   target="_blank">{(fileInfo ? fileInfo?.name?.split('.')?.[0]?.substring(0, 10) : '') + `${fileInfo?.name?.split('.')?.[0]?.length > 10 ? '[...]' : ''}.` + (fileInfo ? fileInfo?.name?.split('.').pop() : '')}
+                                                </a>
+                                            </Box>,
                                             title: "name"
                                         },
                                         {
@@ -510,7 +654,7 @@ const SendMessageWithFile = ({
                                             <Box sx={{
                                                 fontSize: '14px'
                                             }}>
-                                                {translate(`chats.show.load.file.${item?.title}`)}:
+                                                {translate(`chats.show.load.file.${item?.title}`) + ':'}
                                             </Box>
                                             <Box sx={{
                                                 fontSize: '13px'
@@ -534,6 +678,7 @@ const SendMessageWithFile = ({
                                 <input
                                     ref={inputFileRef}
                                     hidden
+                                    value={''}
                                     type="file"
                                     accept={".jpg, .jpeg, .png, .doc, .docx, .pdf"}
                                     id={'changeFileForSend'}

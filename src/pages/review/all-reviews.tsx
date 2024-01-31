@@ -29,10 +29,10 @@ const AllReviews = () => {
                 state?.map((item, index) => (
                     <SwipeComponent
                         key={item?.id}
+                        uniqueKey={item?.id?.toString()}
                         leftItem={
                             <Box sx={{width: '100%'}}>
-                                <Add
-                                    onClick={() => setState((prevState) => ([...prevState, {id: Date.now(), title: `title ${index + 1}`}]))}/>
+                                <Add onClick={() => setState((prevState) => ([...prevState, {id: Date.now(), title: `title ${index + 1}`}]))}/>
                             </Box>
                         }
                         rightItem={

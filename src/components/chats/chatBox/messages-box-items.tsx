@@ -57,8 +57,8 @@ const groupItems = (items: IMessage[]) => {
 
 const shouldCombineMessages = (prevMessage: IMessage, currentMessage: IMessage) => {
     if (prevMessage?.sender && currentMessage?.sender) {
-        const timeDifferenceMinutes = Math.abs(dayjs(prevMessage.createdAt).diff(dayjs(currentMessage.createdAt), 'minute'));
-        return prevMessage.sender === currentMessage.sender && timeDifferenceMinutes <= 2;
+        const timeDifferenceMinutes = Math.abs(dayjs(currentMessage.createdAt).diff(dayjs(prevMessage.createdAt), 'minute'));
+        return prevMessage.sender === currentMessage.sender && timeDifferenceMinutes < 1;
     }
     return false;
 };

@@ -35,7 +35,7 @@ const HeaderDrawer = ({toggleDrawer, button, title, anchor, onClick}: TProps) =>
                     justifyContent: 'space-between',
                     mt: '10px'
                 }}>
-                    <Box sx={{p: 1, minHeight: '30px'}}>
+                    <Box sx={{p: 1, minHeight: '50px'}}>
                         {title}
                     </Box>
                     <Box sx={{
@@ -61,7 +61,7 @@ const HeaderDrawer = ({toggleDrawer, button, title, anchor, onClick}: TProps) =>
                 display: (width < 600 && device && anchor === 'bottom') ? 'none' : 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                minHeight: '30px'
+                minHeight: '50px'
             }}>
                         <span>
                         {title}

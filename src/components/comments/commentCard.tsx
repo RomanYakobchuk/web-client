@@ -20,6 +20,7 @@ import {axiosInstance} from "@/authProvider";
 import SwipeComponent, {CountdownHandle} from "@/components/swipe/swipeComponent";
 import {ShowTimeComponent} from "@/components/time";
 import {ColorModeContext} from "@/contexts";
+import {NewSwipeComponent} from "@/components/swipe/newSwipeComponent";
 
 type INewComment = {
     comment: IComment,
@@ -147,6 +148,271 @@ const CommentCard = ({
         }
     }, [isAnswer]);
 
+    const firstV = true;
+    if (!firstV) return (
+        <NewSwipeComponent key={comment?._id}>
+            {
+                isAllowedReply && (
+                    <Box sx={{
+                        width: 'fit-content',
+                        height: '100%',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                    }}>
+                        <Button
+                            onClick={(event) => {
+                                event.stopPropagation();
+                                if (!isAnswer) {
+                                    setIsAnswer(true)
+                                    setParent(currentComment)
+                                } else {
+                                    handleCloseIsAnswer()
+                                }
+                                handleCenter();
+                            }}
+                            color={'info'}
+                            variant={'contained'}
+                            sx={{
+                                p: 2,
+                                display: 'flex',
+                                width: '50px',
+                                height: '50px',
+                                boxShadow: 'unset',
+                                minWidth: '40px',
+                                borderRadius: '50%',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                margin: 'auto 10px'
+                            }}
+                        >
+                            <ReplyOutlined sx={{color: '#fff'}}/>
+                        </Button>
+                    </Box>
+                )
+            }
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    width: '100%',
+                    color: 'common.white',
+                    minWidth: '250px',
+                    gap: 1,
+                    ...style
+                }}
+            >
+                <Box sx={{
+                    display: 'flex',
+                    gap: 1,
+                    justifyContent: 'space-between',
+                    width: '100%',
+                    alignItems: 'start',
+                }}>
+                    <Box sx={{
+                        display: 'flex',
+                        gap: 1,
+                        width: '100%',
+                    }}>
+                        <Box sx={{
+                            width: 'fit-content'
+                        }}>
+                            <img style={{
+                                width: '50px',
+                                height: '50px',
+                                borderRadius: '50%',
+                                objectFit: 'cover'
+                            }} src={currentComment?.createdBy?.avatar} alt={"avatar"}/>
+                        </Box>
+                        <Box sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: 1,
+                            width: 'calc(100% - 58px)'
+                        }}>
+                            <Box sx={{
+                                display: 'flex',
+                                width: '100%',
+                                flexDirection: 'column',
+                                justifyContent: 'space-between',
+                                gap: 1
+                            }}>
+                                <Box sx={{
+                                    fontSize: '16px',
+                                    fontWeight: 500,
+                                    color: 'cornflowerblue'
+                                }}>
+                                    {currentComment?.createdBy?.name}
+                                </Box>
+                                <Box sx={{
+                                    display: 'flex',
+                                    alignItems: 'flex-start',
+                                    gap: 0.5
+                                }}>
+                                    <ShowTimeComponent date={currentComment?.createdAt}/>
+                                </Box>
+                            </Box>
+                        </Box>
+                    </Box>
+                </Box>
+                <Box sx={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'start',
+                    justifyContent: 'end',
+                    gap: 0.5
+                }}>
+                    <Box sx={{
+                        width: '100%',
+                        fontSize: '14px',
+                        whiteSpace: 'break-spaces',
+                        // bgcolor: 'modern.modern_1.second',
+                        // p: 1,
+                        // borderRadius: '5px'
+                    }}>
+                        {currentComment?.text}
+                    </Box>
+                    {
+                        isSwipe && (
+                            <Box sx={{
+                                width: 'fit-content',
+                                "& svg": {
+                                    fontSize: '20px',
+                                    color: 'silver'
+                                }
+                            }}>
+                                {
+                                    (isAllowedDelete && isAllowedReply)
+                                        ? <SwipeRounded/>
+                                        : (isAllowedDelete && !isAllowedReply)
+                                            ? <SwipeLeftRounded/>
+                                            : (!isAllowedDelete && isAllowedReply)
+                                                ? <SwipeRightRounded/> : ''
+                                }
+                            </Box>
+                        )
+                    }
+                </Box>
+                <Box
+                    sx={{
+                        width: '100%',
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'start',
+                        gap: 2,
+                        "& button": {
+                            textTransform: 'inherit',
+                            fontSize: {xs: '12px', sm: '14px'},
+                            fontWeight: 400,
+                            display: 'flex',
+                            gap: 1,
+                            borderRadius: '0',
+                            p: 0,
+                            "& svg": {
+                                fontSize: {xs: '20px', sm: '24px'}
+                            }
+                        }
+                    }}
+                >
+                    {
+                        isAllowedReply && (isAnswers || (width > 900 || !device)) &&
+                        <Button
+                            onClick={(event) => {
+                                event.stopPropagation();
+                                if (!isAnswer) {
+                                    setIsAnswer(true)
+                                    setParent(currentComment)
+                                } else {
+                                    handleCloseIsAnswer()
+                                }
+                            }}
+                            color={'secondary'}
+                        >
+                            {translate('buttons.reply')}
+                            <ReplyOutlined/>
+                        </Button>
+                    }
+                    {
+                        isAllowedDelete && (width > 900 || !device) &&
+                        <Button
+                            onClick={handleDelete}
+                            color={'error'}
+                        >
+                            {translate('buttons.delete')}
+                            <Delete/>
+                        </Button>
+                    }
+                    {
+                        location?.pathname !== '/profile' && currentComment?.repliesLength > 0 && isShowAnswer &&
+                        <Button
+                            onClick={getAnswers}
+                            color={'secondary'}
+                            endIcon={isLoadAnswers ? <ExpandLess/> : <ExpandMore/>}
+                        >
+                        <span
+                            style={{textTransform: 'capitalize'}}>{translate(isLoadAnswers ? 'buttons.hide' : 'buttons.answer')} ({currentComment?.repliesLength})</span>
+                        </Button>
+                    }
+                </Box>
+                {
+                    isShowReply && isVisibleInput && (
+                        <ShowCommentInput
+                            parent={parent}
+                            currentComment={currentComment}
+                            handleCloseIsAnswer={handleCloseIsAnswer}
+                            setNewCurrentComment={setNewCurrentComment}
+                            isAnswer={isAnswer}
+                            setIsAnswer={setIsAnswer}
+                            setParent={setParent}
+                            setNewComment={setNewComment}
+                        />
+                    )
+                }
+                <Box sx={{
+                    display: isLoadAnswers ? 'block' : 'none'
+                }}>
+                    <CommentAnswers
+                        isShowAnswers={isShowAnswer}
+                        isLoadAnswers={isLoadAnswers}
+                        setIsLoadAnswers={setIsLoadAnswers}
+                        setComment={setCurrentComment}
+                        comment={currentComment}
+                        newComment={newCurrentComment}
+                    />
+                </Box>
+            </Box>
+            {
+                isAllowedDelete && (
+                    <Box sx={{
+                        width: 'fit-content',
+                        height: '100%',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                    }}>
+                        <Button
+                            onClick={handleDelete}
+                            color={'error'}
+                            variant={'contained'}
+                            sx={{
+                                p: 2,
+                                display: 'flex',
+                                width: '50px',
+                                height: '50px',
+                                minWidth: '40px',
+                                borderRadius: '50%',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                margin: 'auto 10px'
+                            }}
+                        >
+                            <Delete sx={{color: '#fff'}}/>
+                        </Button>
+                    </Box>
+                )
+            }
+        </NewSwipeComponent>
+    )
     return (
         <SwipeComponent
             uniqueKey={comment?._id}
@@ -233,6 +499,7 @@ const CommentCard = ({
                     width: '100%',
                     color: 'common.white',
                     minWidth: '250px',
+                    gap: 1,
                     ...style
                 }}
             >
@@ -242,7 +509,6 @@ const CommentCard = ({
                     justifyContent: 'space-between',
                     width: '100%',
                     alignItems: 'start',
-                    pb: '10px'
                 }}>
                     <Box sx={{
                         display: 'flex',
@@ -268,6 +534,7 @@ const CommentCard = ({
                             <Box sx={{
                                 display: 'flex',
                                 width: '100%',
+                                flexDirection: 'column',
                                 justifyContent: 'space-between',
                                 gap: 1
                             }}>
@@ -286,46 +553,46 @@ const CommentCard = ({
                                     <ShowTimeComponent date={currentComment?.createdAt}/>
                                 </Box>
                             </Box>
-                            <Box sx={{
-                                width: '100%',
-                                display: 'flex',
-                                alignItems: 'start',
-                                justifyContent: 'end',
-                                gap: 0.5
-                            }}>
-                                <Box sx={{
-                                    width: '100%',
-                                    fontSize: '14px',
-                                    whiteSpace: 'break-spaces',
-                                    // bgcolor: 'modern.modern_1.second',
-                                    // p: 1,
-                                    // borderRadius: '5px'
-                                }}>
-                                    {currentComment?.text}
-                                </Box>
-                                {
-                                    isSwipe && (
-                                        <Box sx={{
-                                            width: 'fit-content',
-                                            "& svg": {
-                                                fontSize: '20px',
-                                                color: 'silver'
-                                            }
-                                        }}>
-                                            {
-                                                (isAllowedDelete && isAllowedReply)
-                                                    ? <SwipeRounded/>
-                                                    : (isAllowedDelete && !isAllowedReply)
-                                                        ? <SwipeLeftRounded/>
-                                                        : (!isAllowedDelete && isAllowedReply)
-                                                            ? <SwipeRightRounded/> : ''
-                                            }
-                                        </Box>
-                                    )
-                                }
-                            </Box>
                         </Box>
                     </Box>
+                </Box>
+                <Box sx={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'start',
+                    justifyContent: 'end',
+                    gap: 0.5
+                }}>
+                    <Box sx={{
+                        width: '100%',
+                        fontSize: '14px',
+                        whiteSpace: 'break-spaces',
+                        // bgcolor: 'modern.modern_1.second',
+                        // p: 1,
+                        // borderRadius: '5px'
+                    }}>
+                        {currentComment?.text}
+                    </Box>
+                    {
+                        isSwipe && (
+                            <Box sx={{
+                                width: 'fit-content',
+                                "& svg": {
+                                    fontSize: '20px',
+                                    color: 'silver'
+                                }
+                            }}>
+                                {
+                                    (isAllowedDelete && isAllowedReply)
+                                        ? <SwipeRounded/>
+                                        : (isAllowedDelete && !isAllowedReply)
+                                            ? <SwipeLeftRounded/>
+                                            : (!isAllowedDelete && isAllowedReply)
+                                                ? <SwipeRightRounded/> : ''
+                                }
+                            </Box>
+                        )
+                    }
                 </Box>
                 <Box
                     sx={{

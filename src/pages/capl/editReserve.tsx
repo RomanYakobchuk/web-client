@@ -2,11 +2,11 @@ import {useBack, useNotification, useTranslate} from "@refinedev/core";
 import {useForm} from "@refinedev/react-hook-form";
 import React, {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
+import {Button} from "@mui/material";
 
 
 import {IReserve, PropertyProps} from "@/interfaces/common";
 import {CaplForm, CustomEdit} from "@/components";
-import {Button} from "@mui/material";
 
 
 const EditReserve = () => {
@@ -146,7 +146,6 @@ const EditReserve = () => {
         manager,
         setManager
     }
-
     return (
         <CustomEdit
             isLoading={formLoading}
