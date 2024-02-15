@@ -1,31 +1,35 @@
 import {createPortal} from "react-dom";
 import {Box, CircularProgress} from "@mui/material";
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
+
+import {ColorModeContext} from "@/contexts";
 
 type TFullPageLoading = {
     isOpen: boolean,
 }
 export const FullPageLoading = ({isOpen}: TFullPageLoading) => {
 
-    const [isVisible, setIsVisible] = useState<boolean>(false);
+    const {mode} = useContext(ColorModeContext);
+    const [_, setIsVisible] = useState<boolean>(false);
     const [scale, setScale] = useState<number>(0);
 
     useEffect(() => {
         if (isOpen) {
             setTimeout(() => {
                 setScale(1);
-            }, 100)
+            }, 0)
             setIsVisible(true)
         } else {
             setScale(0);
             const timer = setTimeout(() => {
                 setIsVisible(isOpen)
-            }, 500);
+            }, 0);
             return () => {
                 clearTimeout(timer)
             }
         }
     }, [isOpen]);
+    const spinnerColor = mode === 'dark' ? 'secondary' : 'primary';
     return createPortal(
         <Box sx={{
             width: '100%',
@@ -37,7 +41,7 @@ export const FullPageLoading = ({isOpen}: TFullPageLoading) => {
             cursor: 'not-allowed',
             zIndex: 2000,
             transform: `scale(${scale})`,
-            transition: 'all 0.3s linear',
+            transition: 'all 0 linear',
         }}>
             <Box sx={{
                 position: 'absolute',
@@ -52,7 +56,7 @@ export const FullPageLoading = ({isOpen}: TFullPageLoading) => {
                 justifyContent: 'center',
                 alignItems: 'center',
             }}>
-                <CircularProgress color={'primary'}/>
+                <CircularProgress color={spinnerColor}/>
             </Box>
         </Box>,
         document.body

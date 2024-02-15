@@ -27,6 +27,8 @@ import ContainerComponent from "./utills/containerComponent";
 import {ModalWindow} from "@/components";
 import OrPart from "./utills/orPart";
 import UserAgreement from "./utills/userAgreement";
+import {StepTitles} from "@/components/steps/stepTitles";
+import {StepButtons} from "@/components/steps/stepButtons";
 
 const Register = () => {
     const translate = useTranslate();
@@ -346,61 +348,11 @@ const Register = () => {
                     borderRadius: '10px',
                     border: '2px solid cornflowerblue'
                 }}>
-                    <Box sx={{
-                        display: 'flex',
-                        // gap: 4,
-                        width: '90%',
-                        maxWidth: '300px',
-                        margin: '0 auto',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        gap: 2
-                    }}>
-                        <Box sx={{
-                            width: '100%',
-                            height: '2px',
-                            bgcolor: 'cornflowerblue',
-                            order: 1
-                        }}/>
-                        {
-                            stepTitles?.map((title, index) => (
-                                <Box sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: 1,
-                                    order: index
-                                }}
-                                     key={index}
-                                >
-                                    <Button
-                                        variant={'contained'}
-                                        color={(currentStep === index || currentStep > index) ? 'info' : 'inherit'}
-                                        sx={{
-                                            // bgcolor: currentStep === index ? '#12a5ee' : 'silver',
-                                            borderRadius: '50%',
-                                            textTransform: 'inherit',
-                                            fontWeight: 600,
-                                            fontSize: '16px',
-                                            transition: '300ms linear',
-                                            "&:hover": {
-                                                bgcolor: '#12a5ee'
-                                            },
-                                            minWidth: '30px',
-                                            width: {xs: '40px', md: '50px'},
-                                            height: {xs: '40px', md: '50px'},
-                                        }}
-                                    >
-                                        {
-                                            currentStep > index ? <Check/> : index + 1
-                                        }
-                                    </Button>
-                                    <span>
-                                        {title}
-                                    </span>
-                                </Box>
-                            ))
-                        }
-                    </Box>
+                    <StepTitles
+                        gotoStep={gotoStep}
+                        stepTitles={stepTitles}
+                        currentStep={currentStep}
+                    />
                     <Box
                         component="form"
                         autoComplete="off"
@@ -421,62 +373,12 @@ const Register = () => {
                         {
                             renderFormByStep(currentStep)
                         }
-                        <Box sx={{
-                            display: 'flex',
-                            gap: 4,
-                            "& button:not(:nth-of-type(3))": {
-                                borderWidth: '2px !important',
-                                textTransform: 'inherit',
-                                borderRadius: '10px',
-                                p: '5px 20px'
-                            }
-                        }}>
-                            {currentStep > 0 && (
-                                <Button
-                                    variant={'outlined'}
-                                    color={'warning'}
-                                    onClick={(event) => {
-                                        event.preventDefault();
-                                        gotoStep(currentStep - 1);
-                                    }}
-                                >
-                                    {translate('buttons.steps.previous')}
-                                </Button>
-                            )}
-                            {currentStep < stepTitles.length - 1 && (
-                                <Button
-                                    variant={'outlined'}
-                                    color={'info'}
-                                    onClick={(event) => {
-                                        event.preventDefault();
-                                        gotoStep(currentStep + 1);
-                                    }}
-                                >
-                                    {translate('buttons.steps.next')}
-                                </Button>
-                            )}
-                            {
-                                currentStep === stepTitles?.length - 1 && (
-                                    <Button
-                                        type={"submit"}
-                                        variant={'contained'}
-                                        color={mode === "dark" ? "info" : "secondary"}
-                                        sx={{
-                                            ...buttonStyle,
-                                            fontSize: '18px',
-                                            width: '100%',
-                                            maxWidth: '300px',
-                                            margin: '0 auto'
-                                        }}
-                                        onClick={handleSubmit(onFinishHandler)}
-                                    >
-                                        {
-                                            formLoading ? <CircularProgress/> :
-                                                translate("pages.register.buttons.submit")}
-                                    </Button>
-                                )
-                            }
-                        </Box>
+                        <StepButtons
+                            currentStep={currentStep}
+                            stepTitles={stepTitles}
+                            gotoStep={gotoStep}
+                            onSubmit={handleSubmit(onFinishHandler)}
+                        />
                     </Box>
                 </Box>
                 <Box sx={{

@@ -11,12 +11,13 @@ import PropertiesList from "@/components/establishment/utills/lists/propertiesLi
 import {VariantComponent} from "@/components";
 import {SearchInputComponent} from "@/components/common/search";
 import {useDebounce} from "use-debounce";
+import {ESTABLISHMENT} from "@/config/names";
 
 interface IProps {
     id: string
 }
 
-const UserInstitutions = ({id}: IProps) => {
+const Userestablishments = ({id}: IProps) => {
 
     const translate = useTranslate();
     const {width} = useMobile();
@@ -35,7 +36,7 @@ const UserInstitutions = ({id}: IProps) => {
         fetchNextPage,
         isFetchingNextPage,
     } = useInfiniteList<PropertyProps>({
-        resource: `institution/allByUserId/${id}`,
+        resource: `${ESTABLISHMENT}/allByUserId/${id}`,
         pagination: {
             pageSize: 10
         },
@@ -167,4 +168,4 @@ const UserInstitutions = ({id}: IProps) => {
         </Box>
     );
 };
-export default UserInstitutions;
+export default Userestablishments;

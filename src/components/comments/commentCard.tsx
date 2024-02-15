@@ -816,7 +816,7 @@ export const ShowCommentInput = ({
                             isAnswer={isAnswer}
                             setIsAnswer={setIsAnswer}
                             setParent={setParent}
-                            institutionId={currentComment?.establishmentId as string}
+                            establishmentId={currentComment?.establishmentId as string}
                             setNewComment={setNewComment || setNewCurrentComment}
                         />
                     </Box>

@@ -1,5 +1,5 @@
 import {Box, Button, Typography} from "@mui/material";
-import React, {Dispatch, SetStateAction, useEffect, useState} from "react";
+import React, {Dispatch, SetStateAction, useContext, useEffect, useState} from "react";
 import {useInfiniteList, useTranslate} from "@refinedev/core";
 import {useDebounce} from "use-debounce";
 import {Input, Select, Space} from "antd";
@@ -7,7 +7,6 @@ import {Close, Delete, Edit} from "@mui/icons-material";
 
 import {PropertyProps} from "@/interfaces/common";
 import {useMobile} from "@/hook";
-import Loading from "../../loading/loading";
 import {scrollBarStyle} from "@/styles";
 import CustomOpenContentBtn from "../custom/CustomOpenContentBtn";
 import ChangeLocation from "../google/changeLocation";
@@ -15,7 +14,10 @@ import PropertiesList from "../../establishment/utills/lists/propertiesList";
 import MoreButton from "../buttons/MoreButton";
 import VariantComponent from "../buttons/variantComponent";
 import LottieComponent from "@/lotties/LottieComponent";
-import RadarLottie from "@/lotties/properties/radar.json";
+import RadarWhiteLottie from "@/lotties/properties/radar_white.json";
+import RadarBlackLottie from "@/lotties/properties/radar_black.json";
+import {ESTABLISHMENT} from "@/config/names";
+import {ColorModeContext} from "@/contexts";
 
 type TProps = {
     location: {
@@ -56,6 +58,7 @@ const FindNearbyPlaces = ({location, establishment, setOpenDrawer}: TProps) => {
 
     const translate = useTranslate();
     const {device} = useMobile();
+    const {mode} = useContext(ColorModeContext);
 
     const [locationData, setLocationData] = useState<TAddress>({} as TAddress);
     const [currentLocation, setCurrentLocation] = useState<TProps['location']>(location);
@@ -68,7 +71,7 @@ const FindNearbyPlaces = ({location, establishment, setOpenDrawer}: TProps) => {
     const [debounceMaxDistance] = useDebounce(maxDistance, 500);
 
     const {data, isLoading, isError, isFetching, fetchNextPage, isFetchingNextPage, hasNextPage} = useInfiniteList({
-        resource: 'institution/nearby',
+        resource: `${ESTABLISHMENT}/nearby`,
         filters: [
             {
                 value: maxDistance?.unit === 'km' ? debounceMaxDistance?.value * 1000 : debounceMaxDistance?.value,
@@ -323,13 +326,19 @@ const FindNearbyPlaces = ({location, establishment, setOpenDrawer}: TProps) => {
                     (isLoading || isFetching)
                         ?
                         <Box>
-                            <LottieComponent size={250} loop={true} isClickToStartAnimation={false} item={RadarLottie}/>
+                            {/*<Loading height={'200px'}/>*/}
+                            <LottieComponent
+                                size={250}
+                                loop={true}
+                                isClickToStartAnimation={false}
+                                item={mode === 'dark' ? RadarWhiteLottie : RadarBlackLottie}
+                            />
                         </Box>
                         // <Loading height={'200px'}/>
                         : isError ? <div>Something went wrong (((</div>
                             : establishmentList?.length > 0 && (
                             <PropertiesList
-                                numberOfColumnsByWidth={innerWidth < 500 ? 1 : 2}
+                                numberOfColumnsByWidth={2}
                                 items={establishmentList}
                                 setIsOpen={setOpenDrawer}
                             />

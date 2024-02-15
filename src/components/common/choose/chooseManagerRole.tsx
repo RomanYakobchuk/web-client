@@ -55,9 +55,9 @@ const ChooseManagerRole = ({currentEstablishment}: TChooseManagerRoleProps) => {
     const [anchorElPopover, setAnchorElPopover] = useState<HTMLButtonElement | null>(null);
     const handleClickPopover = (event: MouseEvent<HTMLButtonElement>) => {
         setAnchorElPopover(event.currentTarget);
-        getUserInstitutions();
+        getUserestablishments();
     }
-    const getUserInstitutions = () => {
+    const getUserestablishments = () => {
         getData();
     }
     const handleClosePopover = () => {

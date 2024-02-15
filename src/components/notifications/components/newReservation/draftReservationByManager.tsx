@@ -8,6 +8,7 @@ import {AdornmentBtn} from "@/components/establishment/utills/establishment-revi
 import {axiosInstance} from "@/authProvider";
 import {useSendNotification, useUserInfo} from "@/hook";
 import {INotification, IReserve} from "@/interfaces/common";
+import {ESTABLISHMENT} from "@/config/names";
 
 type TProps = {
     reservation: IReserve
@@ -18,7 +19,7 @@ type TProps = {
 //     & { typeNotification: INotification['type'] }
 
 type TUpdateStatusData = {
-    institutionStatus: IReserve["institutionStatus"];
+    establishmentStatus: IReserve["establishmentStatus"];
     userStatus?: IReserve['userStatus']
 };
 const DraftReservationByManager = ({reservation: defaultReservation}: TProps) => {
@@ -50,7 +51,7 @@ const DraftReservationByManager = ({reservation: defaultReservation}: TProps) =>
             try {
                 const updateStatus = async () => {
                     const data = {
-                        institutionStatus: {
+                        establishmentStatus: {
                             value: 'rejected',
                             reasonRefusal: rejectedText,
                             freeDateFor: [newDate]
@@ -92,7 +93,7 @@ const DraftReservationByManager = ({reservation: defaultReservation}: TProps) =>
         try {
             const updateStatus = async () => {
                 const res = await axiosInstance.patch(`/capl/updateStatus/${reservation?._id}`, {
-                    type: 'institutionStatus',
+                    type: 'establishmentStatus',
                     newStatus: 'accepted'
                 });
                 if (res?.data) {
@@ -238,7 +239,7 @@ const DraftReservationByManager = ({reservation: defaultReservation}: TProps) =>
                                 {
                                     isAddFreeSeatsAndDate
                                         ? translate('buttons.cancel')
-                                        : translate('all_institutions.freeSeats.create')
+                                        : translate(`${ESTABLISHMENT}.freeSeats.create`)
                                 }
                             </Button>
                             {
@@ -259,8 +260,8 @@ const DraftReservationByManager = ({reservation: defaultReservation}: TProps) =>
                                             size={'small'}
                                             color={'secondary'}
                                             type={'number'}
-                                            label={translate('all_institutions.freeSeats.numberOfSeats')}
-                                            placeholder={translate('all_institutions.freeSeats.numberOfSeats')}
+                                            label={translate(`${ESTABLISHMENT}.freeSeats.numberOfSeats`)}
+                                            placeholder={translate(`${ESTABLISHMENT}.freeSeats.numberOfSeats`)}
                                             value={numberOfSeats || 0}
                                             inputProps={{
                                                 min: 0

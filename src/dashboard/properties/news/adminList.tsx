@@ -27,6 +27,7 @@ import {GridComponent} from "@/components/grid";
 import {useUserInfo} from "@/hook";
 import NewsStat from "@/dashboard/properties/news/newsStat";
 import NewsFiltersStat from "@/dashboard/properties/news/newsFiltersStat";
+import {ESTABLISHMENT, SHOW} from "@/config/names";
 
 const AdminList = () => {
     const translate = useTranslate();
@@ -45,7 +46,7 @@ const AdminList = () => {
         initialPageSize: 10,
         onSearch: (params) => {
             const filters: CrudFilters = [];
-            const {title, category, date_event_lte, date_event_gte, institution, status} = params;
+            const {title, category, date_event_lte, date_event_gte, establishment, status} = params;
 
             filters.push(
                 {
@@ -59,9 +60,9 @@ const AdminList = () => {
                     value: dateEventLte ? dateEventLte : undefined
                 },
                 {
-                    field: "institution",
+                    field: "establishment",
                     operator: "eq",
-                    value: institution ? institution : undefined
+                    value: establishment ? establishment : undefined
                 },
                 {
                     field: "category",
@@ -82,11 +83,11 @@ const AdminList = () => {
             return filters;
         }
     });
-    const institutionsIds = dataGridProps.rows.map((item) => item._id);
-    const {tableQueryResult: {data: institutionsData, isLoading}} = useTable<PropertyProps>({
-        resource: 'institution/userInstitutions',
+    const establishmentsIds = dataGridProps.rows.map((item) => item._id);
+    const {tableQueryResult: {data: establishmentsData, isLoading}} = useTable<PropertyProps>({
+        resource: `${ESTABLISHMENT}/userestablishments`,
         queryOptions: {
-            enabled: institutionsIds.length > 0
+            enabled: establishmentsIds.length > 0
         }
     });
 
@@ -184,11 +185,11 @@ const AdminList = () => {
                 width: 130
             },
             {
-                field: 'institution._id',
+                field: 'establishment._id',
                 headerName: translate('home.one'),
                 renderCell: function render({row}) {
-                    const {_id: institutionId} = row.institutionId as PropertyProps;
-                    return <IconButton onClick={() => navigate(`/all_institutions/show/${institutionId}`)}>
+                    const {_id: establishmentId} = row.establishmentId as PropertyProps;
+                    return <IconButton onClick={() => navigate(`/${ESTABLISHMENT}/${SHOW}/${establishmentId}`)}>
                         <OpenInNew/>
                     </IconButton>
                 },
@@ -215,7 +216,7 @@ const AdminList = () => {
                 sortable: false,
                 width: 100
             }
-        ], [institutionsData, isLoading]
+        ], [establishmentsData, isLoading]
     );
 
     useEffect(() => {

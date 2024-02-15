@@ -1,4 +1,4 @@
-import React, {Dispatch, ReactNode, SetStateAction, useContext, useRef} from "react";
+import React, {Dispatch, ReactNode, SetStateAction, useContext, useRef, MouseEvent} from "react";
 import {BottomSheet, BottomSheetRef} from "react-spring-bottom-sheet";
 
 import ContainerSheet from "@/components/drawer/swipeDrawer/sheet/containerSheet";
@@ -7,15 +7,19 @@ import SnapMarker from "@/components/drawer/swipeDrawer/snapMarker";
 import {ColorModeContext} from "@/contexts";
 import './style.css'
 import ReactDOM from "react-dom";
-import {Box} from "@mui/material";
+import {Box, SxProps} from "@mui/material";
 
 type TSwipeProps = {
     isVisible: boolean,
     toggleDrawer: Dispatch<SetStateAction<boolean>>,
     header: ReactNode,
     children: ReactNode,
+    defaultSnap?: number,
+    snapPoints?: number[],
+    styles?: SxProps,
+    classes?: string
 }
-const SwipeDrawer = ({isVisible, toggleDrawer, header, children}: TSwipeProps) => {
+const SwipeDrawer = ({isVisible, toggleDrawer, header, children, defaultSnap, snapPoints, styles, classes}: TSwipeProps) => {
 
     const {mode} = useContext(ColorModeContext);
     const focusRef = useRef<HTMLButtonElement | null>(null);
@@ -23,12 +27,18 @@ const SwipeDrawer = ({isVisible, toggleDrawer, header, children}: TSwipeProps) =
 
     // const [expandOnContentDrag, _] = useState<boolean>(true);
 
-    function onDismiss() {
+    function onDismiss(event?: MouseEvent<HTMLDivElement>) {
+        event?.preventDefault();
+        event?.stopPropagation();
         toggleDrawer(false)
     }
 
     return ReactDOM.createPortal(
-        <ContainerSheet>
+        <ContainerSheet
+            styles={{
+                ...styles
+            }}
+        >
             <SnapMarker
                 className="text-white text-opacity-50"
                 style={{top: '10vh'}}
@@ -54,7 +64,7 @@ const SwipeDrawer = ({isVisible, toggleDrawer, header, children}: TSwipeProps) =
                         bgcolor: mode === 'light' ? 'rgba(0, 0, 0, 0.2)' : 'rgba(220, 220, 220, 0.2)',
                         backdropFilter: 'blur(3px)'
                     }}
-                    onClick={onDismiss}
+                         onClick={(event) => onDismiss(event)}
                     />
                 )
             }
@@ -65,20 +75,22 @@ const SwipeDrawer = ({isVisible, toggleDrawer, header, children}: TSwipeProps) =
                 blocking={false}
                 onDismiss={onDismiss}
                 initialFocusRef={focusRef}
-                defaultSnap={({maxHeight}) => maxHeight / 2}
-                snapPoints={({maxHeight}) => [
+                defaultSnap={defaultSnap ? defaultSnap : ({maxHeight}) => maxHeight - maxHeight / 20}
+                snapPoints={({maxHeight}) => (snapPoints && snapPoints?.length > 0) ? snapPoints : [
                     maxHeight - maxHeight / 20,
                     maxHeight - maxHeight / 5,
                     maxHeight / 4,
                     maxHeight / 3,
+                    600,
                     maxHeight * 0.6,
                 ]}
-                className={mode === 'dark' ? 'dark' : ''}
+                className={(mode === 'dark' ? 'dark' : '') + ' ' + classes}
                 // expandOnContentDrag={expandOnContentDrag}
                 // Коли це true то ніякі події не працюють
                 header={
                     header
                 }
+                id={'bottomCaplSheet'}
             >
                 <SheetContent
                     style={{

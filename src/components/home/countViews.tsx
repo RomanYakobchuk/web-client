@@ -6,6 +6,7 @@ import {CallMade, PlaceOutlined} from "@mui/icons-material";
 
 import {useMobile} from "@/hook";
 import {CarouselComponent} from "../index";
+import {ESTABLISHMENT, SHOW} from "@/config/names";
 
 const {Text} = TypographyAntd;
 const CountViews = () => {
@@ -15,7 +16,7 @@ const CountViews = () => {
 
 
     const {data: dataViews, isLoading: isLoadingViews} = useList<any>({
-        resource: "institution/countMoreViews",
+        resource: `${ESTABLISHMENT}/countMoreViews`,
     });
 
     if (dataViews?.data?.length === 0) {
@@ -44,7 +45,7 @@ const CountViews = () => {
             <Box sx={{
                 // width: {xs: '80vw', md: `calc(${layoutWidth}px - 160px)`},
                 width: {xs: '100vw', md: `${layoutWidth}px`},
-                margin: '0 auto',
+                margin: '0',
                 position: 'relative'
             }}>
                 <CarouselComponent>
@@ -93,7 +94,7 @@ const CountViews = () => {
                                         </Text>
                                     </Box>
                                     <Link
-                                        to={`/all_institutions/show/${item?.viewsWith?._id}`}
+                                        to={`/${ESTABLISHMENT}/${SHOW}/${item?.viewsWith?._id}`}
                                         style={{
                                             textDecoration: 'none',
                                             cursor: 'pointer',

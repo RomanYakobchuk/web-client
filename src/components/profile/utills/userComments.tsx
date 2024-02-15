@@ -8,6 +8,7 @@ import {Loading} from "@/components";
 import MoreButton from "@/components/common/buttons/MoreButton";
 import {useLeaveManagerCommentAs, useUserInfo} from "@/hook";
 import ChooseManagerRole from "@/components/common/choose/chooseManagerRole";
+import {ESTABLISHMENT, SHOW} from "@/config/names";
 
 interface IProps {
     id: string,
@@ -119,7 +120,7 @@ const UserComments = ({id}: IProps) => {
                                         sx={{
                                             textTransform: 'inherit'
                                         }}
-                                        onClick={() => navigate(`/all_institutions/show/${comment?.establishmentId}`)}
+                                        onClick={() => navigate(`/${ESTABLISHMENT}/${SHOW}/${comment?.establishmentId}`)}
                                     >
                                         {translate('home.one')}
                                     </Button>

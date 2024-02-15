@@ -4,6 +4,7 @@ import {useContext} from "react";
 import {ColorModeContext} from "../../contexts";
 import {useMobile} from "../../hook";
 import {useTranslate} from "@refinedev/core";
+import {ESTABLISHMENT} from "@/config/names";
 
 const WelcomePart = () => {
 
@@ -107,7 +108,7 @@ const WelcomePart = () => {
                             {translate('text.home.findYourSelf')}
                         </Typography>
                         <Button
-                            href={'/all_institutions'}
+                            href={`/${ESTABLISHMENT}`}
                             variant={'contained'}
                             sx={{
                                 ...buttonStyle,

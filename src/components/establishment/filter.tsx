@@ -2,9 +2,8 @@ import {
     Box,
     FormControl
 } from "@mui/material";
-import React, {Dispatch, ReactNode, useContext, useEffect, useState} from "react";
+import React, {Dispatch, ReactNode, useContext, useEffect, useLayoutEffect, useMemo, useState} from "react";
 import {CrudFilters, CrudSorting, LogicalFilter, useTranslate} from "@refinedev/core";
-import {useLocation} from "react-router-dom";
 import {useDebounce} from "use-debounce";
 
 import {ColorModeContext} from "@/contexts";
@@ -12,11 +11,10 @@ import {
     CustomOpenContentBtn,
     FilterBtn,
     ModalWindow,
-    NearbyEstablishmentBtn,
     SearchCity,
     VariantComponent
 } from "../index";
-import {useMobile, usePosition} from "@/hook";
+import {useMobile} from "@/hook";
 import {EstablishmentType, SetFilterType} from "@/interfaces/types";
 import {
     SearchButtonFilterComponent,
@@ -25,157 +23,105 @@ import {
     SearchInputComponent
 } from "../common/search";
 import SortEstablishmentComponent from "../common/search/establishment/sortEstablishmentComponent";
-import {IFreeSeatsProps, PropertyProps} from "@/interfaces/common";
-
+import {IFreeSeatsProps} from "@/interfaces/common";
 
 interface IProps {
     setFilters: SetFilterType,
-    sortBy: string,
-    setSortBy: (value: string) => void,
     setSearchValue: (value: string) => void,
     sorters: CrudSorting,
     setSorters: (sorter: CrudSorting) => void,
     searchValue: string,
     filters: CrudFilters,
     setCurrent: Dispatch<React.SetStateAction<number>>,
+    currentFilterValues: {
+        title: string,
+        city_like: string,
+        propertyType: EstablishmentType,
+        averageCheck_lte: number,
+        averageCheck_gte: number,
+    }
 }
 
-const FilterInstitutions = ({
-                                setFilters: defaultSetFilters,
-                                sortBy,
-                                sorters,
-                                setSorters: defaultSetSorters,
-                                setSortBy,
-                                setSearchValue,
-                                searchValue,
-                                filters,
-                                setCurrent
-                            }: IProps) => {
+const FilterEstablishments = ({
+                                  setFilters: defaultSetFilters,
+                                  sorters,
+                                  setSorters: defaultSetSorters,
+                                  setSearchValue,
+                                  searchValue,
+                                  filters,
+                                  setCurrent,
+                                  currentFilterValues
+                              }: IProps) => {
 
     const translate = useTranslate();
-    const {state: locationState} = useLocation();
-    const {position, error} = usePosition();
     const {mode} = useContext(ColorModeContext);
-    const {width, height} = useMobile();
+    const {width} = useMobile();
 
+    const [newFilters, setFilters] = useState<CrudFilters>(filters);
     const [freeSeats, setFreeSeats] = useState({} as IFreeSeatsProps);
     const [filterLength, setFilterLength] = useState<number>(0);
     const [openFilter, setOpenFilter] = useState(false);
-    const [newFilters, setFilters] = useState<CrudFilters>([{}] as CrudFilters);
-    const [searchCity, setSearchCity] = useState<string>('');
-    const [newSorters, setNewSorters] = useState<CrudSorting>([{}] as CrudSorting);
-    const [type, setType] = useState<EstablishmentType>("");
-    const [valueGte, setValueGte] = useState<number>(0);
-    const [valueLte, setValueLte] = useState<number>(2000);
-    const [state, _] = useState<any>(locationState ?? "");
+    const [searchCity, setSearchCity] = useState<string>(currentFilterValues?.city_like);
+    const [type, setType] = useState<EstablishmentType>(currentFilterValues?.propertyType);
+    const [valueGte, setValueGte] = useState<number>(currentFilterValues?.averageCheck_gte);
+    const [valueLte, setValueLte] = useState<number>(currentFilterValues?.averageCheck_lte);
     const [debouncedSearchText] = useDebounce(searchValue, 500);
     const [debouncedSearchCity] = useDebounce(searchCity, 500);
 
     const isShowAllFilters = width > 600;
 
-    // const currentFilterValues = useMemo(() => {
-    //     const logicalFilters = newFilters!?.flatMap((item: CrudFilter) =>
-    //         "field" in item ? item : [],
-    //     );
-    //     return {
-    //         tag:
-    //             logicalFilters?.find((item: any) => item.field === "tag")?.value || '',
-    //         title:
-    //             logicalFilters?.find((item: any) => item.field === "title")?.value || "",
-    //         propertyType:
-    //             logicalFilters?.find((item: any) => item.field === "propertyType")?.value || "",
-    //         averageCheck:
-    //             logicalFilters?.find((item: any) => item.field === "averageCheck")?.value || 0,
-    //         city:
-    //             logicalFilters?.find((item: any) => item.field === "city")?.value || ""
-    //     };
-    // }, [newFilters]);
 
-    useEffect(() => {
-        if (!isShowAllFilters) {
-            defaultSetFilters([
-                {
-                    field: 'title_like',
-                    value: searchValue ?? '',
-                    operator: 'eq'
-                }
-            ])
+    // useEffect(() => {
+    //     setFilters([
+    //         {
+    //             field: 'averageCheck',
+    //             operator: 'lte',
+    //             value: valueLte ? valueLte : 2000
+    //         },
+    //         {
+    //             field: 'averageCheck',
+    //             operator: 'gte',
+    //             value: valueGte ? valueGte : 20
+    //         },
+    //         {
+    //             field: 'title',
+    //             operator: 'eq',
+    //             value: searchValue || "",
+    //         },
+    //         {
+    //             field: "propertyType",
+    //             operator: "eq",
+    //             value: type
+    //         },
+    //         {
+    //             field: "city",
+    //             operator: "contains",
+    //             value: searchCity || ""
+    //         }
+    //     ])
+    // }, [valueGte, valueLte, type, searchCity]);
+
+    useLayoutEffect(() => {
+        if (currentFilterValues) {
+            // for (const filter of filters as LogicalFilter[]) {
+            //     if (filter?.field === "averageCheck" && filter?.operator === 'lte') {
+            //     }
+            //     if (filter?.field === "averageCheck" && filter?.operator === 'gte') {
+            //     }
+            //     if (filter?.field === "propertyType" && filter?.value) {
+            //     }
+            //     if (filter?.field === "title") {
+            //     }
+            //     if (filter?.field === 'city' && filter?.value) {
+            //     }
+            // }
+            setValueLte(currentFilterValues?.averageCheck_lte)
+            setValueGte(currentFilterValues?.averageCheck_gte)
+            setType(currentFilterValues?.propertyType)
+            setSearchCity(currentFilterValues?.city_like)
+            setFilterLength(filters?.length);
         }
-    }, [debouncedSearchText, isShowAllFilters]);
-
-    useEffect(() => {
-        setFilters([
-            {
-                field: 'averageCheck',
-                operator: 'lte',
-                value: valueLte ? valueLte : 2000
-            },
-            {
-                field: 'averageCheck',
-                operator: 'gte',
-                value: valueGte ? valueGte : 20
-            },
-            {
-                field: 'title_like',
-                value: searchValue?.length > 0 ? searchValue : "",
-                operator: 'eq'
-            },
-            {
-                field: "propertyType",
-                operator: "eq",
-                value: type
-            },
-            {
-                field: "city",
-                operator: "contains",
-                value: searchCity ?? ""
-            }
-        ])
-    }, [valueGte, valueLte, type, searchCity]);
-
-    useEffect(() => {
-        if (sorters) {
-            setNewSorters([
-                {
-                    field: sorters[0]?.field,
-                    order: sorters[0]?.order
-                }
-            ])
-        }
-    }, [sorters]);
-
-    useEffect(() => {
-        if (filters?.length > 0) {
-            let length = 1;
-            for (const filter of filters as LogicalFilter[]) {
-                if (filter?.field === "averageCheck" && filter?.operator === 'lte') {
-                    setValueLte(filter?.value)
-                }
-                if (filter?.field === "averageCheck" && filter?.operator === 'gte') {
-                    setValueGte(filter?.value)
-                }
-                if (filter?.field === "propertyType" && filter?.value) {
-                    setType(filter?.value)
-                    length++;
-                }
-                if (filter?.field === "title" && filter?.value) {
-                    setSearchValue(filter?.value)
-                }
-                if (filter?.field === 'city' && filter?.value) {
-                    setSearchCity(filter?.value)
-                    length++;
-                }
-            }
-            setFilterLength(length);
-        }
-    }, [filters]);
-
-    useEffect(() => {
-        if (state.value) {
-            setSearchValue(state.value)
-        }
-    }, [state]);
-
+    }, [currentFilterValues]);
     useEffect(() => {
         if (isShowAllFilters) {
             defaultSetFilters([{
@@ -188,10 +134,19 @@ const FilterInstitutions = ({
 
     const handleSearch = () => {
         defaultSetFilters(newFilters)
-        defaultSetSorters(newSorters)
+        // defaultSetSorters(newSorters)
         setOpenFilter(false)
     }
 
+    const handleSearchByTitle = (value: string) => {
+        defaultSetFilters([
+            {
+                field: 'title',
+                value: value,
+                operator: 'eq'
+            }
+        ])
+    }
     const handleReplace = () => {
         setSearchValue("");
         setValueGte(0);
@@ -215,8 +170,6 @@ const FilterInstitutions = ({
             <SearchCity searchCity={searchCity} setSearchCity={setSearchCity}/>
         </FormControl>
     )
-
-    const isFilterBtnAbsolute = height - 100 >= 400;
 
     return (
         <Box sx={{
@@ -261,6 +214,8 @@ const FilterInstitutions = ({
                 searchValue={searchValue}
                 setSearchValue={setSearchValue}
                 defaultSetFilters={defaultSetFilters}
+                handleSearchByValue={handleSearchByTitle}
+                isButton={width > 500}
             />
             <Box sx={{
                 display: 'flex',
@@ -295,10 +250,11 @@ const FilterInstitutions = ({
                                     setType={setType}
                                 />
                                 <SortEstablishmentComponent
-                                    newSorters={newSorters}
-                                    setSortBy={setSortBy}
+                                    sorters={sorters}
+
+                                    // setSortBy={setSortBy}
                                     defaultSetSorters={defaultSetSorters}
-                                    sortBy={sortBy}
+                                    // sortBy={sortBy}
                                 />
                             </Box>
                             <VariantComponent type={'establishment'}/>
@@ -328,23 +284,16 @@ const FilterInstitutions = ({
                                 }
                             }}>
                                 <SortEstablishmentComponent
-                                    newSorters={newSorters}
-                                    setSortBy={setSortBy}
+                                    sorters={sorters}
+                                    // setSortBy={setSortBy}
                                     defaultSetSorters={defaultSetSorters}
-                                    sortBy={sortBy}
+                                    // sortBy={sortBy}
                                 />
                                 <VariantComponent type={'establishment'}/>
                             </Box>
                         </Box>
                     )
                 }
-            </Box>
-            <Box sx={{
-                mt: {xs: 1, sm: 0}
-            }}>
-                <NearbyEstablishmentBtn
-                    error={error}
-                    location={position as PropertyProps['location']}/>
             </Box>
             <ModalWindow
                 timeOut={700}
@@ -428,4 +377,4 @@ const FilterInstitutions = ({
         </Box>
     );
 };
-export default FilterInstitutions;
+export default FilterEstablishments;

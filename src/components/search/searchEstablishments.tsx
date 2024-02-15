@@ -1,12 +1,15 @@
 import {useList, useTranslate} from "@refinedev/core";
 import React, {Dispatch, SetStateAction, useContext, useEffect, useState} from "react";
 import {AutoComplete, Image, Input, Typography as TypographyAntd} from "antd";
-import {Box, FormControl, FormHelperText, Typography} from "@mui/material";
+import {Box, FormControl, FormHelperText, IconButton, Typography} from "@mui/material";
+import {Clear, PlaceOutlined} from "@mui/icons-material";
 import {useDebounce} from "use-debounce";
-import {PlaceOutlined} from "@mui/icons-material";
 
-import {IOptions, PropertyProps} from "@/interfaces/common";
+import {INews, IOptions, PropertyProps} from "@/interfaces/common";
 import {ColorModeContext} from "@/contexts";
+import {ESTABLISHMENT} from "@/config/names";
+import {ChooseSavedEstablishment} from "@/components/common/search/establishment/chooseSavedEstablishment";
+import {useUserInfo} from "@/hook";
 
 const {Text} = TypographyAntd;
 const renderTitle = (title: string) => {
@@ -23,12 +26,15 @@ const renderItem = (title: string, street: string, photo: string, _id: string, a
         allInfo,
         id: _id,
         label: (
-            <Box sx={{
-                display: 'flex',
-                gap: 1,
-                alignItems: 'start',
-                width: '100%'
-            }}>
+            <Box
+                sx={{
+                    display: 'flex',
+                    gap: 1,
+                    alignItems: 'start',
+                    width: '100%'
+                }}
+                key={_id + title + Math.floor(Math.random() * 1000)}
+            >
                 <img src={photo} style={{
                     width: '60px',
                     height: '40px',
@@ -58,33 +64,38 @@ const renderItem = (title: string, street: string, photo: string, _id: string, a
 };
 
 interface IProps {
-    searchInstitution: PropertyProps,
-    setSearchInstitution: Dispatch<SetStateAction<PropertyProps>>,
-    typeSearch: 'userInstitutions' | string,
+    searchEstablishment: PropertyProps,
+    setSearchEstablishment: Dispatch<SetStateAction<PropertyProps | null>>,
+    typeSearch: 'userEstablishments' | string,
     showEstablishmentInfo?: boolean,
     showEstablishmentInfoLabel?: boolean,
     showSearchLabel?: boolean,
-    isOnlyShowInfo?: boolean
+    isOnlyShowInfo?: boolean,
+    isCanClear?: boolean,
+    isChooseFromSaved?: boolean
 }
 
-const SearchInstitutions = ({
-                                typeSearch,
-                                searchInstitution,
-                                setSearchInstitution,
-                                showEstablishmentInfo = true,
-                                showEstablishmentInfoLabel = true,
-                                showSearchLabel = true,
-                                isOnlyShowInfo = false
-                            }: IProps) => {
+const SearchEstablishments = ({
+                                  typeSearch,
+                                  searchEstablishment,
+                                  setSearchEstablishment,
+                                  showEstablishmentInfo = true,
+                                  showEstablishmentInfoLabel = true,
+                                  showSearchLabel = true,
+                                  isOnlyShowInfo = false,
+                                  isCanClear = false,
+                                  isChooseFromSaved = false
+                              }: IProps) => {
 
     const {mode} = useContext(ColorModeContext);
+    const {user} = useUserInfo();
     const translate = useTranslate();
 
     const [searchPlaceInput, setSearchPlaceInput] = useState<string>('');
     const [data, setData] = useState<PropertyProps[]>([] as PropertyProps[]);
     const [searchInputValue, setSearchInputValue] = useState<string>('');
     const [options, setOptions] = useState<IOptions[]>([]);
-    const [currentInstitution, setCurrentInstitution] = useState({title: '', _id: ''});
+    const [currentEstablishment, setCurrentEstablishment] = useState<{ title: string, _id: string } | null>(null);
 
     const [value] = useDebounce(searchPlaceInput, 500);
     const onSearch = (value: string) => {
@@ -92,29 +103,29 @@ const SearchInstitutions = ({
         setSearchPlaceInput(value)
     }
     useEffect(() => {
-        if (searchInstitution?._id !== currentInstitution?._id || !currentInstitution?.title) {
-            setCurrentInstitution(searchInstitution)
+        if (searchEstablishment?._id !== currentEstablishment?._id || !currentEstablishment?.title) {
+            setCurrentEstablishment(searchEstablishment)
         }
-    }, [searchInstitution]);
+    }, [searchEstablishment]);
     const {refetch,} = useList<PropertyProps>({
-        resource: `institution/${typeSearch}`,
-        filters: [{field: 'title', operator: 'contains', value: value}],
+        resource: `${ESTABLISHMENT}/${typeSearch}`,
+        filters: [{field: 'title', operator: 'eq', value: value}],
         queryOptions: {
             enabled: false,
             onSuccess: (data) => {
-                const institutionsOptionGroup = data.data.map((item) => {
+                const establishmentsOptionGroup = data.data.map((item) => {
                         setData(data?.data)
                         return (
                             renderItem(item.title, item.place.address, item.pictures[0].url, item._id, item)
                         )
                     }
                 )
-                if (institutionsOptionGroup.length > 0) {
+                if (establishmentsOptionGroup.length > 0) {
                     setOptions((prevState) => [
                         ...prevState,
                         {
-                            label: renderTitle('Institutions'),
-                            options: institutionsOptionGroup
+                            label: renderTitle(translate('establishment.establishment')),
+                            options: establishmentsOptionGroup
                         }
                     ])
                 }
@@ -124,12 +135,12 @@ const SearchInstitutions = ({
     useEffect(() => {
         if (data?.length > 0) {
             for (const item of data) {
-                if (item?._id === searchInstitution?._id) {
-                    setSearchInstitution(item)
+                if (item?._id === searchEstablishment?._id) {
+                    setSearchEstablishment(item)
                 }
             }
         }
-    }, [data, searchInstitution]);
+    }, [data, searchEstablishment]);
 
     useEffect(() => {
         setOptions([]);
@@ -140,22 +151,35 @@ const SearchInstitutions = ({
     }, [value]);
 
     useEffect(() => {
-        if (currentInstitution?.title) {
-            setSearchInputValue(currentInstitution.title);
-            setSearchPlaceInput(currentInstitution.title)
+        if (currentEstablishment?.title) {
+            setSearchInputValue(currentEstablishment.title);
+            setSearchPlaceInput(currentEstablishment.title)
         }
-    }, [currentInstitution?.title]);
+    }, [currentEstablishment?.title]);
+
+    const handleClear = () => {
+        if (isCanClear) {
+            setCurrentEstablishment(null);
+            setSearchEstablishment(null);
+            setSearchPlaceInput("");
+            setSearchInputValue("");
+        }
+    }
 
     return (
         <Box sx={{
             width: '100%',
             display: 'flex',
             flexDirection: {xs: 'column', sm: 'row'},
-            gap: showEstablishmentInfo ? 2 : 0
+            gap: showEstablishmentInfo ? 2 : 0,
+
         }}>
             {
                 !isOnlyShowInfo && (
-                    <FormControl fullWidth>
+                    <FormControl
+                        id={'searchEstablishmentFromControl'}
+                        fullWidth
+                    >
                         {
                             showSearchLabel && (
                                 <FormHelperText
@@ -170,35 +194,70 @@ const SearchInstitutions = ({
                                 </FormHelperText>
                             )
                         }
-                        <AutoComplete
-                            style={{
-                                color: mode === "dark" ? "#fcfcfc" : "#000",
-                                width: '100%'
-                            }}
-                            options={options}
-                            value={searchPlaceInput}
-                            disabled={isOnlyShowInfo}
-                            filterOption={false}
-                            onSearch={onSearch}
-                            onSelect={(selectValue, option) => {
-                                const {allInfo} = option;
-                                setSearchInstitution((prev) => ({...prev, ...allInfo}))
-                                setSearchPlaceInput(selectValue);
-                                setSearchInputValue(selectValue)
+                        <Box
+                            sx={{
+                                width: '100%',
+                                display: 'flex',
+                                gap: isCanClear ? 1 : 0,
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                justifyContent: 'space-between'
                             }}
                         >
-                            <Input
-                                value={searchInputValue}
-                                onChange={(e) => {
-                                    setSearchPlaceInput(e.target.value)
-                                }}
-                                size={'large'}
+                            <AutoComplete
                                 style={{
-                                    background: "transparent",
-                                    color: mode === "dark" ? "#fcfcfc" : "#000"
+                                    color: mode === "dark" ? "#fcfcfc" : "#000",
+                                    width: '100%'
                                 }}
-                            />
-                        </AutoComplete>
+                                options={options}
+                                value={searchPlaceInput}
+                                disabled={isOnlyShowInfo}
+                                filterOption={false}
+                                onSearch={onSearch}
+                                onSelect={(selectValue, option) => {
+                                    const {allInfo} = option;
+                                    setSearchEstablishment((prev) => ({...prev as PropertyProps, ...allInfo}))
+                                    setSearchPlaceInput(selectValue);
+                                    setSearchInputValue(selectValue)
+                                }}
+                            >
+                                <Input
+                                    value={searchInputValue}
+                                    onChange={(e) => {
+                                        setSearchPlaceInput(e.target.value)
+                                    }}
+                                    size={'large'}
+                                    style={{
+                                        background: "transparent",
+                                        color: mode === "dark" ? "#fcfcfc" : "#000"
+                                    }}
+                                />
+                            </AutoComplete>
+                            {
+                                isCanClear && (
+                                    <IconButton
+                                        onClick={handleClear}
+                                    >
+                                        <Clear/>
+                                    </IconButton>
+                                )
+                            }
+                        </Box>
+                        {
+                            isChooseFromSaved && (
+                                <Box sx={{
+                                    width: '100%',
+                                    mt: 1
+                                }}>
+                                    <ChooseSavedEstablishment
+                                        parentQuerySelectorForSetWidth={'#searchEstablishmentFromControl'}
+                                        checkedItem={searchEstablishment}
+                                        setCheckedItem={setSearchEstablishment as Dispatch<SetStateAction<PropertyProps | null | INews>>}
+                                        userId={user?._id}
+                                    />
+                                </Box>
+                            )
+                        }
                     </FormControl>
                 )
             }
@@ -220,7 +279,7 @@ const SearchInstitutions = ({
                             )
                         }
                         {
-                            searchInstitution?._id && (
+                            searchEstablishment?._id && (
                                 <Box sx={{
                                     display: 'flex',
                                     flexDirection: 'column',
@@ -236,9 +295,9 @@ const SearchInstitutions = ({
                                         }
                                     }}>
                                         {
-                                            searchInstitution?.pictures?.length > 0 && (
+                                            searchEstablishment?.pictures?.length > 0 && (
                                                 <Image
-                                                    src={searchInstitution?.pictures[0]?.url}
+                                                    src={searchEstablishment?.pictures[0]?.url}
                                                     width={'100%'}
                                                     height={'100%'}
                                                 />
@@ -258,10 +317,10 @@ const SearchInstitutions = ({
                                                 fontWeight: 600
                                             }}
                                         >
-                                            {searchInstitution?.title}
+                                            {searchEstablishment?.title}
                                         </Typography>
                                         <span>
-                                            {translate(`home.sortByType.${searchInstitution?.type}`)}
+                                            {translate(`home.sortByType.${searchEstablishment?.type}`)}
                                         </span>
                                     </Box>
                                     <Box sx={{
@@ -281,10 +340,10 @@ const SearchInstitutions = ({
                                             gap: 0.5
                                         }}>
                                     <span>
-                                        {searchInstitution?.place?.city}
+                                        {searchEstablishment?.place?.city}
                                     </span>
                                             <span>
-                                        {searchInstitution?.place?.address}
+                                        {searchEstablishment?.place?.address}
                                     </span>
                                         </Box>
                                     </Box>
@@ -297,4 +356,4 @@ const SearchInstitutions = ({
         </Box>
     );
 };
-export default SearchInstitutions;
+export default SearchEstablishments;

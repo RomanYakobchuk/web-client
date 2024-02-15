@@ -28,7 +28,15 @@ const type = {
     title: 'title'
 }
 
-const NotificationCard = ({notification, handleClear, isClear = true, bgColor, handleRecall, isSwipe = false, setNotifications}: TProps) => {
+const NotificationCard = ({
+                              notification,
+                              handleClear,
+                              isClear = true,
+                              bgColor,
+                              handleRecall,
+                              isSwipe = false,
+                              setNotifications
+                          }: TProps) => {
     const {width} = useMobile();
     const {mode} = useContext(ColorModeContext);
     const {setProperties} = useUserProperties();
@@ -240,7 +248,10 @@ const NotificationCard = ({notification, handleClear, isClear = true, bgColor, h
                                 fontWeight: 600,
                                 color: isRead ? "silver" : 'cornflowerblue'
                             }}>
-                                {translate(`notifications.page.${notification.type}.title.${type[notification?.status === 'usual' ? 'type' : 'title']}`)}
+                                {
+                                    notification?.type && notification?.status &&
+                                    translate(`notifications.page.${notification.type}.title.${type[notification?.status === 'usual' ? 'type' : 'title']}`)
+                                }
                             </Box>
                             <Box>
                                 {newNotificationIcon(notification?.type)}

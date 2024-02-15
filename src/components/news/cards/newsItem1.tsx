@@ -6,6 +6,7 @@ import {useTranslate} from "@refinedev/core";
 import {INews, PropertyProps} from "@/interfaces/common";
 import NewsItem1Info from "./newsItem_1_Info";
 import {ColorModeContext} from "@/contexts";
+import {ESTABLISHMENT, SHOW} from "@/config/names";
 
 type IProps = {
     itemNews: INews
@@ -14,7 +15,7 @@ const NewsItem1 = ({itemNews}: IProps) => {
     const translate = useTranslate();
     const {mode} = useContext(ColorModeContext);
 
-    const establishmentInfo = itemNews?.institutionId as PropertyProps;
+    const establishmentInfo = itemNews?.establishmentId as PropertyProps;
 
     const l = innerWidth < 600 ? 20 : innerWidth < 900 ? 30 : 100;
     const titleEstablishment = establishmentInfo?.title?.length > l ? establishmentInfo?.title?.slice(0, l) : establishmentInfo?.title;
@@ -61,7 +62,7 @@ const NewsItem1 = ({itemNews}: IProps) => {
                 },
             }}>
                 <Link
-                    to={`/all_institutions/show/${establishmentInfo?._id}`}
+                    to={`/${ESTABLISHMENT}/${SHOW}/${establishmentInfo?._id}`}
                     style={{
                         display: 'flex',
                         gap: "16px",

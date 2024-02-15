@@ -44,12 +44,12 @@ import ModalWindow from "./window/modalWindow";
 import ModalShowContent from "./window/modalShowContent";
 
 // profile
-import {FavoritePlaces, UserReviews, UserComments, UserInstitutions} from "./profile"
+import {FavoritePlaces, UserReviews, UserComments, UserEstablishments} from "./profile"
 
-// institution
-import FilterInstitutions from "./establishment/filter";
-import InstitutionsUserList from "./establishment/userList";
-import InstitutionsAdminList from "../dashboard/properties/establishment/adminList";
+// establishment
+import FilterEstablishments from "./establishment/filter";
+import EstablishmentsUserList from "./establishment/userList";
+import EstablishmentsAdminList from "../dashboard/properties/establishment/adminList";
 import EditUpdateStatus from "./establishment/editUpdateStatus";
 import {FormDataSeats} from "./establishment/seats";
 
@@ -68,7 +68,7 @@ import NewsAdminList from '../dashboard/properties/news/adminList';
 import OtherNews from "./news/utills/otherNews";
 
 // search
-import SearchInstitutions from "./search/searchInstitutions";
+import SearchEstablishments from "./search/searchEstablishments";
 import SearchManager from "./search/searchManager";
 import SearchCity from "./search/searchCity";
 
@@ -88,7 +88,7 @@ export {
     FacebookAuth,
     BookMarkButton,
     Loading,
-    UserInstitutions,
+    UserEstablishments,
     Variant1EstablishmentCard,
     Variant2EstablishmentCard,
     CustomProfile,
@@ -105,18 +105,18 @@ export {
     CustomAccordion,
     ListChats,
     NewsCard,
-    FilterInstitutions,
+    FilterEstablishments,
     FilterNews,
     SearchManager,
     UserComments,
     Messenger,
     PaginationComponent,
-    SearchInstitutions,
+    SearchEstablishments,
     ReservedCard,
     CaplUserPage,
     CaplManagerPage,
-    InstitutionsUserList,
-    InstitutionsAdminList,
+    EstablishmentsUserList,
+    EstablishmentsAdminList,
     ImageSlider,
     SearchCity,
     NewsUserList,

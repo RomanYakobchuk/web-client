@@ -1,6 +1,7 @@
 :root {
     --rsbs-backdrop-bg: rgba(0, 0, 0, 0.6);
     --rsbs-bg: #fff;
+    --rsbs-bg-dark: #2c2b2b;
     --rsbs-bg-white: #f1f1f1;
     --rsbs-bg-black: #373639;
     --rsbs-handle-bg: hsla(0, 0%, 0%, 0.14);
@@ -24,13 +25,25 @@
     height: var(--rsbs-overlay-h);
     transform: translate3d(0, var(--rsbs-overlay-translate-y), 0);
     will-change: height, background;
+    z-index: 2000;
     /*max-width: 97% !important;*/
     /*margin: 0 auto !important;*/
 }
-[data-rsbs-overlay] .dark,
-[data-rsbs-content] .dark,
-[data-rsbs-footer] .dark {
+.dark [data-rsbs-overlay],
+.dark [data-rsbs-content],
+.dark [data-rsbs-footer] {
     background: var(--rsbs-bg-black);
+}
+.caplBookmarkButton [data-rsbs-scroll] {
+    border-bottom-right-radius: 15px;
+    border-bottom-left-radius: 15px;
+}
+.caplBookmarkButton [data-rsbs-overlay] {
+    width: 500px;
+    bottom: 10px;
+    margin: 0 auto;
+    border-radius: 15px;
+    max-width: 97%;
 }
 [data-rsbs-root].dark [data-rsbs-scroll] {
     background: var(--rsbs-bg-black);
@@ -88,7 +101,9 @@
     transform: scale3d(1, var(--rsbs-antigap-scale-y), 1);
     will-change: transform;
 }
-
+.dark[data-rsbs-root]:after {
+    background: var(--rsbs-bg-dark);
+}
 [data-rsbs-footer],
 [data-rsbs-header] {
     flex-shrink: 0;

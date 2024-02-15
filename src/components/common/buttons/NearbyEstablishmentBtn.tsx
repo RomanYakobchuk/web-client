@@ -104,11 +104,12 @@ const NearbyEstablishmentBtn = ({
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    gap: {sm: 1},
+                    gap: 1,
                     textTransform: 'inherit',
-                    "& svg":{
-                        display: {xs: 'none', sm: 'flex'}
-                    },
+                    // "& svg":{
+                    //     display: {xs: 'none', sm: 'flex'}
+                    // },
+                    borderRadius: '7px',
                     // marginTop: {xs: '10px', sm: 0},
                     ...style
                 }}
@@ -144,6 +145,13 @@ const NearbyEstablishmentBtn = ({
                         )
                     ) : <Box>
                         {error}
+                        {
+                            error && (
+                                <Button>
+
+                                </Button>
+                            )
+                        }
                     </Box>
                 }
             </CustomDrawer>

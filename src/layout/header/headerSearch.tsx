@@ -12,6 +12,7 @@ import {ColorModeContext} from "@/contexts";
 import {antdInputStyle} from "@/styles";
 import {useUserInfo} from "@/hook";
 import {Link, useNavigate} from "react-router-dom";
+import {ESTABLISHMENT, NEWS, SHOW} from "@/config/names";
 
 type TProps = {
     openModal: boolean,
@@ -29,21 +30,21 @@ const HeaderSearch = ({openModal, setOpenModal}: TProps) => {
 
 
     const {refetch: refetchPlaces, isRefetching: isRefetchPlace, isLoading: isLoadPlace} = useList<PropertyProps>({
-        resource: "institution/all",
+        resource: `${ESTABLISHMENT}/all`,
         filters: [{field: "title", operator: "contains", value: value}],
         queryOptions: {
             enabled: false,
             onSuccess: (data) => {
                 const establishmentOptionGroup = data?.data.map((item, index) =>
-                    renderItem(item, "all_institutions", index, mode, setOpenModal, data?.data.length, translate, `/all_institutions/show/${item?._id}`),
+                    renderItem(item, `${ESTABLISHMENT}`, index, mode, setOpenModal, data?.data.length, translate, `/${ESTABLISHMENT}/${SHOW}/${item?._id}`),
                 );
                 if (establishmentOptionGroup?.length > 0) {
                     setOptions((prevOptions) => [
                         ...prevOptions,
                         {
-                            label: renderTitle(translate("all_institutions.all_institutions"), mode, () => {
+                            label: renderTitle(translate(`${ESTABLISHMENT}.${ESTABLISHMENT}`), mode, () => {
                                 setOpenModal(false);
-                                navigate(`/all_institutions`);
+                                navigate(`/${ESTABLISHMENT}`);
                             }),
                             options: establishmentOptionGroup,
                         },
@@ -54,13 +55,13 @@ const HeaderSearch = ({openModal, setOpenModal}: TProps) => {
     });
 
     const {refetch: refetchNews, isRefetching: isRefetchNews, isLoading: isLoadNews} = useList<INews>({
-        resource: "news/all",
+        resource: `${NEWS}/all`,
         filters: [{field: "title", operator: "contains", value: value}],
         queryOptions: {
             enabled: false,
             onSuccess: (data) => {
                 const newsOptionGroup = data.data.map((item, index) =>
-                    renderItem(item, "news", index, mode, setOpenModal, data.data.length, translate, `/news/show/${item?._id}`),
+                    renderItem(item, `${NEWS}`, index, mode, setOpenModal, data.data.length, translate, `/news/show/${item?._id}`),
                 );
                 if (newsOptionGroup.length > 0) {
                     setOptions((prevOptions) => [
@@ -68,7 +69,7 @@ const HeaderSearch = ({openModal, setOpenModal}: TProps) => {
                         {
                             label: renderTitle(translate("news.news"), mode, () => {
                                 setOpenModal(false);
-                                navigate(`/news`);
+                                navigate(`/${NEWS}`);
                             }),
                             options: newsOptionGroup,
                         },

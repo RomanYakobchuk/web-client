@@ -4,6 +4,7 @@ import React, {useEffect, useState} from "react";
 import {Box, Typography} from "@mui/material";
 import {ScrollContent, Variant1EstablishmentCard} from "@/components";
 import {useMobile} from "@/hook";
+import {ESTABLISHMENT} from "@/config/names";
 
 type TProps = {
     id: string,
@@ -17,7 +18,7 @@ const SimilarEstablishment = ({id}: TProps) => {
     const [similarItems, setSimilarItems] = useState<PropertyProps[]>([] as PropertyProps[]);
 
     const {data, isLoading, isError} = useList<PropertyProps>({
-        resource: `institution/similar/${id}`
+        resource: `${ESTABLISHMENT}/similar/${id}`
     });
 
     useEffect(() => {
@@ -46,7 +47,7 @@ const SimilarEstablishment = ({id}: TProps) => {
                 }}
                 variant={'h5'}
             >
-                {translate('all_institutions.similar.title')}
+                {translate(`${ESTABLISHMENT}.similar.title`)}
             </Typography>
             <ScrollContent
                 parentWidth={innerWidth < 900 ? 'calc(100vw - 30px)' : innerWidth < 1300 ? `calc(${layoutWidth}px - 30px)` : innerWidth < 1550 ? `1070px` : `calc(1500px - 46px - 500px)`}
@@ -66,7 +67,7 @@ const SimilarEstablishment = ({id}: TProps) => {
                                 key={item?._id}
                             >
                                 <Variant1EstablishmentCard
-                                    institution={item}
+                                    establishment={item}
                                 />
                             </Box>
                         ))

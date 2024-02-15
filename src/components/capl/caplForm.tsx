@@ -5,13 +5,13 @@ import {Switch} from "antd";
 
 import {ColorModeContext} from "@/contexts";
 import {IReserve, PropertyProps} from "@/interfaces/common";
-import SearchInstitutions from "../search/searchInstitutions";
+import SearchEstablishments from "../search/searchEstablishments";
 import {useUserInfo} from "@/hook";
 import dayjs from "dayjs";
 import ChooseNewStatus from "@/components/common/choose/chooseNewStatus";
 
 
-type TProps = Omit<IReserve, "_id" | "institution" | "userStatus" | "institutionStatus" | "isClientAppeared"> & {
+type TProps = Omit<IReserve, "_id" | "establishment" | "userStatus" | "establishmentStatus" | "isClientAppeared"> & {
     setFullName: Dispatch<SetStateAction<string>>,
     setWhoPay: Dispatch<SetStateAction<string>>,
     setWriteMe: Dispatch<SetStateAction<boolean>>,
@@ -24,9 +24,9 @@ type TProps = Omit<IReserve, "_id" | "institution" | "userStatus" | "institution
     setSearchPlace: Dispatch<SetStateAction<PropertyProps>>,
     type: "edit" | "create",
     userStatus?: IReserve['userStatus'],
-    institutionStatus?: IReserve['institutionStatus'],
+    establishmentStatus?: IReserve['establishmentStatus'],
     setUserStatus?: Dispatch<SetStateAction<IReserve['userStatus']>>
-    setInstitutionStatus?: Dispatch<SetStateAction<IReserve['institutionStatus']>>,
+    setEstablishmentStatus?: Dispatch<SetStateAction<IReserve['establishmentStatus']>>,
     user: string,
     setUser: Dispatch<SetStateAction<string>>,
     manager: string,
@@ -43,8 +43,8 @@ const CaplForm = (props: TProps) => {
         type,
         setEventType,
         eventType,
-        institutionStatus,
-        setInstitutionStatus,
+        establishmentStatus,
+        setEstablishmentStatus,
         setUserStatus,
         userStatus,
         setNumberPeople,
@@ -83,7 +83,7 @@ const CaplForm = (props: TProps) => {
 
     const isAllowedEditData = currentDate >= reservedDate;
 
-    const editByEStatus = currentDataCapl?.institutionStatus?.value !== "accepted";
+    const editByEStatus = currentDataCapl?.establishmentStatus?.value !== "accepted";
     const isEditByUser = ((currentUser?._id === currentDataCapl?.user || (currentUser?._id === currentDataCapl?.user && currentUser?._id === currentDataCapl?.manager)) && ((isAllowedEditData && editByEStatus) || currentDataCapl?.isAllowedEdit)) || role === 'admin';
     const isAllowedUser = type === 'edit' ? !isEditByUser : false;
     const isEditByManager = (role === 'manager' && editByEStatus) || role === 'admin';
@@ -105,7 +105,7 @@ const CaplForm = (props: TProps) => {
             }
         }}>
             {
-                role !== 'admin' && institutionStatus?.value === 'accepted' && !isAllowedEdit && (
+                role !== 'admin' && establishmentStatus?.value === 'accepted' && !isAllowedEdit && (
                     <Typography sx={{
                         gridColumn,
                         fontSize: {xs: '14px', sm: '16px'},
@@ -136,10 +136,10 @@ const CaplForm = (props: TProps) => {
                     gridColumn: gridColumn
                 }}
             >
-                <SearchInstitutions
+                <SearchEstablishments
                     isOnlyShowInfo={type === 'edit'}
-                    searchInstitution={searchPlace as PropertyProps}
-                    setSearchInstitution={setSearchPlace}
+                    searchEstablishment={searchPlace as PropertyProps}
+                    setSearchEstablishment={setSearchPlace}
                     typeSearch={'all'}/>
             </FormControl>
             <FormControl fullWidth>
@@ -171,9 +171,6 @@ const CaplForm = (props: TProps) => {
                     inputProps={{
                         min: dayjs(new Date())?.format('YYYY-MM-DDTHH:mm'),
                     }}
-                    // InputLabelProps={{
-                    //     shrink: true,
-                    // }}
                     InputProps={{
                         sx: {
                             "&:invalid": {
@@ -371,14 +368,14 @@ const CaplForm = (props: TProps) => {
                     <>
                         {/*<FormControl fullWidth>*/}
                         {/*    <InputLabel*/}
-                        {/*        id={'institutionStatusLabel'}>{translate('capl.status.institutionStatus')}</InputLabel>*/}
+                        {/*        id={'establishmentStatusLabel'}>{translate('capl.status.establishmentStatus')}</InputLabel>*/}
                         {/*    <Select*/}
                         {/*        size={"small"}*/}
                         {/*        disabled={isAllowedManager}*/}
-                        {/*        value={institutionStatus?.value || "draft"}*/}
-                        {/*        labelId={'institutionStatusLabel'}*/}
-                        {/*        label={translate('capl.status.institutionStatus')}*/}
-                        {/*        onChange={(event) => setInstitutionStatus && setInstitutionStatus((prevState) => ({*/}
+                        {/*        value={establishmentStatus?.value || "draft"}*/}
+                        {/*        labelId={'establishmentStatusLabel'}*/}
+                        {/*        label={translate('capl.status.establishmentStatus')}*/}
+                        {/*        onChange={(event) => setestablishmentStatus && setestablishmentStatus((prevState) => ({*/}
                         {/*            ...prevState,*/}
                         {/*            value: event.target.value as TStatus*/}
                         {/*        }))}*/}
@@ -410,16 +407,16 @@ const CaplForm = (props: TProps) => {
                         {/*    </Select>*/}
                         {/*</FormControl>*/}
                         <ChooseNewStatus
-                            value={institutionStatus?.value as TStatus}
+                            value={establishmentStatus?.value as TStatus}
                             disabled={type === 'edit' ? isAllowedManager : false}
-                            label={translate('capl.status.institutionStatus')}
-                            onChange={(event) => setInstitutionStatus && setInstitutionStatus((prevState) => ({
+                            label={translate('capl.status.establishmentStatus')}
+                            onChange={(event) => setEstablishmentStatus && setEstablishmentStatus((prevState) => ({
                                 ...prevState,
                                 value: event.target.value as TStatus
                             }))}
                         />
                         {
-                            institutionStatus?.value === 'accepted' && (
+                            establishmentStatus?.value === 'accepted' && (
                                 <FormControl
                                     sx={{
                                         gridColumn,

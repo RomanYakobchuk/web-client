@@ -1,4 +1,4 @@
-import {Box} from "@mui/material";
+import {Box, Paper} from "@mui/material";
 import {useTranslate} from "@refinedev/core";
 import {useContext} from "react";
 import {ColorModeContext} from "../../contexts";
@@ -46,11 +46,14 @@ const TypePart = () => {
                         alignItems: 'center',
                         width: {xs: '100%', lg: '80%'}
                     }}>
-                        <Box sx={{
-                            width: {xs: '100%', sm: '200px', md: '100%'},
-                            minWidth: {xs: '100%', sm: '200px', md: '260px'},
-                            height: {xs: '180px', sm: '140px', md: '180px', lg: '220px'},
-                        }}>
+                        <Paper
+                            elevation={3}
+                            sx={{
+                                width: {xs: '100%', sm: '200px', md: '100%'},
+                                minWidth: {xs: '100%', sm: '200px', md: '260px'},
+                                height: {xs: '180px', sm: '140px', md: '180px', lg: '220px'},
+                                borderRadius: '7px',
+                            }}>
                             <img
                                 style={{
                                     borderRadius: '7px',
@@ -59,9 +62,10 @@ const TypePart = () => {
                                     objectFit: 'cover'
                                 }}
                                 alt={'type_image'}
+                                loading={"lazy"}
                                 src={`images/restaurant.jpg`}
                             />
-                        </Box>
+                        </Paper>
                         <Box sx={{
                             display: {xs: 'none', sm: 'flex', md: 'none'},
                             textAlign: 'start',

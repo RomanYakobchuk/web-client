@@ -1,4 +1,5 @@
 import {newModel, MemoryAdapter} from "casbin.js";
+import {ESTABLISHMENT, HOME, USER, ADMIN, MANAGER, CAPL, CHATS} from "@/config/names";
 
 export const model = newModel(`
 [request_definition]
@@ -18,16 +19,16 @@ m = g(r.sub, p.sub) && keyMatch(r.obj, p.obj) && regexMatch(r.act, p.act)
 `);
 
 export const adapter = new MemoryAdapter(`
-p, admin, home, (list)|(create)
-p, admin, home, (show)|(edit)|(delete)
+p, admin, ${HOME}, (list)|(create)
+p, admin, ${HOME}, (show)|(edit)|(delete)
 
-p, admin, all_institutions, (list)|(create)
-p, admin, (all_institutions/adminList), (list)|(create)
-p, admin, (all_institutions/adminList), (show)|(edit)|(delete)
+p, admin, ${ESTABLISHMENT}, (list)|(create)
+p, admin, (${ESTABLISHMENT}/adminList), (list)|(create)
+p, admin, (${ESTABLISHMENT}/adminList), (show)|(edit)|(delete)
 
-p, admin, all_institutions, (show)|(edit)|(delete)
-p, admin, all_institutions, update_status
-p, admin, all_institutions, add_free_places
+p, admin, ${ESTABLISHMENT}, (show)|(edit)|(delete)
+p, admin, ${ESTABLISHMENT}, update_status
+p, admin, ${ESTABLISHMENT}, add_free_places
 
 p, admin, chats, (list)|(create)
 p, admin, chats, (show)|(edit)|(delete)
@@ -41,19 +42,19 @@ p, admin, news, (show)|(edit)|(delete)
 p, user, home, (show)
 p, user, news, (show)
 
-p, admin, institutions, adminListInstitutions
-p, admin, institutions, userListInstitutions
+p, admin, establishments, adminListestablishments
+p, admin, establishments, userListestablishments
 p, admin, news, adminListNews
 
 p, admin, capl, (create)
 // p, admin, capl, userListReserve
 p, admin, capl, (show)|(edit)|(delete)
 p, admin, capl, updateUserStatus
-p, admin, capl, updateInstitutionStatus
+p, admin, capl, updateestablishmentStatus
 
 p, admin, dashboard, list
 
-p, admin, institution/deleteOne, delete
+p, admin, establishment/deleteOne, delete
 
 p, admin, my-review, list
 
@@ -75,8 +76,8 @@ p, admin, all-news, (edit)|(show)|(delete)
 
 p, admin, chooseUser, choose
 
-p, admin, top_institutions, (list)|(create)
-p, admin, top_institutions, show
+p, admin, top_establishments, (list)|(create)
+p, admin, top_establishments, show
 
 p, admin, profile, (list)|(create)
 p, admin, profile, (edit)|(show)|(delete) 
@@ -101,21 +102,21 @@ p, user, menu, show
 p, manager, home, (list)|(create)
 p, manager, news, (list)|(create)
 p, manager, news, (edit)|(delete)|(show)
-p, manager, all_institutions, (list)|(create)
-p, manager, all_institutions, add_free_places
-p, manager, all_institutions, (show)|(edit)|(delete)
+p, manager, ${ESTABLISHMENT}, (list)|(create)
+p, manager, ${ESTABLISHMENT}, add_free_places
+p, manager, ${ESTABLISHMENT}, (show)|(edit)|(delete)
 
-p, manager, top_institutions, (list)|(create)
-p, manager, top_institutions, show
+p, manager, top_establishments, (list)|(create)
+p, manager, top_establishments, show
 
 p, manager, profile, list
 p, manager, profile, edit
 
-p, manager, institutions, userListInstitutions
+p, manager, establishments, userListestablishments
 p, manager, news, userListNews
 
 p, manager, capl, managerListReserve
-p, manager, capl, updateInstitutionStatus
+p, manager, capl, updateestablishmentStatus
 p, manager, capl, (list)|(create)
 p, manager, capl, (show)|(edit)
 
@@ -126,11 +127,11 @@ p, manager, favorite-places, delete
 
 p, user, home, (list)
 p, user, news, (list)
-p, user, all_institutions, (list)
-p, user, all_institutions, (show)
+p, user, ${ESTABLISHMENT}, (list)
+p, user, ${ESTABLISHMENT}, (show)
 
-p, user, top_institutions, (list)
-p, user, top_institutions, show
+p, user, top_establishments, (list)
+p, user, top_establishments, show
 
 p, user, profile, list
 p, user, profile, edit
@@ -142,7 +143,7 @@ p, user, capl, (show)|(edit)
 p, user, capl, userListReserve
 p, user, capl, updateUserStatus
 
-p, user, institutions, userListInstitutions
+p, user, establishments, userListestablishments
 p, user, news, userListNews
 
 p, user, my-reviews, list

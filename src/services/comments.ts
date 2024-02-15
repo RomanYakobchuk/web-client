@@ -1,17 +1,17 @@
 import {Dispatch, SetStateAction} from "react";
 import {INotificationContext} from "@refinedev/core";
 
-import {axiosInstance} from "../authProvider";
-import {IComment} from "../interfaces/common";
-import {IForDelete} from "../components/common/lists/comments-list";
-import {TSelectOption} from "../contexts/CommentCreatorDataContext";
+import {axiosInstance} from "@/authProvider";
+import {IComment} from "@/interfaces/common";
+import {IForDelete} from "@/components/common/lists/comments-list";
+import {TSelectOption} from "@/contexts/CommentCreatorDataContext";
 
 export type THandleSendData = {
     textComment: string,
     setTextComment: Dispatch<SetStateAction<string>>,
     setNewComment?: Dispatch<SetStateAction<{comment: IComment, parentReviewsLength: number}>>,
     open: INotificationContext['open'],
-    institutionId: string,
+    establishmentId: string,
     managerRole: string,
     selectedInfo: TSelectOption,
     isAnswer?: boolean,
@@ -24,12 +24,12 @@ export type THandleDeleteData = IForDelete & {
     setComments?: Dispatch<SetStateAction<IComment[]>>,
     open: INotificationContext['open'],
 }
-const handleSend = async ({institutionId, managerRole, setNewComment, textComment, setTextComment, open, isAnswer = false, selectedInfo, parent = {} as IComment, setParent, setIsAnswer}: THandleSendData) => {
+const handleSend = async ({establishmentId, managerRole, setNewComment, textComment, setTextComment, open, isAnswer = false, selectedInfo, parent = {} as IComment, setParent, setIsAnswer}: THandleSendData) => {
     if (textComment && textComment.length > 0) {
         try {
             console.log(parent)
             const data = await axiosInstance.post(`/comment/all_comments`, {
-                institutionId,
+                establishmentId,
                 text: textComment?.trim(),
                 refFieldCreate: managerRole,
                 createdBy: selectedInfo?._id,

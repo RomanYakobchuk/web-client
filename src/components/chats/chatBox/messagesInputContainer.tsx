@@ -10,7 +10,6 @@ import React, {
     useState
 } from "react";
 import dayjs from "dayjs";
-import CryptoJS from "crypto-js";
 import {Box, Button, CircularProgress, IconButton, InputAdornment, TextField} from "@mui/material";
 import {
     Clear,
@@ -19,7 +18,7 @@ import {
     AttachFileRounded
 } from "@mui/icons-material";
 import {FileWordOutlined, FilePdfOutlined, FileJpgOutlined, FileImageOutlined} from "@ant-design/icons";
-
+import CryptoJS from "crypto-js";
 
 import {IConversation, IConvMembers, IMessage, IUser, ProfileProps} from "@/interfaces/common";
 import {socket} from "@/socketClient";
@@ -28,7 +27,7 @@ import {Loading, ModalShowContent} from "@/components";
 import MessagesBox from "@/components/chats/chatBox/messages-box";
 import {handleKeyDownBlockEnter} from "@/keys";
 import {ColorModeContext} from "@/contexts";
-import {ACCESS_TOKEN_KEY, secretKeyCryptMessage} from "@/config/const";
+import {secretKeyCryptMessage} from "@/config/const";
 import {axiosInstance} from "@/authProvider";
 import {EmojiPicker} from "@/components/picker/emojiPicker";
 import {useMessages} from "@/indexedDB";
@@ -51,10 +50,9 @@ const iconByType = {
     png: <FileImageOutlined/>,
 }
 const SOCKET_API = import.meta.env.VITE_APP_SOCKET_API;
-const access_token = localStorage.getItem(ACCESS_TOKEN_KEY);
 export const MessagesInputContainer = ({conversation}: TProps) => {
 
-    const {user} = useUserInfo();
+    const {user, access_token} = useUserInfo();
     const translate = useTranslate();
     const {mode} = useContext(ColorModeContext);
     const inputFileRef = useRef<HTMLInputElement | null>(null);
@@ -96,12 +94,14 @@ export const MessagesInputContainer = ({conversation}: TProps) => {
         const memberUser = member?.user as ProfileProps;
         return memberUser?._id
     });
-    const sendMessage = async (text: string) => {
+    const sendMessage = async () => {
         try {
-            if (!text && !file) return;
+            if (!messageText && !file) {
+                return;
+            }
             setIsSending(true)
             const currentDate = dayjs.utc().format('');
-            const encryptedMessage = CryptoJS.AES.encrypt(JSON.stringify(text), secretKeyCryptMessage).toString();
+            const encryptedMessage = CryptoJS.AES.encrypt(JSON.stringify(messageText), secretKeyCryptMessage).toString();
 
             if (file && access_token) {
                 const formData = new FormData();
@@ -121,7 +121,7 @@ export const MessagesInputContainer = ({conversation}: TProps) => {
                     createdAt: currentDate,
                     replyTo: replyTo?._id && replyTo?._id
                 };
-                socket?.emit('sendMessage', messageData)
+                socket?.emit('sendMessage', messageData);
             }
 
             setIsSending(false)
@@ -133,6 +133,7 @@ export const MessagesInputContainer = ({conversation}: TProps) => {
                 socket.off('sendMessage');
             };
         } catch (error) {
+            console.log(error)
             setIsSending(false)
             setError('Error')
         } finally {
@@ -190,7 +191,7 @@ export const MessagesInputContainer = ({conversation}: TProps) => {
         }
         updateMessages();
     }, [data?.pages]);
-    useEffect(() => {
+    const getMessages = () => {
         if (messagesDB && messagesDB?.length > 0) {
             const list = (): Array<[string, IMessage[]]> => {
                 return Object.entries(messagesDB?.reduce((acc: any, obj: IMessage) => {
@@ -229,7 +230,10 @@ export const MessagesInputContainer = ({conversation}: TProps) => {
                 setMessages(mergedArray);
             }
         }
-    }, [messagesDB]);
+    }
+    useEffect(() => {
+        getMessages();
+    }, [messagesDB?.length]);
     useEffect(() => {
         if (arivialMessages?._id) {
             setMessages(prevState => {
@@ -246,9 +250,10 @@ export const MessagesInputContainer = ({conversation}: TProps) => {
                 } else {
                     messagesCopy.push([dayjs(new Date()).format('DD-M-YYYY'), [arivialMessages]]);
                 }
-                (async () => {
-                    await addMessage(arivialMessages);
-                })();
+                // (async () => {
+                //     await
+                // })();
+                addMessage(arivialMessages);
                 return messagesCopy;
             });
             setTotal(total + 1);
@@ -327,7 +332,7 @@ export const MessagesInputContainer = ({conversation}: TProps) => {
                                 setReplyTo={setReplyTo}
                                 total={total}
                                 conversation={conversation}
-                                localCount={messagesDB ? messagesDB?.length: 0}
+                                localCount={messagesDB ? messagesDB?.length : 0}
                             /> : <div>Error</div>
                 }
             </Box>
@@ -523,7 +528,7 @@ export const MessagesInputContainer = ({conversation}: TProps) => {
                                 borderRadius: '7px',
                             }}
                             disabled={messageText?.length <= 0}
-                            onClick={() => sendMessage(messageText)}
+                            onClick={sendMessage}
                         >
                             {
                                 isSending

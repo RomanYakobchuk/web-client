@@ -1,4 +1,4 @@
-import {Box, Skeleton} from "@mui/material";
+import {Box, Paper, Skeleton} from "@mui/material";
 import {useList, useTranslate} from "@refinedev/core";
 import {Link} from "react-router-dom";
 import {Typography as TypographyAntd} from "antd";
@@ -8,6 +8,7 @@ import {useTranslation} from "react-i18next";
 
 import {ColorModeContext} from "@/contexts";
 import {useMobile} from "@/hook";
+import {ESTABLISHMENT} from "@/config/names";
 
 const {Text} = TypographyAntd;
 const CountType = () => {
@@ -18,7 +19,7 @@ const CountType = () => {
     const {width} = useMobile();
 
     const {data: dataTypes, isLoading: isLoadingTypes} = useList<any>({
-        resource: "institution/countByType",
+        resource: `${ESTABLISHMENT}/countByType`,
     });
     const items = [
         {
@@ -62,7 +63,7 @@ const CountType = () => {
                 justifyContent: 'center',
                 "& a": {
                     textDecoration: 'none',
-                    bgcolor: mode === 'dark' ? '#000' : '#fff',
+                    bgcolor: 'common.black',
                     "&:hover": {
                         bgcolor: 'info.main',
                         "& div.countType_open_btn": {
@@ -94,68 +95,76 @@ const CountType = () => {
                         />
                     ))
                     : mergeData?.sort((a, b) => a?.count > b?.count ? -1 : 1)?.map((item, index) => (
-                        <Link
-                            to={`/all_institutions?pageSize=10&current=1&sorters[0][field]=createdAt_asc&sorters[0][order]=desc&filters[0][field]=propertyType&filters[0][operator]=eq&filters[0][value]=${item?.title}`}
+                        <Paper
+                            elevation={3}
                             key={index}
-                            style={{
+                            sx={{
                                 cursor: 'pointer',
                                 width: '100%',
                                 flex: '1 0 200px',
                                 maxWidth: '300px',
                                 borderRadius: '10px',
-                                padding: '10px',
-                                paddingRight: '20px',
-                                // backgroundImage: `url(images/${type}.jpg)`,
-                                // backgroundSize: 'cover',
-                                // backgroundPosition: 'center',
-                                display: 'flex',
-                                flexDirection: 'row',
-                                justifyContent: 'center',
-                                gap: '32px',
-                                alignItems: 'center',
-                                transition: '300ms linear',
-                            }}>
-                            <Box
-                                className={'countType_open_btn'}
-                                sx={{
-                                    color: 'common.white',
-                                    p: '10px',
-                                    bgcolor: 'info.main',
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
+                            }}
+                        >
+                            <Link
+                                to={`/${ESTABLISHMENT}?pageSize=10&current=1&sorters[0][field]=createdAt_asc&sorters[0][order]=desc&filters[0][field]=propertyType&filters[0][operator]=eq&filters[0][value]=${item?.title}`}
+                                style={{
                                     borderRadius: '10px',
-                                    "& svg": {
-                                        width: '30px',
-                                        height: '30px',
-                                    },
+                                    width: '100%',
+                                    padding: '10px',
+                                    paddingRight: '20px',
+                                    // backgroundImage: `url(images/${type}.jpg)`,
+                                    // backgroundSize: 'cover',
+                                    // backgroundPosition: 'center',
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    justifyContent: 'center',
+                                    gap: '32px',
+                                    alignItems: 'center',
+                                    transition: '300ms linear',
                                 }}>
-                                {item?.icon}
-                            </Box>
-                            <Box sx={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                // gap: 1,
-                                justifyContent: 'center',
-                                alignItems: 'start',
-                                "& span": {
-                                    color: 'common.white'
-                                }
-                            }}>
-                                <Text style={{
-                                    fontSize: width < 600 ? '14px' : '18px',
-                                    fontWeight: 900
+                                <Box
+                                    className={'countType_open_btn'}
+                                    sx={{
+                                        color: 'common.white',
+                                        p: '10px',
+                                        bgcolor: 'info.main',
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        borderRadius: '10px',
+                                        "& svg": {
+                                            width: '30px',
+                                            height: '30px',
+                                        },
+                                    }}>
+                                    {item?.icon}
+                                </Box>
+                                <Box sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    // gap: 1,
+                                    justifyContent: 'center',
+                                    alignItems: 'start',
+                                    "& span": {
+                                        color: 'common.white'
+                                    }
                                 }}>
-                                    {translate(`home.sortByType.${item?.title}`)}
-                                </Text>
-                                <Text style={{
-                                    fontSize: width < 600 ? '12px' : '16px',
-                                    fontWeight: 600
-                                }}>
-                                    {translate("cities.institutions", {"number": item?.count})}
-                                </Text>
-                            </Box>
-                        </Link>
+                                    <Text style={{
+                                        fontSize: width < 600 ? '14px' : '18px',
+                                        fontWeight: 900
+                                    }}>
+                                        {translate(`home.sortByType.${item?.title}`)}
+                                    </Text>
+                                    <Text style={{
+                                        fontSize: width < 600 ? '12px' : '16px',
+                                        fontWeight: 600
+                                    }}>
+                                        {translate("cities.establishments", {"number": item?.count})}
+                                    </Text>
+                                </Box>
+                            </Link>
+                        </Paper>
                     ))
             }
         </Box>

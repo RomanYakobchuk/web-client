@@ -2,6 +2,7 @@ import {Link, useParams} from "react-router-dom";
 import {CustomCreate} from "../../components";
 import {useForm, useTranslate} from "@refinedev/core";
 import {Box} from "@mui/material";
+import {ESTABLISHMENT, SHOW} from "@/config/names";
 
 const AddFreeSeats = () => {
     const {id} = useParams();
@@ -29,17 +30,17 @@ const AddFreeSeats = () => {
                         style={{
                             color: 'silver'
                         }}
-                        to={'/all_institutions'}>{translate('all_institutions.all_institutions')}</Link>
+                        to={`/${ESTABLISHMENT}`}>{translate(`${ESTABLISHMENT}.${ESTABLISHMENT}`)}</Link>
                 },
                 {
                     title: <Link
                         style={{
                             color: 'silver'
                         }}
-                        to={`/all_institutions/show/${id}`}>{translate('home.one')}</Link>
+                        to={`/${ESTABLISHMENT}/${SHOW}/${id}`}>{translate('home.one')}</Link>
                 },
                 {
-                    title: translate('all_institutions.freeSeats.create')
+                    title: translate(`${ESTABLISHMENT}.freeSeats.create`)
                 }
             ]}
         >

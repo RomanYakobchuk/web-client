@@ -20,6 +20,7 @@ export interface ITable<T> {
 
 const useTableDb = <T extends {_id: string}>(config: ITableConfig<T>): ITable<T> => {
 
+    db.open();
     // const db = new Dexie('capl-db');
     //
     // const storeConfig: Record<string, string> = {

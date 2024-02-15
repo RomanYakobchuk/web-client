@@ -9,6 +9,7 @@ import {INews, PropertyProps} from "@/interfaces/common";
 import {BookMarkButton} from "@/components";
 import SharedComponent from "@/components/common/shared/sharedComponent";
 import {ColorModeContext} from "@/contexts";
+import {ESTABLISHMENT, SHOW} from "@/config/names";
 
 type TProps = {
     news: INews
@@ -17,7 +18,7 @@ const CLIENT_URL = import.meta.env.VITE_APP_CLIENT_API;
 const NewsMainInfo = ({news}: TProps) => {
     const {mode} = useContext(ColorModeContext);
     const translate = useTranslate();
-    const {_id, title, category, place, institutionId, dateEvent} = news;
+    const {_id, title, category, place, establishmentId, dateEvent} = news;
 
     const [anchorElPopover, setAnchorElPopover] = useState<HTMLButtonElement | null>(null);
 
@@ -30,7 +31,7 @@ const NewsMainInfo = ({news}: TProps) => {
 
     const bgColorCategory = category === 'general' ? '#ff5f56' : category === 'events' ? '#f9ab46' : category === 'promotions' ? '#3ebafa' : 'common.white';
 
-    const establishment = institutionId as PropertyProps;
+    const establishment = establishmentId as PropertyProps;
 
     const openPopover = Boolean(anchorElPopover);
     const popoverId = openPopover ? 'establishment_popover' : undefined;
@@ -49,7 +50,7 @@ const NewsMainInfo = ({news}: TProps) => {
             }}>
                 <BookMarkButton
                     id={_id}
-                    type={'institutionNews'}
+                    type={'establishmentNews'}
                     showText={true}
                     style={{
                         boxShadow: 'unset',
@@ -69,7 +70,7 @@ const NewsMainInfo = ({news}: TProps) => {
                 <SharedComponent
                     url={`${CLIENT_URL}/news/show/${_id}`}
                     title={title}
-                    type={'institutionNews'}
+                    type={'establishmentNews'}
                     isOnlyShared={true}
                     color={'common.white'}
                     name={title}
@@ -346,7 +347,7 @@ const NewsMainInfo = ({news}: TProps) => {
                                                 padding: '10px',
                                                 borderRadius: '10px'
                                             }}
-                                            to={`/all_institutions/show/${establishment?._id}`}
+                                            to={`/${ESTABLISHMENT}/${SHOW}/${establishment?._id}`}
                                         >
                                             {translate('home.one')}
                                             <East/>

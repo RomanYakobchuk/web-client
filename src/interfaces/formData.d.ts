@@ -14,11 +14,11 @@ export interface IFormDataSeats {
 export interface INewsDataProps {
     handleSubmit: UseFormHandleSubmit<FieldValues, undefined>,
     onFinishHandler: (data: FieldValues) => Promise<void> | void,
-    institutionInfo: PropertyProps,
+    establishmentInfo: PropertyProps,
     defaultPictures: IPicture[],
     pictures: IPicture[] | File[],
     setPictures: Dispatch<SetStateAction<IPicture[] | File[]>>,
-    setInstitutionInfo: Dispatch<SetStateAction<PropertyProps>>,
+    setEstablishmentInfo: Dispatch<SetStateAction<PropertyProps>>,
     title: string,
     setTitle: (value: string) => void,
     category: string,
@@ -80,4 +80,16 @@ export interface IEstablishmentFormProps {
     setTitle: (value: string) => void,
     averageCheck: string,
     setAverageCheck: (value: string) => void,
+}
+
+export type Nullable<T> = {
+    [P in keyof T]: T[P] | null;
+};
+
+export interface IEstablishmentFilterVariables {
+    city: string,
+    title: string,
+    type: string,
+    averageCheckLte: number,
+    averageCheckGte: number,
 }

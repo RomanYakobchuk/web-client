@@ -18,7 +18,7 @@ type IProps = {
 }
 type TSavedPlaces = {
     _id: string,
-    type: "institution" | "institutionNews",
+    type: "establishment" | "establishmentNews",
     item: INews | PropertyProps,
     userId: string
 }
@@ -28,16 +28,16 @@ const arrayType = [
         title: "all"
     },
     {
-        value: "institution",
+        value: "establishment",
         title: "establishment"
     },
     {
-        value: 'institutionNews',
+        value: 'establishmentNews',
         title: 'news'
     }
 ];
 
-type TType = "" | "institution" | "institutionNews";
+type TType = "" | "establishment" | "establishmentNews";
 const FavoritePlaces = ({id}: IProps) => {
 
     const {width} = useMobile();
@@ -107,15 +107,15 @@ const FavoritePlaces = ({id}: IProps) => {
                                 }}
                             >
                                 {
-                                    value?.type === 'institution'
-                                        ? <Variant2EstablishmentCard establishment={value?.item as PropertyProps}/>
-                                        : <NewsItem1 itemNews={value?.item as INews}/>
+                                    value?.type === 'establishment'
+                                        ? value?.item ? <Variant2EstablishmentCard establishment={value?.item as PropertyProps}/> : ''
+                                        : value?.item ? <NewsItem1 itemNews={value?.item as INews}/> : ''
                                 }
                             </Box>
                         ))
                     }
                 </Box>
-            case "institution":
+            case "establishment":
                 return <Box
                     sx={{
                         ...renderStyle
@@ -123,7 +123,7 @@ const FavoritePlaces = ({id}: IProps) => {
                     key={'2'}>
                     <PropertiesList items={savedPlaces?.map((item) => item?.item as PropertyProps)}/>
                 </Box>
-            case "institutionNews":
+            case "establishmentNews":
                 return <Box
                     sx={{
                         ...renderStyle
@@ -157,9 +157,9 @@ const FavoritePlaces = ({id}: IProps) => {
                 {
                     type && (
                         <VariantComponent
-                            type={type === 'institution' ? "establishment" : 'news'}
-                            variant1Icon={type === 'institutionNews' ? <ViewComfySharp/> : null}
-                            variant2Icon={type === 'institutionNews' ? (width < 600 ? <ViewStreamSharp/> :
+                            type={type === 'establishment' ? "establishment" : 'news'}
+                            variant1Icon={type === 'establishmentNews' ? <ViewComfySharp/> : null}
+                            variant2Icon={type === 'establishmentNews' ? (width < 600 ? <ViewStreamSharp/> :
                                 <GridViewSharp/>) : null}
                         />
                     )

@@ -35,6 +35,7 @@ import {IReserve, IReserveFilterVariables, PropertyProps} from "@/interfaces/com
 import GridComponent from "@/components/grid/GridComponent";
 import UpdateReserveStatusTag from "@/components/capl/utills/updateReserveStatusTag";
 import {GridFilter} from "@/components/grid";
+import {ESTABLISHMENT} from "@/config/names";
 
 
 const CaplManagerPage = () => {
@@ -71,7 +72,7 @@ const CaplManagerPage = () => {
         syncWithLocation: true,
         onSearch: (params) => {
             const filters: CrudFilters = [];
-            const {search, institutionStatus, userStatus, institution, day} = params;
+            const {search, establishmentStatus, userStatus, establishment, day} = params;
             filters.push(
                 {
                     field: "search",
@@ -84,14 +85,14 @@ const CaplManagerPage = () => {
                     value: userStatus?.value !== "" ? userStatus : undefined
                 },
                 {
-                    field: "institutionStatus",
+                    field: "establishmentStatus",
                     operator: 'eq',
-                    value: institutionStatus?.value !== "" ? institutionStatus : undefined
+                    value: establishmentStatus?.value !== "" ? establishmentStatus : undefined
                 },
                 {
-                    field: "institution",
+                    field: "establishment",
                     operator: "eq",
-                    value: institution !== "" ? institution : undefined
+                    value: establishment !== "" ? establishment : undefined
                 },
                 {
                     field: 'day',
@@ -103,11 +104,11 @@ const CaplManagerPage = () => {
         }
     });
 
-    const institutionIds = dataGridProps.rows.map((item) => item._id);
-    const {tableQueryResult: {data: institutionsData, isLoading}} = useTable<PropertyProps>({
-        resource: 'institution/userInstitutions',
+    const establishmentIds = dataGridProps.rows.map((item) => item._id);
+    const {tableQueryResult: {data: establishmentsData, isLoading}} = useTable<PropertyProps>({
+        resource: `${ESTABLISHMENT}/userestablishments`,
         queryOptions: {
-            enabled: institutionIds.length > 0
+            enabled: establishmentIds.length > 0
         }
     });
 
@@ -172,7 +173,7 @@ const CaplManagerPage = () => {
                         sx={{
                             m: 'auto'
                         }}
-                        onClick={() => navigate(`/chats?firstId=${row?.user}&secondId=${row?.institution?._id}`)}
+                        onClick={() => navigate(`/chats?firstId=${row?.user}&secondId=${row?.establishment?._id}`)}
                     >
                         <RateReview/>
                     </IconButton>
@@ -238,15 +239,15 @@ const CaplManagerPage = () => {
                 flex: 0.3
             },
             {
-                field: "institutionStatus.value",
-                headerName: translate("capl.status.institutionStatus"),
+                field: "establishmentStatus.value",
+                headerName: translate("capl.status.establishmentStatus"),
                 renderCell: function render({row}) {
                     return <UpdateReserveStatusTag
-                        defaultValue={row?.institutionStatus?.value}
+                        defaultValue={row?.establishmentStatus?.value}
                         id={row?._id}
                         reserve={row}
                         fieldName={this.headerName}
-                        field={'institutionStatus'}
+                        field={'establishmentStatus'}
                     />
                 },
                 width: 150,
@@ -254,7 +255,7 @@ const CaplManagerPage = () => {
                 maxWidth: 170,
                 flex: 0.3
             },
-        ], [institutionsData, isLoading]
+        ], [establishmentsData, isLoading]
     );
 
 
@@ -265,14 +266,14 @@ const CaplManagerPage = () => {
         defaultValues: {
             search: getDefaultFilter("fullName", filters, "eq"),
             userStatus: getDefaultFilter("userStatus.value", filters, "eq"),
-            institutionStatus: getDefaultFilter("institutionStatus.value", filters, "eq"),
-            institution: getDefaultFilter("institution._id", filters, "eq")
+            establishmentStatus: getDefaultFilter("establishmentStatus.value", filters, "eq"),
+            establishment: getDefaultFilter("establishment._id", filters, "eq")
         }
     });
 
     const {autocompleteProps} = useAutocomplete({
-        resource: "institution/userInstitutions",
-        defaultValue: getDefaultFilter("institution._id", filters, "eq")
+        resource: `${ESTABLISHMENT}/userestablishments`,
+        defaultValue: getDefaultFilter("establishment._id", filters, "eq")
     })
 
     return (
@@ -334,7 +335,7 @@ const CaplManagerPage = () => {
                 />
                 <Controller
                     control={control}
-                    name={"institutionStatus"}
+                    name={"establishmentStatus"}
                     render={({field}) => (
                         <Autocomplete
                             options={options as any}
@@ -360,8 +361,8 @@ const CaplManagerPage = () => {
                                 <TextField
                                     {...params}
                                     color={'secondary'}
-                                    label={translate("capl.status.institutionStatus")}
-                                    placeholder={translate("capl.status.institutionStatus")}
+                                    label={translate("capl.status.establishmentStatus")}
+                                    placeholder={translate("capl.status.establishmentStatus")}
                                     variant="outlined"
                                     size="small"
                                 />
@@ -371,7 +372,7 @@ const CaplManagerPage = () => {
                 />
                 <Controller
                     control={control}
-                    name="institution"
+                    name="establishment"
                     render={({field}) => (
                         <Autocomplete
                             {...autocompleteProps}
@@ -400,7 +401,7 @@ const CaplManagerPage = () => {
                                     {...params}
                                     color={'secondary'}
                                     label={translate("home.one")}
-                                    placeholder="Search institution"
+                                    placeholder="Search establishment"
                                     variant="outlined"
                                     size="small"
                                 />

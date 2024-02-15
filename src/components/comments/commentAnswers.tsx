@@ -174,7 +174,7 @@ const AnswersComponent = ({comment, newComment, setComment, currentComment, newA
         fetchNextPage,
         isFetchingNextPage,
     } = useInfiniteList<IComment>({
-        resource: `comment/allByInstitutionId/${id as string}`,
+        resource: `comment/allByestablishmentId/${id as string}`,
         pagination: {
             pageSize: 10
         },

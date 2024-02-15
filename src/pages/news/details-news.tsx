@@ -45,7 +45,7 @@ const DetailsNews = () => {
     // });
 
     const news: INews = data?.data ?? {} as INews;
-    const establishmentInfo = news?.institutionId as PropertyProps;
+    const establishmentInfo = news?.establishmentId as PropertyProps;
 
     const info = encodeURIComponent(JSON.stringify(establishmentInfo));
     if (isError) return <ErrorComponent/>
@@ -130,7 +130,7 @@ const DetailsNews = () => {
                                     establishmentInfo?._id &&
                                     <OtherNews
                                         newsId={news?._id}
-                                        institutionId={establishmentInfo?._id}
+                                        establishmentId={establishmentInfo?._id}
                                     />
                                 }
                             </Box>

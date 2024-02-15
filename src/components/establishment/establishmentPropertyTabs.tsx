@@ -13,6 +13,7 @@ import {useMobile} from "@/hook";
 import EstablishmentComments from "./utills/establishment-comments";
 import {PropertyProps} from "@/interfaces/common";
 import {CircularProgress} from "@mui/material";
+import {ESTABLISHMENT} from "@/config/names";
 
 type tabType = 'reviews' | 'news' | 'comments';
 
@@ -31,9 +32,9 @@ type TNumberOfProperties = {
 }
 
 type TProps = {
-    institution: PropertyProps
+    establishment: PropertyProps
 }
-const EstablishmentPropertyTabs = ({institution}: TProps) => {
+const EstablishmentPropertyTabs = ({establishment}: TProps) => {
     const {width} = useMobile();
     const {id} = useParams();
     const {hash} = useLocation();
@@ -47,7 +48,7 @@ const EstablishmentPropertyTabs = ({institution}: TProps) => {
     });
 
     const {isError, isLoading, data} = useOne<TNumberOfProperties>({
-        resource: 'institution/getNumberOfEstablishmentProperties',
+        resource: `${ESTABLISHMENT}/getNumberOfEstablishmentProperties`,
         id: id as string
     })
     const handleChange = (_: React.SyntheticEvent, newValue: string) => {
@@ -173,7 +174,7 @@ const EstablishmentPropertyTabs = ({institution}: TProps) => {
                 }}>
                     <TabPanel value={'1'}>
                         {
-                            value === '1' && id && institution?._id && (
+                            value === '1' && id && establishment?._id && (
                                 <EstablishmentReviews id={id}/>
                             )
                         }
@@ -186,15 +187,15 @@ const EstablishmentPropertyTabs = ({institution}: TProps) => {
                         }}
                     >
                         {
-                            value === '2' && id && institution?._id && (
+                            value === '2' && id && establishment?._id && (
                                 <EstablishmentNews id={id}/>
                             )
                         }
                     </TabPanel>
                     <TabPanel value={'3'}>
                         {
-                            value === '3' && id && institution?._id && (
-                                <EstablishmentComments institution={institution}/>
+                            value === '3' && id && establishment?._id && (
+                                <EstablishmentComments establishment={establishment}/>
                             )
                         }
                     </TabPanel>

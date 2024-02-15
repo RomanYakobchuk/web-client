@@ -1,5 +1,5 @@
 import {SxProps} from "@mui/material";
-import React, {Dispatch, ReactNode, SetStateAction, useEffect, useState} from "react";
+import React, {CSSProperties, Dispatch, ReactNode, SetStateAction, useEffect, useState} from "react";
 import 'react-spring-bottom-sheet/dist/style.css'
 
 import {useMobile} from "@/hook";
@@ -22,11 +22,37 @@ type TProps = {
     bgColor?: string,
     isScaleRoot?: boolean,
     drawerHeight?: string,
-    showDefaultHeader?: boolean
+    showDefaultHeader?: boolean,
+    isOnlySwiper?: boolean,
+    normalDrawerStyle?: SxProps,
+    swiperSnapPoints?: number[],
+    swiperDefaultSnap?: number,
+    swiperStyles?: SxProps,
+    swiperClasses?: string
 }
 
 
-const CustomDrawer = ({children, anchor, toggleDrawer, title, button, open, closeWithOtherData, maxWidth = '725px', contentStyle, bgColor = '', isScaleRoot = false, drawerHeight, showDefaultHeader = true}: TProps) => {
+const CustomDrawer = ({
+                          children,
+                          anchor,
+                          swiperClasses,
+                          toggleDrawer,
+                          title,
+                          button,
+                          open,
+                          closeWithOtherData,
+                          maxWidth = '725px',
+                          contentStyle,
+                          bgColor = '',
+                          isScaleRoot = false,
+                          drawerHeight,
+                          showDefaultHeader = true,
+                          isOnlySwiper = false,
+                          normalDrawerStyle,
+                          swiperStyles,
+                          swiperDefaultSnap,
+                          swiperSnapPoints,
+                      }: TProps) => {
     const {device, width} = useMobile();
 
     const [isVisible, setIsVisible] = useState<boolean>(false);
@@ -55,13 +81,19 @@ const CustomDrawer = ({children, anchor, toggleDrawer, title, button, open, clos
     return (
         <>
             {
+                isOnlySwiper ||
                 (width <= 600 && device && anchor === 'bottom')
                     ? <SwipeDrawer
                         isVisible={isVisible}
                         toggleDrawer={toggleDrawer}
+                        snapPoints={swiperSnapPoints}
+                        defaultSnap={swiperDefaultSnap}
+                        styles={swiperStyles}
+                        classes={swiperClasses}
                         header={
                             <HeaderDrawer
-                                anchor={'bottom'}
+                                isForSwipe={true}
+                                anchor={anchor}
                                 title={title}
                                 toggleDrawer={toggleDrawer}
                                 button={button}
@@ -74,7 +106,7 @@ const CustomDrawer = ({children, anchor, toggleDrawer, title, button, open, clos
                     : <Drawer
                         header={
                             <HeaderDrawer
-                                anchor={'right'}
+                                anchor={anchor}
                                 title={title}
                                 toggleDrawer={toggleDrawer}
                                 button={button}

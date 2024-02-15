@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+#bottomCaplSheet.customStyleBottomSheetFrom > div[data-rsbs-overlay] {
+    width: 500px;
+}

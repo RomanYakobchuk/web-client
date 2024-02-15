@@ -29,20 +29,46 @@ import {
     Notifications,
     Profile, Register, Settings,
     ShowFreeSeats, ShowNotification,
-    ShowUserInfo, TopInstitutions,
+    ShowUserInfo, TopEstablishments,
     UpdateCity, UpdatePassword, VerifyNumber, Welcome
 } from "@/pages";
 import {
     CaplManagerPage,
-    InstitutionsAdminList,
-    InstitutionsUserList,
+    EstablishmentsAdminList,
+    EstablishmentsUserList,
     NewsAdminList,
     ShowChats
 } from "@/components";
 import CreateUser from "@/dashboard/properties/user/createUser";
+import {
+    EDIT,
+    SHOW,
+    CREATE,
+    NEWS,
+    PROFILE,
+    CAPL,
+    HOME,
+    CHATS,
+    DASHBOARD,
+    ESTABLISHMENT,
+    SHOW_FREE_PLACES,
+    ADD_FREE_PLACES,
+    FORGOT_PASSWORD,
+    UPDATE_PASSWORD,
+    UPDATE_CITY,
+    NOTIFICATIONS,
+    WELCOME,
+    ADMIN_LIST,
+    SETTINGS,
+    USER,
+    VERIFY_NUMBER,
+    REVIEWS,
+    LOGIN,
+    REGISTER,
+    COMMENTS
+} from "@/config/names";
 
-
-const AnimatedRoutes = () => {
+const CaplRoutes = () => {
 
     return (
         <Routes>
@@ -53,7 +79,7 @@ const AnimatedRoutes = () => {
                         key={'navigateToLogin'}
                         v3LegacyAuthProviderCompatible={true}
                         fallback={<CatchAllNavigate
-                            to="/login"/>}>
+                            to={`/${LOGIN}`}/>}>
                         <AppContextProvider>
                             <Layout Header={Header} Sider={Sider}
                                     Title={Title}>
@@ -65,29 +91,29 @@ const AnimatedRoutes = () => {
             >
                 <Route
                     index
-                    element={<NavigateToResource resource="home"/>}
+                    element={<NavigateToResource resource={`${HOME}`}/>}
                 />
-                <Route path={'/dashboard'} element={
+                <Route path={`/${DASHBOARD}`} element={
                     <CanAccess
-                        resource={'dashboard'}
+                        resource={`${DASHBOARD}`}
                         fallback={<ErrorComponent/>}
                         action={'list'}
                     >
                         <DashboardPage/>
                     </CanAccess>
                 }>
-                    <Route path={'establishment'} element={<InstitutionsAdminList/>}/>
-                    <Route path={'user/create'} element={<CreateUser/>}/>
-                    <Route path={'news'} element={<NewsAdminList/>}/>
+                    <Route path={`${ESTABLISHMENT}`} element={<EstablishmentsAdminList/>}/>
+                    <Route path={`${USER}/${CREATE}`} element={<CreateUser/>}/>
+                    <Route path={`${NEWS}`} element={<NewsAdminList/>}/>
                     <Route index element={<AllUsers/>}/>
-                    <Route path={'reviews'} element={<AllReviews/>}/>
-                    <Route path={'capl'} element={<CaplManagerPage/>}/>
+                    <Route path={`${REVIEWS}`} element={<AllReviews/>}/>
+                    <Route path={`${CAPL}`} element={<CaplManagerPage/>}/>
                 </Route>
-                <Route path="/home">
+                <Route path={`${HOME}`}>
                     <Route index element={
                         <Home/>
                     }/>
-                    <Route path={'update-city'}
+                    <Route path={`${UPDATE_CITY}`}
                            element={
                                <CanAccess
                                    action={'cityWithData'}
@@ -99,31 +125,31 @@ const AnimatedRoutes = () => {
                            }
                     />
                 </Route>
-                <Route path={'/notifications'}>
+                <Route path={`/${NOTIFICATIONS}`}>
                     <Route index element={<Notifications/>}/>
-                    <Route path={'show/:id'} element={<ShowNotification/>}/>
+                    <Route path={`${SHOW}/:id`} element={<ShowNotification/>}/>
                 </Route>
-                <Route path={'/all_institutions'}>
+                <Route path={`/${ESTABLISHMENT}`}>
                     <Route path={''} element={<AllEstablishments/>}>
-                        <Route index element={<InstitutionsUserList/>}/>
-                        <Route path={'adminList'} element={
+                        <Route index element={<EstablishmentsUserList/>}/>
+                        <Route path={`${ADMIN_LIST}`} element={
                             <CanAccess
-                                resource={'institutions'}
-                                action={'adminListInstitutions'}
+                                resource={'establishments'}
+                                action={'adminListEstablishments'}
                                 fallback={<ErrorComponent/>}
                             >
-                                <InstitutionsAdminList/>
+                                <EstablishmentsAdminList/>
                             </CanAccess>
                         }/>
-                        <Route path={'adminList/create'}
-                               element={<NavigateToResource resource={'create'}/>}/>
+                        <Route path={`${ADMIN_LIST}/${CREATE}`}
+                               element={<NavigateToResource resource={`${CREATE}`}/>}/>
                     </Route>
                     <Route
-                        path="create"
+                        path={`${CREATE}`}
                         element={
                             <CanAccess
-                                action={"create"}
-                                resource={"all_institutions"}
+                                action={`${CREATE}`}
+                                resource={`${ESTABLISHMENT}`}
                                 fallback={<ErrorComponent/>}
                             >
                                 <CreateEstablishment/>
@@ -131,20 +157,20 @@ const AnimatedRoutes = () => {
                         }
                     />
                     <Route
-                        path="show/:id">
+                        path={`${SHOW}/:id`}>
                         <Route path={''} element={<EstablishmentDetails/>}>
-                            <Route path="news" element={<div>NEWS</div>}/>
-                            <Route path="comments"
+                            <Route path={`${NEWS}`} element={<div>NEWS</div>}/>
+                            <Route path={`${COMMENTS}`}
                                    element={<div>COMMENTS</div>}/>
-                            <Route path="reviews"
+                            <Route path={`${REVIEWS}`}
                                    element={<div>REVIEWS</div>}/>
                         </Route>
-                        <Route path={'show_free_places'}
+                        <Route path={`${SHOW_FREE_PLACES}`}
                                element={<ShowFreeSeats/>}/>
-                        <Route path={'add_free_places'} element={
+                        <Route path={`${ADD_FREE_PLACES}`} element={
                             <CanAccess
-                                action={'add_free_places'}
-                                resource={'all_institutions'}
+                                action={`${ADD_FREE_PLACES}`}
+                                resource={`${ESTABLISHMENT}`}
                                 fallback={<ErrorComponent/>}
                             >
                                 <AddFreeSeats/>
@@ -152,11 +178,11 @@ const AnimatedRoutes = () => {
                         }/>
                     </Route>
                     <Route
-                        path={'edit/:id'}
+                        path={`${EDIT}/:id`}
                         element={
                             <CanAccess
-                                action={"edit"}
-                                resource={"all_institutions"}
+                                action={`${EDIT}`}
+                                resource={`${ESTABLISHMENT}`}
                                 fallback={<ErrorComponent/>}
                             >
                                 <EditEstablishment/>
@@ -167,21 +193,21 @@ const AnimatedRoutes = () => {
                     {/*    element={*/}
                     {/*        <CanAccess*/}
                     {/*            action={"update_status"}*/}
-                    {/*            resource={"all_institutions"}*/}
+                    {/*            resource={"all_establishments"}*/}
                     {/*            fallback={<ErrorComponent/>}*/}
                     {/*        >*/}
                     {/*            <EditUpdateStatus/>*/}
                     {/*        </CanAccess>*/}
                     {/*    }/>*/}
                 </Route>
-                <Route path={"/news"}>
+                <Route path={`/${NEWS}`}>
                     <Route index element={<News/>}/>
                     <Route
-                        path="create"
+                        path={`${CREATE}`}
                         element={
                             <CanAccess
-                                action={"create"}
-                                resource={"news"}
+                                action={`${CREATE}`}
+                                resource={`${NEWS}`}
                                 fallback={<ErrorComponent/>}
                             >
                                 <CreateNews/>
@@ -189,27 +215,27 @@ const AnimatedRoutes = () => {
                         }
                     />
                     <Route
-                        path="show/:id" element={<DetailsNews/>}/>
+                        path={`${SHOW}/:id`} element={<DetailsNews/>}/>
                     <Route
-                        path={'edit/:id'}
+                        path={`${EDIT}/:id`}
                         element={
                             <CanAccess
-                                action={"edit"}
-                                resource={"news"}
+                                action={`${EDIT}`}
+                                resource={`${NEWS}`}
                                 fallback={<ErrorComponent/>}
                             >
                                 <EditNews/>
                             </CanAccess>
                         }/>
                 </Route>
-                <Route path={'/profile'}>
+                <Route path={`/${PROFILE}`}>
                     <Route index element={<Profile/>}/>
                     <Route
-                        path={'edit'}>
+                        path={`${EDIT}`}>
                         <Route index element={<EditProfile/>}/>
                         <Route path={':id'} element={
                             <CanAccess
-                                action={"edit"}
+                                action={`${EDIT}`}
                                 resource={"profileUser"}
                                 fallback={<ErrorComponent/>}
                             >
@@ -217,32 +243,32 @@ const AnimatedRoutes = () => {
                             </CanAccess>
                         }/>
                     </Route>
-                    <Route path={'show/:id'} element={
+                    <Route path={`${SHOW}/:id`} element={
                         <CanAccess
-                            action={"show"}
-                            resource={"profile"}
+                            action={`${SHOW}`}
+                            resource={`${PROFILE}`}
                             fallback={<ErrorComponent/>}
                         >
                             <ShowUserInfo/>
                         </CanAccess>
                     }/>
                 </Route>
-                <Route path={'/chats'}>
+                <Route path={`/${CHATS}`}>
                     <Route index element={<Chat/>}/>
-                    <Route path={'show/:userId/:institutionId'} element={
+                    <Route path={`${SHOW}/:userId/:establishmentId`} element={
                         <ShowChats/>
                     }/>
                 </Route>
-                <Route path={'/capl'}>
+                <Route path={`/${CAPL}`}>
                     <Route index element={<Capl/>}/>
-                    <Route path={'create'} element={<CreateReservation/>}/>
-                    <Route path='show/:id' element={<DetailsReserve/>}/>
-                    <Route path='edit/:id' element={<EditReserve/>}/>
+                    <Route path={`${CREATE}`} element={<CreateReservation/>}/>
+                    <Route path={`${SHOW}/:id`} element={<DetailsReserve/>}/>
+                    <Route path={`${EDIT}/:id`} element={<EditReserve/>}/>
                 </Route>
-                <Route path={'/top-institutions'}>
-                    <Route index element={<TopInstitutions/>}/>
+                <Route path={'/top-establishments'}>
+                    <Route index element={<TopEstablishments/>}/>
                 </Route>
-                <Route path={'/settings'}>
+                <Route path={`/${SETTINGS}`}>
                     <Route index element={<Settings/>}/>
                 </Route>
                 <Route path="*" element={<ErrorComponent/>}/>
@@ -254,44 +280,44 @@ const AnimatedRoutes = () => {
                         key={'navigateToHome'}
                         v3LegacyAuthProviderCompatible={true}
                         fallback={<Outlet/>}>
-                        <NavigateToResource resource={'home'}/>
+                        <NavigateToResource resource={`${HOME}`}/>
                     </Authenticated>
                 }
             >
                 <Route index element={<Welcome/>}/>
                 <Route
-                    path="/login"
+                    path={`/${LOGIN}`}
                     element={
                         <Login/>
                     }
                 />
                 <Route
-                    path='/welcome'
+                    path={`/${WELCOME}`}
                     element={
                         <Welcome/>
                     }
                 />
                 <Route
-                    path="/register"
+                    path={`/${REGISTER}`}
                     element={
                         <Register/>
                     }
                 />
                 <Route
-                    path="/forgot-password"
+                    path={`/${FORGOT_PASSWORD}`}
                     element={
                         <ForgotPassword/>
                     }
                 />
                 <Route
-                    path="/update-password"
+                    path={`/${UPDATE_PASSWORD}`}
                     element={
                         <UpdatePassword/>
                     }
                 />
 
                 <Route
-                    path="/verifyNumber"
+                    path={`/${VERIFY_NUMBER}`}
                     element={
                         <VerifyNumber/>
                     }
@@ -315,4 +341,4 @@ const AnimatedRoutes = () => {
         // </AnimatePresence>
     );
 };
-export default AnimatedRoutes
+export default CaplRoutes

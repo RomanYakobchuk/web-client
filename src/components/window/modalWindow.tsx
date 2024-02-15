@@ -41,8 +41,14 @@ const ModalWindow = ({children, open, setOpen, title, titleStyle, bodyProps, con
     } : {};
 
     const handleModalClick = (event: MouseEvent<HTMLDivElement>) => {
-        event.stopPropagation();
         event.preventDefault();
+        event.stopPropagation();
+    }
+
+    const handleModalClose = (event: MouseEvent<HTMLDivElement>) => {
+        event.preventDefault();
+        event.stopPropagation();
+        setOpen(false);
     }
 
     useEffect(() => {
@@ -96,7 +102,7 @@ const ModalWindow = ({children, open, setOpen, title, titleStyle, bodyProps, con
                     transform: 'translateX(-100px)'
                 }
             }}
-            onClick={() => setOpen(false)}
+            onClick={handleModalClose}
         >
             <Box
                 onClick={handleModalClick}

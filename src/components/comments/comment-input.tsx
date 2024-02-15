@@ -1,4 +1,4 @@
-import {Box, Button, CircularProgress, InputAdornment, TextField,} from "@mui/material";
+import {Box, Button, CircularProgress, TextField,} from "@mui/material";
 import {SendOutlined} from "@mui/icons-material";
 import React, {Dispatch, SetStateAction, useState} from "react";
 import {useNotification, useTranslate} from "@refinedev/core";
@@ -12,21 +12,23 @@ import {EmojiPicker} from "@/components/picker/emojiPicker";
 
 
 interface IProps {
-    institutionId: string,
+    establishmentId: string,
     setNewComment?: Dispatch<SetStateAction<INewComment | null>>,
     isAnswer?: boolean,
     setIsAnswer?: Dispatch<SetStateAction<boolean>>,
     parent?: IComment,
     setParent?: Dispatch<SetStateAction<IComment>>,
+    maxTextLength?: number
 }
 
 const CommentInput = ({
-                          institutionId,
+                          establishmentId,
                           setNewComment,
                           parent = {} as IComment,
                           isAnswer = false,
                           setParent,
-                          setIsAnswer
+                          setIsAnswer,
+                          maxTextLength = 300
                       }: IProps) => {
     const {device} = useMobile();
     const translate = useTranslate();
@@ -42,7 +44,7 @@ const CommentInput = ({
             try {
                 setIsLoading(true)
                 const data = await axiosInstance.post(`/comment/create`, {
-                    institutionId,
+                    establishmentId: establishmentId,
                     text: value?.trim(),
                     refFieldCreate: managerRole,
                     createdBy: selectedInfo?._id,
@@ -92,7 +94,10 @@ const CommentInput = ({
                 borderRadius: '15px 15px 3px 3px',
                 bgcolor: 'common.black',
                 p: 2,
-                width: '100%'
+                width: '100%',
+                display: 'flex',
+                gap: 1,
+                flexDirection: 'column'
             }}>
                 <TextField
                     placeholder="Type something here…"
@@ -103,10 +108,7 @@ const CommentInput = ({
                     minRows={3}
                     maxRows={10}
                     inputProps={{
-                        maxLength: 300,
-                    }}
-                    InputProps={{
-                        endAdornment: <InputAdornment position={'start'}>{value?.length}/300</InputAdornment>
+                        maxLength: maxTextLength,
                     }}
                     color={'secondary'}
                     onChange={(event) => {
@@ -123,6 +125,13 @@ const CommentInput = ({
                         }
                     }}
                 />
+                <Box sx={{
+                    width: '100%',
+                    display: 'flex',
+                    justifyContent: 'end'
+                }}>
+                    {value?.length}/{maxTextLength}
+                </Box>
             </Box>
             <Box sx={{
                 width: '100%',

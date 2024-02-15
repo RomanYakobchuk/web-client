@@ -36,10 +36,9 @@ const ChatBoxInfo = ({conversation}: TProps) => {
     }, [conversation]);
 
     const isChatEstablishment = {
-        is: conversation?.chatInfo?.field?.name === 'institution',
+        is: conversation?.chatInfo?.field?.name === 'establishment',
         id: typeof conversation?.chatInfo?.field?.id === 'object' ? conversation?.chatInfo?.field?.id?._id : conversation?.chatInfo?.field?.id
     }
-    console.log(isChatEstablishment)
     return (
         <Box>
             <IconButton
@@ -119,7 +118,7 @@ const ChatBoxInfo = ({conversation}: TProps) => {
                                         const image = memberUser?.avatar;
                                         const name = memberUser?.name;
                                         const byFieldName = {
-                                            institution: () => {
+                                            establishment: () => {
                                                 if (typeof chat?.chatInfo?.field?.id === 'object') {
                                                     const e = chat?.chatInfo?.field?.id as PropertyProps;
                                                     if (e?.createdBy === memberUser?._id) {

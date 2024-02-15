@@ -1,7 +1,7 @@
 import {Input} from "antd";
 import {Box, Button, IconButton, SxProps} from "@mui/material";
 import {ClearOutlined, SearchOutlined} from "@mui/icons-material";
-import React, {useContext, useEffect} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {useTranslate} from "@refinedev/core";
 
 import {antdInputStyle} from "@/styles";
@@ -16,26 +16,29 @@ type TProps = {
     defaultSetFilters?: SetFilterType,
     isButton?: boolean,
     fieldName?: string,
-    styleSx?: SxProps
+    styleSx?: SxProps,
+    handleSearchByValue?: (value: string) => void
 }
-const SearchInputComponent = ({setSearchValue, searchValue, defaultSetFilters, styleSx, isButton = true, fieldName = 'title'}: TProps) => {
+const SearchInputComponent = ({
+                                  setSearchValue,
+                                  searchValue,
+                                  defaultSetFilters,
+                                  styleSx,
+                                  isButton = true,
+                                  fieldName = 'title',
+                                  handleSearchByValue
+                              }: TProps) => {
     const translate = useTranslate();
     const {width} = useMobile();
     const {mode} = useContext(ColorModeContext);
 
-    const [useDebounce1] = useDebounce(searchValue, 500);
+    const [useDebounce1] = useDebounce(searchValue, 1000);
     const search = () => {
-        if (defaultSetFilters) {
-            defaultSetFilters([
-                {
-                    field: fieldName,
-                    value: searchValue ?? '',
-                    operator: 'contains'
-                }
-            ])
+        if (handleSearchByValue) {
+            console.log('handleSearchByValue')
+            handleSearchByValue(searchValue);
         }
     }
-
     const bRButtonFilter = '7px';
 
     useEffect(() => {
@@ -51,7 +54,7 @@ const SearchInputComponent = ({setSearchValue, searchValue, defaultSetFilters, s
                 display: 'flex',
                 flexDirection: 'row',
                 gap: width > 500 ? 1 : 0,
-                margin: '10px 0',
+                margin: '0 0 10px',
                 "& button": {
                     borderRadius: bRButtonFilter,
                     display: (width > 500 && isButton) ? 'flex' : 'none'
@@ -71,7 +74,7 @@ const SearchInputComponent = ({setSearchValue, searchValue, defaultSetFilters, s
                     color: mode === 'dark' ? 'white' : 'black',
                     background: 'transparent',
                 }}
-                value={searchValue ?? ''}
+                value={searchValue || ''}
                 onChange={(event) => setSearchValue(event.target.value)}
                 suffix={
                     <Box sx={{
@@ -104,7 +107,7 @@ const SearchInputComponent = ({setSearchValue, searchValue, defaultSetFilters, s
                                 {
                                     field: 'title',
                                     value: '',
-                                    operator: 'contains'
+                                    operator: 'eq'
                                 }
                             ])
                         }

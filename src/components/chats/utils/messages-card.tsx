@@ -64,7 +64,7 @@ const MessagesCard = ({item: message, receiver, setReplyTo, lengthGroup, index, 
         };
         const onClick = () => {
             // navigate((message?.sender === conversation?.managerId?._id)
-            //     ? `/all_institutions/show/${conversation?.institutionId?._id}`
+            //     ? `/all_establishments/show/${conversation?.establishmentId?._id}`
             //     : `/capl`
             // )
             console.log('press')
@@ -100,7 +100,7 @@ const MessagesCard = ({item: message, receiver, setReplyTo, lengthGroup, index, 
             } else if ((lengthGroup === 2 && index === 1) || (lengthGroup >= 3 && index === (lengthGroup - 1))) {
                 return `${second} ${third} ${fourth} ${fourth}`
             } else if (lengthGroup >= 3 && index !== 0 && index !== (lengthGroup - 1)) {
-                return `${fourth} ${third} ${third} ${second}`
+                return `${second} ${third} ${third} ${second}`
             }
         };
 

@@ -7,6 +7,7 @@ import DataForm from "@/components/establishment/dataForm";
 import {CustomCreate} from "@/components";
 import {Link} from "react-router-dom";
 import {IEstablishmentFormProps} from "@/interfaces/formData";
+import {ESTABLISHMENT} from "@/config/names";
 
 
 const CreateEstablishment: FC = () => {
@@ -16,8 +17,13 @@ const CreateEstablishment: FC = () => {
         handleSubmit,
     } = useForm({
         refineCoreProps: {
-            resource: `institution/create`,
+            resource: `${ESTABLISHMENT}/create`,
             redirect: false,
+            meta: {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }
         }
     });
 
@@ -153,7 +159,7 @@ const CreateEstablishment: FC = () => {
                         style={{
                             color: 'silver'
                         }}
-                        to={'/all_institutions'}>{translate('all_institutions.all_institutions')}</Link>
+                        to={`/${ESTABLISHMENT}`}>{translate(`${ESTABLISHMENT}.${ESTABLISHMENT}`)}</Link>
                 },
                 {
                     title: translate('home.create.title')

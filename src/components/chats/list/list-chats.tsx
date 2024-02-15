@@ -35,7 +35,7 @@ const ListChats = ({setCurrentChat, setOpenDrawer}: IProps) => {
     const [title, setTitle] = useState<string>('');
     const [debouncedSearchText] = useDebounce(title, 500);
     const [updatedChat, setUpdatedChat] = useState<IConversation>({} as IConversation)
-    const [institutionId, setInstitutionId] = useState<string>('');
+    const [establishmentId, setestablishmentId] = useState<string>('');
 
     const {
         data,
@@ -51,7 +51,7 @@ const ListChats = ({setCurrentChat, setOpenDrawer}: IProps) => {
         },
         filters: [
             {field: 'userId', value: user?._id, operator: 'eq'},
-            {field: 'institutionId', value: institutionId, operator: 'eq'},
+            {field: 'establishmentId', value: establishmentId, operator: 'eq'},
             {field: 'title', value: debouncedSearchText, operator: 'contains'},
         ],
         pagination: {

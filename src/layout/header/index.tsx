@@ -12,7 +12,6 @@ import {
     MenuItem,
     Select,
     Toolbar,
-    Badge,
     Typography, SelectChangeEvent, Button, Box
 } from "@mui/material";
 import {
@@ -24,6 +23,7 @@ import {
 } from "@mui/icons-material";
 import {useTranslation} from "react-i18next";
 import {useLocation, useNavigate} from "react-router-dom";
+import {Badge} from "antd"
 
 import {ColorModeContext} from "@/contexts";
 import {useSchema} from "@/settings";
@@ -173,10 +173,11 @@ export const Header: React.FC = () => {
                             }}
                             onClick={() => navigate('/notifications')}>
                             <Badge
-                                color={'info'}
-                                badgeContent={properties?.notReadNotifications || 0}
+                                count={properties?.notReadNotifications || 0}
+                                // color={'info'}
+                                // badgeContent={properties?.notReadNotifications || 0}
                             >
-                                <Notifications/>
+                                <Notifications color={'secondary'}/>
                             </Badge>
                         </IconButton>
                     }

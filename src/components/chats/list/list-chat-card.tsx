@@ -44,7 +44,7 @@ const ListChatCard = ({conversation}: IProps) => {
     const encryptedLastMessage = bytes ? JSON.parse(bytes.toString(CryptoJS.enc.Utf8)) : '';
 
     const chatType = {
-        institution: translate('home.one'),
+        establishment: translate('home.one'),
         user: translate('roles.user'),
         capl: translate('capl.reservation')
     }

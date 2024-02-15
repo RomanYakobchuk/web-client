@@ -22,7 +22,7 @@ const CreateNews = () => {
     const goBack = useBack();
 
     const [defaultPictures, _] = useState<IPicture[]>([] as IPicture[])
-    const [institutionInfo, setInstitutionInfo] = useState<PropertyProps>({} as PropertyProps);
+    const [establishmentInfo, setestablishmentInfo] = useState<PropertyProps>({} as PropertyProps);
     const [description, setDescription] = useState<string>("");
     const [title, setTitle] = useState<string>("");
     const [place, setPlace] = useState<INewsDataProps['place']>({} as INewsDataProps['place']);
@@ -36,7 +36,7 @@ const CreateNews = () => {
 
     useEffect(() => {
         if (search) {
-            setInstitutionInfo((prevState) => ({...prevState, _id: search?.split('=')[1]}))
+            setestablishmentInfo((prevState) => ({...prevState, _id: search?.split('=')[1]}))
         }
     }, [search]);
 
@@ -47,6 +47,11 @@ const CreateNews = () => {
         refineCoreProps: {
             resource: `news/create`,
             redirect: false,
+            meta: {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }
         }
     });
 
@@ -77,7 +82,7 @@ const CreateNews = () => {
         }
 
         formData.append("createdBy", user?._id);
-        formData.append("institutionId", institutionInfo?._id);
+        formData.append("establishmentId", establishmentInfo?._id);
         formData.append("dateEvent", JSON.stringify(dateEvent));
 
         await onFinish(formData);
@@ -106,8 +111,8 @@ const CreateNews = () => {
         onFinishHandler,
         pictures,
         setPictures,
-        institutionInfo,
-        setInstitutionInfo,
+        establishmentInfo,
+        setEstablishmentInfo: setestablishmentInfo,
         title,
         setTitle,
         setDateEvent,

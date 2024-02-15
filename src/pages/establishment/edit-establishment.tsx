@@ -2,14 +2,15 @@ import {useBack, useGetIdentity, useTranslate} from "@refinedev/core";
 import {useParams} from "react-router-dom";
 import {useForm} from "@refinedev/react-hook-form";
 import React, {useEffect, useState} from "react";
-
-import {IPicture, ProfileProps, PropertyProps} from "../../interfaces/common";
-import DataForm from "../../components/establishment/dataForm";
-import {ErrorComponent} from "@refinedev/mui";
-import {CustomEdit} from "../../components";
-import {IEstablishmentFormProps} from "../../interfaces/formData";
 import {RestartAlt} from "@mui/icons-material";
+import {ErrorComponent} from "@refinedev/mui";
 import {Button} from "antd";
+
+import {IPicture, ProfileProps, PropertyProps} from "@/interfaces/common";
+import DataForm from "@/components/establishment/dataForm";
+import {CustomEdit} from "@/components";
+import {IEstablishmentFormProps} from "@/interfaces/formData";
+import {ESTABLISHMENT} from "@/config/names";
 
 const EditEstablishment = () => {
     const {data: currentUser} = useGetIdentity<ProfileProps>();
@@ -21,9 +22,9 @@ const EditEstablishment = () => {
         refineCore: {onFinish, queryResult},
         handleSubmit,
         saveButtonProps
-    } = useForm<{institution: PropertyProps}>({
+    } = useForm<{establishment: PropertyProps}>({
         refineCoreProps: {
-            resource: `institution/infoById`,
+            resource: `${ESTABLISHMENT}/infoById`,
             id: id as string,
             redirect: false,
             errorNotification: (data: any) => {
@@ -38,15 +39,20 @@ const EditEstablishment = () => {
                     message: data?.data?.message
                 }
             },
+            meta: {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }
         },
     });
     const {isLoading: isLoadingData, isError: isErrorData,} = queryResult!;
 
-    const [institution, setInstitution] = useState<PropertyProps>({} as PropertyProps);
+    const [establishment, setEstablishment] = useState<PropertyProps>({} as PropertyProps);
 
     useEffect(() => {
         if (queryResult?.data?.data) {
-            setInstitution(queryResult.data.data?.institution as PropertyProps)
+            setEstablishment(queryResult.data.data?.establishment as PropertyProps)
         }
     }, [queryResult]);
 
@@ -68,28 +74,28 @@ const EditEstablishment = () => {
     const [createdBy, setCreatedBy] = useState<string>('');
 
     const loadData = () => {
-        setContacts(institution?.contacts)
-        setTags(institution?.tags)
-        setType(institution?.type)
-        setFeatures(institution?.features)
-        setAverageCheck(institution?.averageCheck)
-        setCreatedBy(institution?.createdBy)
-        setDescription(institution?.description)
-        setTitle(institution?.title)
-        setWorkSchedule(institution?.workSchedule)
-        setWorkDays(institution?.workSchedule?.workDays?.length > 0 ? institution?.workSchedule?.workDays : [institution?.workSchedule?.workDays])
-        setWorkScheduleWeekend(institution?.workSchedule?.weekend)
-        setLocation(institution?.location)
-        setPlace(institution?.place)
-        setPictures(institution?.pictures)
-        setDefaultPictures(institution?.pictures)
-        setSendNotifications(institution?.sendNotifications)
+        setContacts(establishment?.contacts)
+        setTags(establishment?.tags)
+        setType(establishment?.type)
+        setFeatures(establishment?.features)
+        setAverageCheck(establishment?.averageCheck)
+        setCreatedBy(establishment?.createdBy)
+        setDescription(establishment?.description)
+        setTitle(establishment?.title)
+        setWorkSchedule(establishment?.workSchedule)
+        setWorkDays(establishment?.workSchedule?.workDays?.length > 0 ? establishment?.workSchedule?.workDays : [establishment?.workSchedule?.workDays])
+        setWorkScheduleWeekend(establishment?.workSchedule?.weekend)
+        setLocation(establishment?.location)
+        setPlace(establishment?.place)
+        setPictures(establishment?.pictures)
+        setDefaultPictures(establishment?.pictures)
+        setSendNotifications(establishment?.sendNotifications)
     }
     useEffect(() => {
-        if (institution) {
+        if (establishment) {
             loadData();
         }
-    }, [institution]);
+    }, [establishment]);
 
     useEffect(() => {
         if (workDays && workScheduleWeekend) {
@@ -105,7 +111,6 @@ const EditEstablishment = () => {
         if (pictures.length < 3) return alert('Minimum 3 pictures')
 
         const formData = new FormData();
-
         for (let i = 0; i < pictures.length; i++) {
             if (pictures[i] instanceof File) {
                 formData.append('pictures', pictures[i] as File);
@@ -113,6 +118,7 @@ const EditEstablishment = () => {
                 formData.append('pictures', JSON.stringify(pictures[i]))
             }
         }
+
         formData.append("description", JSON.stringify(description));
         formData.append("sendNotifications", JSON.stringify(sendNotifications));
         formData.append("title", JSON.stringify(title));

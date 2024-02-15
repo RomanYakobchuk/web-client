@@ -22,10 +22,10 @@ const NewReservation = ({reservation, notification}: TProps) => {
     const isManager = role === 'manager' && user?._id === reservation?.manager;
     const isUser = role === 'user' && user?._id === reservation?.user;
 
-    const isDraftByManager = isManager && ((reservation?.institutionStatus?.value === 'draft' && reservation?.userStatus?.value === 'accepted') || (reservation?.institutionStatus?.value === 'rejected' && reservation?.institutionStatus?.reasonRefusal && reservation?.institutionStatus?.freeDateFor && reservation?.userStatus?.value !== 'rejected'));
+    const isDraftByManager = isManager && ((reservation?.establishmentStatus?.value === 'draft' && reservation?.userStatus?.value === 'accepted') || (reservation?.establishmentStatus?.value === 'rejected' && reservation?.establishmentStatus?.reasonRefusal && reservation?.establishmentStatus?.freeDateFor && reservation?.userStatus?.value !== 'rejected'));
 
-    const isAcceptedUser = isUser && reservation?.institutionStatus?.value === 'accepted' && reservation?.userStatus?.value !== 'rejected';
-    const isRejectedUser = isUser && reservation?.institutionStatus?.value === 'rejected' && reservation?.userStatus?.value !== 'rejected';
+    const isAcceptedUser = isUser && reservation?.establishmentStatus?.value === 'accepted' && reservation?.userStatus?.value !== 'rejected';
+    const isRejectedUser = isUser && reservation?.establishmentStatus?.value === 'rejected' && reservation?.userStatus?.value !== 'rejected';
 
     return (
         <Box sx={{

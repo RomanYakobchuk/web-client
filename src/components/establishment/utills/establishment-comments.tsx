@@ -12,14 +12,14 @@ import MoreButton from "../../common/buttons/MoreButton";
 import {INewComment} from "../../comments/commentAnswers";
 
 type IProps = {
-    institution: PropertyProps,
+    establishment: PropertyProps,
 }
 
-const EstablishmentComments = ({institution}: IProps) => {
+const EstablishmentComments = ({establishment}: IProps) => {
     const translate = useTranslate();
     const {data: permissionsData} = usePermissions();
 
-    const {_id: institutionId} = institution;
+    const {_id: establishmentId} = establishment;
 
     const {selectedInfo} = useLeaveManagerCommentAs();
 
@@ -34,7 +34,7 @@ const EstablishmentComments = ({institution}: IProps) => {
         fetchNextPage,
         isFetchingNextPage,
     } = useInfiniteList<IComment>({
-        resource: `comment/allByInstitutionId/${institutionId}`,
+        resource: `comment/allByestablishmentId/${establishmentId}`,
         pagination: {
             pageSize: 10
         },
@@ -102,7 +102,7 @@ const EstablishmentComments = ({institution}: IProps) => {
                                 <span>{selectedInfo?.title}</span>
                             </Box>
                             <ChooseManagerRole
-                                currentEstablishment={institution?._id}
+                                currentEstablishment={establishment?._id}
                             />
                         </Box>
                     )
@@ -114,7 +114,7 @@ const EstablishmentComments = ({institution}: IProps) => {
                 }}>
                     <CommentInput
                         setNewComment={setNewComment}
-                        institutionId={institutionId}
+                        establishmentId={establishmentId}
                     />
                 </Box>
             </Box>

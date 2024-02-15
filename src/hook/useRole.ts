@@ -5,18 +5,18 @@ import {ProfileProps, PropertyProps} from "@/interfaces/common";
 export const useRole = () => {
     const [role, setRole] = useState<"admin" | "manager" | 'user' | string>("");
     const [user, setUser] = useState<ProfileProps>({} as ProfileProps);
-    // const [institution, setInstitution] = useState<PropertyProps[]>([]);
+    // const [establishment, setestablishment] = useState<PropertyProps[]>([]);
     // useEffect(() => {
     //     if (user?._id && user?.status === 'manager') {
     //         const x = async () => {
-    //             const data = await axiosInstance.get(`/institution/userInstitutions`);
+    //             const data = await axiosInstance.get(`/establishment/userestablishments`);
     //             if (data?.data) {
-    //                 setInstitution(data?.data)
+    //                 setestablishment(data?.data)
     //             }
     //         }
     //         x().catch((reason) => console.log(reason));
     //     } else {
-    //         setInstitution([]);
+    //         setestablishment([]);
     //     }
     // }, [user])
     const data: ProfileProps | any = localStorage.getItem("user")
@@ -43,19 +43,19 @@ export const useRole = () => {
         return {
             role,
             userId: user?._id,
-            // institution: institution
+            // establishment: establishment
         }
     } else if (!data) {
         return {
             role: '',
             userId: '',
-            // institution: []
+            // establishment: []
         }
     } else {
         return {
             role: 'notRole',
             userId: '',
-            // institution: []
+            // establishment: []
         }
     }
 }

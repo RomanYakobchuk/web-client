@@ -8,7 +8,8 @@ import {savedPlaceSchema as savedPlaces, TSavedPlaceTable} from "./tables/savedP
 type DexieTables = TMessageTable & TChatTable & TSavedPlaceTable;
 export type Dexie<T extends any = DexieTables> = BaseDexie & T;
 
-export const db = new BaseDexie('capl-db') as Dexie;
+const DBName = 'capl-db';
+export const db = new BaseDexie(DBName) as Dexie;
 
 const schema = Object.assign(
     {},
@@ -18,3 +19,8 @@ const schema = Object.assign(
 )
 
 db.version(1).stores(schema);
+
+export const deleteIndexedDB = () => {
+    window.indexedDB.deleteDatabase(DBName);
+    db.close();
+}

@@ -14,7 +14,7 @@ import MDEditor from "@uiw/react-md-editor";
 import ImageSelector from "../../establishment/utills/ImageSelector";
 import {ColorModeContext} from "@/contexts";
 import {IMDEditor, INewsDateEvent, IPicture} from "@/interfaces/common";
-import SearchInstitutions from "../../search/searchInstitutions";
+import SearchEstablishments from "../../search/searchEstablishments";
 import DateTimeList from "./dateTimeList";
 import {INewsDataProps} from "@/interfaces/formData";
 import {ChangeLocation, CustomOpenContentBtn} from "../../index";
@@ -22,7 +22,7 @@ import {ChangeLocation, CustomOpenContentBtn} from "../../index";
 const NewsFormData = (props: INewsDataProps) => {
     const {
         title,
-        setInstitutionInfo,
+        setEstablishmentInfo,
         setStatus,
         onFinishHandler,
         status,
@@ -36,7 +36,7 @@ const NewsFormData = (props: INewsDataProps) => {
         dateEvent,
         category,
         setCategory,
-        institutionInfo,
+        establishmentInfo,
         setTitle,
         setDateEvent,
         datePublished, setDatePublished,
@@ -57,10 +57,10 @@ const NewsFormData = (props: INewsDataProps) => {
             setDataPlace((prevState) => ({...prevState, location, place}))
         }
 
-        if (location?.lng !== institutionInfo?.location?.lng || location?.lat !== institutionInfo?.location?.lat || place?.city !== institutionInfo?.place?.city || place?.address !== institutionInfo?.place?.address) {
+        if (location?.lng !== establishmentInfo?.location?.lng || location?.lat !== establishmentInfo?.location?.lat || place?.city !== establishmentInfo?.place?.city || place?.address !== establishmentInfo?.place?.address) {
             setIsEstablishmentLocPlace(false);
         }
-    }, [location?.lng, location?.lat, place?.address, place?.city, institutionInfo]);
+    }, [location?.lng, location?.lat, place?.address, place?.city, establishmentInfo]);
 
 
     const handlePicturesChange = (e: ChangeEvent<HTMLInputElement> | any) => {
@@ -103,8 +103,8 @@ const NewsFormData = (props: INewsDataProps) => {
         const checked = event.target.checked;
         setIsEstablishmentLocPlace(checked);
         if (checked) {
-            setLocation(institutionInfo?.location)
-            setPlace(institutionInfo?.place)
+            setLocation(establishmentInfo?.location)
+            setPlace(establishmentInfo?.place)
         } else {
             setLocation({} as INewsDataProps['place']['location']);
             setPlace({} as INewsDataProps['place']['place'])
@@ -150,9 +150,9 @@ const NewsFormData = (props: INewsDataProps) => {
                                          gridColumn: gridColumn
                                      }}
                         >
-                            <SearchInstitutions
-                                typeSearch={'userInstitutions'} searchInstitution={institutionInfo}
-                                setSearchInstitution={setInstitutionInfo}/>
+                            <SearchEstablishments
+                                typeSearch={'userEstablishments'} searchEstablishment={establishmentInfo}
+                                setSearchEstablishment={setEstablishmentInfo}/>
                         </FormControl>
                     </Box>
                     <Box sx={{

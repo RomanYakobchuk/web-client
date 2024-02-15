@@ -4,6 +4,7 @@ import {useShow, useTranslate} from "@refinedev/core";
 import DonutStatSkeleton from "../../items/donutStatSkeleton";
 import PieChart from "../../charts/PieChart";
 import {PieChartProps} from "@/interfaces/dashboard";
+import {ESTABLISHMENT} from "@/config/names";
 
 type TEstablishmentStat = {
     totalEstablishment: number,
@@ -21,7 +22,7 @@ const EstablishmentStat = () => {
 
     const {queryResult} = useShow<TEstablishmentStat>({
         dataProviderName: 'statistics',
-        resource: 'stat/institutionsStatistics',
+        resource: 'stat/establishmentsStatistics',
         id: '1' as string
     })
 
@@ -75,7 +76,7 @@ const EstablishmentStat = () => {
                             <PieChart
                                 list={items}
                                 labels={labels}
-                                title={translate('all_institutions.all_institutions')}
+                                title={translate(`${ESTABLISHMENT}.${ESTABLISHMENT}`)}
                                 value={statisticsEstablishment?.totalEstablishment || 0}
                                 series={series}
                                 colors={colors}

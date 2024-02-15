@@ -165,7 +165,7 @@ const NewsItem1Info = ({news, style}: TProps) => {
                         {/*    id={_id}*/}
                         {/*    bgColor={'transparent'}*/}
                         {/*    color={'common.white'}*/}
-                        {/*    type={'institutionNews'}*/}
+                        {/*    type={'establishmentNews'}*/}
                         {/*    showText={false}*/}
                         {/*    style={{*/}
                         {/*        p: '5px',*/}
@@ -224,7 +224,7 @@ const NewsItem1Info = ({news, style}: TProps) => {
                                         name={title}
                                         isShowSharedText={true}
                                         url={`${CLIENT_URL}/news/show/${_id}`}
-                                        title={title} type={"institutionNews"}
+                                        title={title} type={"establishmentNews"}
                                         id={_id}
                                     />
                                 ) : (
@@ -240,7 +240,7 @@ const NewsItem1Info = ({news, style}: TProps) => {
                                             name={title}
                                             isOnlyShared
                                             isShowSharedText={false}
-                                            type={"institutionNews"}
+                                            type={"establishmentNews"}
                                             sharedStyle={{
                                                 "& svg": {
                                                     order: 1,
@@ -257,7 +257,7 @@ const NewsItem1Info = ({news, style}: TProps) => {
                                         />
                                         <BookMarkButton
                                             id={_id}
-                                            type={"institutionNews"}
+                                            type={"establishmentNews"}
                                             showText={false}
                                             color={'common.white'}
                                             style={{

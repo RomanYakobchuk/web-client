@@ -1,23 +1,18 @@
-import {useLocation} from "react-router-dom";
-import {useTable} from "@refinedev/core";
+import {HttpError, useTable} from "@refinedev/core";
 import {Box, Typography} from "@mui/material";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 
-import {FilterInstitutions} from "../index";
+import {FilterEstablishments} from "../index";
 import {PropertyProps} from "@/interfaces/common";
 import ListForUsers from "./utills/lists/listForUsers";
+import {ESTABLISHMENT} from "@/config/names";
+import {FullPageLoading} from "@/components/loading/fullPageLoading";
+import {EstablishmentType} from "@/interfaces/types";
+
 
 const UserList = () => {
-    const {state} = useLocation();
-    const [sortBy, setSortBy] = useState("");
-
-    const [searchValue, setSearchValue] = useState<any>();
-    // const [query, setQuery] = useSearchParams({
-    //     page: '1',
-    //     pageSize: '20'
-    // });
     const {
-        tableQueryResult: {data, isLoading, isError},
+        tableQueryResult: {data, isLoading, isError, isFetching},
         current,
         setCurrent,
         setPageSize,
@@ -26,113 +21,35 @@ const UserList = () => {
         setSorters,
         filters,
         setFilters,
-        createLinkForSyncWithLocation
-    } = useTable({
-        resource: "institution/all",
+    } = useTable<PropertyProps, HttpError>({
+        resource: `${ESTABLISHMENT}/all`,
         pagination: {
             current: 1,
             pageSize: 20
         },
         syncWithLocation: true,
     });
+    // console.log(filters)
+    console.log(performance.navigation.type == performance.navigation.TYPE_RELOAD)
+    const currentFilterValues = useMemo(() => {
+        const logicalFilters = filters.flatMap((item) => ("field" in item ? item : []));
 
-    // useEffect(() => {
-    //     const newLink = createLinkForSyncWithLocation({
-    //         pagination: {
-    //             pageSize: pageSize,
-    //             current: current,
-    //         },
-    //         filters: filters,
-    //         sorters: sorters
-    //     });
-    //     console.log(newLink)
-    //     // navigate(`/all_institutions${newLink}`)
-    // }, [filters, sorters, current, pageSize]);
-    useEffect(() => {
-        if (state && state?.value && state?.isTag) {
-            setFilters([
-                {
-                    field: 'title',
-                    value: '#' + state.value,
-                    operator: 'contains'
-                }
-            ])
-            setSearchValue('#' + state.value)
+        return {
+            title: logicalFilters.find((item) => item.field === 'title')?.value || "",
+            city_like: logicalFilters.find((item) => item.field === 'city')?.value || "",
+            propertyType: logicalFilters.find((item) => item.field === 'propertyType')?.value as EstablishmentType || "" as EstablishmentType,
+            averageCheck_lte: logicalFilters.find((item) => item.field === 'averageCheck_lte')?.value || 0,
+            averageCheck_gte: logicalFilters.find((item) => item.field === 'averageCheck_gte')?.value || 2000,
         }
-    }, [state]);
+    }, [filters]);
+    const [title, setTitle] = useState<string>(currentFilterValues?.title);
 
-    const allInstitutions = data?.data as PropertyProps[] ?? [] as PropertyProps[];
-
+    // console.log(currentFilterValues?.title);
+    const allEstablishments = data?.data || [] as PropertyProps[];
+    console.log(filters)
     // useEffect(() => {
-    //     const newFilters: any = {};
-    //     if (filters?.length > 0) {
-    //         for (const filter of filters as LogicalFilter[]) {
-    //             if (filter?.value && filter?.field) {
-    //                 newFilters[filter.field] = filter.value
-    //             }
-    //         }
-    //     }
-    //     if (sorters?.length > 0) {
-    //         for (const sorter of sorters) {
-    //             if (sorter?.field && sorter?.order) {
-    //                 newFilters['sort'] = sorter.field;
-    //                 newFilters['order'] = sorter.order;
-    //             }
-    //         }
-    //     }
-    //     setQuery(newFilters)
-    // }, [filters, sorters]);
-
-    // useEffect(() => {
-    //     const queryObj = Object.fromEntries(query.entries());
-    //
-    //     const newArrayFilters: LogicalFilter[] = [];
-    //     for (const queryObjKey in queryObj) {
-    //         if (queryObj.hasOwnProperty(queryObjKey)) {
-    //             const fieldValue = queryObj[queryObjKey];
-    //             if (queryObjKey !== 'sort' && queryObjKey !== 'order') {
-    //                newArrayFilters.push({
-    //                    field: queryObjKey,
-    //                    value: fieldValue,
-    //                    operator: 'eq'
-    //                })
-    //             }
-    //         }
-    //     }
-    //     setFilters(newArrayFilters)
-    //     setSorters([
-    //         {
-    //             field: queryObj['sort'] || '',
-    //             order: queryObj['order'] as "asc" | "desc" || 'desc'
-    //         }
-    //     ])
-    // }, []);
-
-
-    // useEffect(() => {
-    //     const queryObj = Object.fromEntries(query.entries());
-    //
-    //     const newArrayFilters: LogicalFilter[] = Object.entries(queryObj)
-    //         .filter(([key]) => key !== 'sort' && key !== 'order')
-    //         .map(([key, value]) => ({
-    //             field: key,
-    //             value,
-    //             operator: 'eq'
-    //         }));
-    //
-    //     setFilters(newArrayFilters);
-    //
-    //     setSorters([
-    //         {
-    //             field: queryObj['sort'] || '',
-    //             order: queryObj['order'] as "asc" | "desc" || 'desc'
-    //         }
-    //     ]);
-    // }, []);
-
-
-    if (isError) return <Typography>Error...</Typography>;
-
+    //     setTitle(currentFilterValues?.title)
+    // }, [currentFilterValues?.title]);
     return (
         <Box sx={{
             display: 'flex',
@@ -153,31 +70,34 @@ const UserList = () => {
                     width: '100%',
                     alignItems: 'center'
                 }}>
-                    <Box mb={1} mt={1} width={"100%"}>
-                        <FilterInstitutions
+                    <Box mb={1} width={"100%"}>
+                        <FilterEstablishments
+                            currentFilterValues={currentFilterValues}
                             filters={filters}
                             setFilters={setFilters}
-                            sortBy={sortBy}
-                            setSortBy={setSortBy}
                             setCurrent={setCurrent}
-                            setSearchValue={setSearchValue}
+                            setSearchValue={setTitle}
                             sorters={sorters}
                             setSorters={setSorters}
-                            searchValue={searchValue}
+                            searchValue={title}
                         />
                     </Box>
                 </Box>
             </Box>
-            <ListForUsers
-                isLoading={isLoading}
-                allInstitutions={allInstitutions}
-                data={data}
-                current={current}
-                setCurrent={setCurrent}
-                pageSize={pageSize}
-                total={data?.total as number}
-                setPageSize={setPageSize}
-            />
+            <FullPageLoading isOpen={isFetching}/>
+            {
+                isError ? <Typography>Error...</Typography> :
+                    <ListForUsers
+                        isLoading={isLoading}
+                        allEstablishments={allEstablishments}
+                        data={data}
+                        current={current}
+                        setCurrent={setCurrent}
+                        pageSize={pageSize}
+                        total={data?.total as number}
+                        setPageSize={setPageSize}
+                    />
+            }
         </Box>
     );
 };

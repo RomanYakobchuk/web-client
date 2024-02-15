@@ -5,7 +5,7 @@ import {
     Rating,
     Stack,
     List,
-    Typography
+    Typography, Divider
 } from "@mui/material";
 import {
     Place,
@@ -20,6 +20,11 @@ import {PropertyProps} from "@/interfaces/common";
 import {ColorModeContext} from "@/contexts";
 import {useStore} from "@/store";
 import MDEditor from "@uiw/react-md-editor";
+import {ESTABLISHMENT} from "@/config/names";
+import {MainDescription} from "@/components/establishment/utills/main/mainDescription";
+import {MainSchedule} from "@/components/establishment/utills/main/mainSchedule";
+import {MainContacts} from "@/components/establishment/utills/main/mainContacts";
+import {MainTags} from "@/components/establishment/utills/main/mainTags";
 
 
 interface IProps {
@@ -101,7 +106,7 @@ const MainEstablishmentInfo = ({establishment}: IProps) => {
                                 {establishment.title}
                             </Typography>
                             <Link
-                                to={`/all_institutions?pageSize=10&current=1&sorters[0][field]=createdAt_asc&sorters[0][order]=desc&filters[0][field]=propertyType&filters[0][operator]=eq&filters[0][value]=${establishment.type}`}
+                                to={`/${ESTABLISHMENT}?pageSize=10&current=1&sorters[0][field]=createdAt_asc&sorters[0][order]=desc&filters[0][field]=propertyType&filters[0][operator]=eq&filters[0][value]=${establishment.type}`}
                                 style={{
                                     textDecoration: 'none',
                                     display: 'flex',
@@ -133,7 +138,7 @@ const MainEstablishmentInfo = ({establishment}: IProps) => {
                             flexDirection: 'column'
                         }}>
                             <Link
-                                to={`/all_institutions?pageSize=10&current=1&sorters[0][field]=&sorters[0][order]=asc&filters[0][field]=averageCheck&filters[0][operator]=lte&filters[0][value]=100000&filters[1][field]=averageCheck&filters[1][operator]=gte&filters[1][value]=20&filters[2][field]=tag&filters[2][value]=&filters[2][operator]=contains&filters[3][field]=title&filters[3][value]=&filters[3][operator]=contains&filters[4][field]=propertyType&filters[4][operator]=eq&filters[4][value]=&filters[5][field]=city&filters[5][operator]=contains&filters[5][value]=${establishment?.place?.city}`}
+                                to={`/${ESTABLISHMENT}?pageSize=10&current=1&sorters[0][field]=&sorters[0][order]=asc&filters[0][field]=averageCheck&filters[0][operator]=lte&filters[0][value]=100000&filters[1][field]=averageCheck&filters[1][operator]=gte&filters[1][value]=20&filters[2][field]=tag&filters[2][value]=&filters[2][operator]=contains&filters[3][field]=title&filters[3][value]=&filters[3][operator]=contains&filters[4][field]=propertyType&filters[4][operator]=eq&filters[4][value]=&filters[5][field]=city&filters[5][operator]=contains&filters[5][value]=${establishment?.place?.city}`}
                                 style={{
                                     fontSize: '14px',
                                     width: 'fit-content',
@@ -252,81 +257,8 @@ const MainEstablishmentInfo = ({establishment}: IProps) => {
                     establishment?.pictures?.length > 0 &&
                     <ImageGalleryV1 photos={establishment?.pictures}/>
                 }
-                <Box sx={{
-                    bgcolor: 'modern.modern_1.second',
-                    p: '10px',
-                    borderRadius: '15px',
-                }}>
-                    <Typography variant={'h5'} sx={{
-                        color: 'common.white'
-                    }}>
-                        {translate('home.create.description')}
-                    </Typography>
-                    <Box sx={{
-                        width: '100%',
-                    }}>
-                        <MDEditor.Markdown source={establishment?.description}
-                                           style={{
-                                               whiteSpace: 'break-spaces',
-                                               fontSize: "14px",
-                                               padding: "5px 0",
-                                               background: 'transparent',
-                                               color: mode === 'dark' ? '#fff' : '#000'
-                                           }}/>
-                    </Box>
-                </Box>
-                <Box sx={{
-                    display: 'flex',
-                    width: '100%',
-                    flexDirection: 'column',
-                    p: '10px',
-                    borderRadius: '15px',
-                    justifyContent: 'start',
-                    bgcolor: 'modern.modern_1.second',
-                    alignItems: 'start',
-                    color: 'common.white'
-                }}>
-                    <Typography sx={{
-                        fontWeight: 600,
-                        fontSize: '1.1rem'
-                    }}>
-                        {translate("home.create.workSchedule.title")}
-                    </Typography>
-                    <Stack sx={{
-                        gap: 1
-                    }}>
-                        {
-                            establishment?.workSchedule?.workDays?.map((workDay, index) => (
-                                <Box key={index} sx={{
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    justifyContent: "start",
-                                    alignItems: 'start',
-                                    ml: 1
-                                }}>
-                                                <span>
-                                                    {translate(`home.create.workSchedule.dayName.${workDay?.days?.from}`)} - {translate(`home.create.workSchedule.dayName.${workDay?.days?.to}`)}
-                                                </span>
-                                    <span>
-                                                    {workDay?.time?.from} - {workDay?.time?.to}
-                                                </span>
-                                </Box>
-                            ))
-                        }
-                    </Stack>
-                    <Typography sx={{
-                        mt: 1,
-                        fontWeight: 600
-                    }}>
-                        {translate("home.create.workSchedule.weekend.title")}
-                    </Typography>
-                    <Box sx={{
-                        ml: 1
-                    }}>
-                        {establishment?.workSchedule?.weekend}
-                    </Box>
-                </Box>
-                {/*</ObserverComponent>*/}
+                <MainDescription description={establishment?.description || ''}/>
+                <MainSchedule workSchedule={establishment?.workSchedule}/>
                 {
                     establishment?._id && location?.lng &&
                     <Box sx={{
@@ -356,57 +288,11 @@ const MainEstablishmentInfo = ({establishment}: IProps) => {
                     bgcolor: 'modern.modern_1.second',
                     width: '100%'
                 }}>
-                    <Box sx={{
-                        width: '100%',
-                        borderBottom: '1px solid silver'
-                    }}>
-                        <Typography>
-                            {translate("home.create.contacts")}
-                        </Typography>
-                        <Box sx={{
-                            ml: 1,
-                            mt: 1
-                        }}>
-                            {
-                                establishment?.contacts?.map((contact: any, index: number) => (
-                                    <Box key={index}>
-                                        {contact?.value}
-                                    </Box>
-                                ))
-                            }
-                        </Box>
-                    </Box>
-                    <Box sx={{
-                        diaply: 'flex',
-                        flexDirection: 'column'
-                    }}>
-                        <Typography>
-                            {translate("home.create.tags")}
-                        </Typography>
-                        <Box sx={{
-                            display: 'flex',
-                            flexWrap: 'wrap',
-                            ml: 1,
-                            mt: 1,
-                            gap: 0.5,
-
-                        }}>
-                            {
-                                establishment?.tags?.map((tag: any, index: number) => (
-                                    <Chip
-                                        onClick={() => navigate(`/all_institutions?pageSize=10&current=1&sorters[0][field]=createdAt_desc&sorters[0][order]=desc&filters[0][field]=title&filters[0][value]=${'#' + tag.value}&filters[0][operator]=contains`,
-                                            {state: {value: tag.value, isTag: true}})}
-                                        key={index}
-                                        label={'#' + tag.value}
-                                        sx={{
-                                            cursor: 'pointer',
-                                            bgcolor: 'common.white',
-                                            color: 'common.black'
-                                        }}/>
-                                ))
-                            }
-                        </Box>
-                    </Box>
+                    <MainContacts contacts={establishment?.contacts}/>
+                    <Divider sx={{
+                        bgcolor: 'silver'
+                    }}/>
+                    <MainTags tags={establishment?.tags}/>
                 </Box>
                 <Box sx={{
                     p: '15px',

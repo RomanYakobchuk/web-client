@@ -45,6 +45,11 @@ const Login = () => {
         refineCoreProps: {
             resource: 'auth/login',
             action: 'create',
+            meta: {
+                headers: {
+                    "User-Agent": window.navigator.userAgent
+                }
+            },
             onMutationError: (data) => {
                 setError(data?.response?.data)
             },

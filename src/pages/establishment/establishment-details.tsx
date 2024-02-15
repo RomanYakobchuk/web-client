@@ -18,6 +18,7 @@ import "@/hook/transition.css"
 import LoadingDetails from "@/components/establishment/whileLoading/loadingDetails";
 import {MessageRounded} from "@mui/icons-material";
 import {CustomChatShowContainer} from "@/components/chats/customChatShow/customChatShowContainer";
+import {ADD_FREE_PLACES, ESTABLISHMENT} from "@/config/names";
 
 const EstablishmentDetails: FC = () => {
     const translate = useTranslate();
@@ -29,8 +30,8 @@ const EstablishmentDetails: FC = () => {
 
     const [isOpenChat, setIsOpenChat] = useState<boolean>(false);
 
-    const {queryResult} = useShow<{ institution: PropertyProps, subscribe: ISubscribe }>({
-        resource: 'institution/infoById',
+    const {queryResult} = useShow<{ establishment: PropertyProps, subscribe: ISubscribe }>({
+        resource: `${ESTABLISHMENT}/infoById`,
         id: id as string,
         errorNotification: (data: any) => {
             return {
@@ -41,7 +42,7 @@ const EstablishmentDetails: FC = () => {
     });
     const {data, isLoading, isError} = queryResult;
 
-    const institution: PropertyProps = data?.data?.institution ?? {} as PropertyProps;
+    const establishment: PropertyProps = data?.data?.establishment ?? {} as PropertyProps;
     const subscribe: ISubscribe = data?.data?.subscribe ?? {} as ISubscribe;
 
     if (isError) return <ErrorComponent/>
@@ -49,14 +50,14 @@ const EstablishmentDetails: FC = () => {
     return (
         <CustomShow isLoading={false}
                     bgColor={'transparent'}
-                    isShowButtons={user?._id === institution?.createdBy || user?.status === 'admin'}
+                    isShowButtons={user?._id === establishment?.createdBy || user?.status === 'admin'}
                     maxWidth={innerWidth > 1550 ? '1500px' : '1100px'}
         >
             {
                 isLoading
                     ? <LoadingDetails/>
                     : <figcaption style={{
-                        viewTransitionName: `establishment${institution?._id}`,
+                        viewTransitionName: `establishment${establishment?._id}`,
                         contain: 'paint',
                         width: '100%'
                     }}>
@@ -80,7 +81,7 @@ const EstablishmentDetails: FC = () => {
                                 <Button
                                     onClick={(e) => {
                                         e.preventDefault();
-                                        navigate(`/capl/create?establishmentId=${institution?._id}`)
+                                        navigate(`/capl/create?establishmentId=${establishment?._id}`)
                                     }}
                                     color={'info'}
                                     variant={'contained'}
@@ -92,8 +93,8 @@ const EstablishmentDetails: FC = () => {
                                     {translate('capl.title')}
                                 </Button>
                                 <NearbyEstablishmentBtn
-                                    establishment={institution}
-                                    location={institution.location}
+                                    establishment={establishment}
+                                    location={establishment.location}
                                     style={{
                                         m: 0,
                                         width: 'fit-content',
@@ -108,13 +109,13 @@ const EstablishmentDetails: FC = () => {
                                     flexDirection: {xs: 'row', xl: 'column'}
                                 }}>
                                     {
-                                        (institution?.createdBy !== user?._id
-                                            && institution?._id && institution?.sendNotifications) &&
+                                        (establishment?.createdBy !== user?._id
+                                            && establishment?._id && establishment?.sendNotifications) &&
                                         <SubscribeButton
-                                            createdBy={institution?.createdBy}
+                                            createdBy={establishment?.createdBy}
                                             showText={width > 350}
                                             subscribe={subscribe}
-                                            establishmentId={institution?._id}
+                                            establishmentId={establishment?._id}
                                         />
                                     }
                                     <Box sx={{
@@ -136,7 +137,7 @@ const EstablishmentDetails: FC = () => {
                                                     order: -1
                                                 }
                                             }}
-                                            type={'institution'} id={institution?._id}
+                                            type={'establishment'} id={establishment?._id}
                                         />
                                         <Box sx={{
                                             // backdropFilter: 'blur(7px)',
@@ -144,19 +145,19 @@ const EstablishmentDetails: FC = () => {
                                             // borderRadius: '5px'
                                         }}>
                                             <SharedComponent
-                                                type={'institution'}
+                                                type={'establishment'}
                                                 color={'common.white'}
                                                 url={window.location.href}
                                                 isShowSharedText={width > 600}
                                                 title={translate('buttons.share')}
                                                 isOnlyShared={true}
-                                                name={institution?.title}
+                                                name={establishment?.title}
                                             />
                                         </Box>
                                     </Box>
                                 </Box>
                                 {
-                                    user?._id !== institution?.createdBy && (
+                                    user?._id !== establishment?.createdBy && (
                                         <Box>
                                             <Button
                                                 onClick={() => setIsOpenChat(true)}
@@ -174,10 +175,10 @@ const EstablishmentDetails: FC = () => {
                                                 {translate('capl.list.write')}
                                             </Button>
                                             {
-                                                isOpenChat && institution?._id && (
+                                                isOpenChat && establishment?._id && (
                                                     <CustomChatShowContainer
-                                                        chatFieldName={'institution'}
-                                                        chatFieldId={institution?._id}
+                                                        chatFieldName={'establishment'}
+                                                        chatFieldId={establishment?._id}
                                                         chatType={'oneByOne'}
                                                         isOpen={isOpenChat}
                                                         setIsOpen={setIsOpenChat}
@@ -187,10 +188,10 @@ const EstablishmentDetails: FC = () => {
                                                                 user: user?._id,
                                                                 role: user?.status,
                                                                 connectedAt: new Date(),
-                                                                conversationTitle: institution?.title
+                                                                conversationTitle: establishment?.title
                                                             },
                                                             {
-                                                                user: institution?.createdBy,
+                                                                user: establishment?.createdBy,
                                                                 role: 'manager',
                                                                 connectedAt: new Date(),
                                                                 conversationTitle: user?.name
@@ -214,24 +215,24 @@ const EstablishmentDetails: FC = () => {
                             }}
                             >
                                 <CanAccess
-                                    action={'add_free_places'}
-                                    resource={'all_institutions'}
+                                    action={`${ADD_FREE_PLACES}`}
+                                    resource={`${ESTABLISHMENT}`}
                                 >
                                     <Link
-                                        to={'add_free_places'}
+                                        to={`${ADD_FREE_PLACES}`}
                                     >
                                         add_free_places
                                     </Link>
                                 </CanAccess>
                                 <MainEstablishmentInfo
-                                    establishment={institution}/>
+                                    establishment={establishment}/>
                                 {
-                                    institution?._id && (
+                                    establishment?._id && (
                                         <Box sx={{
                                             width: '100%'
                                         }}>
                                             <SimilarEstablishment
-                                                id={institution?._id}/>
+                                                id={establishment?._id}/>
                                         </Box>
                                     )
                                 }
@@ -243,7 +244,7 @@ const EstablishmentDetails: FC = () => {
                                     // p: '10px',
                                     // bgcolor: 'modern.modern_1.main'
                                 }}>
-                                    <EstablishmentPropertyTabs institution={institution}/>
+                                    <EstablishmentPropertyTabs establishment={establishment}/>
                                 </Box>
                             </Box>
                         </Box>

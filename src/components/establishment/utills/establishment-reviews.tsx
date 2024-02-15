@@ -83,7 +83,7 @@ const EstablishmentReviews = ({id}: IProps) => {
         fetchNextPage,
         isFetchingNextPage
     } = useInfiniteList<IReviews>({
-        resource: `review/allByInstitutionId/${id}`,
+        resource: `review/allByestablishmentId/${id}`,
         pagination: {
             pageSize: 20
         }
@@ -118,7 +118,7 @@ const EstablishmentReviews = ({id}: IProps) => {
         try {
             await onFinish({
 
-                institutionId: id,
+                establishmentId: id,
                 grade: grade,
                 text: {
                     like: like,

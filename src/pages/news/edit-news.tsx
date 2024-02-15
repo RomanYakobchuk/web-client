@@ -35,6 +35,11 @@ const EditNews = () => {
                     type: "success",
                     message: data?.data?.message
                 }
+            },
+            meta: {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
             }
         },
 
@@ -50,7 +55,7 @@ const EditNews = () => {
         }
     }, [queryResult])
 
-    const [institutionInfo, setInstitutionInfo] = useState<PropertyProps>({} as PropertyProps);
+    const [establishmentInfo, setestablishmentInfo] = useState<PropertyProps>({} as PropertyProps);
     const [defaultPictures, _] = useState<IPicture[]>([] as IPicture[])
     const [description, setDescription] = useState<string>("");
     const [title, setTitle] = useState<string>("");
@@ -71,7 +76,7 @@ const EditNews = () => {
         setIsDatePublish(news?.publishAt?.isPublish)
         setPictures(news?.pictures)
         setDateEvent(news?.dateEvent)
-        setInstitutionInfo(news?.institutionId as PropertyProps)
+        setestablishmentInfo(news?.establishmentId as PropertyProps)
         setPlace(news?.place)
     }
     useEffect(() => {
@@ -100,7 +105,7 @@ const EditNews = () => {
         formData.append('place', JSON.stringify(place));
         formData.append("category", category);
         // formData.append("createdBy", JSON.stringify(user?._id));
-        formData.append("institutionId", institutionInfo?._id);
+        formData.append("establishmentId", establishmentInfo?._id);
         formData.append("dateEvent", JSON.stringify(dateEvent));
 
         await onFinish(formData);
@@ -135,9 +140,9 @@ const EditNews = () => {
         title,
         setTitle,
         setDateEvent,
-        institutionInfo,
+        establishmentInfo,
         category,
-        setInstitutionInfo,
+        setEstablishmentInfo: setestablishmentInfo,
         setCategory,
         dateEvent,
         description,

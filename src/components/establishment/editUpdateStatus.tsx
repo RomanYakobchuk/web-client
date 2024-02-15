@@ -7,6 +7,7 @@ import {PropertyProps} from "@/interfaces/common";
 import {ColorModeContext} from "@/contexts";
 import {TagField} from "@refinedev/mui";
 import {axiosInstance} from "@/authProvider";
+import {ESTABLISHMENT} from "@/config/names";
 
 
 type TProps = {
@@ -27,7 +28,7 @@ const EditUpdateStatus = ({establishment}: TProps) => {
     // } = useForm({
     //     refineCoreProps: {
     //         action: 'edit',
-    //         resource: `institution/updateStatus`,
+    //         resource: `establishment/updateStatus`,
     //         id: establishment?._id as string,
     //         redirect: false,
     //         errorNotification: (data: any) => {
@@ -62,7 +63,7 @@ const EditUpdateStatus = ({establishment}: TProps) => {
 
     const onFinishHandler = async () => {
         try {
-            const response =  await axiosInstance.patch(`institution/updateStatus/${establishment?._id}`, {
+            const response =  await axiosInstance.patch(`${ESTABLISHMENT}/updateStatus/${establishment?._id}`, {
                 status: newStatus
             });
             if (response?.data?.message) {

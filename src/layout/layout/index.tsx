@@ -1,7 +1,7 @@
 import React, {useContext, useEffect} from "react";
 import {LayoutProps, useNotification} from "@refinedev/core";
 import {Box} from "@mui/material";
-import {Outlet, useNavigate} from "react-router-dom";
+import {Outlet, useLocation, useNavigate} from "react-router-dom";
 
 import {Sider as DefaultSider} from "../sider";
 import {Header as DefaultHeader} from "../header";
@@ -15,7 +15,6 @@ import "../layout.css";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from 'dayjs/plugin/timezone';
-
 import {useTranslation} from "react-i18next";
 
 import "dayjs/locale/uk";
@@ -23,6 +22,9 @@ import "dayjs/locale/en";
 import {socket} from "@/socketClient";
 import {INotification} from "@/interfaces/common";
 import {CreateUniqueIndicator} from "@/components/chats/create/createUniqueIndicator";
+import {FloatButton} from "antd";
+import EditNoteRoundedIcon from '@mui/icons-material/EditNoteRounded';
+import {CAPL, CHATS, CREATE} from "@/config/names";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -47,6 +49,7 @@ export const Layout: React.FC<LayoutProps> = ({
     const {mode} = useContext(ColorModeContext);
     const {open, close} = useNotification();
     const navigate = useNavigate();
+    const {pathname} = useLocation();
 
     useEffect(() => {
 
@@ -62,7 +65,6 @@ export const Layout: React.FC<LayoutProps> = ({
 
     useEffect(() => {
         if (user?._id) {
-
             const handleConnect = () => {
                 socket.emit("addUser", user?._id);
             };
@@ -122,11 +124,16 @@ export const Layout: React.FC<LayoutProps> = ({
         i18n.language === "ua" ? dayjs.locale('uk') : dayjs.locale('en')
     }, [i18n.language, dayjs]);
 
+    const handleNavigate = () => {
+        navigate(`/${CAPL}/${CREATE}`)
+    }
+    const currentPathName = pathname?.split('/')[1];
+
     return (
         <Box
             display="flex" flexDirection="row"
             sx={{
-                margin: styles.marginS,
+                padding: styles?.marginS,
                 height: '100%',
             }}>
             <SiderToRender/>
@@ -136,7 +143,7 @@ export const Layout: React.FC<LayoutProps> = ({
                     flexDirection: "column",
                     flex: 1,
                     scrollBehavior: 'smooth',
-                    gap: styles.gapS,
+                    gap: styles?.gapS,
                     height: '100%',
                 }}
             >
@@ -212,6 +219,17 @@ export const Layout: React.FC<LayoutProps> = ({
                         },
                         "& div.w-md-editor": {
                             minHeight: '250px !important'
+                        },
+                        "& button > div.ant-float-btn-body": {
+                            background: mode === 'light' ? '#f1f1f1' : '#070707',
+                            color: mode === 'dark' ? '#f1f1f1' : '#070707',
+                            transition: '0.2s linear',
+                            boxShadow: mode === 'dark' ? '0px 2px 4px -1px rgba(255,255,255,0.2), 0px 4px 5px 0px rgba(255, 255, 255, 0.14), 0px 1px 10px 0px rgba(255,255,255,0.12)' : '0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12)',
+                            "&:hover": {
+                                background: mode === 'light' ? '#f9f9f9' : '#000',
+                                color: mode === 'dark' ? '#f7f7f7' : '#000',
+                                boxShadow: mode === 'dark' ? '0px 0px 10px 10px rgba(255,255,255,0.2), 0px 4px 5px 0px rgba(255, 255, 255, 0.14), 0px 1px 10px 0px rgba(255,255,255,0.12)' : '0px 0px 10px 10px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12)',
+                            }
                         }
                     }}
                 >
@@ -222,6 +240,21 @@ export const Layout: React.FC<LayoutProps> = ({
                     {
                         schema === 'schema_1' && (
                             <HeaderToRender/>
+                        )
+                    }
+                    {
+                        currentPathName !== `${CAPL}` && currentPathName !== `${CHATS}` && (
+                            <FloatButton
+                                onClick={handleNavigate}
+                                tooltip={<div>Capl</div>}
+                                icon={<EditNoteRoundedIcon sx={{
+                                    color: 'common.white'
+                                }}/>}
+                                style={{
+                                    width: '48px',
+                                    height: '48px',
+                                }}
+                            />
                         )
                     }
                     <Outlet/>

@@ -8,6 +8,7 @@ import {FilterNews} from "../index";
 import ListForUsers from "./lists/listForUsers";
 import {useMobile} from "@/hook";
 import {SchemaContext} from "@/settings/schema";
+import {FullPageLoading} from "@/components/loading/fullPageLoading";
 
 const UserList = () => {
 
@@ -21,7 +22,7 @@ const UserList = () => {
 
 
     const {
-        tableQueryResult: {data, isLoading, isError},
+        tableQueryResult: {data, isFetching, isLoading, isError},
         current,
         setCurrent,
         setPageSize,
@@ -53,6 +54,7 @@ const UserList = () => {
             maxWidth: {xs: '95%', lg: '1100px'},
             margin: '0 auto'
         }}>
+            <FullPageLoading isOpen={isFetching}/>
             <Box sx={{
                 display: 'flex',
                 flexDirection: 'column',

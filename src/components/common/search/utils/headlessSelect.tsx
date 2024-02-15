@@ -10,8 +10,9 @@ type TOption = {
 }
 type TProps = {
     options: TOption[],
-    setSortBy: (value: string) => void | Dispatch<SetStateAction<string>>,
+    setSortBy?: (value: string) => void | Dispatch<SetStateAction<string>>,
     toggleSort?: (value: any) => void,
+    current?: TOption,
     btnHeight?: string,
     btnWidth?: string,
 }
@@ -45,10 +46,10 @@ type TProps = {
 //         value: 'date_event_desc'
 //     }
 // ]
-export const HeadlessSelect = ({options, toggleSort, setSortBy, btnHeight = '40px', btnWidth = '200px'}: TProps) => {
+export const HeadlessSelect = ({options, toggleSort, setSortBy, btnHeight = '40px', btnWidth = '200px', current}: TProps) => {
     const {mode} = useContext(ColorModeContext);
 
-    const [selectedValue, setSelectedValue] = useState(options[0]);
+    const [selectedValue, setSelectedValue] = useState(current ? current : options[0]);
 
     return (
         <Box sx={{
@@ -58,7 +59,9 @@ export const HeadlessSelect = ({options, toggleSort, setSortBy, btnHeight = '40p
                 value={selectedValue}
                 onChange={
                     (value) => {
-                        setSortBy(value?.value)
+                        if (setSortBy) {
+                            setSortBy(value?.value)
+                        }
                         if (toggleSort) {
                             toggleSort(value?.value as any)
                         }

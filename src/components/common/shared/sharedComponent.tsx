@@ -79,7 +79,7 @@ type TProps = {
     id?: string,
     isOnlyShared?: boolean
     color?: string,
-    type: 'institution' | 'institutionNews',
+    type: 'establishment' | 'establishmentNews',
     isShowSharedText?: boolean,
     bookMarkStyle?: SxProps,
     sharedStyle?: SxProps,

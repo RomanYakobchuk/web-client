@@ -18,7 +18,7 @@ type TProps = {
     field?: TUpdateType
 }
 
-type TUpdateType = "institutionStatus" | "userStatus";
+type TUpdateType = "establishmentStatus" | "userStatus";
 const UpdateReserveStatusTag = ({id, defaultValue, reserve, fieldName, field}: TProps) => {
 
     const {user} = useUserInfo();
@@ -52,7 +52,7 @@ const UpdateReserveStatusTag = ({id, defaultValue, reserve, fieldName, field}: T
         }
     }
 
-    const isAccess = reserve?.isAllowedEdit && reserve?.isActive && defaultValue !== 'accepted' && ((field === 'userStatus' && reserve?.user === user?._id) || (field === 'institutionStatus' && reserve?.manager === user?._id)) || role === 'admin';
+    const isAccess = reserve?.isAllowedEdit && reserve?.isActive && defaultValue !== 'accepted' && ((field === 'userStatus' && reserve?.user === user?._id) || (field === 'establishmentStatus' && reserve?.manager === user?._id)) || role === 'admin';
 
     return (
         <Box sx={{

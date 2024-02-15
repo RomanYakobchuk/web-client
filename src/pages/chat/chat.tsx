@@ -22,13 +22,13 @@ const Chat = () => {
     const [openDrawer, setOpenDrawer] = useState(false);
     const [currentChat, setCurrentChat] = useState<IConversation | null>(null);
     const [userId, setUserId] = useState<string>('');
-    const [institutionId, setInstitutionId] = useState<string>('');
+    const [establishmentId, setestablishmentId] = useState<string>('');
     const [conversationId, setConversationId] = useState<string>('');
 
     useEffect(() => {
         if (params.get('firstId') && params.get('secondId')) {
             setUserId(params.get('firstId') as string)
-            setInstitutionId(params.get('secondId') as string)
+            setestablishmentId(params.get('secondId') as string)
         }
         if (params.get('conversationId')) {
             setConversationId(params.get('conversationId') as string)
@@ -36,23 +36,7 @@ const Chat = () => {
     }, [params]);
 
     useEffect(() => {
-        if (userId && institutionId && !conversationId) {
-            (async () => {
-                const data: any = await axiosInstance.post(`/conversation/findChatByTwoId`, {
-                    userId: userId,
-                    institutionId: institutionId
-                })
-                if (data?.data) {
-                    setCurrentChat(data?.data)
-                } else {
-                    const data: any = await axiosInstance.post(`/conversation/create`, {
-                        userId: userId,
-                        institutionId: institutionId
-                    });
-                    setCurrentChat(data?.data)
-                }
-            })();
-        } else if (conversationId) {
+        if (conversationId) {
             (async () => {
                 try {
                     const data = await axiosInstance.get(`/conversation/findById/${conversationId}`);
@@ -69,7 +53,42 @@ const Chat = () => {
                 }
             })()
         }
-    }, [userId, institutionId, conversationId]);
+    }, [conversationId]);
+    // useEffect(() => {
+    //     if (userId && establishmentId && !conversationId) {
+    //         (async () => {
+    //             const data: any = await axiosInstance.post(`/conversation/findChatByTwoId`, {
+    //                 userId: userId,
+    //                 establishmentId: establishmentId
+    //             })
+    //             if (data?.data) {
+    //                 setCurrentChat(data?.data)
+    //             } else {
+    //                 const data: any = await axiosInstance.post(`/conversation/create`, {
+    //                     userId: userId,
+    //                     establishmentId: establishmentId
+    //                 });
+    //                 setCurrentChat(data?.data)
+    //             }
+    //         })();
+    //     } else if (conversationId) {
+    //         (async () => {
+    //             try {
+    //                 const data = await axiosInstance.get(`/conversation/findById/${conversationId}`);
+    //
+    //                 if (data?.data) {
+    //                     setCurrentChat(data?.data)
+    //                 }
+    //             } catch (e: any) {
+    //                 open?.({
+    //                     type: 'error',
+    //                     message: 'Error',
+    //                     description: e?.response?.data?.error
+    //                 })
+    //             }
+    //         })()
+    //     }
+    // }, [userId, establishmentId, conversationId]);
 
     useEffect(() => {
         if (currentChat?._id) {
@@ -78,10 +97,10 @@ const Chat = () => {
     }, [currentChat]);
 
     useEffect(() => {
-        if (institutionId) {
-            setCurrentPlace((prevState) => ({...prevState, _id: institutionId}))
+        if (establishmentId) {
+            setCurrentPlace((prevState) => ({...prevState, _id: establishmentId}))
         }
-    }, [institutionId]);
+    }, [establishmentId]);
 
     const closeChat = () => {
         setCurrentChat(null)
@@ -146,10 +165,10 @@ const Chat = () => {
                 {/*}}>*/}
                 {/*<CanAccess resource={'chats'} action={'searchChatsByPlace'}>*/}
                 {/*    <Box>*/}
-                {/*<SearchInstitutions*/}
-                {/*    searchInstitution={currentPlace}*/}
-                {/*    setSearchInstitution={setCurrentPlace}*/}
-                {/*    typeSearch={role === 'admin' ? 'all' : 'userInstitutions'}*/}
+                {/*<Searchestablishments*/}
+                {/*    searchestablishment={currentPlace}*/}
+                {/*    setSearchestablishment={setCurrentPlace}*/}
+                {/*    typeSearch={role === 'admin' ? 'all' : 'userestablishments'}*/}
                 {/*/>*/}
                 {/*</Box>*/}
                 {/*</CanAccess>*/}
@@ -182,7 +201,7 @@ const Chat = () => {
                 {/*                        minWidth: '100px',*/}
                 {/*                        mt: 1*/}
                 {/*                    }}*/}
-                {/*                    // onClick={() => navigate(`/all_institutions/show/${currentChat?.institutionId?._id}`)}*/}
+                {/*                    // onClick={() => navigate(`/all_establishments/show/${currentChat?.establishmentId?._id}`)}*/}
                 {/*                    color={"secondary"}*/}
                 {/*                    endIcon={<EastOutlined/>}*/}
                 {/*                    variant={"outlined"}>*/}
@@ -192,7 +211,7 @@ const Chat = () => {
                 {/*            : <Box sx={{*/}
                 {/*                p: '20px'*/}
                 {/*            }}>*/}
-                {/*                Institution details*/}
+                {/*                establishment details*/}
                 {/*            </Box>*/}
                 {/*        : ''*/}
                 {/*}*/}

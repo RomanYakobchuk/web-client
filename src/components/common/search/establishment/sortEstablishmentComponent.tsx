@@ -5,35 +5,33 @@ import "@/main.css"
 import {HeadlessSelect} from "@/components/common/search/utils/headlessSelect";
 
 type TProps = {
-    newSorters: CrudSorting,
-    setSortBy: (value: string) => void,
+    sorters: CrudSorting,
     defaultSetSorters: (sorter: CrudSorting) => void,
-    sortBy: string
 }
-const SortEstablishmentComponent = ({newSorters, setSortBy, defaultSetSorters, sortBy}: TProps) => {
+const SortEstablishmentComponent = ({sorters, defaultSetSorters}: TProps) => {
 
     const translate = useTranslate();
 
     const currentSorterOrders = useMemo(() => {
         return {
             rating_asc:
-                newSorters?.find((item: any) => item.field === "rating_asc")?.order || "asc",
+                sorters?.find((item) => item.field === "rating_asc")?.order || "asc",
             rating_desc:
-                newSorters?.find((item: any) => item.field === "rating_desc")?.order || "desc",
+                sorters?.find((item) => item.field === "rating_desc")?.order || "desc",
             createdAt_asc:
-                newSorters?.find((item: any) => item.field === "createdAt_asc")?.order || "asc",
+                sorters?.find((item) => item.field === "createdAt_asc")?.order || "asc",
             createdAt_desc:
-                newSorters?.find((item: any) => item.field === "createdAt_desc")?.order || "desc",
+                sorters?.find((item) => item.field === "createdAt_desc")?.order || "desc",
             title_asc:
-                newSorters?.find((item: any) => item.field === "title_asc")?.order || "asc",
+                sorters?.find((item) => item.field === "title_asc")?.order || "asc",
             title_desc:
-                newSorters?.find((item: any) => item.field === "title_desc")?.order || "desc",
+                sorters?.find((item) => item.field === "title_desc")?.order || "desc",
             averageCheck_asc:
-                newSorters?.find((item: any) => item.field === "averageCheck_asc")?.order || -1,
+                sorters?.find((item) => item.field === "averageCheck_asc")?.order || -1,
             averageCheck_desc:
-                newSorters?.find((item: any) => item.field === "averageCheck_desc")?.order || 1,
+                sorters?.find((item) => item.field === "averageCheck_desc")?.order || 1,
         };
-    }, [newSorters]);
+    }, [sorters]);
     const toggleSort = (field: keyof typeof currentSorterOrders) => {
         const newOrder = field?.split('_')[1] as "asc" | 'desc';
         defaultSetSorters([
@@ -82,151 +80,12 @@ const SortEstablishmentComponent = ({newSorters, setSortBy, defaultSetSorters, s
             value: 'averageCheck_desc'
         },
     ];
+
+    const currentSorters = options?.sort((a) => (a?.value === (sorters?.length > 0 ? sorters[0]?.field : '')) ? -1 : 1)[0];
     return (
-        // <FormControl
-        //     sx={{
-        //         width: '100%',
-        //         maxWidth: '200px'
-        //     }}
-        // >
-        //     <Select
-        //         variant={"outlined"}
-        //         size="small"
-        //         color={"info"}
-        //         fullWidth
-        //         displayEmpty
-        //         required
-        //         inputProps={{'aria-label': 'Without label'}}
-        //         value={newSorters[0]?.field ? newSorters[0]?.field : sortBy ? sortBy : ""}
-        //         sx={{
-        //             fontSize: {xs: '12px', sm: '16px'},
-        //             borderRadius: bRButtonFilter,
-        //             borderColor: 'common.white',
-        //             borderWidth: '1px',
-        //             borderStyle: 'solid'
-        //         }}
-        //         onChange={
-        //             (e: any) => {
-        //                 setSortBy(e.target.value)
-        //                 toggleSort(e.target.value)
-        //             }
-        //         }
-        //     >
-        //         <MenuItem value={""}>{translate("home.default")}</MenuItem>
-        //         {
-        //             [
-        //                 {
-        //                     title: translate("home.sortRating") + '  ' + '↑',
-        //                     value: "rating_asc",
-        //                 },
-        //                 {
-        //                     title: translate("home.sortRating") + '  ' + '↓',
-        //                     value: "rating_desc",
-        //                 },
-        //                 {
-        //                     title: translate('home.oldest'),
-        //                     value: 'createdAt_asc',
-        //                 },
-        //                 {
-        //                     title: translate('home.newest'),
-        //                     value: 'createdAt_desc',
-        //                 },
-        //                 {
-        //                     title: translate("home.sortByABC.title") + ' ' + translate("home.sortByABC.a-z"),
-        //                     value: 'title_asc'
-        //                 },
-        //                 {
-        //                     title: translate("home.sortByABC.title") + ' ' + translate("home.sortByABC.z-a"),
-        //                     value: 'title_desc'
-        //                 },
-        //                 {
-        //                     title: translate("home.create.averageCheck") + '  ' + '↑',
-        //                     value: 'averageCheck_asc'
-        //                 },
-        //                 {
-        //                     title: translate("home.create.averageCheck") + '  ' + '↓',
-        //                     value: 'averageCheck_desc'
-        //                 },
-        //             ].map((type) => (
-        //                 <MenuItem key={type.value}
-        //                           value={type.value}>{type.title}</MenuItem>
-        //             ))
-        //         }
-        //     </Select>
-        // </FormControl>
-        // <div className="w-[220px]">
-        //     <Listbox
-        //         value={selectedValue}
-        //         onChange={
-        //             (value) => {
-        //                 setSortBy(value?.value)
-        //                 toggleSort(value?.value as any)
-        //                 setSelectedValue(value)
-        //                 console.log(value)
-        //             }
-        //         }
-        //     >
-        //         <div className="relative mt-1">
-        //             <Listbox.Button
-        //                 className="relative cursor-pointer w-full rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
-        //                 <span className="block truncate">{selectedValue.title}</span>
-        //                 <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-        //              <ChevronUpDownIcon
-        //                  className="h-5 w-5 text-gray-400"
-        //                  aria-hidden="true"
-        //              />
-        //             </span>
-        //             </Listbox.Button>
-        //             <Transition
-        //                 as={Fragment}
-        //                 leave="transition ease-in duration-100"
-        //                 leaveFrom="opacity-100"
-        //                 leaveTo="opacity-0"
-        //             >
-        //                 <Listbox.Options
-        //                     className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
-        //                     {
-        //                         ?.map((item, index) => {
-        //                             return (
-        //                                 <Listbox.Option
-        //                                     className={({active}) =>
-        //                                         `relative cursor-default select-none py-2 pl-10 pr-4 ${
-        //                                             active ? 'bg-amber-100 text-amber-900' : 'text-gray-900'
-        //                                         }`
-        //                                     }
-        //                                     key={index}
-        //                                     value={item}>
-        //                                     {() => {
-        //                                         return (
-        //                                             <>
-        //               <span
-        //                   className={`block truncate ${
-        //                       selectedValue?.value === item?.value ? 'font-medium' : 'font-normal'
-        //                   }`}
-        //               >
-        //                 {item?.title}
-        //               </span>
-        //                                                 {selectedValue?.value === item?.value ? (
-        //                                                     <span
-        //                                                         className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600">
-        //                   <CheckIcon className="h-5 w-5" aria-hidden="true"/>
-        //                 </span>
-        //                                                 ) : null}
-        //                                             </>
-        //                                         )
-        //                                     }}
-        //                                 </Listbox.Option>
-        //                             )
-        //                         })
-        //                     }
-        //                 </Listbox.Options>
-        //             </Transition>
-        //         </div>
-        //     </Listbox>
-        // </div>
         <HeadlessSelect
+            current={currentSorters}
             options={options}
-            setSortBy={setSortBy}
             toggleSort={toggleSort}
         />
     );

@@ -1,5 +1,6 @@
-import {Box, Typography} from "@mui/material";
+import {Box} from "@mui/material";
 import {SchemaSelector} from "../../components";
+import {ScreenMode} from "@/components/settings/screenMode";
 
 const Settings = () => {
     return (
@@ -10,7 +11,7 @@ const Settings = () => {
             gap: 2
         }}>
             <SchemaSelector/>
-
+            <ScreenMode/>
         </Box>
     );
 };

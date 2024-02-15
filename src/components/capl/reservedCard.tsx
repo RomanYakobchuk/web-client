@@ -9,6 +9,7 @@ import {IReserve} from "@/interfaces/common";
 import {ColorModeContext} from "@/contexts";
 import {useUserInfo} from "@/hook";
 import RenderTag from "@/components/common/statusTagRender";
+import {ESTABLISHMENT, SHOW} from "@/config/names";
 
 interface IProps {
     reserve: IReserve
@@ -17,11 +18,11 @@ interface IProps {
 const ReservedCard = ({reserve}: IProps) => {
 
     const {
-        institution,
+        establishment,
         date,
         _id,
         fullName,
-        institutionStatus,
+        establishmentStatus,
         userStatus,
         isActive,
         isClientAppeared
@@ -150,9 +151,9 @@ const ReservedCard = ({reserve}: IProps) => {
                                 fontWeight: 600,
                                 fontSize: '16px'
                             }}>
-                                {translate('capl.status.institutionStatus')}
+                                {translate('capl.status.establishmentStatus')}
                             </span>
-                            <RenderTag value={institutionStatus?.value}/>
+                            <RenderTag value={establishmentStatus?.value}/>
                         </div>
                     </Box>
                 </Box>
@@ -222,7 +223,7 @@ const ReservedCard = ({reserve}: IProps) => {
                                 }}
                             >
                                 {
-                                    institution?.pictures?.length > 0 && (
+                                    establishment?.pictures?.length > 0 && (
                                         <Box sx={{
                                             width: {xs: '80px', md: '100px'},
                                             height: {xs: '80px', md: '100px'}
@@ -234,8 +235,8 @@ const ReservedCard = ({reserve}: IProps) => {
                                                     borderRadius: '10px',
                                                     objectFit: 'cover'
                                                 }}
-                                                src={institution?.pictures[0]?.url}
-                                                alt={institution?.title}/>
+                                                src={establishment?.pictures[0]?.url}
+                                                alt={establishment?.title}/>
                                         </Box>
                                     )
                                 }
@@ -251,7 +252,7 @@ const ReservedCard = ({reserve}: IProps) => {
                                             fontWeight: 600
                                         }}
                                     >
-                                        {institution?.title}
+                                        {establishment?.title}
                                     </Typography>
                                     <Typography
                                         sx={{
@@ -263,10 +264,10 @@ const ReservedCard = ({reserve}: IProps) => {
                                             borderRadius: '10px'
                                         }}
                                     >
-                                        {translate(`home.sortByType.${institution?.type}`)}
+                                        {translate(`home.sortByType.${establishment?.type}`)}
                                     </Typography>
                                     {
-                                        institution?.place?.city && (
+                                        establishment?.place?.city && (
                                             <Typography sx={{
                                                 display: 'flex',
                                                 flexDirection: 'row',
@@ -275,7 +276,7 @@ const ReservedCard = ({reserve}: IProps) => {
                                                 fontSize: '14px'
                                             }}>
                                                 <Place/>
-                                                {institution?.place?.city}
+                                                {establishment?.place?.city}
                                             </Typography>
                                         )
                                     }
@@ -301,7 +302,7 @@ const ReservedCard = ({reserve}: IProps) => {
                                 }
                             }}>
                                 <Link
-                                    to={`/all_institutions/show/${institution?._id}`}
+                                    to={`/${ESTABLISHMENT}/${SHOW}/${establishment?._id}`}
                                 >
                                     <CallMadeSharp/>
                                 </Link>

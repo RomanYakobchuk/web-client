@@ -1,50 +1,29 @@
-import React, {useContext, useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {Sider as DefaultSider} from "@refinedev/mui";
 
 import {
     Box,
+    Button,
+    Collapse,
     Drawer,
+    List as MuiList,
     ListItemButton,
     ListItemIcon,
     ListItemText,
-    Collapse,
     Tooltip,
-    Button,
 } from "@mui/material";
-
-import {List as MuiList} from "@mui/material";
-import {
-    ListOutlined,
-    Logout,
-    ExpandLess,
-    ExpandMore,
-    ChevronLeft,
-    ChevronRight,
-    CheckOutlined, CloseOutlined,
-} from "@mui/icons-material";
-import {
-    CanAccess,
-    ITreeMenu,
-    useIsExistAuthentication,
-    useLogout,
-    useTitle,
-    useTranslate,
-    useMenu,
-    useLink,
-} from "@refinedev/core";
+import {ChevronLeft, ChevronRight, ExpandLess, ExpandMore, ListOutlined,} from "@mui/icons-material";
+import {CanAccess, ITreeMenu, useLink, useMenu, useTitle, useTranslate,} from "@refinedev/core";
 
 import {Title as DefaultTitle} from "../title";
-import {useSchema} from "../../settings";
-import {ColorModeContext} from "../../contexts";
-import {ModalWindow} from "../../components";
-import {SchemaContext} from "../../settings/schema";
-import {googleLogout} from "@react-oauth/google";
-import {socket} from "@/socketClient";
+import {useSchema} from "@/settings";
+import {ColorModeContext} from "@/contexts";
+import {LogoutComponent} from "@/layout/common";
+import {SchemaContext} from "@/settings/schema";
 
 export const Sider: typeof DefaultSider = ({render}) => {
 
     const {schema} = useContext(SchemaContext);
-
     const {open: openSider, setOpen: setOpenSider, collapsed, setCollapsed} = useContext(ColorModeContext);
 
     const drawerWidth = () => {
@@ -55,18 +34,16 @@ export const Sider: typeof DefaultSider = ({render}) => {
         if (collapsed) return 68;
         return 256;
     };
+    const logout = LogoutComponent({});
 
     const t = useTranslate();
     const Link = useLink();
 
     const {menuItems, selectedKey, defaultOpenKeys} = useMenu();
-    const isExistAuthentication = useIsExistAuthentication();
-    const {mutate: mutateLogout} = useLogout();
     const Title = useTitle();
     const {styles} = useSchema();
 
     const [open, setOpen] = useState<{ [k: string]: any }>({});
-    const [isLogOut, setIsLogOut] = useState(false)
     const [path, setPath] = useState<any>();
 
     useEffect(() => {
@@ -82,10 +59,9 @@ export const Sider: typeof DefaultSider = ({render}) => {
                 ...previousOpenKeys,
                 ...defaultOpenKeys,
             ]);
-            const uniqueKeyRecord = Object.fromEntries(
+            return Object.fromEntries(
                 Array.from(uniqueKeys.values()).map((key) => [key, true]),
             );
-            return uniqueKeyRecord;
         });
     }, [defaultOpenKeys]);
 
@@ -260,131 +236,6 @@ export const Sider: typeof DefaultSider = ({render}) => {
             );
         });
     };
-    // const [logoutPath, setLogoutPath] = useState(window.location.pathname + window.location.search);
-    //
-    // useEffect(() => {
-    //     if (window.location.pathname) {
-    //         setLogoutPath(window.location.pathname + window?.location?.search)
-    //     }
-    // }, [window.location.pathname, window.location.search]);
-
-    const logout = isExistAuthentication && (
-        <Tooltip
-            title={t("buttons.logout", "Logout")}
-            placement="right"
-            disableHoverListener={!collapsed}
-            arrow
-        >
-            <>
-                <ModalWindow
-                    open={isLogOut}
-                    setOpen={setIsLogOut}
-                    title={''}>
-                    <Box sx={{
-                        display: 'flex',
-                        justifyContent: "space-between",
-                        alignItems: 'center',
-                        flexDirection: collapsed ? "column" : 'row',
-                        gap: collapsed ? 2 : 0,
-                        margin: "10px auto",
-                        borderRadius: "12px",
-                        height: "56px",
-                        p: '0px 20px',
-                        width: {xs: drawerWidth()},
-                        bgcolor: 'rgba(197,176,196,0.5)'
-                    }}>
-                        <Button
-                            sx={{
-                                bgcolor: 'red',
-                                p: '5px 10px',
-                                height: '35px',
-                                transition: '300ms linear',
-                                "&:hover": {
-                                    bgcolor: '#900f1a'
-                                }
-                            }}
-                            onClick={() => setIsLogOut(false)}
-                        >
-                            <CloseOutlined sx={{
-                                color: 'white'
-                            }}/>
-                        </Button>
-                        <Button
-                            sx={{
-                                bgcolor: 'green',
-                                p: '5px 10px',
-                                height: '35px',
-                                transition: '300ms linear',
-                                "&:hover": {
-                                    bgcolor: '#365d10'
-                                }
-                            }}
-                            onClick={() => {
-                                googleLogout()
-                                mutateLogout()
-                                socket.disconnect()
-                                FB?.getLoginStatus(function (response) {
-                                    if (response.status === 'connected') {
-                                        FB?.logout()
-                                    }
-                                })
-                            }}
-                        >
-                            <CheckOutlined sx={{
-                                color: 'white'
-                            }}/>
-                        </Button>
-                    </Box>
-                </ModalWindow>
-                {/*{*/}
-                {/*    isLogOut*/}
-                {/*        ?  :*/}
-                <ListItemButton
-                    key="logout"
-                    onClick={() => {
-                        setIsLogOut(true)
-                        setOpenSider()
-                    }}
-                    sx={{
-                        justifyContent: "center",
-                        margin: "10px auto",
-                        borderRadius: "12px",
-                        bgcolor: 'error.main',
-                        minHeight: "56px",
-                        width: "90%",
-                        transition: '300ms linear',
-                        color: 'secondary.main',
-                        "&:hover": {
-                            bgcolor: 'red',
-                            //     color: (theme) => theme.palette.secondary.main,
-                            //     transition: '300ms linear',
-                            //     "> div": {
-                            //         color: (theme) => theme.palette.secondary.main
-                            //     }
-                        }
-                    }}
-                >
-                    <ListItemIcon
-                        sx={{
-                            justifyContent: "center",
-                            minWidth: 36,
-                            color: (theme) => theme.palette.secondary.main,
-                        }}
-                    >
-                        <Logout/>
-                    </ListItemIcon>
-                    <ListItemText
-                        primary={t("buttons.logout", "Logout")}
-                        primaryTypographyProps={{
-                            noWrap: true,
-                            fontSize: "16px",
-                        }}
-                    />
-                </ListItemButton>
-            </>
-            {/*}*/}
-        </Tooltip>
-    );
 
     const items = renderTreeView(menuItems, selectedKey);
 
@@ -518,7 +369,7 @@ export const Sider: typeof DefaultSider = ({render}) => {
                             overflow: "hidden",
                             transition:
                                 "width 200ms cubic-bezier(0.4, 0, 0.6, 1) 0ms",
-                            margin: styles.marginSiderS,
+                            margin: schema === 'schema_1' ? styles.marginSiderS : '5px 5px 5px 5px',
                             borderRadius: styles.borderRadiusS,
                             height: styles.heightSiderS
                         },

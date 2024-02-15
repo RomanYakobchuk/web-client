@@ -60,7 +60,6 @@ const DataForm = (props: IEstablishmentFormProps) => {
     const {data: identity} = useGetIdentity<IGetIdentity>();
     const currentUser: ProfileProps = identity?.user as ProfileProps;
 
-
     useEffect(() => {
         if (currentUser?.status !== 'admin') {
             setCreatedBy(currentUser?._id)

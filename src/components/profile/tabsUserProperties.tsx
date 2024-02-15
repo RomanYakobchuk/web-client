@@ -7,9 +7,10 @@ import {TabContext, TabList, TabPanel} from "@mui/lab";
 import {usePermissions, useTranslate} from "@refinedev/core";
 import {useMobile} from "@/hook";
 import {Apartment, Bookmark, MessageOutlined, ReviewsOutlined} from "@mui/icons-material";
-import {FavoritePlaces, UserComments, UserInstitutions, UserReviews} from "@/components";
+import {FavoritePlaces, UserComments, UserEstablishments, UserReviews} from "@/components";
 import {useLocation, useNavigate} from "react-router-dom";
 import {ColorModeContext} from "@/contexts";
+import {ESTABLISHMENT} from "@/config/names";
 
 // type tabType = 'reviews' | 'saved' | 'comments' | "own_establishment";
 
@@ -70,9 +71,9 @@ const TabsUserProperties = ({user}: TProps) => {
     useEffect(() => {
         if (user?.status === 'manager' && (role === 'manager' || role === 'admin')) {
             setButtons([...defaultButtons, {
-                label: translate('all_institutions.all_institutions'),
+                label: translate(`${ESTABLISHMENT}.${ESTABLISHMENT}`),
                 icon: <Apartment/>,
-                link: 'establishment',
+                link: `${ESTABLISHMENT}`,
                 index: '4'
             }])
         }
@@ -213,7 +214,7 @@ const TabsUserProperties = ({user}: TProps) => {
                         >
                             {
                                 value === '4' && _id && (
-                                    <UserInstitutions id={_id}/>
+                                    <UserEstablishments id={_id}/>
                                 )
                             }
                         </TabPanel>

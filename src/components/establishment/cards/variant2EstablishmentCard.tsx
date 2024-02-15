@@ -1,4 +1,4 @@
-import {Box, CardMedia, Typography} from "@mui/material";
+import {Box, CardMedia, Paper, Typography} from "@mui/material";
 import React, {useContext} from "react";
 import {Link} from "react-router-dom";
 import {useTranslate} from "@refinedev/core";
@@ -8,7 +8,9 @@ import {BookMarkButton} from "../../index";
 import {PropertyProps} from "@/interfaces/common";
 import {ColorModeContext} from "@/contexts";
 import SharedComponent from "../../common/shared/sharedComponent";
-import {useMobile, useNavigateWithTransition} from "@/hook";
+import {useNavigateWithTransition} from "@/hook";
+import {ESTABLISHMENT, SHOW} from "@/config/names";
+import {TruncateSingleText} from "@/utils";
 
 interface IProps {
     establishment: PropertyProps
@@ -21,20 +23,18 @@ const Variant2EstablishmentCard = ({establishment}: IProps) => {
     const {_id, type, place, pictures, rating, title, averageCheck, createdBy} = establishment;
     const navigateWithTransition = useNavigateWithTransition();
     const {mode} = useContext(ColorModeContext);
-    const {width} = useMobile();
     const translate = useTranslate();
 
-    const tL = (width >= 800 && width <= 900) ? 30 : ((width < 800) || (width < 1100 && width > 900)) ? 15 : 30;
-    const currentTitle = title?.length > (tL) ? title?.slice(0, tL) : title;
-
-    const isSplicedTitle = title?.length > tL;
-
-    const linkTo = `/all_institutions/show/${establishment?._id}`;
+    const linkTo = `/${ESTABLISHMENT}/show/${establishment?._id}`;
 
     return (
-        <Box sx={{
-            width: '100%',
-        }}>
+        <Paper
+            sx={{
+                width: '100%',
+                borderRadius: {xs: '16px', sm: '20px'},
+            }}
+            elevation={4}
+        >
             <Link
                 unstable_viewTransition
                 style={{
@@ -56,7 +56,7 @@ const Variant2EstablishmentCard = ({establishment}: IProps) => {
                     flexDirection: {xs: 'column', sm: 'row'},
                     boxShadow: {xs: 'unset', sm: '0px 4px 8px 0px rgba(125, 125, 125, 0.2)'},
                     bgcolor: 'common.black',
-                    borderRadius: {xs: '0', sm: '20px'},
+                    borderRadius: {xs: '16px', sm: '20px'},
                     width: '100%',
                     gap: 2,
                     color: 'common.white'
@@ -70,8 +70,12 @@ const Variant2EstablishmentCard = ({establishment}: IProps) => {
                                 sx={{
                                     borderRadius: {xs: 0, sm: "10px"},
                                     height: {xs: '200px', sm: '150px', lg: '200px'},
-                                    "@media screen and (max-width: 700px && min-width: 600px)":{
+                                    "@media screen and (600px <= width < 700px)": {
                                         width: '200px'
+                                    },
+                                    "@media screen and (max-width: 600px)": {
+                                        borderTopLeftRadius: '16px',
+                                        borderTopRightRadius: '16px',
                                     },
                                     width: {xs: '100%', sm: '250px', lg: '300px'},
                                 }}
@@ -81,7 +85,7 @@ const Variant2EstablishmentCard = ({establishment}: IProps) => {
                     <Box sx={{
                         display: 'flex',
                         width: {xs: '100%', sm: 'calc(100% - 250px)', lg: 'calc(100% - 300px)'},
-                        "@media screen and (max-width: 700px && min-width: 600px)":{
+                        "@media screen and (600px <= width < 700px)": {
                             width: 'calc(100% - 200px)'
                         },
                         flexDirection: 'column',
@@ -101,16 +105,15 @@ const Variant2EstablishmentCard = ({establishment}: IProps) => {
                                 alignItems: 'center',
                                 gap: {xs: 2.5, md: 5}
                             }}>
-                                <Typography sx={{
+                                <Box sx={{
                                     fontSize: {xs: '1rem', sm: '1.2rem', md: '1.5rem'},
-                                    "@media screen and (max-width: 950px && min-width: 900px)":{
+                                    "@media screen and (max-width: 950px && min-width: 900px)": {
                                         fontSize: '1.3rem'
                                     },
-                                    fontWeight: 700
+                                    fontWeight: 700,
                                 }}>
-                                    {currentTitle}
-                                    {isSplicedTitle && '...'}
-                                </Typography>
+                                    {TruncateSingleText({width: '120px', str: title})}
+                                </Box>
                                 <Typography sx={{
                                     color: 'common.black',
                                     bgcolor: 'common.white',
@@ -118,7 +121,7 @@ const Variant2EstablishmentCard = ({establishment}: IProps) => {
                                     borderRadius: '7px',
                                     fontWeight: 500,
                                     fontSize: {sm: '0.875rem', md: '1rem'},
-                                    "@media screen and ((max-width: 1000px && min-width: 900px) || max-width: 600px)":{
+                                    "@media screen and ((max-width: 1000px && min-width: 900px) || max-width: 600px)": {
                                         fontSize: '0.875rem'
                                     },
                                 }}>
@@ -132,9 +135,10 @@ const Variant2EstablishmentCard = ({establishment}: IProps) => {
                             }}>
                                 <BookMarkButton
                                     id={_id}
+                                    title={establishment?.title}
                                     bgColor={'transparent'}
                                     color={'common.white'}
-                                    type={'institution'}
+                                    type={'establishment'}
                                     showText={false}
                                     style={{
                                         // p: '5px',
@@ -152,9 +156,9 @@ const Variant2EstablishmentCard = ({establishment}: IProps) => {
                                     // borderRadius: '5px'
                                 }}>
                                     <SharedComponent
-                                        type={'institution'}
+                                        type={'establishment'}
                                         color={'commn.black'}
-                                        url={`${CLIENT_URL}/all_institutions/show/${_id}`}
+                                        url={`${CLIENT_URL}/${ESTABLISHMENT}/${SHOW}/${_id}`}
                                         title={translate('buttons.share')}
                                         isOnlyShared={true}
                                         name={establishment?.title}
@@ -233,7 +237,7 @@ const Variant2EstablishmentCard = ({establishment}: IProps) => {
                     </Box>
                 </Box>
             </Link>
-        </Box>
+        </Paper>
     );
 };
 export default Variant2EstablishmentCard;

@@ -9,7 +9,7 @@ import {useMobile} from "../../../../hook";
 
 type IProps = {
     isLoading: boolean,
-    allInstitutions: PropertyProps[],
+    allEstablishments: PropertyProps[],
     total: number,
     data: GetListResponse<BaseRecord> | undefined,
     current: number,
@@ -17,7 +17,7 @@ type IProps = {
     pageSize: number,
     setPageSize: Dispatch<React.SetStateAction<number>>
 }
-const ListForUsers = ({isLoading, allInstitutions, data, current, setCurrent, setPageSize, pageSize, total}: IProps) => {
+const ListForUsers = ({isLoading, allEstablishments, data, current, setCurrent, setPageSize, pageSize, total}: IProps) => {
     const translate = useTranslate();
     const {width} = useMobile();
 
@@ -31,8 +31,8 @@ const ListForUsers = ({isLoading, allInstitutions, data, current, setCurrent, se
         }}>
             {
                 isLoading ? <Loading height={'40vh'}/> :
-                    allInstitutions?.length > 0 ?
-                        <PropertiesList items={allInstitutions}/>
+                    allEstablishments?.length > 0 ?
+                        <PropertiesList items={allEstablishments}/>
                         : <Box sx={{
                             width: '100%',
                             height: '250px',

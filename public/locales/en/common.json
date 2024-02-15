@@ -58,6 +58,7 @@
       "steps": {
         "first": "First",
         "second": "Second",
+        "third":"Third",
         "last": "Last"
       },
       "errors": {
@@ -314,7 +315,7 @@
     "search": "Search by title, description, city, features",
     "searchByTag": "Search by #tag",
     "sortByType": {
-      "all": "all",
+      "all": "All",
       "bar": "Bar",
       "cafe": "Cafe",
       "restaurant": "Restaurant",
@@ -443,8 +444,8 @@
       "title": "Edit establishment"
     }
   },
-  "all_institutions": {
-    "all_institutions": "Establishments",
+  "establishment": {
+    "establishment": "Establishments",
     "tile": "All establishments",
     "similar": {
       "title": "Similar establishment"
@@ -493,8 +494,8 @@
       "publicDate": "Publication date"
     }
   },
-  "top-institutions": {
-    "top-institutions": "Top establishments",
+  "top-establishments": {
+    "top-establishments": "Top establishments",
     "title": "Top establishments"
   },
   "capl": {
@@ -523,7 +524,7 @@
     },
     "status": {
       "userStatus": "Client status",
-      "institutionStatus": "Establishment status",
+      "establishmentStatus": "Establishment status",
       "accepted": "Accepted",
       "draft": "Is waiting",
       "rejected": "Rejected",
@@ -551,8 +552,8 @@
   "all-capl": {
     "title": "All reservations"
   },
-  "my-institution": {
-    "my-institution": "My establishments",
+  "my-establishment": {
+    "my-establishment": "My establishments",
     "title": "My establishments",
     "verify": {
       "published": "Published",
@@ -651,7 +652,7 @@
     "odesa": "Odesa",
     "kharkiv": "Kharkiv",
     "lviv": "Lviv",
-    "institutions": "Establishments: {{number}}"
+    "establishments": "Establishments: {{number}}"
   },
   "roles": {
     "manager": "Manager",
@@ -677,7 +678,7 @@
   },
   "list": {
     "list": "List",
-    "institution": "List of establishments",
+    "establishment": "List of establishments",
     "capl": "List of reservations",
     "news": "News list",
     "users": "List of users"

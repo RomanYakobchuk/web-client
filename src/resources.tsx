@@ -9,83 +9,85 @@ import {
 } from "@mui/icons-material";
 import React from "react";
 
+import {DASHBOARD, CHATS, HOME, CAPL, PROFILE, SHOW, NEWS, EDIT, CREATE, ESTABLISHMENT} from "@/config/names";
+
 const resources = [
     {
-        name: 'dashboard',
-        list: '/dashboard',
+        name: `${DASHBOARD}`,
+        list: `/${DASHBOARD}`,
         meta: {
-            label: 'dashboard/user',
+            label: `${DASHBOARD}/user`,
             icon: <DashboardOutlined/>
         },
     },
     {
-        name: "home",
+        name: `${HOME}`,
         meta: {
             icon: <HomeIcon/>,
         },
-        list: '/home',
-        show: '/home/show/:id',
-        create: '/home/create',
-        edit: '/home/edit/:id',
+        list: `/${HOME}`,
+        show: `/${HOME}/${SHOW}/:id`,
+        create: `/${HOME}/${CREATE}`,
+        edit: `/${HOME}/${EDIT}/:id`,
     },
     {
-        name: "all_institutions",
+        name: `${ESTABLISHMENT}`,
         meta: {
             icon: <Apartment/>,
             canDelete: true,
         },
-        list: '/all_institutions',
-        show: '/all_institutions/show/:id',
-        create: '/all_institutions/create',
-        edit: '/all_institutions/edit/:id',
+        list: `/${ESTABLISHMENT}`,
+        show: `/${ESTABLISHMENT}/${SHOW}/:id`,
+        create: `/${ESTABLISHMENT}/${CREATE}`,
+        edit: `/${ESTABLISHMENT}/${EDIT}/:id`,
     },
     {
-        name: "news",
+        name: `${NEWS}`,
         meta: {
             icon: <NewspaperOutlined/>,
         },
-        list: '/news',
-        show: '/news/show/:id',
-        create: '/news/create',
-        edit: '/news/edit/:id',
+        list: `/${NEWS}`,
+        show: `/${NEWS}/${SHOW}/:id`,
+        create: `/${NEWS}/${CREATE}`,
+        edit: `/${NEWS}/${EDIT}/:id`,
     },
     {
-        name: "top-institutions",
-        list: '/top-institutions',
+        name: "top-establishments",
+        list: '/top-establishments',
         meta: {
             icon: <Star/>,
-            label: "Top Institutions"
+            label: "Top establishments"
         },
-        show: '/top-institutions/show/:id',
+        show: '/top-establishments/show/:id',
     },
     {
-        name: "capl",
-        list: '/capl',
+        name: `${CAPL}`,
+        list: `/${CAPL}`,
         meta: {
             icon: <WineBar/>,
-            label: 'Capl'
+            label: `${CAPL}`
         },
-        show: '/capl/show/:id',
-        edit: '/capl/edit/:id',
-        create: '/capl/create'
+        show: `/${CAPL}/${SHOW}/:id`,
+        edit: `/${CAPL}/${EDIT}/:id`,
+        create: `/${CAPL}/${CREATE}`
     },
     {
-        name: 'chats',
-        list: '/chats',
+        name: `${CHATS}`,
+        list: `/${CHATS}`,
         meta: {
             icon: <ForumOutlined/>
         },
-        show: '/chats/:userId/:institutionId'
+        show: `/${CHATS}/:userId/:establishmentId`
     },
     {
-        name: "profile",
-        list: '/profile',
+        name: `${PROFILE}`,
+        list: `/${PROFILE}`,
         meta: {
             icon: <Person/>,
-            label: "Profile"
+            label: `${PROFILE}`
         },
-        show: '/profile/show/:id',
-        edit: '/profile/edit'
+        show: `/${PROFILE}/${SHOW}/:id`,
+        edit: `/${PROFILE}/${EDIT}`
     },
 ];
 

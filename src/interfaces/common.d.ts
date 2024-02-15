@@ -67,7 +67,7 @@ export interface ProfileProps {
     status: "admin" | "manager" | "user",
     avatar: string,
     email: string,
-    allInstitutions?: Array | undefined,
+    allestablishments?: Array | undefined,
     isActivated: boolean,
     dOB: Date | any,
     uniqueIndicator: {
@@ -158,6 +158,35 @@ export interface IFreeSeatsList {
     status: "free" | "reserved" | "",
     description?: string
 }
+export interface IUserAgent {
+    browser: {
+        name: string,
+        version: string,
+        major: string
+    },
+    device: {
+        model: string | undefined,
+        type: string | undefined,
+        vendor: string | undefined,
+    },
+    engine: {
+        name: string,
+        version: string,
+    },
+    os: {
+        name: string,
+        version: string
+    }
+}
+export interface IOAuth {
+    userId: string | ProfileProps,
+    access_token: string,
+    refresh_token: string,
+    _id: string,
+    userAgent: IUserAgent,
+    createdAt?: Date,
+    updatedAt?: Date
+}
 export interface IFreeSeatsProps {
     isCombineTheSeats: boolean,
     table: number,
@@ -182,7 +211,7 @@ export interface IReviews {
     },
     _id: string,
     grade: number,
-    institutionId: PropertyProps | any,
+    establishmentId: PropertyProps | any,
     createdBy: ProfileProps | any,
     createdAt: Date
 }
@@ -207,7 +236,7 @@ export interface IComment {
 export interface NewsProps {
     _id: string,
     index?: number,
-    institutionId?: string,
+    establishmentId?: string,
     title: string,
     place: {
         city: string,
@@ -274,7 +303,7 @@ export interface IStar {
 
 export interface INews {
     _id: string,
-    institutionId?: string | PropertyProps,
+    establishmentId?: string | PropertyProps,
     title: string,
     index?: number,
     createdAt: Date | any,
@@ -297,7 +326,7 @@ export interface INewsFilterVariables {
     date_event_lte: Date | any,
     title: string,
     category: "general" | "event" | "promotions",
-    institution: string,
+    establishment: string,
     status: "draft" | "published" | "rejected",
     search: string
 }
@@ -348,7 +377,7 @@ export interface IPostFilterVariables {
 
 export interface IMenuItem {
     description: string,
-    institutionId: string,
+    establishmentId: string,
     title: string,
     category: string,
     weight: number,
@@ -363,7 +392,7 @@ export interface IMenu {
         createdAt?: Date,
         createdBy: string,
         fileMenu?: string,
-        institutionId: string,
+        establishmentId: string,
         items?: IMenuItem[],
         _id: string
     }
@@ -397,7 +426,7 @@ export interface IMessage {
     text: string,
     pictures?: [],
     replyTo?: IMessage | any,
-    memberType?: 'user' | 'institution',
+    memberType?: 'user' | 'establishment',
     createdAt?: Date | any,
     updatedAt?: Date | any,
     isSent: boolean,
@@ -424,7 +453,7 @@ export interface IConversation {
         status: "public" | "private",
         type: "group" | "oneByOne",
         field: {
-            name: "institution" | "user" | "capl",
+            name: "establishment" | "user" | "capl",
             id: string | {_id: string, avatar: string, name: string} | PropertyProps
         },
         chatName: string,
@@ -437,7 +466,7 @@ export interface IConversation {
 
 
 export interface IReserve {
-    institution: PropertyProps | string | any,
+    establishment: PropertyProps | string | any,
     _id: string,
     isAllowedEdit: boolean,
     fullName: string,
@@ -456,7 +485,7 @@ export interface IReserve {
         value: "accepted" | "rejected" | "draft",
         reasonRefusal?: string
     },
-    institutionStatus: {
+    establishmentStatus: {
         value: "accepted" | "rejected" | "draft",
         reasonRefusal?: string,
         freeDateFor: [Date | null] | null
@@ -468,17 +497,17 @@ export interface IReserveFilterVariables {
     userStatus: {
         value: "accepted" | "rejected" | "draft" | string
     },
-    institutionStatus: {
+    establishmentStatus: {
         value: "accepted" | "rejected" | "draft" | string
     },
-    institution: string,
+    establishment: string,
     day: Date
 }
 
 export interface ISubscribe {
     _id: string,
     subscriberId: string,
-    institutionId: string,
+    establishmentId: string,
     createdAt?: Date,
     updatedAt?: Date,
 }
@@ -506,4 +535,8 @@ export interface INotification {
     isRead: boolean,
     createdAt: Date,
     updateAt: Date
+}
+
+export interface CustomObject {
+    [key: string]: any;
 }

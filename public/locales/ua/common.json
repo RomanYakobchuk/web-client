@@ -58,6 +58,7 @@
       "steps": {
         "first": "Перший",
         "second": "Другий",
+        "third":"Третій",
         "last": "Останній"
       },
       "errors": {
@@ -314,7 +315,7 @@
     "search": "Пошук за назвою, описом, містом, особливостями",
     "searchByTag": "Пошук за #тегом",
     "sortByType": {
-      "all": "усі",
+      "all": "Усі",
       "bar": "Бар",
       "cafe": "Кафе",
       "restaurant": "Ресторан",
@@ -443,8 +444,8 @@
       "title": "Редагувати заклад"
     }
   },
-  "all_institutions": {
-    "all_institutions": "Заклади",
+  "establishment": {
+    "establishment": "Заклади",
     "title": "Усі заклади",
     "similar": {
       "title": "Схожі заклади"
@@ -493,8 +494,8 @@
       "publicDate": "Дата публікації"
     }
   },
-  "top-institutions": {
-    "top-institutions": "Топ закладів",
+  "top-establishments": {
+    "top-establishments": "Топ закладів",
     "title": "Топ закладів"
   },
   "capl": {
@@ -525,7 +526,7 @@
     "fullNameError": "Ім'я повинно включати 2 поля",
     "status": {
       "userStatus": "Статус клієнта",
-      "institutionStatus": "Статус закладу",
+      "establishmentStatus": "Статус закладу",
       "accepted": "Прийнято",
       "draft": "Очікує",
       "rejected": "Відхилено",
@@ -551,8 +552,8 @@
   "all-capl": {
     "title": "Усі резервування"
   },
-  "my-institution": {
-    "my-institution": "Мої заклади",
+  "my-establishment": {
+    "my-establishment": "Мої заклади",
     "title": "Мої заклади",
     "verify": {
       "published": "Опублікований",
@@ -651,7 +652,7 @@
     "odesa": "Одеса",
     "kharkiv": "Харків",
     "lviv": "Львів",
-    "institutions": "Закладів: {{number}}"
+    "establishments": "Закладів: {{number}}"
   },
   "roles": {
     "manager": "Менеджер",
@@ -677,7 +678,7 @@
   },
   "list": {
     "list": "Список",
-    "institution": "Список закладів",
+    "establishment": "Список закладів",
     "capl": "Список бронювання",
     "news": "Список новин",
     "users": "Список користувачів"

@@ -1,7 +1,7 @@
 import AdminList from "../../dashboard/properties/establishment/adminList";
 import DataForm from "./dataForm";
 import EditUpdateStatus from "./editUpdateStatus";
-import FilterInstitutions from "./filter";
+import FilterEstablishments from "./filter";
 import EstablishmentComments from "./utills/establishment-comments";
 import EstablishmentNews from "./utills/establishment-news";
 import EstablishmentReviews from "./utills/establishment-reviews";
@@ -12,7 +12,7 @@ import SimilarEstablishment from "./similarEstablishment";
 
 export {
     AdminList,
-    FilterInstitutions,
+    FilterEstablishments,
     EstablishmentNews,
     UserList,
     EditUpdateStatus,

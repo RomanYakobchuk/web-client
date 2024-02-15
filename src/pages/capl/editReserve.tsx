@@ -33,7 +33,7 @@ const EditReserve = () => {
     const [numberPeople, setNumberPeople] = useState<number>(0);
     const [whoPay, setWhoPay] = useState<string>('');
     const [userStatus, setUserStatus] = useState<IReserve['userStatus']>({}  as IReserve['userStatus'])
-    const [institutionStatus, setInstitutionStatus] = useState<IReserve['institutionStatus']>({}  as IReserve['institutionStatus'])
+    const [establishmentStatus, setEstablishmentStatus] = useState<IReserve['establishmentStatus']>({}  as IReserve['establishmentStatus'])
 
     const {refineCore: {onFinish, queryResult, formLoading}} = useForm({
         warnWhenUnsavedChanges: true,
@@ -73,13 +73,13 @@ const EditReserve = () => {
         setWriteMe(reserve?.writeMe)
         setWhoPay(reserve?.whoPay)
         setUserStatus(reserve?.userStatus)
-        setInstitutionStatus(reserve?.institutionStatus)
+        setEstablishmentStatus(reserve?.establishmentStatus)
         setDesiredAmount(reserve?.desiredAmount)
         setNumberPeople(reserve?.numberPeople)
         setDate(reserve?.date)
         setComment(reserve?.comment)
         setEventType(reserve?.eventType)
-        setSearchPlace(reserve?.institution as PropertyProps)
+        setSearchPlace(reserve?.establishment as PropertyProps)
         setIsAllowedEdit(reserve?.isAllowedEdit)
         setManager(reserve?.manager)
         setUser(reserve?.user)
@@ -96,7 +96,7 @@ const EditReserve = () => {
             comment,
             writeMe,
             userStatus,
-            institutionStatus,
+            establishmentStatus,
             isAllowedEdit
         }
         if (fullName?.split(" ")?.length !== 2 || whoPay?.split(" ")?.length !== 2) {
@@ -136,8 +136,8 @@ const EditReserve = () => {
         setCreatedBy,
         userStatus,
         setUserStatus,
-        institutionStatus,
-        setInstitutionStatus,
+        establishmentStatus,
+        setestablishmentStatus: setEstablishmentStatus,
         setIsAllowedEdit,
         isAllowedEdit,
         currentDataCapl: reserve,
@@ -323,7 +323,7 @@ export default EditReserve;
 //                         color: color
 //                     }}>{''}</label>
 //                 }
-//                 name="institutionStatus"
+//                 name="establishmentStatus"
 //                 rules={[
 //                     {
 //                         required: true,

@@ -5,6 +5,7 @@ import {usePermissions} from "@refinedev/core";
 import {PropertyProps} from "@/interfaces/common";
 import {axiosInstance} from "@/authProvider";
 import {localKeyEstablishment, localKeyLeaveCommentAs} from "@/config/const";
+import {ESTABLISHMENT} from "@/config/names";
 
 export type TSelectOption = {
     _id: string,
@@ -55,7 +56,7 @@ export const CommentCreatorDataProvider: FC<PropsWithChildren> = ({children}) =>
     const [pageSize, setPageSize] = useState<number>(100);
     const getManagerEstablishment = async () => {
         setIsLoading(true);
-        const {data} = await axiosInstance.get(`/institution/userInstitutions?_end=${page * pageSize}&_start=${(page - 1) * pageSize}`);
+        const {data} = await axiosInstance.get(`/${ESTABLISHMENT}/userestablishments?_end=${page * pageSize}&_start=${(page - 1) * pageSize}`);
         if (data?.length > 0) {
             setManagerEstablishment(data);
         }

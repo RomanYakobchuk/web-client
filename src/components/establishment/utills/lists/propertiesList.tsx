@@ -25,6 +25,9 @@ const PropertiesList = ({items, setIsOpen, numberOfColumnsByWidth}: IProps) => {
             display: 'grid',
             gridTemplateColumns: `repeat(${numberOfColumnsByWidth ? numberOfColumnsByWidth : defaultNumberOfColumnsByWidth}, 1fr)`,
             gap: 1,
+            "@media screen and (max-width: 350px)": {
+                gridTemplateColumns: `repeat(1, 1fr)`,
+            },
             width: '100%',
             p: '0 8px',
             margin: '0 auto',
@@ -33,7 +36,8 @@ const PropertiesList = ({items, setIsOpen, numberOfColumnsByWidth}: IProps) => {
             ? {
                 display: 'flex',
                 flexDirection: 'column',
-                gap: {xs: 0, sm: 2},
+                gap: 2,
+                p: {xs: 2, sm: 'unset'},
                 justifyContent: 'start',
                 alignItems: 'start'
             } : {}
@@ -46,11 +50,11 @@ const PropertiesList = ({items, setIsOpen, numberOfColumnsByWidth}: IProps) => {
                 ...style
             }}>
                 {
-                    items.map((institution: PropertyProps) => {
+                    items.map((establishment: PropertyProps) => {
                             if (variantShowItems?.establishment === 'variant_2') {
                                 return (
                                     <Box
-                                        key={institution._id}
+                                        key={establishment._id}
                                         onClick={() => {
                                             if (setIsOpen) {
                                                 setIsOpen(false)
@@ -61,7 +65,7 @@ const PropertiesList = ({items, setIsOpen, numberOfColumnsByWidth}: IProps) => {
                                             position: 'relative',
                                         }}
                                     >
-                                        <Variant2EstablishmentCard establishment={institution}/>
+                                        <Variant2EstablishmentCard establishment={establishment}/>
                                     </Box>
                                 )
                             }
@@ -75,7 +79,7 @@ const PropertiesList = ({items, setIsOpen, numberOfColumnsByWidth}: IProps) => {
                                         width: '100%'
                                     }}
                                     item
-                                    key={institution?._id}
+                                    key={establishment?._id}
                                     xs={12}
                                     sm={6}
                                     md={4}
@@ -88,7 +92,7 @@ const PropertiesList = ({items, setIsOpen, numberOfColumnsByWidth}: IProps) => {
                                     }}
                                 >
                                     <Variant1EstablishmentCard
-                                        institution={institution}
+                                        establishment={establishment}
                                     />
                                 </Grid>
                             )

@@ -18,7 +18,7 @@ const SubscribeButton = ({establishmentId, style, subscribe, showText, createdBy
 
     const translate = useTranslate();
 
-    const [isSubscribe, setIsSubscribe] = useState<boolean>(subscribe?.institutionId === establishmentId);
+    const [isSubscribe, setIsSubscribe] = useState<boolean>(subscribe?.establishmentId === establishmentId);
 
     const {onFinish, mutationResult: {data}} = useForm({
         resource: `subscribe/updateOne/${establishmentId}`,
@@ -39,12 +39,13 @@ const SubscribeButton = ({establishmentId, style, subscribe, showText, createdBy
 
     useEffect(() => {
         if (subscribe) {
-            setIsSubscribe(subscribe?.institutionId === establishmentId);
+            setIsSubscribe(subscribe?.establishmentId === establishmentId);
         }
-    }, [subscribe?.institutionId]);
+    }, [subscribe?.establishmentId]);
 
     const updateSubscribe = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
+        event.stopPropagation();
         try {
             await onFinish({});
             if (data?.data) {

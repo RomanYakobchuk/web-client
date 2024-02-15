@@ -20,6 +20,7 @@ import {useMobile, useUserInfo} from "@/hook";
 import RenderTag from "@/components/common/statusTagRender";
 import {ShowTimeComponent} from "@/components/time";
 import LoadingCaplDetails from "@/components/capl/whileLoading/loadingCaplDetails";
+import {ESTABLISHMENT} from "@/config/names";
 
 const {Title, Text} = Typography;
 
@@ -52,8 +53,8 @@ const DetailsReserve = () => {
 
     const reserve = data?.data as IReserve;
 
-    const isRejectedTextByRejected = reserve?.institutionStatus?.value === 'rejected' && reserve?.institutionStatus?.reasonRefusal && reserve?.institutionStatus?.reasonRefusal?.length > 5;
-    const isFreeDateByRejected = reserve?.institutionStatus?.value === 'rejected' && reserve?.institutionStatus?.freeDateFor && reserve?.institutionStatus?.freeDateFor?.length > 0;
+    const isRejectedTextByRejected = reserve?.establishmentStatus?.value === 'rejected' && reserve?.establishmentStatus?.reasonRefusal && reserve?.establishmentStatus?.reasonRefusal?.length > 5;
+    const isFreeDateByRejected = reserve?.establishmentStatus?.value === 'rejected' && reserve?.establishmentStatus?.freeDateFor && reserve?.establishmentStatus?.freeDateFor?.length > 0;
 
     const items: GridItem[] = [
         {
@@ -101,7 +102,7 @@ const DetailsReserve = () => {
                         // m: 'auto'
                     }}
                     color={'inherit'}
-                    onClick={() => navigate(`/chats/show/${reserve?.user}/${reserve?.institution?._id}`)}
+                    onClick={() => navigate(`/chats/show/${reserve?.user}/${reserve?.establishment?._id}`)}
                 >
                     <RateReview/>
                 </IconButton>
@@ -114,35 +115,35 @@ const DetailsReserve = () => {
         },
         {
             value: <Box
-                className={'institutionRejected'}
+                className={'establishmentRejected'}
             >
-                <RenderTag value={reserve?.institutionStatus?.value}/>
+                <RenderTag value={reserve?.establishmentStatus?.value}/>
                 {
                     (isFreeDateByRejected || isRejectedTextByRejected) && (
                         <Box
                             sx={{
                                 my: '5px'
                             }}
-                            className={'institutionRejected'}
+                            className={'establishmentRejected'}
                         >
                             {
                                 isRejectedTextByRejected && (
                                     <div
-                                        className={'institutionRejected'}
+                                        className={'establishmentRejected'}
                                     >
-                                        {reserve?.institutionStatus?.reasonRefusal}
+                                        {reserve?.establishmentStatus?.reasonRefusal}
                                     </div>
                                 )
                             }
                             {
                                 isFreeDateByRejected && (
                                     <div
-                                        className={'institutionRejected'}
+                                        className={'establishmentRejected'}
                                     >
                                         {
-                                            reserve?.institutionStatus?.freeDateFor?.map((value, index) => (
+                                            reserve?.establishmentStatus?.freeDateFor?.map((value, index) => (
                                                 <div
-                                                    className={'institutionRejected'}
+                                                    className={'establishmentRejected'}
                                                     key={index}>
                                                     <ShowTimeComponent
 
@@ -161,7 +162,7 @@ const DetailsReserve = () => {
                     )
                 }
             </Box>,
-            title: translate('capl.status.institutionStatus')
+            title: translate('capl.status.establishmentStatus')
         },
         {
             value: reserve?.eventType,
@@ -289,7 +290,7 @@ const DetailsReserve = () => {
                                             //         gap: 1,
                                             //         justifyContent: 'start',
                                             //         alignItems: 'start',
-                                            //         "& div:not(.institutionRejected)": {
+                                            //         "& div:not(.establishmentRejected)": {
                                             //             p: '8px 16px'
                                             //         }
                                             //     }}
@@ -351,7 +352,7 @@ const DetailsReserve = () => {
                                             width: 'fit-content',
                                             textTransform: 'inherit'
                                         }}
-                                        onClick={() => navigate(`/all_institutions/show/${reserve?.institution?._id}`)}
+                                        onClick={() => navigate(`/${ESTABLISHMENT}/show/${reserve?.establishment?._id}`)}
                                         color={"secondary"}
                                         endIcon={<EastOutlined/>}
                                         variant={"outlined"}>
@@ -367,8 +368,8 @@ const DetailsReserve = () => {
                                 }}>
                                     <Image
                                         width={'100%'}
-                                        src={reserve?.institution?.pictures[0].url}
-                                        alt={reserve?.institution?.title}
+                                        src={reserve?.establishment?.pictures[0].url}
+                                        alt={reserve?.establishment?.title}
                                         style={{
                                             width: '100%',
                                             // maxWidth: '400px',
@@ -377,10 +378,10 @@ const DetailsReserve = () => {
                                             objectFit: 'cover'
                                         }}
                                     />
-                                    <Title level={4}>{reserve?.institution?.title}</Title>
-                                    <Text>{translate(`home.sortByType.${reserve?.institution?.type}`)}</Text>
+                                    <Title level={4}>{reserve?.establishment?.title}</Title>
+                                    <Text>{translate(`home.sortByType.${reserve?.establishment?.type}`)}</Text>
                                     {
-                                        reserve?.institution?.place?.city && (
+                                        reserve?.establishment?.place?.city && (
                                             <Box sx={{
                                                 display: 'flex',
                                                 flexDirection: 'row',
@@ -394,10 +395,10 @@ const DetailsReserve = () => {
                                                     flexDirection: 'column'
                                                 }}>
                                         <span>
-                                            {reserve?.institution?.place?.city}
+                                            {reserve?.establishment?.place?.city}
                                         </span>
                                                     <span>
-                                            {reserve?.institution?.place?.address}
+                                            {reserve?.establishment?.place?.address}
                                         </span>
                                                 </Box>
                                             </Box>
@@ -424,7 +425,7 @@ const DeleteButton = ({resource, id, value}: IDelete) => {
 
     const {mutate} = useDelete();
     const [openDelete, setOpenDelete] = useState(false);
-    const deleteInstitution = async (id: string) => {
+    const deleteestablishment = async (id: string) => {
         mutate(
             {
                 resource,
@@ -500,7 +501,7 @@ const DeleteButton = ({resource, id, value}: IDelete) => {
                         </IconButton>
                         <IconButton
                             color={'info'}
-                            onClick={() => deleteInstitution(id)}
+                            onClick={() => deleteestablishment(id)}
                         >
                             <Check/>
                         </IconButton>

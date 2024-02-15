@@ -9,6 +9,7 @@ import {IPropertyPropsFilterVariables, PropertyProps} from "@/interfaces/common"
 import {SearchInputComponent} from "@/components/common/search";
 import {SetFilterType} from "@/interfaces/types";
 import {GridFilter} from "@/components/grid";
+import {ESTABLISHMENT} from "@/config/names";
 
 type TProps = {
     value: string,
@@ -27,7 +28,7 @@ const EstablishmentFiltersStat = ({setFilters, search, value, setValue, filters,
 
     const {control, register, handleSubmit} = useForm<PropertyProps, HttpError, IPropertyPropsFilterVariables>({
         refineCoreProps: {
-            resource: 'institution/all'
+            resource: `${ESTABLISHMENT}/all`
         },
         defaultValues: {
             city: getDefaultFilter("city", filters, "eq"),

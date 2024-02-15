@@ -26,7 +26,7 @@ import {VariantProvider} from "./settings/variantEstablishment";
 import {resources} from "./resources";
 // import {axiosInstance as aI} from "@refinedev/simple-rest/src/utils/axios";
 import {CommentCreatorDataProvider} from "./contexts/CommentCreatorDataContext";
-import AnimatedRoutes from "@/layout/animatedRoutes";
+import {CaplRoutes} from "@/services";
 
 
 const API_URL = import.meta.env.VITE_APP_API;
@@ -77,7 +77,7 @@ function App() {
                                         }}
                                     >
                                         <CommentCreatorDataProvider>
-                                            <AnimatedRoutes/>
+                                            <CaplRoutes/>
                                         </CommentCreatorDataProvider>
                                         <RefineKbar/>
                                         <UnsavedChangesNotifier/>

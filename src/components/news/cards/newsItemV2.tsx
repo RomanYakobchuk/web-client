@@ -34,7 +34,7 @@ const NewsItemV2 = ({news}: TProps) => {
 
     const imageUrl = news?.pictures?.length > 0 ? news?.pictures[0]?.url : ''
 
-    const establishment = news?.institutionId as PropertyProps;
+    const establishment = news?.establishmentId as PropertyProps;
 
     const showPopoverDescription = news?.description?.split('\r\n')?.length > 6 ? news?.description?.split('\r\n')?.slice(0, 6)?.join('\r\n') : news?.description;
 
@@ -142,7 +142,7 @@ const NewsItemV2 = ({news}: TProps) => {
                         url={`${import.meta.env.VITE_APP_CLIENT_API}/news/show/${news?._id}`}
                         title={news?.title}
                         name={news?.title}
-                        type={"institutionNews"}
+                        type={"establishmentNews"}
                         isOnlyShared
                         sharedStyle={{
                             color: '#f1f1f1',
@@ -164,7 +164,7 @@ const NewsItemV2 = ({news}: TProps) => {
                         }}
                         color={'common.white'}
                         id={news?._id}
-                        type={"institutionNews"}
+                        type={"establishmentNews"}
                         showText={false}
                     />
                 </Box>

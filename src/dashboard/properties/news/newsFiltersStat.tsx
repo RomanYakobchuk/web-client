@@ -10,6 +10,7 @@ import {Clear} from "@mui/icons-material";
 import {SearchInputComponent} from "@/components/common/search";
 import {INews, INewsFilterVariables} from "@/interfaces/common";
 import {SetFilterType} from "@/interfaces/types";
+import {ESTABLISHMENT} from "@/config/names";
 
 type TProps = {
     value: string,
@@ -61,8 +62,8 @@ const NewsFiltersStat = ({setFilters, search, setValue, value, filters, dateEven
         },
     ];
     const {autocompleteProps} = useAutocomplete({
-        resource: "institution/userInstitutions",
-        defaultValue: getDefaultFilter("institution._id", filters, "eq")
+        resource: `${ESTABLISHMENT}/userestablishments`,
+        defaultValue: getDefaultFilter("establishment._id", filters, "eq")
     });
 
     const handleClearDateLte = () => {
@@ -78,7 +79,7 @@ const NewsFiltersStat = ({setFilters, search, setValue, value, filters, dateEven
             <GridFilter onSubmit={handleSubmit(search)}>
                 <Controller
                     control={control}
-                    name="institution"
+                    name="establishment"
                     render={({field}) => (
                         <Autocomplete
                             {...autocompleteProps}
@@ -107,7 +108,7 @@ const NewsFiltersStat = ({setFilters, search, setValue, value, filters, dateEven
                                     {...params}
                                     color={'secondary'}
                                     label={translate("home.one")}
-                                    placeholder="Search institution"
+                                    placeholder="Search establishment"
                                     variant="outlined"
                                     size="small"
                                 />

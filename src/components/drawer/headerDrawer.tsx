@@ -10,9 +10,10 @@ type TProps = {
     title: ReactNode,
     button: ReactNode,
     anchor: "left" | "top" | "bottom" | "right",
-    onClick?: () => void
+    onClick?: () => void,
+    isForSwipe?: boolean
 }
-const HeaderDrawer = ({toggleDrawer, button, title, anchor, onClick}: TProps) => {
+const HeaderDrawer = ({toggleDrawer, button, title, anchor, onClick, isForSwipe = false}: TProps) => {
     const {width, device} = useMobile();
     return (
         <>
@@ -22,7 +23,7 @@ const HeaderDrawer = ({toggleDrawer, button, title, anchor, onClick}: TProps) =>
                     top: -drawerBleeding,
                     borderTopLeftRadius: 16,
                     borderTopRightRadius: 16,
-                    visibility: (width < 600 && device && anchor === 'bottom') ? 'inherit' : 'hidden',
+                    visibility: isForSwipe || (width < 600 && device && anchor === 'bottom') ? 'inherit' : 'hidden',
                     right: 0,
                     left: 0,
                 }}
@@ -46,7 +47,12 @@ const HeaderDrawer = ({toggleDrawer, button, title, anchor, onClick}: TProps) =>
                     }}>
                         {button}
                         <CloseOutlined
-                            onClick={() => {
+                            sx={{
+                                cursor: 'pointer'
+                            }}
+                            onClick={(event) => {
+                                event.preventDefault();
+                                event.stopPropagation();
                                 toggleDrawer(false)
                                 if (onClick) {
                                     onClick();
@@ -56,9 +62,9 @@ const HeaderDrawer = ({toggleDrawer, button, title, anchor, onClick}: TProps) =>
                 </Box>
             </StyledBox>
             <Box sx={{
-                visibility: (!device || (device && width >= 600)) || anchor === 'right' ? 'inherit' : 'hidden',
+                visibility: !isForSwipe || (!device || (device && width >= 600)) || anchor === 'right' ? 'inherit' : 'hidden',
                 position: 'relative',
-                display: (width < 600 && device && anchor === 'bottom') ? 'none' : 'flex',
+                display: isForSwipe || (width < 600 && device && anchor === 'bottom') ? 'none' : 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
                 minHeight: '50px'
@@ -70,9 +76,12 @@ const HeaderDrawer = ({toggleDrawer, button, title, anchor, onClick}: TProps) =>
                     sx={{
                         position: 'absolute',
                         top: '0',
-                        left: '0'
+                        left: '0',
+                        cursor: 'pointer'
                     }}
-                    onClick={() => {
+                    onClick={(event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
                         toggleDrawer(false)
                         if (onClick) {
                             onClick();

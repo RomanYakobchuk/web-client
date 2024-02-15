@@ -6,7 +6,7 @@ import AddFreeSeats from "./establishment/addFreeSeats";
 import ShowFreeSeats from "./establishment/showFreeSeats";
 import UpdateFreeSeats from "./establishment/updateFreeSeats";
 
-import TopInstitutions from "./other/topInstitutions";
+import TopEstablishments from "./other/topEstablishments";
 
 import Login from "./auth/login";
 import Register from "./auth/register";
@@ -58,7 +58,7 @@ export {
     Settings,
     EditUserInfo,
     ShowUserInfo,
-    TopInstitutions,
+    TopEstablishments,
     VerifyNumber,
     Welcome,
     ForgotPassword,

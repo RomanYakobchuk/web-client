@@ -12,6 +12,7 @@ import {useTranslate} from "@refinedev/core";
 import {ChangeEvent, Dispatch, SetStateAction, useEffect, useState} from "react";
 
 import {IFreeSeatsProps} from "../../../../interfaces/common";
+import {ESTABLISHMENT} from "@/config/names";
 
 
 type TProps = {
@@ -63,7 +64,7 @@ const SearchByFreeSeats = ({setFreeSeats, freeSeats}: TProps) => {
         }}>
             <Box>
                 <Typography>
-                    {translate('all_institutions.freeSeats.isCombine')}
+                    {translate(`${ESTABLISHMENT}.freeSeats.isCombine`)}
                 </Typography>
                 <Switch
                     color={'info'}
@@ -80,7 +81,7 @@ const SearchByFreeSeats = ({setFreeSeats, freeSeats}: TProps) => {
             </Box>
             <Box>
                 <Typography>
-                    {translate('all_institutions.freeSeats.tableNumber')}
+                    {translate(`${ESTABLISHMENT}.freeSeats.tableNumber`)}
                 </Typography>
                 <TextField
                     name={'table'}
@@ -93,7 +94,7 @@ const SearchByFreeSeats = ({setFreeSeats, freeSeats}: TProps) => {
             </Box>
             <Box>
                 <Typography>
-                    {translate('all_institutions.freeSeats.numberOfSeats')}
+                    {translate(`${ESTABLISHMENT}.freeSeats.numberOfSeats`)}
                 </Typography>
                 <TextField
                     name={'numberOfSeats'}
@@ -106,7 +107,7 @@ const SearchByFreeSeats = ({setFreeSeats, freeSeats}: TProps) => {
             </Box>
             <Box>
                 <Typography>
-                    {translate('all_institutions.freeSeats.statusOfSeats.title')}
+                    {translate(`${ESTABLISHMENT}.freeSeats.statusOfSeats.title`)}
                 </Typography>
                 <Select
                     value={currentFreeSeats['status'] ?? ' '}
@@ -133,7 +134,7 @@ const SearchByFreeSeats = ({setFreeSeats, freeSeats}: TProps) => {
                                 key={item.title}
                                 value={item.v}
                             >
-                                {translate(`all_institutions.freeSeats.statusOfSeats.${item.title}`)}
+                                {translate(`${ESTABLISHMENT}.freeSeats.statusOfSeats.${item.title}`)}
                             </MenuItem>
                         ))
                     }

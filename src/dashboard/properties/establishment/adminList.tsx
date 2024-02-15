@@ -26,6 +26,7 @@ import GridComponent from "@/components/grid/GridComponent";
 import EstablishmentStat from "@/dashboard/properties/establishment/establishmentStat";
 import EstablishmentFiltersStat from "@/dashboard/properties/establishment/establishmentFiltersStat";
 import {EditUpdateStatus} from "@/components";
+import {CREATE, EDIT, ESTABLISHMENT, SHOW} from "@/config/names";
 
 const AdminList = () => {
     const translate = useTranslate();
@@ -40,7 +41,7 @@ const AdminList = () => {
     const {dataGridProps, filters, setFilters, search} = useDataGrid<
         PropertyProps, HttpError, IPropertyPropsFilterVariables
     >({
-        resource: `institution/all`,
+        resource: `${ESTABLISHMENT}/all`,
         initialPageSize: 10,
         onSearch: (params) => {
             const filters: CrudFilters = [];
@@ -108,7 +109,7 @@ const AdminList = () => {
                         >
                             <IconButton
                                 color={"success"}
-                                onClick={() => navigate(`/all_institutions/show/${row?._id}`)}
+                                onClick={() => navigate(`/${ESTABLISHMENT}/${SHOW}/${row?._id}`)}
                             >
                                 <Visibility/>
                             </IconButton>
@@ -120,7 +121,7 @@ const AdminList = () => {
                         >
                             <IconButton
                                 color={'info'}
-                                onClick={() => navigate(`/all_institutions/edit/${row?._id}`)}
+                                onClick={() => navigate(`/${ESTABLISHMENT}/${EDIT}/${row?._id}`)}
                             >
                                 <Edit/>
                             </IconButton>
@@ -244,11 +245,11 @@ const AdminList = () => {
                         setValue={setValue}
                     />
                 }
-                title={translate('list.institution')}
+                title={translate('list.establishment')}
                 dataGridProps={dataGridProps}
                 columns={columns}
-                accessResource={'all_institutions'}
-                createLink={'/all_institutions/create'}
+                accessResource={`${ESTABLISHMENT}`}
+                createLink={`/${ESTABLISHMENT}/${CREATE}`}
             />
             <Grid item xs={12}>
                 <Grid item xs={12} sm={6}>

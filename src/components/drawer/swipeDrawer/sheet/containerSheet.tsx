@@ -1,13 +1,16 @@
 import cx from 'classnames/dedupe'
-import { useEffect } from 'react'
-import { useDetectEnv } from '../hooks'
+import {useEffect} from 'react'
+import {useDetectEnv} from '../hooks'
+import {Box, SxProps} from "@mui/material";
 
 export default function ContainerSheet({
-                                      children,
-                                      className,
-                                  }: {
+                                           children,
+                                           className,
+                                           styles
+                                       }: {
     children: React.ReactNode
-    className?: Parameters<typeof cx>[0]
+    className?: Parameters<typeof cx>[0],
+    styles?: SxProps
 }) {
     const env = useDetectEnv()
     useEffect(() => {
@@ -22,13 +25,16 @@ export default function ContainerSheet({
     }, [env])
 
     return (
-        <div
+        <Box
             className={cx(
                 'grid bg place-content-evenly min-h-screen fixed',
                 className
             )}
+            sx={{
+                ...styles
+            }}
         >
             {children}
-        </div>
+        </Box>
     )
 }

@@ -34,11 +34,11 @@ const RejectedReservationUser = ({reservation: defaultReservation}: TProps) => {
     const handleChooseNewDate = () => {
         setIsOpenChooseNewDate(prevState => !prevState);
     }
-    const isHaveNewDates = reservation?.institutionStatus?.freeDateFor && reservation?.institutionStatus?.freeDateFor?.length > 0;
+    const isHaveNewDates = reservation?.establishmentStatus?.freeDateFor && reservation?.establishmentStatus?.freeDateFor?.length > 0;
 
     useEffect(() => {
-        if (reservation?.institutionStatus?.freeDateFor && reservation?.institutionStatus?.freeDateFor?.length > 0) {
-            const firstDate = reservation?.institutionStatus?.freeDateFor[0];
+        if (reservation?.establishmentStatus?.freeDateFor && reservation?.establishmentStatus?.freeDateFor?.length > 0) {
+            const firstDate = reservation?.establishmentStatus?.freeDateFor[0];
             setSelectedDate(firstDate);
         }
     }, [reservation, isHaveNewDates]);
@@ -204,7 +204,7 @@ const RejectedReservationUser = ({reservation: defaultReservation}: TProps) => {
                             ml: '20px'
                         }}>
                             {
-                                reservation?.institutionStatus?.freeDateFor?.map((date, index) => (
+                                reservation?.establishmentStatus?.freeDateFor?.map((date, index) => (
                                     <Box
                                         onClick={() => selectNewDate(date as Date)}
                                         key={index}
