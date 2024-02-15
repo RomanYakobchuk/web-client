@@ -1,10 +1,25 @@
-import {FormEventHandler, ReactNode} from "react";
-import {FieldValues} from "react-hook-form";
-import {BaseRecord, CreateResponse, UpdateResponse} from "@refinedev/core";
+import {ChangeEvent, ReactNode} from "react";
+import {CredentialResponse} from "./google";
+import {ContextStore} from "@uiw/react-md-editor";
+import {INewsDataFormPlace} from "./formData";
 
 export interface IUserLoginProps {
     email: string,
     password: string
+}
+
+export interface IPicture {
+    url: string,
+    name: string
+}
+
+export interface IColor {
+    color: 'inherit' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning'
+}
+
+export interface IGetIdentity {
+    user: ProfileProps,
+    favoritePlaces: string[]
 }
 
 export interface IUser {
@@ -17,9 +32,13 @@ export interface IUser {
 
 export interface IData {
     user: IUser | any,
+    message?: string,
     access_token: string,
     refresh_token: string,
-    error?: any
+    error?: any,
+    favoritePlaces: string[],
+    subscribedEstablishments: [{id: string}];
+    countNotReadNotifications: number
 }
 
 export interface IUserRegisterProps {
@@ -43,27 +62,31 @@ export interface CustomButtonProps {
 }
 
 export interface ProfileProps {
-    _id: any,
+    _id: string,
     name: string,
-    status: string,
+    status: "admin" | "manager" | "user",
     avatar: string,
     email: string,
-    allInstitutions: Array | undefined,
+    allestablishments?: Array | undefined,
     isActivated: boolean,
     dOB: Date | any,
+    uniqueIndicator: {
+        value: string,
+        type: "public" | "private"
+    },
     phone: number,
     phoneVerify: boolean,
     isAdmin?: boolean,
-    favoritePlaces: Array | undefined,
+    favoritePlaces?: Array | undefined,
     favoriteNews?: Array | undefined,
-    myReviews: Array | undefined,
+    myReviews?: Array | undefined,
     createdAt?: Date | any,
     otherProps?: any
-    user_comments: IComment[] | [],
+    user_comments?: IComment[] | [],
     blocked?: {
         isBlocked?: boolean,
         whyBlock?: string
-    } ,
+    },
 }
 
 export interface IProfilePropsFilterVariables {
@@ -79,14 +102,18 @@ export interface PropertyProps {
     otherProps?: any,
     _id: string,
     title: string,
+    reviewsLength?: number,
     description: string,
-    otherPhoto: Array | undefined,
+    sendNotifications: boolean,
+    pictures: {
+        name: string,
+        url: string
+    }[],
     place: {
         city: string,
         address: string
     },
     type: string,
-    mainPhoto: string,
     workSchedule: {
         workDays: IWorkDay[],
         weekend: string,
@@ -102,16 +129,70 @@ export interface PropertyProps {
     ratings?: Array<string> | Array<object> | any,
     reviews?: Array<String> | any,
     averageCheck: string,
-    features: [{value: string}],
+    features: [{
+        value: string
+    }],
     createdBy?: string | any,
     variantForDisplay?: string | any,
     news?: any,
     createdAt?: Date | any,
-    views?: {
+    viewsContainer?: {
         viewsNumber?: number
-    }
+    },
+    freeSeats: string | IFreeSeats
 }
 
+export interface IFreeSeats {
+    _id: string,
+    establishmentId: string | PropertyProps,
+    list: IFreeSeatsList[],
+    allFreeSeats: number,
+    isCombineTheSeats: boolean,
+    createdAt?: Date,
+    updatedAt?: Date,
+}
+
+export interface IFreeSeatsList {
+    table: number,
+    numberOfSeats: number,
+    status: "free" | "reserved" | "",
+    description?: string
+}
+export interface IUserAgent {
+    browser: {
+        name: string,
+        version: string,
+        major: string
+    },
+    device: {
+        model: string | undefined,
+        type: string | undefined,
+        vendor: string | undefined,
+    },
+    engine: {
+        name: string,
+        version: string,
+    },
+    os: {
+        name: string,
+        version: string
+    }
+}
+export interface IOAuth {
+    userId: string | ProfileProps,
+    access_token: string,
+    refresh_token: string,
+    _id: string,
+    userAgent: IUserAgent,
+    createdAt?: Date,
+    updatedAt?: Date
+}
+export interface IFreeSeatsProps {
+    isCombineTheSeats: boolean,
+    table: number,
+    numberOfSeats: number,
+    status: IFreeSeatsList['status']
+}
 export interface IPropertyPropsFilterVariables {
     averageCheck_gte: number,
     averageCheck_lte: number,
@@ -130,7 +211,7 @@ export interface IReviews {
     },
     _id: string,
     grade: number,
-    institutionId: PropertyProps | any,
+    establishmentId: PropertyProps | any,
     createdBy: ProfileProps | any,
     createdAt: Date
 }
@@ -140,21 +221,22 @@ export interface IComment {
     text: string,
     _id: string,
     createdAt: Date | any,
-    institutionId: {
+    establishmentId: {
         _id: string,
-        mainPhoto: string,
+        pictures: IPicture[],
         title: string,
         type: string
-    },
-    parentCommentId: string | any,
+    } | string,
+    parentId: string | IComment,
     replies: IComment[],
-    containerId?: string
+    containerId?: string,
+    repliesLength: number
 }
 
 export interface NewsProps {
     _id: string,
     index?: number,
-    institutionId?: string,
+    establishmentId?: string,
     title: string,
     place: {
         city: string,
@@ -170,8 +252,10 @@ export interface NewsProps {
             to?: string
         }
     }],
-    mainPhoto: string,
-    photos?: Array<string>,
+    pictures?: {
+        name: string,
+        url: string
+    }[],
     category: string,
     description: string,
     status?: string,
@@ -181,12 +265,12 @@ export interface NewsProps {
 
 export interface IWorkDay {
     days: {
-        from: string,
-        to: string
+        from: number,
+        to: number
     },
     time: {
-        from: Date | string | any,
-        to: Date | string | any,
+        from: string,
+        to: string,
     }
 }
 
@@ -194,18 +278,6 @@ export interface ICity {
     name: string;
     _id: string;
 }
-
-export interface FormProps {
-    type: string,
-    register: any,
-    onFinish: (values: FieldValues) => Promise<void | CreateResponse<BaseRecord> | UpdateResponse<BaseRecord>>,
-    formLoading: boolean,
-    handleSubmit: FormEventHandler<HTMLFormElement> | undefined,
-    handleImageChange: (file) => void,
-    onFinishHandler: (data: FieldValues) => Promise<void> | void,
-    propertyImage: { name: string, url: string },
-}
-
 
 export interface IConv {
     _id?: string,
@@ -231,41 +303,22 @@ export interface IStar {
 
 export interface INews {
     _id: string,
-    institutionId?: string | any,
+    establishmentId?: string | PropertyProps,
     title: string,
     index?: number,
     createdAt: Date | any,
     status?: "published" | "draft" | "rejected",
-    mainPhoto?: Array<string> | any,
-    otherPhoto?: any,
+    pictures: IPicture[],
     description: string,
-    category?: "general" | "event" | "promotions",
+    category?: "general" | "events" | "promotions",
     createdBy?: string,
     variantForDisplay?: string,
-    dateEvent: [{
-        date?: Date,
-        schedule?: {
-            from: string | any,
-            to: string | any
-        },
-        time?: {
-            from: Date | any,
-            to: Date | any
-        },
-    }],
+    dateEvent: INewsDateEvent[],
     publishAt?: {
         isPublish: boolean,
         datePublish: Date | any
     },
-    place?: {
-        city?: string,
-        address?: string,
-        isPlace?: boolean,
-        location: {
-            lat: number | any,
-            lng: number | any
-        }
-    }
+    place: INewsDataFormPlace
 }
 
 export interface INewsFilterVariables {
@@ -273,7 +326,7 @@ export interface INewsFilterVariables {
     date_event_lte: Date | any,
     title: string,
     category: "general" | "event" | "promotions",
-    institution: string,
+    establishment: string,
     status: "draft" | "published" | "rejected",
     search: string
 }
@@ -282,14 +335,21 @@ export interface IOptionGroup {
     value: string;
     label: string | ReactNode;
     userId?: string,
-    id?: string
+    title?: string,
+    id?: string,
+    allInfo?: PropertyProps,
+    key?: string
 }
 
 export interface IOptions {
     label: string | ReactNode;
     options: IOptionGroup[];
+    title?: string,
     userId?: string,
-    id?: string
+    allInfo?: PropertyProps,
+    id?: string,
+    value?: string,
+    key?: string
 }
 
 
@@ -303,7 +363,9 @@ export interface IPost {
     title: string;
     content: string;
     status: "published" | "draft" | "rejected";
-    category: { id: number };
+    category: {
+        id: number
+    };
 }
 
 export interface IPostFilterVariables {
@@ -315,7 +377,7 @@ export interface IPostFilterVariables {
 
 export interface IMenuItem {
     description: string,
-    institutionId: string,
+    establishmentId: string,
     title: string,
     category: string,
     weight: number,
@@ -330,85 +392,25 @@ export interface IMenu {
         createdAt?: Date,
         createdBy: string,
         fileMenu?: string,
-        institutionId: string,
+        establishmentId: string,
         items?: IMenuItem[],
         _id: string
     }
 }
 
-export interface IPlaceFormProps {
-    onFinish?: (values: FieldValues) => Promise<void | CreateResponse<BaseRecord> | UpdateResponse<BaseRecord>>,
-    formLoading: boolean,
-    handleSubmit: FormEventHandler<HTMLFormElement> | any,
-    onFinishHandler: (data: FieldValues) => Promise<void> | void,
-    setMainPhoto: (item: any) => void,
-    setOtherPhoto: (item: any) => void,
-    otherPhoto: any,
-    mainPhoto: any,
-    open: boolean,
-    titleAction: string,
-    setOpen: (item: any) => void,
-    type: string,
-    setType: (item: string) => void,
-    workScheduleWeekend: PropertyProps["workSchedule"]["weekend"],
-    setWorkScheduleWeekend: (item: setWorkScheduleWeekend) => void,
-    location: google.maps.LatLngLiteral | any,
-    setLocation: any,
-    tags: Array<any> | any,
-    setTags: (item: any) => void,
-    place: { address: string, city: string },
-    setPlace: (item: { address: string, city: string }) => void,
-    features: Array<any> | any,
-    setFeatures: (item: any) => void,
-    contacts: Array<any> | any,
-    setContacts: (item: any) => void,
-    workSchedule?: PropertyProps["workSchedule"] | any,
-    setWorkSchedule?: (item: PropertyProps["workSchedule"] | any) => void,
-    workDays: IWorkDay[],
-    setWorkDays: (item: PropertyProps["workSchedule"]["workDays"]) => void,
-    description: string,
-    setDescription: (value?: string, event?: any, state?: any) => void,
-    createdBy: string,
-    setCreatedBy: (item: string) => void,
-    variantForDisplay: string,
-    setVariantForDisplay: (item: string) => void,
-    searchManagerInput?: string,
-    setSearchManagerInput?: (item: string) => void,
-    searchInputValue?: string,
-    setSearchInputValue?: (item: string) => void,
-    title: string,
-    setTitle: (value: string) => void,
-    averageCheck: string,
-    setAverageCheck: (value: string) => void,
+export interface INewsDateEvent {
+    schedule?: {
+        from?: Date | string | null,
+        to?: Date | string | null
+    },
+    time?: {
+        from?: string | Date | null,
+        to?: string | Date | null
+    }
 }
 
-export interface INewsDataProps {
-    handleSubmit: any,
-    onFinishHandler: any,
-    mainPhoto: string | any,
-    setMainPhoto: any,
-    otherPhoto: any,
-    setOtherPhoto: (item: any) => void,
-    currentInstitutionId: string,
-    setCurrentInstitutionId: (item: string) => void,
-    userInstitutions?: any,
-    title: string,
-    setTitle: (value: string) => void,
-    category: string,
-    setCategory: (value: string) => void,
-    workDays: any,
-    setWorkDays: any,
-    description: string,
-    setDescription: (value: string) => void,
-    status: string,
-    setStatus: (value: string) => void,
-    isDatePublished: boolean,
-    setIsDatePublished: (value: boolean) => void,
-    datePublished: any,
-    setDatePublished: any,
-    variantForDisplay: string,
-    setVariantForDisplay: (value: string) => void,
-    formLoading: boolean
+export interface IMDEditor {
+    set: ((value?: string, event?: ChangeEvent<HTMLTextAreaElement> | undefined, state?: ContextStore | undefined) => void) | undefined
 }
 
 export interface IConv {
@@ -418,41 +420,64 @@ export interface IConv {
 }
 
 export interface IMessage {
-    _id?: string,
+    _id: string,
     conversationId?: string,
-    sender: ProfileProps,
+    sender: ProfileProps | string,
     text: string,
     pictures?: [],
     replyTo?: IMessage | any,
-    memberType?: 'user'| 'institution',
-    createdAt?: Date | any
+    memberType?: 'user' | 'establishment',
+    createdAt?: Date | any,
+    updatedAt?: Date | any,
+    isSent: boolean,
+    isDelivered: boolean,
+    isRead: boolean,
+    isError: boolean
 }
-
+export interface IConvMembers {
+    user: ProfileProps | string,
+    connectedAt: Date,
+    indicator?: null | string,
+    role: "admin" | "manager" | "user",
+    conversationTitle: string
+}
 export interface IConversation {
     _id: string,
-    userId: ProfileProps,
-    managerId: ProfileProps,
-    institutionId: PropertyProps,
-    userName: string,
-    institutionTitle: string,
-    createdAt?: Date | any,
+    members: IConvMembers[],
     lastMessage: {
         sender: string,
-        text: string
-    }
+        text: string,
+        updatedAt: Date
+    },
+    chatInfo: {
+        status: "public" | "private",
+        type: "group" | "oneByOne",
+        field: {
+            name: "establishment" | "user" | "capl",
+            id: string | {_id: string, avatar: string, name: string} | PropertyProps
+        },
+        chatName: string,
+        picture: string,
+        creator: string | ProfileProps
+    },
+    createdAt?: Date,
+    updatedAt?: Date
 }
 
 
 export interface IReserve {
-    institution: PropertyProps | any,
+    establishment: PropertyProps | string | any,
     _id: string,
+    isAllowedEdit: boolean,
     fullName: string,
-    user?: string,
+    user: string,
+    isClientAppeared: boolean,
+    manager: string,
     writeMe: boolean,
     whoPay: string,
     eventType: string,
-    date: Date | any,
-    isActive: string,
+    date: Date | string,
+    isActive?: string,
     comment: string,
     desiredAmount: number,
     numberPeople: number,
@@ -460,13 +485,10 @@ export interface IReserve {
         value: "accepted" | "rejected" | "draft",
         reasonRefusal?: string
     },
-    institutionStatus: {
+    establishmentStatus: {
         value: "accepted" | "rejected" | "draft",
         reasonRefusal?: string,
-        freeDateFor: [{
-            day: Date,
-            time: Date
-        }]
+        freeDateFor: [Date | null] | null
     }
 }
 
@@ -475,9 +497,46 @@ export interface IReserveFilterVariables {
     userStatus: {
         value: "accepted" | "rejected" | "draft" | string
     },
-    institutionStatus: {
+    establishmentStatus: {
         value: "accepted" | "rejected" | "draft" | string
     },
-    institution: string,
+    establishment: string,
     day: Date
+}
+
+export interface ISubscribe {
+    _id: string,
+    subscriberId: string,
+    establishmentId: string,
+    createdAt?: Date,
+    updatedAt?: Date,
+}
+
+export interface INotificationSubscribe {
+    _id: string,
+    subscribeId: string,
+    newsId: string,
+    createdAt?: Date,
+    updatedAt?: Date,
+}
+
+export interface INotification {
+    _id: string,
+    isDelete: boolean,
+    forUser: {
+        role: "manager" | "admin" | "user",
+        userId?: string | ProfileProps
+    },
+    status: "usual" | "accepted" | "rejected",
+    userId: string | ProfileProps,
+    message: string,
+    description: string,
+    type: "newReservation" | "newMessage" | "newNews" |"newFunctional" | "newEstablishment" | "newUser",
+    isRead: boolean,
+    createdAt: Date,
+    updateAt: Date
+}
+
+export interface CustomObject {
+    [key: string]: any;
 }

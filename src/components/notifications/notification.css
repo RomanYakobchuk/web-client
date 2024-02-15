@@ -1,0 +1,22 @@
+@keyframes deleteNotification {
+    from {
+        width: 50px;
+        height:  50px
+    }
+    to {
+        width: 0;
+        height:  0
+    }
+}
+@keyframes buttonDeleteNotification {
+    0% {
+        scale: 1;
+        transform: rotate(-360deg);
+    }
+    10% {
+        scale: 1.5;
+    }
+    100% {
+        scale: 1;
+    }
+}

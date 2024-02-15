@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+<!--    <link rel="icon" href="images/logo.png"/>-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+    <meta name="theme-color" content="#000000"/>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta
+            name="description"
+            content="CAPL"
+    />
+    <link rel="icon" href="./favicon.ico">
+    <link rel="apple-touch-icon" href="./favicon.ico">
+    <link rel="manifest" href="./manifest.json">
+    <link rel="stylesheet" href="https://unpkg.com/react-spring-bottom-sheet/dist/style.css" crossorigin="anonymous">
+
+    <meta name="google-signin-client_id" content={495583971120-ki01714kbouu8nciat4fpfo86g5e3ed2.apps.googleusercontent.com}>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link
+            href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap"
+            rel="stylesheet"
+    />
+    <style>
+        html {
+            width: 100%;
+            height: 100%;
+            /*overflow: hidden;*/
+        }
+        body {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+        }
+        #root {
+            height: 100%;
+        }
+        ul.MuiList-root.MuiMenu-list li.MuiMenuItem-root.Mui-selected {
+            background-color: rgb(183 160 160 / 49%)
+        }
+    </style>
+    <title>
+        Capl
+    </title>
+    <script
+            src="https://accounts.google.com/gsi/client"
+            async
+            defer
+    ></script>
+    <script src="https://apis.google.com/js/platform.js?onload=init" async defer></script>
+    <script src="https://accounts.google.com/gsi/client" async></script>
+    <script src="https://apis.google.com/js/platform.js?onload=onLoadCallback" async defer></script>
+    <script src="https://accounts.google.com/gsi/client"></script>
+    <script src="https://maps.googleapis.com/maps/api/directions/json?origin=43.65077%2C-79.378425&destination=43.63881%2C-79.42745&key=495583971120-ki01714kbouu8nciat4fpfo86g5e3ed2.apps.googleusercontent.com"></script>
+    <script src="https://connect.facebook.net/en_US/sdk.js" async defer></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="module" src="./src/main.tsx"></script>
+</body>
+</html>

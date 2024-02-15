@@ -1,17 +1,20 @@
-import axios, {AxiosRequestConfig} from "axios";
-import {parseJwt} from "utils/parse-jwt";
-import {IData, ProfileProps} from "./interfaces/common";
-import {AuthBindings} from "@refinedev/core";
+import axios, {AxiosInstance, InternalAxiosRequestConfig} from "axios";
+import type {AuthBindings} from "@refinedev/core";
 
+import {parseJwt} from "./utils";
+import {IData, IGetIdentity, ProfileProps} from "./interfaces/common";
+import {
+    ACCESS_TOKEN_KEY,
+    localFavPlacesKey,
+    REFRESH_TOKEN_KEY, USER_PROPERTY
+} from "./config/const";
+import {clearUserAllData} from "@/hook/useUserLogout";
 
-export const ACCESS_TOKEN_KEY = "access-refine-auth";
-export const REFRESH_TOKEN_KEY = "refresh-refine-auth";
-
-export const baseURL = `${process.env.REACT_APP_API}/api/v1`;
-
-export const axiosInstance = axios.create({
+export const baseURL = `${import.meta.env.VITE_APP_API}/api/v1`;
+export const axiosInstance: AxiosInstance = axios.create({
     baseURL, headers: {
-        'Access-Control-Allow-Origin': `${process.env.REACT_APP_API}`,
+        'Access-Control-Allow-Origin': `${import.meta.env.VITE_APP_API}`,
+        'Content-Type': 'application/json;charset=UTF-8'
     }
 });
 
@@ -36,61 +39,23 @@ const onTokenRefreshed = () => {
     _refreshSubscribers.map((cb) => cb());
 };
 
-axiosInstance.interceptors.request.use(async (request: AxiosRequestConfig) => {
-        const access_token = await localStorage.getItem(ACCESS_TOKEN_KEY);
+const access_token = localStorage.getItem(ACCESS_TOKEN_KEY);
+axiosInstance.defaults.headers.common['Authorization'] = access_token;
+axiosInstance.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
         if (access_token && isAccessTokenExpired(access_token)) {
-            if (request.headers) {
-                request.headers["Authorization"] = access_token;
-            } else {
-                request.headers = {
-                    Authorization: access_token,
-                };
+            if (config.headers) {
+                config.headers["Authorization"] = access_token;
             }
+            // else {
+            //     config['headers'] = {
+            //         Authorization: access_token,
+            //     };
+            // }
         }
-        return request;
+        return config;
     },
     (error) => Promise.reject(error)
 );
-
-
-// axiosInstance.interceptors.response.use(
-//     (response) => {
-//         return response
-//     },
-//     async (error) => {
-//         if (error.response) {
-//             const config = error?.config;
-//             if (error?.response?.status === 401 && !config._retry) {
-//                 config._retry = true;
-//                 try {
-//                     const refresh_token = localStorage.getItem(REFRESH_TOKEN_KEY);
-//                     const response = await axios.post(`${baseURL}/auth/refreshToken`, {
-//                         refresh_token
-//                     })
-//                     config.headers.authorization = response?.data?.access_token;
-//
-//                     localStorage.setItem(ACCESS_TOKEN_KEY, response?.data?.access_token)
-//                     localStorage.setItem(REFRESH_TOKEN_KEY, response?.data?.refresh_token)
-//                     localStorage.setItem("user", response?.data?.user)
-//
-//                     config._retry = true;
-//
-//                     return await axios.request(config);
-//                 } catch (error: any) {
-//                     if (error?.response?.data?.code === 401 || error?.response?.data?.code === '401') {
-//
-//                         localStorage.removeItem(ACCESS_TOKEN_KEY);
-//                         localStorage.removeItem(REFRESH_TOKEN_KEY);
-//                         localStorage.removeItem("user");
-//                         return window.location.reload();
-//                     }
-//                     return Promise.reject(error)
-//                 }
-//             }
-//         }
-//         return Promise.reject(error)
-//     }
-// )
 
 axiosInstance.interceptors.response.use(
     (response) => {
@@ -105,17 +70,25 @@ axiosInstance.interceptors.response.use(
                     _isRefreshing = true;
 
                     try {
+
                         const refresh_token = localStorage.getItem(REFRESH_TOKEN_KEY);
+                        if (!refresh_token) {
+                            window.location.reload();
+                            return Promise.reject(error)
+                        }
                         const response = await axios.post(`${baseURL}/auth/refreshToken`, {
                             refresh_token,
                         });
 
                         config.headers.authorization = response?.data?.access_token;
-
+                        axiosInstance.defaults.headers.common['Authorization'] = response?.data?.access_token;
                         localStorage.setItem(ACCESS_TOKEN_KEY, response?.data?.access_token);
                         localStorage.setItem(REFRESH_TOKEN_KEY, response?.data?.refresh_token);
                         localStorage.setItem("user", response?.data?.user);
-
+                        localStorage.setItem(localFavPlacesKey, JSON.stringify(response?.data?.favoritePlaces));
+                        localStorage.setItem(USER_PROPERTY, JSON.stringify({
+                            notReadNotifications: response?.data?.countNotReadNotifications || 0
+                        }));
                         onTokenRefreshed();
                         config._retry = true;
 
@@ -125,22 +98,21 @@ axiosInstance.interceptors.response.use(
                             error?.response?.data?.code === 401 ||
                             error?.response?.data?.code === "401"
                         ) {
-                            localStorage.removeItem(ACCESS_TOKEN_KEY);
-                            localStorage.removeItem(REFRESH_TOKEN_KEY);
-                            localStorage.removeItem("user");
-                            return window.location.reload();
+                            // await logOutUser.currentDevice();
+                            clearUserAllData();
+                            // return window.location.reload();
+                            return;
                         }
                         return {};
                     } finally {
                         _isRefreshing = false;
                     }
                 } else {
-                    const retryOriginalRequest = new Promise((resolve) => {
+                    return new Promise((resolve) => {
                         subscribeTokenRefresh(() => {
                             resolve(axios.request(config));
                         });
                     });
-                    return retryOriginalRequest;
                 }
             }
         }
@@ -149,88 +121,96 @@ axiosInstance.interceptors.response.use(
 );
 
 export const authProvider: AuthBindings = {
-        login: async ({user, access_token, refresh_token}: IData) => {
-            if (user) {
-                const profileObj = user ? parseJwt(user) : null;
+    login: async ({user, access_token, refresh_token, favoritePlaces, countNotReadNotifications}: IData) => {
+        if (user) {
+            const profileObj = user ? parseJwt(user) : null;
+            if (profileObj) {
+                localStorage.setItem(
+                    "user",
+                    JSON.stringify(user)
+                );
+                localStorage.setItem(localFavPlacesKey, JSON.stringify(favoritePlaces ?? []));
+                localStorage.setItem(ACCESS_TOKEN_KEY, access_token)
+                localStorage.setItem(REFRESH_TOKEN_KEY, refresh_token)
+                localStorage.setItem(USER_PROPERTY, JSON.stringify({
+                    notReadNotifications: countNotReadNotifications || 0
+                }))
 
-                if (profileObj) {
-                    localStorage.setItem(
-                        "user",
-                        JSON.stringify(user)
-                    );
-                    localStorage.setItem(ACCESS_TOKEN_KEY, access_token)
-                    localStorage.setItem(REFRESH_TOKEN_KEY, refresh_token)
-
-                    await window.location.reload();
-                    return {
-                        success: true,
-                    }
-                } else {
-                    return {
-                        success: false
-                    }
+                return {
+                    success: true,
+                }
+            } else {
+                return {
+                    success: false
                 }
             }
-            return {
-                success: false
-            };
-        },
-        logout: async () => {
-            await axiosInstance.get('/auth/logout')
-            localStorage.removeItem(ACCESS_TOKEN_KEY);
-            localStorage.removeItem(REFRESH_TOKEN_KEY);
-            localStorage.removeItem("user");
-            return {
-                success: true,
-                redirectTo: '/login'
-            };
-        },
-        onError: async (error) => {
-            console.error(error?.response)
-            return {error}
-        },
-        check: async () => {
-            const access_token = localStorage.getItem(ACCESS_TOKEN_KEY);
-            const refresh_token = localStorage.getItem(REFRESH_TOKEN_KEY);
-            if (!access_token || !refresh_token) {
-                return {
-                    authenticated: false,
-                    error: new Error("Not authenticated"),
-                    logout: true,
-                    success: false,
-                    redirectTo: '/login'
-                }
-            } else if (access_token && refresh_token) {
-                return {
-                    authenticated: true
-                }
-            }
+        }
+        return {
+            success: false
+        };
+    },
+    logout: async () => {
+        clearUserAllData();
+        axios.defaults.headers.common = {};
+        return {
+            success: true,
+        };
+    },
+    onError: async (error) => {
+        console.log(error?.response?.data)
+        return {error: error?.response?.data || error}
+    },
+    check: async () => {
+        const access_token = localStorage.getItem(ACCESS_TOKEN_KEY);
+        const refresh_token = localStorage.getItem(REFRESH_TOKEN_KEY);
+        if (!access_token || !refresh_token) {
             return {
                 authenticated: false,
+                error: new Error("Not authenticated"),
+                logout: true,
+                success: false,
+                // redirectTo: '/login'
+            }
+        } else if (access_token || refresh_token) {
+            return {
+                authenticated: true
+            }
+        }
+        return {
+            authenticated: false,
+            // redirectTo: '/login',
+            logout: true
+        };
+
+    },
+    getPermissions: async () => {
+        const userToken = localStorage.getItem('user') as string;
+        const user = userToken ? parseJwt(userToken) : null;
+        if (user) {
+            return user?._doc?.status || user?.status
+        }
+        return "user";
+    },
+    getIdentity: async (): Promise<IGetIdentity | any> => {
+        const token = localStorage.getItem(ACCESS_TOKEN_KEY) as string;
+        const refresh = localStorage.getItem(REFRESH_TOKEN_KEY) as string;
+        const favoritePlaces = JSON.parse(localStorage.getItem(localFavPlacesKey) as string);
+        const user = localStorage.getItem("user") as string;
+        if (!token && (refresh && !isAccessTokenExpired(refresh))) {
+            return {
+                authenticated: false,
+                error: new Error("Not authenticated"),
+                logout: true,
                 redirectTo: '/login'
             };
+        }
+        const data = user ? parseJwt(user) : null;
 
-        },
-        getPermissions: async () => {
-            return null;
-        },
-        getIdentity: async () => {
-            const token = localStorage.getItem(ACCESS_TOKEN_KEY);
-            const refresh = localStorage.getItem(REFRESH_TOKEN_KEY);
-            const user = localStorage.getItem("user");
-            if (!token || (refresh && !isAccessTokenExpired(refresh))) {
-                return {
-                    authenticated: false,
-                    error: new Error("Not authenticated"),
-                    logout: true,
-                    redirectTo: '/login'
-                };
-            }
-            const data = user ? parseJwt(user) : null;
+        if (!data) return null;
 
-            if (!data) return null;
-
-            return Promise.resolve<ProfileProps>(data?._doc ?? data)
-        },
-    }
-;
+        return {
+            user: data?._doc || data as ProfileProps,
+            favoritePlaces: favoritePlaces as string[]
+        }
+    },
+};

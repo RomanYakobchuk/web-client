@@ -49,7 +49,7 @@ const SearchManager = ({setCreatedBy, createdBy}: IProps) => {
     const [currentUserName, setCurrentUserName] = useState('');
     useEffect(() => {
         if (currentUser?.status !== 'admin') {
-            setCreatedBy(currentUser?._id)
+            setCreatedBy(currentUser?._id as string)
         }
     }, [currentUser]);
 

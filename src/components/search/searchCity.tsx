@@ -17,9 +17,9 @@ const renderTitle = (title: string) => {
     );
 };
 
-const renderItem = (title: string, resource: string, id: number) => {
+const renderItem = (value: string, title: string, resource: string, id: number | string) => {
     return {
-        value: title,
+        value: value,
         label: (
             <Text style={{
                 textTransform: 'capitalize'
@@ -47,10 +47,8 @@ const SearchCity = ({setSearchCity, searchCity}: IProps) => {
     const [value] = useDebounce(searchCityInput, 500);
 
     useEffect(() => {
-        if (searchCity) {
-            setCurrentCity(searchCity)
-        }
-    }, [searchCity])
+        setCurrentCity(searchCity)
+    }, [searchCity]);
     const {refetch: refetchCities, isLoading: citiesIsLoading} = useList<any>({
         resource: 'city/all',
         filters: [{field: 'city', operator: 'contains', value: value}],
@@ -59,14 +57,14 @@ const SearchCity = ({setSearchCity, searchCity}: IProps) => {
             onSuccess: (data) => {
                 const citiesOptionGroup = data.data.map((item) => {
                         if (searchCity === item.name) {
-                            console.log(item.name)
                             setCurrentCity(item.name)
                         }
                         return (
-                            renderItem(item.name, translate("cities.cities"), item._id)
+                            renderItem(item.name, item.name, translate("cities.cities"), item._id)
                         )
                     }
                 )
+                citiesOptionGroup.push(renderItem("", translate('home.sortByType.all'), translate("home.sortByType.all"), 'all_cities'))
                 if (citiesOptionGroup.length > 0) {
                     setOptions((prevState) => [
                         ...prevState,
@@ -83,6 +81,7 @@ const SearchCity = ({setSearchCity, searchCity}: IProps) => {
     const onSearch = (value: string) => {
         setSearchInputValue(value)
         setSearchCityInput(value)
+        setSearchCity(value)
     }
 
     useEffect(() => {
@@ -93,10 +92,8 @@ const SearchCity = ({setSearchCity, searchCity}: IProps) => {
     }, [value]);
 
     useEffect(() => {
-        if (currentCity) {
-            setSearchInputValue(currentCity);
-            setSearchCityInput(currentCity);
-        }
+        setSearchInputValue(currentCity);
+        setSearchCityInput(currentCity);
     }, [currentCity])
 
     return (
@@ -119,10 +116,11 @@ const SearchCity = ({setSearchCity, searchCity}: IProps) => {
                 value={searchInputValue}
                 onChange={(e) => setSearchCityInput(e.target.value)}
                 size={"large"}
+                placeholder={translate('home.sortByType.all') + ' ' + `(${translate('home.create.location.title')})`}
                 style={{
                     background: "transparent",
                     color: mode === "dark" ? "#fcfcfc" : "#000",
-                    ...selectStyle
+                    borderRadius: '7px'
                 }}
             />
         </AutoComplete>

@@ -1,0 +1,23 @@
+@keyframes OpenModalWindow {
+    0% {
+        top: 100vh;
+    }
+    50% {
+        top: 50vh;
+    }
+    100% {
+        top: 0;
+    }
+}
+
+@keyframes CloseModalWindow {
+    0% {
+        top: 0;
+    }
+    50% {
+        top: 50vh;
+    }
+    100% {
+        top: 100vh;
+    }
+}

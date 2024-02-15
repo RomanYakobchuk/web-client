@@ -15,11 +15,11 @@ import {useNotification, useTranslate} from "@refinedev/core";
 import {axiosInstance} from "@refinedev/simple-rest";
 import {FieldValues} from "react-hook-form";
 
-import {Header} from "../../layout";
-import {ColorModeContext} from "../../contexts";
-import {parseJwt, useMobile} from "../../utils";
+import {Header} from "@/layout";
+import {ColorModeContext} from "@/contexts";
+import {parseJwt} from "@/utils";
 import Copyright from "./utills/copyright";
-import {buttonStyle} from "../../styles";
+import {buttonStyle} from "@/styles";
 
 const VerifyNumber = () => {
 
@@ -28,7 +28,6 @@ const VerifyNumber = () => {
     const {mode} = useContext(ColorModeContext);
     const {token}: any = useParams();
     const {open} = useNotification();
-    const {width} = useMobile();
 
     const [send, setSend] = useState(false);
     const [error, setError] = useState<any>([]);
@@ -240,7 +239,14 @@ const VerifyNumber = () => {
                             maxWidth: '360px',
                             columnGap: '10px',
                             justifyContent: 'center',
-                            alignItems: 'center'
+                            alignItems: 'center',
+                            "& > input":{
+                                "@media screen and (max-width: 400px)":{
+                                    width: '40px',
+                                    height: '46px',
+                                    fontSize: '24px'
+                                },
+                            }
                         }}>
                         {
                             valueItems?.map((digit, idx) => (
@@ -250,13 +256,13 @@ const VerifyNumber = () => {
                                     color={"secondary"}
                                     style={{
                                         textDecoration: 'none',
-                                        width: width < 400 ? '40px' : '100%',
-                                        height: width < 400 ? '46px' : '60px',
+                                        width: '100%',
+                                        height: '60px',
+                                        fontSize:  '32px',
                                         border: '1px solid #ccc',
                                         borderRadius: '5px',
                                         padding: 0,
                                         textAlign: 'center',
-                                        fontSize: width < 400 ? '24px' : '32px',
                                         fontWeight: "bold",
                                         color: mode === "dark" ? '#fcfcfc' : "#000",
                                         background: 'transparent',

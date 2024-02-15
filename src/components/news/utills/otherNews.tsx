@@ -1,16 +1,16 @@
 import {useInfiniteList, useTranslate} from "@refinedev/core";
 import {INews} from "../../../interfaces/common";
-import Loading from "../../loading";
+import Loading from "../../loading/loading";
 import {Box, Button} from "@mui/material";
-import NewsCard from "./NewsCard";
+import NewsCard from "../cards/NewsCard";
 import React from "react";
 
 interface IProps {
-    institutionId: string,
+    establishmentId: string,
     newsId: string
 }
 
-const OtherNews = ({institutionId, newsId}: IProps) => {
+const OtherNews = ({establishmentId, newsId}: IProps) => {
 
     const translate = useTranslate();
 
@@ -22,7 +22,7 @@ const OtherNews = ({institutionId, newsId}: IProps) => {
         fetchNextPage,
         isFetchingNextPage
     } = useInfiniteList<INews>({
-        resource: `news/otherPlaceNews/${institutionId}`,
+        resource: `news/otherPlaceNews/${establishmentId}`,
         filters: [
             {
                 field: 'newsId',
@@ -50,7 +50,8 @@ const OtherNews = ({institutionId, newsId}: IProps) => {
             gap: 2,
             height: '100%',
             maxHeight: {xs: '100%', lg: '900px'},
-            overflowY: 'auto'
+            overflow: 'auto',
+            WebkitOverflowScrolling: 'touch',
         }}>
             {
                 data?.pages?.map((page) =>

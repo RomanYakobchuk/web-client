@@ -15,13 +15,22 @@
       },
       "errors": {
         "validEmail": "Invalid email address",
-        "active": "It looks like your account is inactive"
+        "active": "It looks like your account is inactive",
+        "passValid": "The password must consist of the Latin alphabet and contain at least 8 characters, including 1 upper and lower case letter, 1 number and 1 special character"
       },
       "buttons": {
         "submit": "Login",
         "forgotPassword": "Forgot password",
         "noAccount": "Don’t have an account?",
         "rememberMe": "Remember me"
+      },
+      "importantly": {
+        "title": "Importantly",
+        "loginMethod": "To Login, use the method you used to register on the site",
+        "facebook": {
+          "part1": "To Logout and change your Facebook account, go to",
+          "part2": "and logout or change your account"
+        }
       }
     },
     "forgotPassword": {
@@ -43,7 +52,14 @@
         "name": "Name",
         "phone": "Phone",
         "dOB": "Date of Birth",
-        "password": "Password"
+        "password": "Password",
+        "role": "Role"
+      },
+      "steps": {
+        "first": "First",
+        "second": "Second",
+        "third":"Third",
+        "last": "Last"
       },
       "errors": {
         "validEmail": "Invalid email address"
@@ -83,12 +99,18 @@
     "confirmDelete": "Are you sure you want to delete {{value}}?"
   },
   "buttons": {
+    "goTo": "Go to",
     "copy": "Copy",
+    "share": "To share:",
+    "change": "Change",
+    "choose": "Choose",
+    "add": "Add",
     "create": "Create",
     "details": "Details",
     "save": "Save",
     "logout": "Logout",
     "loadMore": "Load more",
+    "thatsAll": "That`s all",
     "delete": "Delete",
     "edit": "Edit",
     "cancel": "Cancel",
@@ -96,20 +118,40 @@
     "confirm": "Confirm",
     "send": "Send",
     "filter": "Filter",
+    "filtersApplied": "filters applied",
+    "moreFilter": "More filters",
     "clear": "Clear",
     "reset": "Reset",
+    "more": "More",
     "refresh": "Refresh",
+    "restore": "Restore",
     "show": "Show",
     "undo": "Undo",
     "search": "Search",
     "import": "Import",
     "clone": "Clone",
+    "answer": "Answer",
     "submitting": "Submitting...",
     "notAccessTitle": "You don't have permission to access",
     "isPublished": "Published",
     "isDraft": "Expect",
     "isRejected": "Rejected",
-    "reply": "Reply"
+    "reply": "Reply",
+    "nearby": "Establishments nearby",
+    "hide": "Hide",
+    "google": {
+      "signin_with": "Sign in with Google",
+      "signup_with": "Sign up with Google",
+      "viewRoute": "View route"
+    },
+    "facebook": {
+      "signin_with": "Sign in with Facebook",
+      "signup_with": "Sign up with Facebook"
+    },
+    "steps": {
+      "next": "Next",
+      "previous": "Previous"
+    }
   },
   "warnWhenUnsavedChanges": "Are you sure you want to leave? You have unsaved changes.",
   "notifications": {
@@ -124,14 +166,106 @@
     "editError": "Error when editing {{resource}} (status code: {{statusCode}})",
     "importProgress": "Importing: {{processed}}/{{total}}",
     "addSuccess": "Successfully added {{resource}}",
-    "allField": "All fields must be filled"
+    "allField": "All fields must be filled",
+    "page": {
+      "info": {
+        "read": "Readings",
+        "notRead": "Not read",
+        "all": "All"
+      },
+      "deleted": {
+        "title": "Deleted"
+      },
+      "newReservation": {
+        "title": {
+          "title": "Reservation",
+          "type": "New reservation"
+        },
+        "message": {
+          "accepted": "The establishment accepted the reservation",
+          "rejected": "The establishment rejected the reservation",
+          "message": "User reserved seats",
+          "reasonForRefusal": "Reason for refusal",
+          "chooseNewDateOrReject": "Choose a new date or cancel the reservation?",
+          "userAccepted": "The user changed the reservation",
+          "userRejected": "The user canceled the reservation"
+        }
+      },
+      "newEstablishment": {
+        "title": {
+          "title": "Establishment",
+          "type": "New establishment"
+        },
+        "message": {
+          "message": "Manager created establishment",
+          "accepted": "Administrator accepted the establishment",
+          "rejected": "Administrator rejected the establishment"
+        }
+      },
+      "newNews": {
+        "title": {
+          "title": "News",
+          "type": "New news"
+        },
+        "message": {
+          "accepted": "",
+          "rejected": "",
+          "message": "Establishment add news"
+        }
+      },
+      "newMessage": {
+        "title": {
+          "title": "Message",
+          "type": "New message"
+        },
+        "message": {
+          "accepted": "Заклад прийняв бронювання",
+          "rejected": "Заклад відхилив бронювання",
+          "message": "You have new message"
+        }
+      },
+      "newNotification": {
+        "title": {
+          "title": "Notification",
+          "type": "New notification"
+        },
+        "message": {
+          "message": "You have received a new notification",
+          "accepted": "Заклад прийняв бронювання",
+          "rejected": "Заклад відхилив бронювання"
+        }
+      },
+      "newEvent": {
+        "title": {
+          "title": "Event",
+          "type": "New event"
+        },
+        "message": {
+          "message": "User reserved seats",
+          "accepted": "Заклад прийняв бронювання",
+          "rejected": "Заклад відхилив бронювання"
+        }
+      },
+      "newUser": {
+        "title": {
+          "title": "User",
+          "type": "New user"
+        },
+        "message": {
+          "message": "New user registered",
+          "accepted": "Заклад прийняв бронювання",
+          "rejected": "Заклад відхилив бронювання"
+        }
+      }
+    }
   },
   "loading": "Loading...",
   "tags": {
     "clone": "Clone"
   },
   "dashboard": {
-    "title": "Dashboard"
+    "title": "Dashboard",
+    "dashboard": "Dashboard"
   },
   "posts": {
     "posts": "Posts",
@@ -173,10 +307,11 @@
   },
   "home": {
     "home": "Home",
-    "title": "All Institutions",
-    "one": "Institution",
+    "title": "All Establishments",
+    "one": "Establishment",
+    "theOne": "establishment",
     "owner": "Owner",
-    "notHave": "There are no institutions",
+    "notHave": "There are no establishments",
     "search": "Search by title, description, city, features",
     "searchByTag": "Search by #tag",
     "sortByType": {
@@ -184,7 +319,8 @@
       "bar": "Bar",
       "cafe": "Cafe",
       "restaurant": "Restaurant",
-      "browse": "Browse by type",
+      "browseByType": "Browse establishment by type",
+      "browseByCity": "Browse by city",
       "popularPlace": "Popular place"
     },
     "pages": {
@@ -193,6 +329,8 @@
       "of": "of"
     },
     "sort": "Sort",
+    "newest": "The newest",
+    "oldest": "The oldest",
     "sortRating": "Sort rating",
     "sortByABC": {
       "title": "Sort alphabetically",
@@ -203,14 +341,14 @@
     "tags": "Tags",
     "default": "Default",
     "create": {
-      "title": "Add institution",
+      "title": "Add establishment",
       "confirmTitle": "Confirm the addition",
-      "message": "If the data is entered correctly, you can add an institution. \nThe institution will be publicly available after verification by an administrator",
+      "message": "If the data is entered correctly, you can add an establishment. \nThe establishment will be publicly available after verification by an administrator",
       "mainPhoto": "Add a main photo",
-      "name": "Name of the institution",
+      "name": "Name of the establishment",
       "description": "Description",
-      "otherPhoto": {
-        "title": "Add additional photo",
+      "pictures": {
+        "title": "Add photos",
         "message": "Select variant for display",
         "variant": "Variant",
         "inputPlace": "Enter the order number for the photo",
@@ -222,7 +360,7 @@
       "city": "Inhabited locality",
       "address": "Street",
       "type": {
-        "title": "Type of institution",
+        "title": "Type of establishment",
         "bar": "Bar",
         "cafe": "Cafe",
         "restaurant": "Restaurant"
@@ -230,13 +368,13 @@
       "workSchedule": {
         "title": "Work schedule",
         "dayName": {
-          "monday": "Monday",
-          "tuesday": "Tuesday",
-          "wednesday": "Wednesday",
-          "thursday": "Thursday",
-          "friday": "Friday",
-          "saturday": "Saturday",
-          "sunday": "Sunday"
+          "1": "Monday",
+          "2": "Tuesday",
+          "3": "Wednesday",
+          "4": "Thursday",
+          "5": "Friday",
+          "6": "Saturday",
+          "7": "Sunday"
         },
         "workDays": {
           "title": "Working days",
@@ -279,10 +417,12 @@
       },
       "comments": {
         "title": "Comments",
-        "notHave": "There are no comments"
+        "notHave": "There are no comments",
+        "leaveAs": "Leave a comment as ",
+        "leave": "Leave a comment"
       },
-      "addToFav": "Add to favorites",
-      "delFromFav": "Remove from favorites",
+      "addToFav": "Save {{type}}",
+      "delFromFav": "Remove from saved",
       "reviews": {
         "title": "Reviews",
         "notHave": "There are no reviews",
@@ -301,19 +441,38 @@
       "title": "Add news"
     },
     "edit": {
-      "title": "Edit institution"
+      "title": "Edit establishment"
     }
   },
-  "all_institutions": {
-    "all_institutions": "Institutions"
+  "establishment": {
+    "establishment": "Establishments",
+    "tile": "All establishments",
+    "similar": {
+      "title": "Similar establishment"
+    },
+    "freeSeats": {
+      "title": "Free seats",
+      "create": "Add free seats",
+      "isCombine": "Possibility to combine seats",
+      "tableNumber": "Table number",
+      "numberOfSeats": "Number of seats",
+      "statusOfSeats": {
+        "title": "Status of seats",
+        "free": "Free",
+        "reserved": "Reserved",
+        "all": "All"
+      }
+    }
   },
   "news": {
     "news": "News",
+    "theOne": "the news",
     "title": "All news",
     "notHave": "There are no news",
     "button": "Add news",
     "searchByTitle": "Search by title, description",
     "sortByCategory": {
+      "all": "All",
       "general": "General",
       "promotions": "Promotions",
       "events": "Events"
@@ -322,7 +481,7 @@
       "title": "The date of the event"
     },
     "show": {
-      "otherPlaceNews": "Other news of the institution"
+      "otherPlaceNews": "Other news of the establishment"
     },
     "create": {
       "title": "Title",
@@ -335,9 +494,9 @@
       "publicDate": "Publication date"
     }
   },
-  "top-institutions": {
-    "top-institutions": "Top institutions",
-    "title": "Top institutions"
+  "top-establishments": {
+    "top-establishments": "Top establishments",
+    "title": "Top establishments"
   },
   "capl": {
     "capl": "Capl",
@@ -345,6 +504,9 @@
     "title": "Reserve seats",
     "main": {
       "yourReserve": "Your reservations: {{length}}"
+    },
+    "edit": {
+      "isAccepted": "Since the establishment has confirmed the reservation, editing is not allowed, please get permission to edit"
     },
     "create": {
       "fullName": "Full name",
@@ -354,14 +516,27 @@
       "writeMe": "Write to me",
       "desiredAmount": "The desired amount of expenses, grn",
       "numberPeople": "Number of people",
-      "whoPay": "Who will pay"
+      "whoPay": "Who will pay",
+      "minDateReserve": {
+        "isError": "You can reserve a place one hour before the event",
+        "message": "Reserve a place one hour before the event"
+      }
     },
     "status": {
       "userStatus": "Client status",
-      "institutionStatus": "Institution status",
+      "establishmentStatus": "Establishment status",
       "accepted": "Accepted",
       "draft": "Is waiting",
-      "rejected": "Rejected"
+      "rejected": "Rejected",
+      "valid": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "all": "All"
+      },
+      "clientAppeared": {
+        "true": "Appeared",
+        "false": "Did not appear"
+      }
     },
     "required": "Field: {{field}} - required",
     "fullNameError": "The name must include 2 fields",
@@ -371,12 +546,15 @@
     }
   },
   "all-places": {
-    "all-places": "All institutions",
-    "title": "All institutions"
+    "all-places": "All establishments",
+    "title": "All establishments"
   },
-  "my-institution": {
-    "my-institution": "My institutions",
-    "title": "My institutions",
+  "all-capl": {
+    "title": "All reservations"
+  },
+  "my-establishment": {
+    "my-establishment": "My establishments",
+    "title": "My establishments",
     "verify": {
       "published": "Published",
       "await": "Awaiting verification"
@@ -401,15 +579,20 @@
     "title": "All news"
   },
   "favorite-places": {
-    "favorite-places": "Favorite places",
-    "title": "Favorite places"
+    "favorite-places": "Saved places",
+    "title": "Saved places",
+    "type": {
+      "all": "All",
+      "establishment": "Establishments",
+      "news": "News"
+    }
   },
   "profile": {
     "profile": "Profile",
     "title": "Profile",
     "my_comments": "My comments: {{length}}",
-    "my_places": "My institutions: {{length}}",
-    "my_fav_places": "Favorite institutions: {{length}}",
+    "my_places": "My establishments: {{length}}",
+    "my_fav_places": "Saved establishments: {{length}}",
     "my_reviews": "My reviews: {{length}}",
     "email": "Email: ",
     "edit": {
@@ -469,19 +652,33 @@
     "odesa": "Odesa",
     "kharkiv": "Kharkiv",
     "lviv": "Lviv",
-    "institutions": "Institutions: {{number}}"
+    "establishments": "Establishments: {{number}}"
   },
   "roles": {
     "manager": "Manager",
     "admin": "Administrator",
-    "user": "User"
+    "user": "User",
+    "ordinaryUser": "Ordinary user"
   },
   "text": {
+    "info": "Information",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "nothing": "Nothing",
+    "notResult": "Nothing found",
+    "areYouSure": "Are you sure?",
+    "home": {
+      "searchPlace1": "Looking for a relaxing place to have ",
+      "searchPlace2": "a drink with friends?",
+      "byPlace": "Welcome to our platform, where your time will always have a special place. We understand the importance of finding the perfect spot for relaxation and a casual atmosphere.",
+      "findYourSelf": "Choose an establishment specifically for you and find the ideal place yourself.",
+      "byType": "We offer a variety of atmospheres and types of entertainment. Do you enjoy upscale restaurants with gastronomic masterpieces, or are you looking to treat yourself and friends in cozy cafes? Perhaps you're seeking nightlife at vibrant bars, where the rhythm of the night comes alive."
+    },
+    "current": "Current value"
   },
   "list": {
-    "institution": "List of institutions",
+    "list": "List",
+    "establishment": "List of establishments",
     "capl": "List of reservations",
     "news": "News list",
     "users": "List of users"
@@ -490,9 +687,47 @@
     "title": "Views"
   },
   "chats": {
-    "chats": "All chats"
+    "chats": "All chats",
+    "one": "Chat",
+    "create": {
+      "uniqueIndicator": {
+        "title": "Identifier",
+        "type": {
+          "title": "Type of identifier"
+        },
+        "isExist": "Such an identifier already exists",
+        "create": "Create a unique identifier to be able to create chats and communicate"
+      },
+      "title": "Create",
+      "type": {
+        "title": "Chat type",
+        "group": "Group",
+        "oneByOne": "One by one"
+      },
+      "status": {
+        "title": "Status",
+        "private": "Private",
+        "public": "Public"
+      },
+      "load": {
+        "uploadFile": "Click to upload or drag and drop"
+      }
+    },
+    "show": {
+      "load": {
+        "file": {
+          "file": "File",
+          "sizeError": "File size exceeds 50MB. Choose a smaller file",
+          "type": "Type",
+          "name": "Name",
+          "size": "Size"
+        }
+      }
+    }
   },
   "dates": {
+    "today": "Today",
+    "yesterday": "Yesterday",
     "months": {
       "1": "January",
       "2": "February",
@@ -512,5 +747,38 @@
     "title": "Select schema",
     "schema_1": "Schema 1",
     "schema_2": "Schema 2"
+  },
+  "pictures": {
+    "pictures": "Pictures"
+  },
+  "notification": {
+    "send": "Send notifications to subscribers about  news",
+    "subscribe": {
+      "true": "Subscribed",
+      "false": "Subscribe"
+    }
+  },
+  "travelMode": {
+    "BICYCLING": "Bicycling",
+    "DRIVING": "Driving",
+    "TRANSIT": "Transit",
+    "WALKING": "Walking"
+  },
+  "stat": {
+    "createdInLastMonth": "Created in last month",
+    "users": {
+      "blocked": "Blocked accounts",
+      "activatedByEmail": "Activated by email",
+      "notActivatedByEmail": "Not activated by email",
+      "activeAccountsInLastMonth": "Activated accounts for the last month",
+      "verifiedByPhone": "Verified by phone",
+      "notVerifiedByPhone": "Not verified by phone",
+      "role": "Role",
+      "status": {
+        "name": "Status",
+        "online": "Online",
+        "offline": "Offline"
+      }
+    }
   }
 }

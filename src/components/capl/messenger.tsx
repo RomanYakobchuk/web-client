@@ -1,11 +1,11 @@
 import {useGetIdentity, useList} from "@refinedev/core";
-import {IConv, IMessage, ProfileProps} from "../../interfaces/common";
+import {IConv, IGetIdentity, IMessage, ProfileProps} from "../../interfaces/common";
 import {useEffect, useState} from "react";
 import {axiosInstance} from "../../authProvider";
 
 const Messenger = () => {
-    const {data: user} = useGetIdentity<ProfileProps>();
-
+    const {data: identity} = useGetIdentity<IGetIdentity>();
+    const user: ProfileProps = identity?.user as ProfileProps;
     const {data: dataConv, isLoading, isError} = useList({
         resource: `conversation/findChat/${user?._id}`,
     });

@@ -1,0 +1,53 @@
+@-webkit-keyframes bgcolorGradientAnimation {
+    0% {
+        background-position: 10% 0
+    }
+    25% {
+        background-position: 30% 100%
+    }
+    50% {
+        background-position: 50% 100%
+    }
+    75% {
+        background-position: 80% 100%
+    }
+    100% {
+        background-position: 10% 0
+    }
+}
+
+@-moz-keyframes bgcolorGradientAnimation {
+    0% {
+        background-position: 10% 0
+    }
+    25% {
+        background-position: 30% 100%
+    }
+    50% {
+        background-position: 50% 100%
+    }
+    75% {
+        background-position: 80% 100%
+    }
+    100% {
+        background-position: 10% 0
+    }
+}
+
+@keyframes bgcolorGradientAnimation {
+    0% {
+        background-position: 10% 0
+    }
+    25% {
+        background-position: 30% 100%
+    }
+    50% {
+        background-position: 50% 100%
+    }
+    75% {
+        background-position: 80% 100%
+    }
+    100% {
+        background-position: 10% 0
+    }
+}

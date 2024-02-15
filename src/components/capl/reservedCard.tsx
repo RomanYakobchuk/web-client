@@ -1,14 +1,15 @@
-import {Box, Button, Typography} from "@mui/material";
-import {useGetIdentity, useTranslate} from "@refinedev/core";
-import {DateRange, Person, EastOutlined, Place} from "@mui/icons-material";
-import React, {useContext} from "react";
+import {Box, Button, Popover, Typography} from "@mui/material";
+import {useTranslate} from "@refinedev/core";
+import {DateRange, Person, EastOutlined, Place, CallMadeSharp} from "@mui/icons-material";
+import React, {MouseEvent, useContext, useState} from "react";
 import dayjs from "dayjs";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 
-import {IReserve, ProfileProps} from "../../interfaces/common";
-import {ColorModeContext} from "../../contexts";
-import {TagField} from "@refinedev/mui";
-import {buttonStyle} from "../../styles";
+import {IReserve} from "@/interfaces/common";
+import {ColorModeContext} from "@/contexts";
+import {useUserInfo} from "@/hook";
+import RenderTag from "@/components/common/statusTagRender";
+import {ESTABLISHMENT, SHOW} from "@/config/names";
 
 interface IProps {
     reserve: IReserve
@@ -17,195 +18,312 @@ interface IProps {
 const ReservedCard = ({reserve}: IProps) => {
 
     const {
-        institution,
+        establishment,
         date,
         _id,
         fullName,
-        institutionStatus,
+        establishmentStatus,
         userStatus,
+        isActive,
+        isClientAppeared
     } = reserve;
 
-    const {data: user} = useGetIdentity<ProfileProps>();
+    const {user} = useUserInfo();
     const translate = useTranslate();
     const navigate = useNavigate();
     const {mode} = useContext(ColorModeContext);
+
+
+    const [anchorElPopover, setAnchorElPopover] = useState<HTMLButtonElement | null>(null);
+
+    const handleClickPopover = (event: MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+        setAnchorElPopover(event.currentTarget);
+    }
+    const handleClosePopover = () => {
+        setAnchorElPopover(null);
+    }
+    const openPopover = Boolean(anchorElPopover);
+    const popoverId = openPopover ? 'reservation_popover_info' : undefined;
+
+
     return (
         <Box sx={{
             width: '100%',
+            height: '100%',
             borderRadius: '10px',
-            p: '10px',
-            bgcolor: mode === 'light' ? '#fcfcfc' : '#384c5f',
+            p: '7px',
+            gap: 2,
+            display: 'flex',
+            flexDirection: 'column',
+            bgcolor: mode === 'light' ? '#fcfcfc' : '#191a1c',
+            boxShadow: '0px 0px 2px 0px silver'
         }}>
             <Box sx={{
                 display: 'flex',
                 flexDirection: 'column',
-                gap: 2
+                gap: 1,
+                alignItems: 'start'
             }}>
                 <Box sx={{
+                    width: '100%',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: 1,
-                    alignItems: 'center',
-                    width: '100%',
-                    borderBottom: "1px solid silver",
-                    paddingBottom: '10px'
+                    alignItems: 'start',
+                    gap: 2,
+                    fontSize: '15px',
+                    justifyContent: 'space-between'
                 }}>
-                    <Box
-                        sx={{
-                            width: '100%',
+                    <Box sx={{
+                        width: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'start',
+                        gap: 2,
+                        "& div": {
                             display: 'flex',
-                            flexDirection: 'row',
+                            alignItems: 'end',
                             gap: 1,
-                            alignItems: 'center'
-                        }}
-                    >
-                        <img
-                            style={{
-                                width: '100px',
-                                height: '100px',
-                                borderRadius: '10px',
-                                objectFit: 'cover'
-                            }}
-                            src={institution?.mainPhoto}
-                            alt={institution?.title}/>
+                        },
+                        "& svg": {
+                            fontSize: '1.6rem',
+                            color: 'common.white'
+                        }
+                    }}>
                         <Box sx={{
                             display: 'flex',
-                            flexDirection: 'column',
-                            gap: 2
-                        }}>
-                            <Typography
-                                sx={{
-                                    fontSize: '20px',
-                                    fontWeight: 600
-                                }}
-                            >
-                                {institution?.title}
-                            </Typography>
-                            <Typography
-                                sx={{
-                                    fontSize: '16px'
-                                }}
-                            >
-                                {institution?.type}
-                            </Typography>
-                        </Box>
-                    </Box>
-                    <Typography sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        gap: 1,
-                        alignItems: 'center',
-                        fontSize: '14px'
-                    }}>
-                        <Place/>
-                        {institution?.place?.city}
-                    </Typography>
-                </Box>
-                {
-                    [
-                        {
-                            value: fullName,
-                            icon: <Person/>
-                        },
-                        {
-                            value: dayjs(date).format("DD/MM/YYYY HH:mm"),
-                            icon: <DateRange/>
-                        },
-                        {
-                            icon: translate('capl.status.userStatus'),
-                            value: userStatus?.value === 'accepted'
-                                ?
-                                <TagField
-                                    style={{
-                                        fontSize: '20px',
-                                        padding: '7px'
-                                    }}
-                                    value={translate(`capl.status.${userStatus?.value}`)}
-                                    color={"success"}/>
-                                : userStatus?.value === 'draft'
-                                    ?
-                                    <TagField
-                                        style={{
-                                            fontSize: '20px',
-                                            padding: '7px'
-                                        }}
-                                        value={translate(`capl.status.${userStatus?.value}`)}
-                                        color={"info"}/>
-                                    : userStatus?.value === 'rejected'
-                                        ? <TagField
-                                            style={{
-                                                fontSize: '20px',
-                                                padding: '7px'
-                                            }}
-
-                                            value={translate(`capl.status.${userStatus?.value}`)}
-                                            color={"error"}/>
-                                        : <TagField value={""}
-                                                    color={"default"}/>
-                        },
-                        {
-                            icon: translate('capl.status.institutionStatus'),
-                            value: institutionStatus?.value === 'accepted'
-                                ?
-                                <TagField
-                                    style={{
-                                        fontSize: '20px',
-                                        padding: '7px'
-                                    }}
-                                    value={translate(`capl.status.${institutionStatus?.value}`)}
-                                    color={"success"}/>
-                                : institutionStatus?.value === 'draft'
-                                    ?
-                                    <TagField
-                                        style={{
-                                            fontSize: '20px',
-                                            padding: '7px'
-                                        }}
-                                        value={translate(`capl.status.${institutionStatus?.value}`)}
-                                        color={"info"}/>
-                                    : institutionStatus?.value === 'rejected'
-                                        ? <TagField
-                                            style={{
-                                                fontSize: '20px',
-                                                padding: '7px'
-                                            }}
-
-                                            value={translate(`capl.status.${institutionStatus?.value}`)}
-                                            color={"error"}/>
-                                        : <TagField value={""}
-                                                    color={"default"}/>
-                        }
-                    ]?.map((item, index) => (
-                        <Box key={index} sx={{
-                            display: 'grid',
-                            gridTemplateColumns: '1.5fr 2fr',
+                            width: '100%',
                             alignItems: 'center',
-                            gap: 2
+                            justifyContent: 'space-between',
                         }}>
-                            {item.icon}
+                            <div>
+                                <Person/>
+                                {fullName}
+                            </div>
                             <Box sx={{
-                                display: 'flex',
-                                justifyContent: 'end'
+                                p: '3px 10px',
+                                bgcolor: isActive ? '#00be65' : '#ff6464',
+                                color: '#010101',
+                                borderRadius: '10px'
                             }}>
-                                {item.value}
+                                {translate(`capl.status.valid.${isActive ? 'active' : 'inactive'}`)}
                             </Box>
                         </Box>
-                    ))
-                }
+                        <div>
+                            <DateRange/>
+                            <div style={{
+                                display: 'flex',
+                                gap: '8px',
+                                fontSize: '15px'
+                            }}>
+                                {dayjs(date)?.fromNow()}
+                                {' ' + ' '}
+                                {dayjs(date)?.format('DD/MM/YYYY HH:mm')}
+                            </div>
+
+                        </div>
+                    </Box>
+                    <Box sx={{
+                        width: 'fit-content',
+                        maxWidth: 'calc(100% - 8px)', display: 'flex',
+                        flexDirection: 'column',
+                        gap: 1,
+                        "& div": {
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 1,
+                            justifyContent: 'space-between'
+                        }
+                    }}>
+                        <div>
+                            <span style={{
+                                color: 'common.white',
+                                fontWeight: 600,
+                                fontSize: '16px'
+                            }}>
+                                {translate('capl.status.userStatus')}
+                            </span>
+                            <RenderTag value={userStatus?.value}/>
+                        </div>
+                        <div>
+                            <span style={{
+                                color: 'common.white',
+                                fontWeight: 600,
+                                fontSize: '16px'
+                            }}>
+                                {translate('capl.status.establishmentStatus')}
+                            </span>
+                            <RenderTag value={establishmentStatus?.value}/>
+                        </div>
+                    </Box>
+                </Box>
             </Box>
-            <Button
-                sx={{
-                    fontSize: {xs: '12px', sm: '14px'},
-                    width: '100%',
-                    my: 1,
-                    ...buttonStyle
-                }}
-                onClick={() => navigate(`/capl/show/${_id}`)}
-                color={"secondary"}
-                endIcon={<EastOutlined/>}
-                variant={"outlined"}>
-                {translate("buttons.details")}
-            </Button>
+            <Box sx={{
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+            }}>
+                <Button
+                    color={'info'}
+                    variant={'outlined'}
+                    sx={{
+                        textTransform: 'inherit',
+                        borderRadius: '7px'
+                    }}
+                    onClick={handleClickPopover}
+                >
+                    {translate('home.one')}
+                </Button>
+                <Popover
+                    id={popoverId}
+                    open={openPopover}
+                    anchorEl={anchorElPopover}
+                    onClose={handleClosePopover}
+                    anchorOrigin={{
+                        vertical: 'center',
+                        horizontal: 'center',
+                    }}
+                    transformOrigin={{
+                        vertical: 'center',
+                        horizontal: 'center',
+                    }}
+                    sx={{
+                        "& div.MuiPaper-root": {
+                            backgroundColor: 'common.black',
+                            boxShadow: `0px 0px 10px 0px ${mode === 'dark' ? '#f1f1f1' : '#424242'}`,
+                            borderRadius: '7px'
+                        },
+                    }}
+                >
+                    <Box sx={{
+                        width: '300px',
+                        height: 'fit-content',
+                        // maxHeight: {xs: '400px', md: '600px', lg: '700px'},
+                        overflowY: 'auto',
+                        display: 'flex',
+                        p: 2,
+                        flexDirection: 'column',
+                        color: 'common.white',
+                        gap: 1
+                    }}>
+                        <Box sx={{
+                            width: '100%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between'
+                        }}>
+                            <Box
+                                sx={{
+                                    width: 'fit-content',
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    gap: 1,
+                                    alignItems: 'start'
+                                }}
+                            >
+                                {
+                                    establishment?.pictures?.length > 0 && (
+                                        <Box sx={{
+                                            width: {xs: '80px', md: '100px'},
+                                            height: {xs: '80px', md: '100px'}
+                                        }}>
+                                            <img
+                                                style={{
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    borderRadius: '10px',
+                                                    objectFit: 'cover'
+                                                }}
+                                                src={establishment?.pictures[0]?.url}
+                                                alt={establishment?.title}/>
+                                        </Box>
+                                    )
+                                }
+                                <Box sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    justifyContent: 'space-between',
+                                    height: {xs: '80px', md: '100px'}
+                                }}>
+                                    <Typography
+                                        sx={{
+                                            fontSize: {xs: '16px', md: '18px'},
+                                            fontWeight: 600
+                                        }}
+                                    >
+                                        {establishment?.title}
+                                    </Typography>
+                                    <Typography
+                                        sx={{
+                                            fontSize: '14px',
+                                            p: '1px 7px',
+                                            bgcolor: 'common.white',
+                                            width: 'fit-content',
+                                            color: 'common.black',
+                                            borderRadius: '10px'
+                                        }}
+                                    >
+                                        {translate(`home.sortByType.${establishment?.type}`)}
+                                    </Typography>
+                                    {
+                                        establishment?.place?.city && (
+                                            <Typography sx={{
+                                                display: 'flex',
+                                                flexDirection: 'row',
+                                                gap: 1,
+                                                alignItems: 'end',
+                                                fontSize: '14px'
+                                            }}>
+                                                <Place/>
+                                                {establishment?.place?.city}
+                                            </Typography>
+                                        )
+                                    }
+                                </Box>
+                            </Box>
+                            <Box sx={{
+                                borderRadius: '50%',
+                                width: '40px',
+                                height: '40px',
+                                bgcolor: 'common.white',
+                                backdropFilter: 'blur(4px)',
+                                display: 'flex',
+                                p: 1,
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                "& a":{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                },
+                                "& svg": {
+                                    color: 'common.black',
+                                }
+                            }}>
+                                <Link
+                                    to={`/${ESTABLISHMENT}/${SHOW}/${establishment?._id}`}
+                                >
+                                    <CallMadeSharp/>
+                                </Link>
+                            </Box>
+                        </Box>
+                    </Box>
+                </Popover>
+                <Button
+                    sx={{
+                        width: 'fit-content',
+                        textTransform: 'inherit',
+                        borderRadius: '7px',
+                        color: 'common.black'
+                    }}
+                    onClick={() => navigate(`/capl/show/${_id}`)}
+                    color={"secondary"}
+                    endIcon={<EastOutlined/>}
+                    variant={"contained"}>
+                    {translate("buttons.details")}
+                </Button>
+            </Box>
         </Box>
     );
 };

@@ -1,0 +1,25 @@
+.carousel {
+    /*padding-bottom: 30px;*/
+    position: unset;
+}
+.carousel > ul li {
+    cursor: grab;
+}
+
+.carousel > button.react-multiple-carousel__arrow--left {
+    left: 15px;
+}
+
+.carousel > button.react-multiple-carousel__arrow--right {
+    right: 15px;
+}
+
+/*@media screen and (max-width: 500px){*/
+/*    .carousel > button.react-multiple-carousel__arrow--left {*/
+/*        left: -30px;*/
+/*    }*/
+
+/*    .carousel > button.react-multiple-carousel__arrow--right {*/
+/*        right: -30px;*/
+/*    }*/
+/*}*/

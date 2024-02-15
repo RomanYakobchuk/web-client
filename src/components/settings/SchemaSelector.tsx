@@ -15,9 +15,9 @@ const SchemaSelector: FC = () => {
         setSchema(schema);
     };
     const style = {
-        width: '300px',
-        height: '200px',
-        borderRadius: '15px',
+        width: '100%',
+        height: '100%',
+        borderRadius: '10px',
         border: '2px solid',
         display: 'flex',
         flexDirection: 'column',
@@ -32,19 +32,24 @@ const SchemaSelector: FC = () => {
             display: 'flex',
             flexDirection: 'column',
             gap: 1,
-            p: '10px',
-            borderRadius: '15px',
+            p: 2,
+            borderRadius: '10px',
             // color: '#fff',
-            bgcolor: mode === 'dark' ? '#254e6f' : '#e6d4c8',
+            bgcolor: mode === 'dark' ? '#1b374d' : '#d6dbef',
         }}>
             <Typography variant="h6">{translate('schema.title')}:</Typography>
             <FormGroup sx={{
                 display: 'flex',
                 flexDirection: {xs: 'column', sm: 'row'},
-                gap: 1,
+                gap: 3,
                 alignItems: 'center',
-                justifyContent: 'space-evenly',
-                width: '100%'
+                justifyContent: 'start',
+                width: '100%',
+                "& label": {
+                    m: 0,
+                    width: {xs: '100%', sm: '250px', md: '300px'},
+                    height: {xs: '145px', sm: '175px', md: '225px'},
+                }
             }}>
                 <FormControlLabel
                     label={''}
@@ -71,8 +76,8 @@ const SchemaSelector: FC = () => {
                             <Box sx={{
                                 display: 'flex',
                                 flexDirection: 'row',
-                                margin: 'auto',
-                                height: '120px',
+                                margin: '0 auto',
+                                height: {xs: '90px', sm: '130px'},
                             }}>
                                 <Box sx={{
                                     width: '40px',
@@ -125,9 +130,9 @@ const SchemaSelector: FC = () => {
                             <Box sx={{
                                 display: 'flex',
                                 flexDirection: 'row',
-                                margin: 'auto',
+                                margin: '0 auto',
                                 gap: '5px',
-                                height: '120px',
+                                height: {xs: '90px', sm: '130px'},
                             }}>
                                 <Box sx={{
                                     width: '40px',

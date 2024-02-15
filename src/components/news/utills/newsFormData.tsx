@@ -1,113 +1,134 @@
 import {
     Box,
     Button,
-    CardMedia, CircularProgress,
     FormControl,
     FormHelperText,
-    IconButton,
     MenuItem,
-    Select, TextareaAutosize, TextField,
-    Typography
+    Select, Switch, TextField
 } from "@mui/material";
-import {Add, AddCircleOutline, ArrowBackIosNew, DeleteForeverOutlined, Edit} from "@mui/icons-material";
-import React, {ChangeEvent, useContext} from "react";
-import {DateTimePicker, LocalizationProvider} from "@mui/x-date-pickers";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import {DemoContainer} from "@mui/x-date-pickers/internals/demo";
+import {Add} from "@mui/icons-material";
+import React, {ChangeEvent, useContext, useEffect, useState} from "react";
 import {useTranslate} from "@refinedev/core";
-import {useNavigate} from "react-router-dom";
+import MDEditor from "@uiw/react-md-editor";
 
-import {CustomButton} from "../../index";
+import ImageSelector from "../../establishment/utills/ImageSelector";
+import {ColorModeContext} from "@/contexts";
+import {IMDEditor, INewsDateEvent, IPicture} from "@/interfaces/common";
+import SearchEstablishments from "../../search/searchEstablishments";
 import DateTimeList from "./dateTimeList";
-import ImageSelector from "../../institution/utills/ImageSelector";
-import {ColorModeContext} from "../../../contexts";
-import {useMobile} from "../../../utils";
-import {INewsDataProps} from "interfaces/common";
-import SearchInstitutions from "../../search/searchInstitutions";
+import {INewsDataProps} from "@/interfaces/formData";
+import {ChangeLocation, CustomOpenContentBtn} from "../../index";
 
-const NewsFormData = ({
-                          title,
-                          setCurrentInstitutionId,
-                          formLoading,
-                          currentInstitutionId,
-                          setStatus,
-                          onFinishHandler,
-                          status,
-                          mainPhoto,
-                          setMainPhoto,
-                          otherPhoto,
-                          setOtherPhoto,
-                          description,
-                          setDescription,
-                          handleSubmit,
-                          setVariantForDisplay,
-                          variantForDisplay,
-                          setIsDatePublished,
-                          isDatePublished,
-                          workDays,
-                          category,
-                          setCategory,
-                          setTitle,
-                          setWorkDays,
-                          datePublished, setDatePublished
-                      }: INewsDataProps) => {
+const NewsFormData = (props: INewsDataProps) => {
+    const {
+        title,
+        setEstablishmentInfo,
+        setStatus,
+        onFinishHandler,
+        status,
+        pictures,
+        setPictures,
+        description,
+        setDescription,
+        handleSubmit,
+        setIsDatePublished,
+        isDatePublished,
+        dateEvent,
+        category,
+        setCategory,
+        establishmentInfo,
+        setTitle,
+        setDateEvent,
+        datePublished, setDatePublished,
+        defaultPictures,
+        setPlace: setDataPlace,
+        place: dataPlace,
+    } = props;
     const translate = useTranslate();
-    const navigate = useNavigate();
     const {mode} = useContext(ColorModeContext);
-    const {device, width} = useMobile();
+    const maxImages = 6;
+
+    const [isEstablishmentLocPlace, setIsEstablishmentLocPlace] = useState<boolean>(!!dataPlace?.location?.lng ?? false);
+    const [location, setLocation] = useState<INewsDataProps['place']['location']>(dataPlace?.location);
+    const [place, setPlace] = useState<INewsDataProps['place']['place']>(dataPlace?.place);
+
+    useEffect(() => {
+        if (location?.lng && location?.lng && place?.address && place?.city) {
+            setDataPlace((prevState) => ({...prevState, location, place}))
+        }
+
+        if (location?.lng !== establishmentInfo?.location?.lng || location?.lat !== establishmentInfo?.location?.lat || place?.city !== establishmentInfo?.place?.city || place?.address !== establishmentInfo?.place?.address) {
+            setIsEstablishmentLocPlace(false);
+        }
+    }, [location?.lng, location?.lat, place?.address, place?.city, establishmentInfo]);
 
 
-    const handleMainPhotoChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setMainPhoto(e.target.files![0])
-    }
-    const deleteImage = () => {
-        setMainPhoto([])
-    }
+    const handlePicturesChange = (e: ChangeEvent<HTMLInputElement> | any) => {
+        if (pictures.length > maxImages || e.target.files?.length > maxImages) return alert(translate("home.create.pictures.max") + "6")
 
-    const handleOtherPhotoChange = (e: ChangeEvent<HTMLInputElement> | any) => {
-        if (6 < otherPhoto.length) return alert(translate("home.create.otherPhoto.max") + "6")
-        if (6 < e.target.files?.length) return alert(translate("home.create.otherPhoto.max") + "6");
-
-        let arr = [];
+        let arr = [] as IPicture[] | File[];
         const items = e.target.files;
         for (let i = 0; i < items?.length; i++) {
             const item = items[i];
-            arr.push(item)
+            if ((arr?.length + pictures?.length) < maxImages) {
+                arr.push(item)
+            }
         }
-        setOtherPhoto([...arr])
+        setPictures((prevState) => ([...prevState, ...arr] as IPicture[] | File[]))
     }
-
-    const handleAddWorkDays = (workSchedule: any) => {
-        setWorkDays([...workDays, workSchedule])
+    const handleAddWorkDays = (workSchedule: INewsDateEvent) => {
+        if (workSchedule?.schedule?.from || workSchedule?.schedule?.to || workSchedule?.time?.from || workSchedule?.time?.to) {
+            if (workSchedule?.schedule?.to && !workSchedule?.schedule?.from) {
+                workSchedule.schedule.from = workSchedule.schedule.to
+                delete workSchedule['schedule']['to']
+            }
+            setDateEvent((prevState) => ([...prevState, workSchedule]))
+        }
     }
     const handleDeleteWorkDays = (index: number | any) => {
-        setWorkDays(workDays.filter((_: any, i: any) => i !== index))
+        setDateEvent(dateEvent.filter((_: any, i: any) => i !== index))
     }
+
+    const gridColumn = {xs: 'span 1', sm: 'span 2'};
+
+    const formHelperStyle = {
+        fontWeight: 500,
+        margin: "10px 0",
+        fontSize: {xs: 14, sm: 16},
+        color: 'common.white',
+    }
+
+
+    const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const checked = event.target.checked;
+        setIsEstablishmentLocPlace(checked);
+        if (checked) {
+            setLocation(establishmentInfo?.location)
+            setPlace(establishmentInfo?.place)
+        } else {
+            setLocation({} as INewsDataProps['place']['location']);
+            setPlace({} as INewsDataProps['place']['place'])
+        }
+    };
+
+    const handleClearLocation = () => {
+        setIsEstablishmentLocPlace(false);
+        setDataPlace({isPlace: false} as INewsDataProps['place']);
+        setLocation({} as INewsDataProps['place']['location']);
+        setPlace({} as INewsDataProps['place']['place'])}
 
     return (
         <Box>
-            <Box sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: "start",
-                gap: {xs: '10%', sm: '30%', md: '40%'}
-            }}>
-                <Button
-                    variant={"outlined"}
-                    onClick={() => navigate(-1)}
-                    color={'secondary'}>
-                    <ArrowBackIosNew/>
-                </Button>
-                <Typography fontSize={{xs: '18px', sm: '22px'}} fontWeight={700} textAlign={"center"}>
-                    {translate("news.button")}
-                </Typography>
-            </Box>
-
-            <Box mt={2.5} borderRadius="15px" padding="20px" bgcolor={mode === "dark" ? "#2e424d" : "#fcfcfc"}>
+            <Box
+                sx={{
+                    // p: '5px',
+                    // borderRadius: '15px',
+                    // bgcolor: mode === "dark" ? "#2e424d" : "#fcfcfc",
+                    transition: 'all 300ms linear',
+                }}
+            >
                 <form
                     style={{
-                        marginTop: "20px",
                         width: "100%",
                         display: "flex",
                         flexDirection: "column",
@@ -116,184 +137,57 @@ const NewsFormData = ({
                     onSubmit={handleSubmit(onFinishHandler)}
                 >
                     <Box sx={{
-                        display: 'flex',
-                        flexDirection: {xs: 'column', sm: 'row'},
-                        alignItems: "end",
-                        gap: {xs: 3, sm: 2}
+                        display: 'grid',
+                        gridTemplateColumns: {xs: '1fr', sm: 'repeat(2, 1fr)'},
+                        gap: 2,
+                        alignItems: 'start',
+                        p: '10px',
+                        borderRadius: '10px',
+                        bgcolor: mode === 'dark' ? '#1f1f1f' : '#f6f6f6',
                     }}>
-                        <FormControl sx={{
-                            width: '100%',
-                            display: 'flex',
-                            flexDirection: "column",
-                            gap: 2,
-                            justifyContent: 'center',
-                            alignItems: 'center'
-                        }}>
-                            <Box sx={{
-                                width: '100%',
-                                display: 'flex',
-                                flexDirection: "row",
-                                gap: 2,
-                                justifyContent: 'center',
-                                alignItems: 'start'
-                            }}>
-                                <Box sx={{
-                                    width: {xs: "200px", sm: "250px", lg: "440px"},
-                                    height: {xs: "150px", sm: "170px", lg: "320px"},
-                                    borderRadius: "5px",
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                }}>
-                                    {
-                                        mainPhoto?.name || typeof mainPhoto === 'string' ?
-                                            <CardMedia
-                                                component={"img"}
-                                                src={typeof mainPhoto === 'string' ? mainPhoto : URL.createObjectURL(mainPhoto)}
-                                                alt={"title"}
-                                                style={{
-                                                    borderRadius: '5px',
-                                                    width: '100%',
-                                                    height: '100%',
-                                                    objectFit: 'cover',
-                                                }}
-                                            />
-                                            : <Button component={"label"} sx={
-                                                {
-                                                    width: {xs: "250px", lg: "440px"},
-                                                    height: {xs: "170px", lg: "320px"},
-                                                    display: 'flex',
-                                                    justifyContent: "center",
-                                                    alignItems: "center",
-                                                    flexDirection: 'column',
-                                                    borderRadius: '5px',
-                                                    cursor: "pointer",
-                                                    transition: "300ms linear",
-                                                    "&:hover": {
-                                                        bgcolor: 'silver',
-                                                    },
-                                                    border: `1px dashed ${mode === "dark" ? "#fcfcfc" : "#9ba5c9"}`
-                                                }
-                                            }>
-                                                <FormHelperText
-                                                    sx={{
-                                                        fontWeight: 500,
-                                                        margin: "10px 0",
-                                                        fontSize: {xs: 12, sm: 14, md: 16},
-                                                        color: mode === "dark" ? "#fcfcfc" : "#11142D",
-                                                    }}
-                                                >
-                                                    {translate("home.create.mainPhoto")}
-                                                </FormHelperText>
-                                                <AddCircleOutline sx={{
-                                                    color: mode === "dark" ? "#fcfcfc" : "#9ba5c9",
-                                                    fontSize: {xs: "70px", lg: "160px"}
-                                                }}/>
-                                                <input
-                                                    hidden
-                                                    accept="image/*"
-                                                    type="file"
-                                                    onChange={(
-                                                        e: ChangeEvent<HTMLInputElement>,
-                                                    ) => {
-                                                        handleMainPhotoChange(e);
-                                                    }}
-                                                />
-                                            </Button>
-                                    }
-                                </Box>
-                                <Box sx={{
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    justifyContent: 'space-evenly',
-                                    alignItems: 'center',
-                                    gap: 2
-                                }}>
-                                    {
-                                        mainPhoto && (mainPhoto?.name || typeof mainPhoto === 'string')
-                                            ? <Box sx={{
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                                alignItems: 'center',
-                                                gap: 1
-                                            }}>
-                                                {
-                                                    device
-                                                        ? <IconButton
-                                                            size={"large"}
-                                                        >
-                                                            <input
-                                                                hidden
-                                                                accept="image/*"
-                                                                type="file"
-                                                                onChange={(
-                                                                    e: ChangeEvent<HTMLInputElement>,
-                                                                ) => {
-                                                                    handleMainPhotoChange(e);
-                                                                }}
-                                                            />
-                                                            <Edit fontSize="inherit"/>
-                                                        </IconButton>
-                                                        : <Button
-                                                            variant={"contained"}
-                                                            startIcon={<Edit sx={{
-                                                                fontSize: {xs: '18px', sm: '24px'},
-                                                            }}/>}
-                                                            sx={{
-                                                                bgcolor: 'blue',
-                                                            }}
-                                                        >
-                                                            {translate("profile.edit.change")}
-                                                        </Button>
-                                                }
-                                                {
-                                                    device
-                                                        ? <IconButton
-                                                            size={"large"}
-                                                            onClick={deleteImage}
-                                                        >
-                                                            <DeleteForeverOutlined fontSize="inherit"/>
-                                                        </IconButton>
-                                                        : <Button
-                                                            onClick={deleteImage}
-                                                            startIcon={<DeleteForeverOutlined/>}
-                                                            sx={{
-                                                                bgcolor: '#cfcfcf',
-                                                                color: '#242539'
-                                                            }}
-                                                        >
-                                                            {translate("profile.edit.delete")}
-                                                        </Button>
-                                                }
-                                            </Box>
-                                            : <div></div>
-                                    }
-                                </Box>
-                            </Box>
+                        <FormControl fullWidth
+                                     sx={{
+                                         gridColumn: gridColumn
+                                     }}
+                        >
+                            <SearchEstablishments
+                                typeSearch={'userEstablishments'} searchEstablishment={establishmentInfo}
+                                setSearchEstablishment={setEstablishmentInfo}/>
                         </FormControl>
-                        <Box sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'start',
-                            width: '100%',
-                            gap: 2,
-                        }}>
-                            <FormControl fullWidth>
-                                <SearchInstitutions typeSearch={'userInstitutions'} searchPlace={currentInstitutionId} setSearchPlace={setCurrentInstitutionId}/>
-                            </FormControl>
-                            <FormControl fullWidth>
-                                <TextField
-                                    fullWidth
-                                    label={translate("news.create.title")}
-                                    required
-                                    size={"small"}
-                                    id="outlined-basic"
-                                    color={"secondary"}
-                                    variant="outlined"
-                                    value={title ? title : ''}
-                                    onChange={(event) => setTitle(event.target.value)}
-                                />
-                            </FormControl>
+                    </Box>
+                    <Box sx={{
+                        display: 'grid',
+                        gridTemplateColumns: {xs: '1fr', sm: 'repeat(2, 1fr)'},
+                        gap: 2,
+                        alignItems: 'start'
+                    }}>
+                        <FormControl fullWidth>
+                            <FormHelperText
+                                sx={{
+                                    ...formHelperStyle
+                                }}
+                            >
+                                {translate("news.create.title")}
+                            </FormHelperText>
+                            <TextField
+                                fullWidth
+                                required
+                                size={"small"}
+                                id="outlined-basic"
+                                color={"secondary"}
+                                variant="outlined"
+                                value={title ? title : ''}
+                                onChange={(event) => setTitle(event.target.value)}
+                            />
+                        </FormControl>
+                        <FormControl>
+                            <FormHelperText
+                                sx={{
+                                    ...formHelperStyle
+                                }}
+                            >
+                                {translate("posts.fields.category.title")}
+                            </FormHelperText>
                             <Select variant={"outlined"} fullWidth size="small" displayEmpty required
                                     inputProps={{'aria-label': 'Without label'}}
                                     sx={{
@@ -311,158 +205,189 @@ const NewsFormData = ({
                                     ))
                                 }
                             </Select>
-                        </Box>
-                    </Box>
-                    <Box sx={{
-                        display: 'flex',
-                        flexDirection: {xs: 'column', sm: 'row'},
-                        gap: 2,
-                        justifyContent: {sm: 'space-between'}
-                    }}>
-                        <DateTimeList dataLabel={translate("news.create.date.title")} onSubmit={handleAddWorkDays}
-                                      elements={workDays} onDelete={handleDeleteWorkDays}/>
+                        </FormControl>
                         <FormControl sx={{
-                            width: {xs: '100%', sm: '50%'}
+                            width: '100%',
+                            gridColumn: gridColumn,
+                        }}>
+                            <CustomOpenContentBtn
+                                openComponent={dateEvent?.length > 0}
+                                openText={translate('news.dateEvent.title')}
+                                closeText={translate('buttons.hide')}
+                            >
+                                <DateTimeList
+                                    dataLabel={translate("news.create.date.title")}
+                                    onSubmit={handleAddWorkDays}
+                                    elements={dateEvent}
+                                    onDelete={handleDeleteWorkDays}
+                                />
+                            </CustomOpenContentBtn>
+                        </FormControl>
+                        <FormControl sx={{
+                            width: '100%',
+                            gridColumn: gridColumn,
+                        }}>
+                            <CustomOpenContentBtn
+                                openText={translate('home.create.location.title')}
+                                closeText={translate('buttons.hide')}
+                            >
+                                <Box>
+                                    <Box sx={{
+                                        color: 'common.white',
+                                        fontSize: '14px',
+                                        "span.css-a54nzi-MuiSwitch-track": {
+                                            backgroundColor: '#a00013'
+                                        }
+                                    }}>
+                                        <Switch
+                                            color={'info'}
+                                            checked={isEstablishmentLocPlace}
+                                            onChange={handleChange}
+                                            inputProps={{'aria-label': 'controlled'}}
+                                        />
+                                        Use establishment location and place
+                                    </Box>
+                                    <Button
+                                        color={'warning'}
+                                        variant={'text'}
+                                        onClick={handleClearLocation}
+                                        sx={{
+                                            textTransform: 'inherit'
+                                        }}
+                                    >
+                                        {translate('buttons.clear')}
+                                    </Button>
+                                </Box>
+                                <ChangeLocation
+                                    location={location}
+                                    setLocation={setLocation}
+                                    setPlace={setPlace}
+                                    place={place}
+                                />
+                            </CustomOpenContentBtn>
+                        </FormControl>
+                        <FormControl sx={{
+                            gridColumn: gridColumn
                         }}>
                             <FormHelperText
                                 sx={{
-                                    fontWeight: 500,
-                                    margin: "10px 0",
-                                    fontSize: {xs: 12, sm: 16},
-                                    color: mode === "dark" ? "#fcfcfc" : "#11142D",
+                                    ...formHelperStyle
                                 }}
                             >
                                 {translate("news.create.description")}
                             </FormHelperText>
-                            <TextareaAutosize
-                                minRows={5}
-                                required
-                                style={{
-                                    width: "100%",
-                                    background: "transparent",
-                                    fontSize: "16px",
-                                    resize: 'vertical',
-                                    minHeight: '100px',
-                                    maxHeight: '200px',
-                                    height: '100px',
-                                    borderRadius: 6,
-                                    padding: 10,
-                                    color: mode === "dark" ? "#fcfcfc" : "#000",
-                                }}
-                                id="outlined-basic"
-                                color={"secondary"}
-                                value={description ? description : ''}
-                                onChange={(event) => setDescription(event.target.value)}
+                            <MDEditor data-color-mode={mode === "dark" ? 'dark' : 'light'}
+                                      value={description ? description : ''}
+                                      onChange={setDescription as IMDEditor['set']}
                             />
                         </FormControl>
-                    </Box>
-                    <FormControl fullWidth>
-                        <FormHelperText
-                            sx={{
-                                fontWeight: 500,
-                                margin: "10px 0",
-                                fontSize: {xs: 12, sm: 16},
-                                color: mode === "dark" ? "#fcfcfc" : "#11142D",
-                            }}
-                        >
-                            {translate("posts.fields.status.title")}
-                        </FormHelperText>
-                        <Select variant={"outlined"} fullWidth size="small" color={"secondary"} displayEmpty required
-                                inputProps={{'aria-label': 'Without label'}}
+                        <FormControl fullWidth>
+                            <FormHelperText
                                 sx={{
-                                    fontSize: {xs: '12px', sm: '16px'}
+                                    ...formHelperStyle
                                 }}
-                                value={status ? status : ""}
-                                onChange={(e) => {
-                                    setStatus(e.target.value)
-                                }}>
-                            <MenuItem value={"published"}>{translate(`posts.fields.status.published`)}</MenuItem>
-                            <MenuItem value={"private"}>{translate(`posts.fields.status.private`)}</MenuItem>
-                        </Select>
-                        {
-                            status === 'published' && (
-                                <Button
+                            >
+                                {translate("posts.fields.status.title")}
+                            </FormHelperText>
+                            <Select variant={"outlined"} fullWidth size="small" color={"secondary"} displayEmpty
+                                    required
+                                    inputProps={{'aria-label': 'Without label'}}
                                     sx={{
-                                        my: 1
+                                        fontSize: {xs: '12px', sm: '16px'}
                                     }}
-                                    fullWidth
-                                    color={isDatePublished ? "error" : "secondary"}
-                                    endIcon={isDatePublished ? '' : <Add/>}
-                                    variant={"outlined"}
-                                    onClick={() => setIsDatePublished(!isDatePublished)}
-                                >
-                                    {translate(isDatePublished ? 'buttons.cancel' : 'news.create.addDate')}
-                                </Button>
-                            )
-                        }
-                        {
-                            status === 'published' && isDatePublished && (
-                                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                    <DemoContainer
-                                        components={['DateTimePicker']}>
-                                        <DateTimePicker
-                                            value={datePublished ? datePublished : ''}
-                                            onChange={(value) => {
-                                                setDatePublished(value)
-                                            }}
-                                            sx={{
-                                                '& .MuiInputBase-input': {
-                                                    color: (theme) => theme.palette.secondary.main,
-                                                },
-                                                '& .MuiInputLabel-root': {
-                                                    color: (theme) => theme.palette.secondary.main,
-                                                },
-                                                '& .MuiOutlinedInput-notchedOutline': {
-                                                    borderColor: (theme) => theme.palette.secondary.main,
-                                                },
-                                                '&:hover .MuiOutlinedInput-notchedOutline': {
-                                                    borderColor: (theme) => theme.palette.secondary.main,
-                                                },
-                                            }}
-                                            label={translate('news.create.publicDate')}
-                                        />
-                                    </DemoContainer>
-                                </LocalizationProvider>
-                            )
-                        }
-                    </FormControl>
-                    <FormControl>
+                                    value={status ? status : "published"}
+                                    onChange={(e) => {
+                                        setStatus(e.target.value as string)
+                                    }}>
+                                {
+                                    [
+                                        {
+                                            value: 'published'
+                                        },
+                                        {
+                                            value: 'private'
+                                        }
+                                    ]?.map((item, index) => (
+                                        <MenuItem
+                                            key={index}
+                                            value={item.value}>{translate(`posts.fields.status.${item.value}`)}</MenuItem>
+                                    ))
+                                }
+                            </Select>
+                            {
+                                status === 'published' && (
+                                    <Button
+                                        sx={{
+                                            my: 1
+                                        }}
+                                        fullWidth
+                                        color={isDatePublished ? "error" : "secondary"}
+                                        endIcon={isDatePublished ? '' : <Add/>}
+                                        variant={"outlined"}
+                                        onClick={() => setIsDatePublished(!isDatePublished)}
+                                    >
+                                        {translate(isDatePublished ? 'buttons.cancel' : 'news.create.addDate')}
+                                    </Button>
+                                )
+                            }
+                            {
+                                status === 'published' && isDatePublished && (
+                                    <TextField
+                                        size={'small'}
+                                        color={'secondary'}
+                                        type={'datetime-local'}
+                                        value={datePublished ?? ''}
+                                        onChange={(event) => setDatePublished(event.target.value)}
+                                    />
+                                    // <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    //     <DemoContainer
+                                    //         components={['DateTimePicker']}>
+                                    //         <DateTimePicker
+                                    //             value={datePublished ? datePublished : ''}
+                                    //             onChange={(value) => {
+                                    //                 setDatePublished(value)
+                                    //             }}
+                                    //             sx={{
+                                    //                 '& .MuiInputBase-input': {
+                                    //                     color: (theme) => theme.palette.secondary.main,
+                                    //                 },
+                                    //                 '& .MuiInputLabel-root': {
+                                    //                     color: (theme) => theme.palette.secondary.main,
+                                    //                 },
+                                    //                 '& .MuiOutlinedInput-notchedOutline': {
+                                    //                     borderColor: (theme) => theme.palette.secondary.main,
+                                    //                 },
+                                    //                 '&:hover .MuiOutlinedInput-notchedOutline': {
+                                    //                     borderColor: (theme) => theme.palette.secondary.main,
+                                    //                 },
+                                    //             }}
+                                    //             label={translate('news.create.publicDate')}
+                                    //         />
+                                    //     </DemoContainer>
+                                    // </LocalizationProvider>
+                                )
+                            }
+                        </FormControl>
+                    </Box>
+                    <FormControl sx={{
+                        bgcolor: mode === 'dark' ? "#1a1313" : '#f4f4f4',
+                        borderRadius: '10px',
+                        p: '10px',
+                        m: '-10px'
+                    }}>
                         <FormHelperText
                             sx={{
-                                fontWeight: 500,
-                                margin: "10px 0",
-                                fontSize: {xs: 12, sm: 16},
-                                color: mode === "dark" ? "#fcfcfc" : "#11142D",
+                                ...formHelperStyle
                             }}
                         >
-                            {translate("home.create.otherPhoto.title")}
+                            {translate("home.create.pictures.title")}
                         </FormHelperText>
-                        <ImageSelector variantForDisplay={variantForDisplay} setVariantForDisplay={setVariantForDisplay}
-                                       maxImages={8} images={otherPhoto}
-                                       setOtherPhoto={setOtherPhoto}
-                                       handleChange={handleOtherPhotoChange}/>
+                        <ImageSelector
+                            defaultPictures={defaultPictures}
+                            maxImages={maxImages} images={pictures}
+                            setPictures={setPictures}
+                            handleChange={handlePicturesChange}/>
 
-                    </FormControl>
-                    <FormControl sx={{
-                        display: 'flex',
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: 'center'
-                    }}>
-                        <CustomButton
-                            width={"38%"}
-                            title={translate("profile.edit.cancel")}
-                            backgroundColor="red"
-                            color="#fcfcfc"
-                            handleClick={() => navigate("/news")}
-                        />
-                        <CustomButton
-                            type="submit"
-                            width={"60%"}
-                            title={formLoading ? <CircularProgress/> : translate("profile.edit.save")}
-                            backgroundColor="#475be8"
-                            color="#fcfcfc"
-                        />
                     </FormControl>
                 </form>
             </Box>

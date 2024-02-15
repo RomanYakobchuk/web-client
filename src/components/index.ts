@@ -1,133 +1,143 @@
 // common
-import BookMark from "./common/BookMark";
-import CustomButton from "./common/CustomButton";
-import CustomProfile from "./common/CustomProfile";
-import InstitutionCard from "./institution/utills/InstitutionCard";
-import CustomAccordion from "./common/customAccordion";
-import CustomDrawer from "./common/customDrawer";
-import ScrollContent from "./common/scrollContent";
-import Pagination from "./common/pagination";
-import TitleTextItem from "./common/TitleTextItem";
+import BookMarkButton from "./common/buttons/BookMarkButton";
+import NearbyEstablishmentBtn from "./common/buttons/NearbyEstablishmentBtn";
+
+import CustomButton from "./common/custom/CustomButton";
+import CustomProfile from "./profile/CustomProfile";
+import VariantComponent from "./common/buttons/variantComponent";
+import Variant1EstablishmentCard from "./establishment/cards/variant1EstablishmentCard";
+import Variant2EstablishmentCard from "./establishment/cards/variant2EstablishmentCard";
+import CustomAccordion from "./common/custom/customAccordion";
+import CustomDrawer from "./drawer/customDrawer";
+import ScrollContent from "./common/scroll/scrollContent";
+import PaginationComponent from "./common/paginationComponent";
 import ReviewsList from "./common/reviews-list";
-import CommentsList from "./common/comments-list";
+import CommentsList from "./common/lists/comments-list";
+import ImageSlider from "./common/imageSlider";
+import CarouselComponent from "./common/carousel/carouselComponent";
+
+// buttons
+import SubscribeButton from "./common/buttons/SubscribeButton";
+import FilterBtn from "./common/buttons/FilterBtn"
 
 // google
-import GoogleButton from "./google/googleAuth";
+import ChangeLocation from "./common/google/changeLocation";
+import ShowMap from "./common/google/showMap";
+import {openGoogleMaps} from "./common/google/openGoogleMaps";
+
+// custom
+import CustomShow from "./common/custom/customShow";
+import CustomEdit from "./common/custom/customEdit";
+import CustomCreate from "./common/custom/customCreate";
+import NewComponentButton from "./common/buttons/newComponentButton";
+import CustomOpenContentBtn from "./common/custom/CustomOpenContentBtn";
+
+// google
+import {GoogleAuth} from "../auth";
+import {FacebookAuth} from "../auth";
 
 // loading
-import Loading from "./loading";
+import Loading from "./loading/loading";
 
 // modal
 import ModalWindow from "./window/modalWindow";
+import ModalShowContent from "./window/modalShowContent";
 
 // profile
-import UserReviews from "./profile/userReviews"
-import UserInstitutions from "./profile/userInstitutions"
-import FavoritePlaces from "./profile/favoritePlaces"
-import UserComments from "./profile/userComments";
-import ShowUserInfo from "./profile/show-user-info";
+import {FavoritePlaces, UserReviews, UserComments, UserEstablishments} from "./profile"
 
-// institution
-import InstitutionDetails from "./institution/institution-details";
-import EditInstitution from "./institution/edit-institution";
-import CreateInstitution from "./institution/create-institution";
-import FilterInstitutions from "./institution/utills/filter";
-import Menu from "./institution/utills/menu/menu";
-import EditMenu from "./institution/utills/menu/edit-menu";
-import CreateMenu from "./institution/utills/menu/create-menu";
-import InstitutionsUserList from "./institution/userList";
-import InstitutionsAdminList from "./institution/adminList";
-import EditUpdateStatus from "./institution/editUpdateStatus";
-import ImageGallery from "./institution/imageGallery";
+// establishment
+import FilterEstablishments from "./establishment/filter";
+import EstablishmentsUserList from "./establishment/userList";
+import EstablishmentsAdminList from "../dashboard/properties/establishment/adminList";
+import EditUpdateStatus from "./establishment/editUpdateStatus";
+import {FormDataSeats} from "./establishment/seats";
 
 // capl
-import CreateReservation from "./capl/create-reservation";
-import DetailsReserve from "./capl/detailsReserve";
 import Messenger from "./capl/messenger";
-import EditReserve from "./capl/editReserve";
 import ReservedCard from "./capl/reservedCard";
-import CaplUserList from "./capl/userList";
-import CaplManagerList from "./capl/managerList";
+import CaplUserPage from "./capl/caplUserPage";
+import CaplManagerPage from "./capl/caplManagerPage";
+import CaplForm from "./capl/caplForm";
 
 // news
-import CreateNews from "./news/create-news";
-import DetailsNews from "./news/details-news";
-import EditNews from "./news/edit-news";
-import NewsCard from "./news/utills/NewsCard";
+import NewsCard from "./news/cards/NewsCard";
 import FilterNews from "./news/utills/filter";
 import NewsUserList from './news/userList';
-import NewsAdminList from './news/adminList';
+import NewsAdminList from '../dashboard/properties/news/adminList';
 import OtherNews from "./news/utills/otherNews";
 
 // search
-import SearchInstitutions from "./search/searchInstitutions";
+import SearchEstablishments from "./search/searchEstablishments";
 import SearchManager from "./search/searchManager";
 import SearchCity from "./search/searchCity";
 
 
 // chats
 import ShowChats from "./chats/show-chats";
-import CurrentChatContainer from "./chats/current-chat-container";
-import ListChats from "./chats/list-chats";
+import CurrentChatContainer from "./chats/chatBox/current-chat-container";
+import ListChats from "./chats/list/list-chats";
 
 
 // settings
 import SchemaSelector from "./settings/SchemaSelector";
 
 // home
-import UpdateCity from "./home/utils/update-city";
 export {
-    GoogleButton,
-    BookMark,
+    GoogleAuth,
+    FacebookAuth,
+    BookMarkButton,
     Loading,
-    CreateMenu,
-    EditInstitution,
-    UserInstitutions,
-    InstitutionCard,
+    UserEstablishments,
+    Variant1EstablishmentCard,
+    Variant2EstablishmentCard,
     CustomProfile,
     UserReviews,
     FavoritePlaces,
     CustomButton,
     OtherNews,
     ModalWindow,
-    CreateInstitution,
-    InstitutionDetails,
     CurrentChatContainer,
     CustomDrawer,
     ScrollContent,
     ReviewsList,
     CommentsList,
     CustomAccordion,
-    CreateReservation,
     ListChats,
-    DetailsNews,
-    CreateNews,
-    EditNews,
-    TitleTextItem,
     NewsCard,
-    FilterInstitutions,
+    FilterEstablishments,
     FilterNews,
-    Menu,
-    EditMenu,
     SearchManager,
     UserComments,
-    DetailsReserve,
     Messenger,
-    Pagination,
-    SearchInstitutions,
+    PaginationComponent,
+    SearchEstablishments,
     ReservedCard,
-    CaplUserList,
-    CaplManagerList,
-    EditReserve,
-    InstitutionsUserList,
-    InstitutionsAdminList,
+    CaplUserPage,
+    CaplManagerPage,
+    EstablishmentsUserList,
+    EstablishmentsAdminList,
+    ImageSlider,
     SearchCity,
     NewsUserList,
     NewsAdminList,
-    ShowUserInfo,
     EditUpdateStatus,
     ShowChats,
-    UpdateCity,
-    ImageGallery,
-    SchemaSelector
+    SchemaSelector,
+    CustomShow,
+    CustomEdit,
+    CustomCreate,
+    CarouselComponent,
+    VariantComponent,
+    SubscribeButton,
+    NewComponentButton,
+    ChangeLocation,
+    FormDataSeats,
+    CustomOpenContentBtn,
+    ShowMap,
+    openGoogleMaps,
+    NearbyEstablishmentBtn,
+    FilterBtn,
+    CaplForm,
+    ModalShowContent
 }

@@ -1,10 +1,10 @@
 import {useParams} from "react-router-dom";
 
 const ShowChats = () => {
-    const {userId, institutionId} = useParams();
+    const {userId, establishmentId} = useParams();
 
     console.log("userId: ", userId)
-    console.log("institutionId: ", institutionId)
+    console.log("establishmentId: ", establishmentId)
     return (
         <div>
             ShowChats
