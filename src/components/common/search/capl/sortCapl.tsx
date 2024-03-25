@@ -1,7 +1,7 @@
 import {SxProps} from "@mui/material";
 import React, {useMemo} from "react";
 import {CrudSorting, useTranslate} from "@refinedev/core";
-import {HeadlessSelect} from "@/components/common/search/utils/headlessSelect";
+import {HeadlessSelect} from "@/components/headlessUI/headlessSelect";
 
 type TProps = {
     setSortBy: (value: string) => void,
@@ -72,11 +72,14 @@ const SortCapl = ({setSortBy, setSorters, sorters, sortBy, styles}: TProps) => {
         },
     ];
 
+    const currentSorters = options?.sort((a) => (a?.value === (sorters?.length > 0 ? sorters[0]?.field : '')) ? -1 : 1)[0];
+
     return (
         <HeadlessSelect
             options={options}
             setSortBy={setSortBy}
             toggleSort={toggleSort}
+            current={currentSorters}
             />
         // <FormControl
         //     sx={{

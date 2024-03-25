@@ -25,7 +25,7 @@ const CustomProfile = ({user}: TProps) => {
     const {mode} = useContext(ColorModeContext);
     const {schema} = useContext(SchemaContext);
     const translate = useTranslate();
-
+    console.log(currentUser?.status)
     const {_id, avatar, email, phone, dOB, name} = user;
 
     return (

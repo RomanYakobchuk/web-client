@@ -2,9 +2,9 @@
     --rsbs-backdrop-bg: rgba(0, 0, 0, 0.6);
     --rsbs-bg: #fff;
     --rsbs-bg-dark: #2c2b2b;
-    --rsbs-bg-white: #f1f1f1;
+    --rsbs-bg-white: #fff;
     --rsbs-bg-black: #373639;
-    --rsbs-handle-bg: hsla(0, 0%, 0%, 0.14);
+    --rsbs-handle-bg: hsla(0, 4%, 60%, 0.5);
     --rsbs-max-w: auto;
     --rsbs-ml: env(safe-area-inset-left);
     --rsbs-mr: env(safe-area-inset-right);
@@ -67,7 +67,7 @@
 [data-rsbs-overlay],
 [data-rsbs-backdrop],
 [data-rsbs-root]:after {
-    z-index: 3;
+    z-index: 40;
     overscroll-behavior: none;
     touch-action: none;
     position: fixed;
@@ -95,15 +95,16 @@
 [data-rsbs-root]:after {
     content: '';
     pointer-events: none;
-    background: var(--rsbs-bg);
+    /*background: var(--rsbs-bg);*/
+    background: transparent;
     height: 1px;
     transform-origin: bottom;
     transform: scale3d(1, var(--rsbs-antigap-scale-y), 1);
     will-change: transform;
 }
-.dark[data-rsbs-root]:after {
-    background: var(--rsbs-bg-dark);
-}
+/*.dark[data-rsbs-root]:after {*/
+/*    background: var(--rsbs-bg-dark);*/
+/*}*/
 [data-rsbs-footer],
 [data-rsbs-header] {
     flex-shrink: 0;

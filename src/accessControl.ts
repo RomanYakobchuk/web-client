@@ -19,6 +19,10 @@ m = g(r.sub, p.sub) && keyMatch(r.obj, p.obj) && regexMatch(r.act, p.act)
 `);
 
 export const adapter = new MemoryAdapter(`
+
+p, admin, test
+p, manager, test
+p, user, test
 p, admin, ${HOME}, (list)|(create)
 p, admin, ${HOME}, (show)|(edit)|(delete)
 
@@ -95,6 +99,7 @@ p, manager, menu, (show)|(edit)|(delete)
 p, manager, menu, create
 
 p, manager, chats, (list)|(create)
+p, manager, chats, (show)|(edit)|(delete)
 p, manager, chats, searchChatsByPlace
 
 p, user, menu, show
@@ -137,6 +142,8 @@ p, user, profile, list
 p, user, profile, edit
 
 p, user, chats, (list)|(create)
+p, user, chats, (show)|(edit)
+// p, user, chats/all, (list)|(create)
 
 p, user, capl, (list)|(create)
 p, user, capl, (show)|(edit)

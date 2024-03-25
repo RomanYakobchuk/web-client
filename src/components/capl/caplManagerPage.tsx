@@ -31,7 +31,7 @@ import React, {useMemo, useState} from "react";
 import dayjs from "dayjs";
 import {useNavigate} from "react-router-dom";
 
-import {IReserve, IReserveFilterVariables, PropertyProps} from "@/interfaces/common";
+import {IReserve, IReserveFilterVariables, IEstablishment} from "@/interfaces/common";
 import GridComponent from "@/components/grid/GridComponent";
 import UpdateReserveStatusTag from "@/components/capl/utills/updateReserveStatusTag";
 import {GridFilter} from "@/components/grid";
@@ -105,7 +105,7 @@ const CaplManagerPage = () => {
     });
 
     const establishmentIds = dataGridProps.rows.map((item) => item._id);
-    const {tableQueryResult: {data: establishmentsData, isLoading}} = useTable<PropertyProps>({
+    const {tableQueryResult: {data: establishmentsData, isLoading}} = useTable<IEstablishment>({
         resource: `${ESTABLISHMENT}/userestablishments`,
         queryOptions: {
             enabled: establishmentIds.length > 0
@@ -223,7 +223,7 @@ const CaplManagerPage = () => {
             },
             {
                 field: "userStatus.value",
-                headerName: translate("capl.status.userStatus"),
+                headerName: translate("capl.status.userStatus.title"),
                 renderCell: function render({row}) {
                     return <UpdateReserveStatusTag
                         defaultValue={row?.userStatus?.value}
@@ -240,7 +240,7 @@ const CaplManagerPage = () => {
             },
             {
                 field: "establishmentStatus.value",
-                headerName: translate("capl.status.establishmentStatus"),
+                headerName: translate("capl.status.establishmentStatus.title"),
                 renderCell: function render({row}) {
                     return <UpdateReserveStatusTag
                         defaultValue={row?.establishmentStatus?.value}
@@ -324,8 +324,8 @@ const CaplManagerPage = () => {
                                 <TextField
                                     {...params}
                                     color={'secondary'}
-                                    label={translate("capl.status.userStatus")}
-                                    placeholder={translate("capl.status.userStatus")}
+                                    label={translate("capl.status.userStatus.title")}
+                                    placeholder={translate("capl.status.userStatus.title")}
                                     variant="outlined"
                                     size="small"
                                 />
@@ -361,8 +361,8 @@ const CaplManagerPage = () => {
                                 <TextField
                                     {...params}
                                     color={'secondary'}
-                                    label={translate("capl.status.establishmentStatus")}
-                                    placeholder={translate("capl.status.establishmentStatus")}
+                                    label={translate("capl.status.establishmentStatus.title")}
+                                    placeholder={translate("capl.status.establishmentStatus.title")}
                                     variant="outlined"
                                     size="small"
                                 />

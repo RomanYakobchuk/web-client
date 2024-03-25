@@ -1,11 +1,11 @@
 import {Dispatch, SetStateAction, useContext} from "react";
 
 import {CommentCreatorDataContext} from "../contexts/CommentCreatorDataContext";
-import {PropertyProps} from "../interfaces/common";
+import {IEstablishment} from "../interfaces/common";
 
 type TProps = {
-    managerEstablishment: PropertyProps[],
-    setManagerEstablishment: Dispatch<SetStateAction<PropertyProps[]>>,
+    managerEstablishment: IEstablishment[],
+    setManagerEstablishment: Dispatch<SetStateAction<IEstablishment[]>>,
     getData: () => void,
     isLoading: boolean
 }

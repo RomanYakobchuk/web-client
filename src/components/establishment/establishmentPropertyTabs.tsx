@@ -7,20 +7,20 @@ import {ReactElement, ReactNode, useEffect, useState} from "react";
 import {TabContext, TabList, TabPanel} from "@mui/lab";
 import Tab from "@mui/material/Tab";
 
-import EstablishmentReviews from "./utills/establishment-reviews";
+import EstablishmentReviews from "./utills/establishmentReviews/establishment-reviews";
 import EstablishmentNews from "./utills/establishment-news";
 import {useMobile} from "@/hook";
 import EstablishmentComments from "./utills/establishment-comments";
-import {PropertyProps} from "@/interfaces/common";
+import {IEstablishment} from "@/interfaces/common";
 import {CircularProgress} from "@mui/material";
 import {ESTABLISHMENT} from "@/config/names";
 
-type tabType = 'reviews' | 'news' | 'comments';
+export type tabType = 'reviews' | 'news' | 'comments';
 
-interface IButtons {
-    label: tabType,
-    icon: ReactElement,
-    count: number | ReactNode,
+export interface IButtons {
+    label: tabType | string,
+    icon?: ReactElement,
+    count?: number | ReactNode,
     link: string,
     index: string
 }
@@ -32,7 +32,7 @@ type TNumberOfProperties = {
 }
 
 type TProps = {
-    establishment: PropertyProps
+    establishment: IEstablishment
 }
 const EstablishmentPropertyTabs = ({establishment}: TProps) => {
     const {width} = useMobile();
@@ -75,7 +75,7 @@ const EstablishmentPropertyTabs = ({establishment}: TProps) => {
         },
         {
             label: 'news',
-            link: '',
+            link: 'news',
             icon: <NewspaperOutlined/>,
             count: showCount ?? numberOfProperties?.newsCount,
             index: '2'
@@ -100,41 +100,39 @@ const EstablishmentPropertyTabs = ({establishment}: TProps) => {
     return (
         <Box sx={{
             width: '100%',
-            "& div.MuiTabPanel-root": {
-                p: {xs: '20px 0px', sm: '30px 0px', md: '40px 0px'}
-            }
+            maxWidth: '800px',
+            margin: '0 auto',
+            // "& div.MuiTabPanel-root": {
+            //     p: {xs: '20px 0px', sm: '30px 0px', md: '40px 0px'}
+            // }
         }}>
             <TabContext value={value}>
                 <Box sx={{
+                    borderBottom: '1px solid',
+                    borderColor: 'silver',
                     "& span.MuiTabs-indicator": {
                         backgroundColor: 'info.main',
-                        height: '3px'
+                        height: '3px',
+                        borderRadius: '5px'
                     }
                 }}>
                     <TabList
                         onChange={handleChange}
-                        variant={'fullWidth'}
                         aria-label="nav tabs example"
                         sx={{
-                            maxWidth: '800px',
-                            margin: '0 auto',
+                            height: '64px',
                             "& button": {
-                                minHeight: {xs: '36px', md: '48px'},
-                                bgcolor: 'silver',
+                                bgcolor: 'transparent',
                                 fontSize: {xs: '0.8rem', md: '0.875rem'},
                                 transition: '200ms linear',
                                 textTransform: 'inherit',
-                                color: 'black',
-                                borderRadius: '40px',
-                                m: {xs: '5px', md: '10px'},
-                                p: '0',
+                                color: 'common.white',
+                                py: 0,
                                 "&.Mui-selected": {
-                                    color: '#f1f1f1',
-                                    bgcolor: 'info.main',
+                                    color: 'info.main',
                                 },
                                 "&:hover": {
-                                    color: '#fff',
-                                    backgroundColor: 'info.main'
+                                    color: 'info.main',
                                 }
                             },
                         }}
@@ -152,14 +150,14 @@ const EstablishmentPropertyTabs = ({establishment}: TProps) => {
                                             display: 'flex',
                                             alignItems: 'center',
                                             gap: 1,
-                                            flexWrap: 'wrap'
+                                            flexWrap: 'no-wrap'
                                         }}>
-                                            <span>
-                                            {translate(`home.show.${label}.title`)}
-                                            </span>
-                                            <span>
-                                            {count}
-                                            </span>
+                                            <Box>
+                                                {translate(`home.show.${label}.title`)}
+                                            </Box>
+                                            <Box>
+                                                {count}
+                                            </Box>
                                         </Box>
                                     }
                                 />
@@ -171,6 +169,9 @@ const EstablishmentPropertyTabs = ({establishment}: TProps) => {
                     width: '100%',
                     margin: '0 auto',
                     maxWidth: '750px',
+                    "& > div":{
+                        px: 0
+                    }
                 }}>
                     <TabPanel value={'1'}>
                         {
@@ -187,12 +188,17 @@ const EstablishmentPropertyTabs = ({establishment}: TProps) => {
                         }}
                     >
                         {
-                            value === '2' && id && establishment?._id && (
+                            value === '2' && id && (
                                 <EstablishmentNews id={id}/>
                             )
                         }
                     </TabPanel>
-                    <TabPanel value={'3'}>
+                    <TabPanel
+                        value={'3'}
+                        sx={{
+                            px: 0
+                        }}
+                    >
                         {
                             value === '3' && id && establishment?._id && (
                                 <EstablishmentComments establishment={establishment}/>

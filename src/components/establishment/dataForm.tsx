@@ -3,10 +3,9 @@ import {useGetIdentity, useTranslate} from "@refinedev/core";
 import {
     Box,
     FormControl,
-    FormHelperText, MenuItem, Select,
+    FormHelperText,
     SelectChangeEvent, TextField, Typography,
 } from "@mui/material";
-import MDEditor from "@uiw/react-md-editor";
 import {Switch} from "antd";
 
 import {IGetIdentity, IWorkDay, ProfileProps} from "@/interfaces/common";
@@ -15,9 +14,12 @@ import {ColorModeContext} from "@/contexts";
 import ImageSelector from "./utills/ImageSelector";
 import ScheduleList from "./utills/lists/scheduleList";
 import ItemsList from "./utills/lists/dataPropertyList";
-import {selectStyle, textFieldStyle} from "@/styles";
-import ChangeLocation from "../common/google/changeLocation";
+import {textFieldStyle} from "@/styles";
+import ChangeLocation from "@/components/google/changeLocation";
 import {IEstablishmentFormProps} from "@/interfaces/formData";
+import {ChooseCuisine} from "@/components/common/search/establishment/chooseCuisine";
+import {HeadlessSelect} from "@/components/headlessUI/headlessSelect";
+import {CustomMDEditor} from "@/components/common/textEditor/CustomMDEditor";
 
 
 const DataForm = (props: IEstablishmentFormProps) => {
@@ -92,6 +94,23 @@ const DataForm = (props: IEstablishmentFormProps) => {
         setPictures([...pictures, ...arr]);
     }
 
+    const typeOptions = [
+        {
+            title: translate("home.sortByType.bar"),
+            value: 'bar'
+        },
+        {
+            title: translate("home.sortByType.cafe"),
+            value: "cafe"
+        },
+        {
+            title: translate("home.sortByType.restaurant"),
+            value: 'restaurant'
+        }
+    ];
+    const currentTypeValue = typeOptions?.find((value) => value?.value === type);
+    // console.log(currentTypeValue)
+
     return (
         <Box
             sx={{
@@ -109,6 +128,12 @@ const DataForm = (props: IEstablishmentFormProps) => {
                     display: "flex",
                     flexDirection: "column",
                     gap: {xs: '10px', sm: '20px'},
+                    "& p.MuiFormHelperText-root": {
+                        fontSize: 16,
+                        fontWeight: 500,
+                        margin: "10px 0",
+                        color: 'common.white',
+                    }
                 }}
                 onSubmit={handleSubmit(onFinishHandler)}
             >
@@ -126,16 +151,12 @@ const DataForm = (props: IEstablishmentFormProps) => {
                         width: {xs: '100%'},
                         // gridTemplateRows: '80px',
                         gap: 1,
-                        alignItems: 'end'
+                        alignItems: 'start'
                     }}>
                         <FormControl fullWidth>
                             <FormHelperText
                                 sx={{
-                                    fontWeight: 500,
-                                    margin: "10px 0",
-                                    fontSize: {xs: 12, sm: 16},
-                                    color: mode === "dark" ? "#fcfcfc" : "#11142D",
-                                    lineHeight: 'normal'
+                                    // lineHeight: 'normal'
                                 }}
                             >
                                 {translate("home.create.name")}
@@ -162,9 +183,7 @@ const DataForm = (props: IEstablishmentFormProps) => {
                                 }}>
                                 <FormHelperText
                                     sx={{
-                                        fontSize: {xs: '14px', sm: '16px'},
                                         m: '10px 0',
-                                        color: (theme) => theme.palette.text.primary,
                                         lineHeight: 'normal'
                                     }}
                                 >
@@ -177,77 +196,87 @@ const DataForm = (props: IEstablishmentFormProps) => {
                         <FormControl fullWidth>
                             <FormHelperText
                                 sx={{
-                                    fontWeight: 500,
-                                    margin: "10px 0",
-                                    fontSize: {xs: 12, sm: 16},
-                                    height: '19px',
-                                    color: mode === "dark" ? "#fcfcfc" : "#11142D",
+                                    // margin: "10px 0",
                                 }}
                             >
                                 {translate("home.create.type.title")}
                             </FormHelperText>
-                            <Select
-                                labelId="demo-simple-select-label"
-                                id="demo-simple-select"
-                                value={type ? type : ''}
-                                size={"small"}
-                                sx={{
-                                    ...selectStyle,
-                                    fontSize: {xs: 12, sm: 16},
-                                }}
-                                color={"secondary"}
-                                onChange={handleChange}
-                            >
-                                {
-                                    [
-                                        {
-                                            title: translate("home.sortByType.bar"),
-                                            value: 'bar'
-                                        },
-                                        {
-                                            title: translate("home.sortByType.cafe"),
-                                            value: "cafe"
-                                        },
-                                        {
-                                            title: translate("home.sortByType.restaurant"),
-                                            value: 'restaurant'
-                                        }
-                                    ].map((type) => (
-                                        <MenuItem sx={{
-                                            fontSize: {xs: 12, sm: 16},
-                                        }} key={type.value}
-                                                  value={type.value}>{type.title}</MenuItem>
-                                    ))
-                                }
-                            </Select>
+                            <HeadlessSelect
+                                btnWidth={'100%'}
+                                options={typeOptions}
+                                setSortBy={setType}
+                                current={currentTypeValue}
+                            />
+                            {/*<Select*/}
+                            {/*    labelId="demo-simple-select-label"*/}
+                            {/*    id="demo-simple-select"*/}
+                            {/*    value={type ? type : ''}*/}
+                            {/*    size={"small"}*/}
+                            {/*    sx={{*/}
+                            {/*        ...selectStyle,*/}
+                            {/*        fontSize: {xs: 12, sm: 16},*/}
+                            {/*    }}*/}
+                            {/*    color={"secondary"}*/}
+                            {/*    onChange={handleChange}*/}
+                            {/*>*/}
+                            {/*    {*/}
+                            {/*        typeOptions.map((type) => (*/}
+                            {/*            <MenuItem sx={{*/}
+                            {/*                fontSize: {xs: 12, sm: 16},*/}
+                            {/*            }} key={type.value}*/}
+                            {/*                      value={type.value}>{type.title}</MenuItem>*/}
+                            {/*        ))*/}
+                            {/*    }*/}
+                            {/*</Select>*/}
+                            {
+                                type === 'restaurant' && (
+                                    <Box sx={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: 2,
+                                        width: '100%',
+                                        mt: 1,
+                                        justifyContent: 'space-between'
+                                    }}>
+                                        <FormHelperText
+                                            sx={{
+                                                fontWeight: 500,
+                                                width: 'fit-content',
+                                                margin: "10px 0",
+                                                fontSize: 16,
+                                                height: '19px',
+                                                color: mode === "dark" ? "#fcfcfc" : "#11142D",
+                                            }}
+                                        >
+                                            {translate("cuisine.title")}
+                                        </FormHelperText>
+                                        <ChooseCuisine
+                                            position={'right'}
+                                            styles={{width: '200px'}}/>
+                                    </Box>
+                                )
+                            }
                         </FormControl>
                     </Box>
                 </Box>
                 <FormControl fullWidth>
                     <FormHelperText
                         sx={{
-                            fontWeight: 500,
                             margin: "10px 0",
-                            fontSize: {xs: 12, sm: 16},
-                            color: mode === "dark" ? "#fcfcfc" : "#11142D",
                         }}
                     >
                         {translate("home.create.description")}
                     </FormHelperText>
-                    <MDEditor
-
-                        data-color-mode={mode === "dark" ? 'dark' : 'light'}
-                        value={description ? description : ''}
-                        onChange={setDescription}
+                    <CustomMDEditor
+                        isDefaultStyles={false}
+                        value={description}
+                        setValue={setDescription}
                     />
                 </FormControl>
                 <FormControl fullWidth>
                     <FormHelperText
                         sx={{
-                            fontWeight: 500,
                             margin: "10px 0",
-                            fontSize: {xs: 12, sm: 16},
-                            color: mode === "dark" ? "#fcfcfc" : "#11142D",
                         }}
                     >
                         {translate("home.create.location.title")}
@@ -324,10 +353,7 @@ const DataForm = (props: IEstablishmentFormProps) => {
                 }}>
                     <FormHelperText
                         sx={{
-                            fontWeight: 500,
                             margin: "10px 0",
-                            fontSize: {xs: 12, sm: 16},
-                            color: mode === "dark" ? "#fcfcfc" : "#11142D",
                         }}
                     >
                         {translate("home.create.pictures.title")}

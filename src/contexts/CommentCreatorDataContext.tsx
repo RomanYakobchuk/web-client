@@ -2,7 +2,7 @@ import {createContext, Dispatch, FC, PropsWithChildren, SetStateAction, useEffec
 
 import {useUserInfo} from "@/hook";
 import {usePermissions} from "@refinedev/core";
-import {PropertyProps} from "@/interfaces/common";
+import {IEstablishment} from "@/interfaces/common";
 import {axiosInstance} from "@/authProvider";
 import {localKeyEstablishment, localKeyLeaveCommentAs} from "@/config/const";
 import {ESTABLISHMENT} from "@/config/names";
@@ -18,8 +18,8 @@ export type TPropsCommentCreatorContext = {
     setSelectedInfo: (value: TSelectOption) => void,
     managerRole: "user" | "establishment",
     setManagerRole: (value: TPropsCommentCreatorContext['managerRole']) => void,
-    managerEstablishment: PropertyProps[],
-    setManagerEstablishment: Dispatch<SetStateAction<PropertyProps[]>>,
+    managerEstablishment: IEstablishment[],
+    setManagerEstablishment: Dispatch<SetStateAction<IEstablishment[]>>,
     getData: () => void,
     isLoading: boolean
 }
@@ -50,7 +50,7 @@ export const CommentCreatorDataProvider: FC<PropsWithChildren> = ({children}) =>
 
     const [selectedInfo, setSelectedInfo] = useState<TSelectOption>(parseLocalData?.selectedInfo);
     const [managerRole, setManagerRole] = useState<TPropsCommentCreatorContext['managerRole']>(parseLocalData?.managerRole);
-    const [managerEstablishment, setManagerEstablishment] = useState<PropertyProps[]>(parsedManagerEstablishment);
+    const [managerEstablishment, setManagerEstablishment] = useState<IEstablishment[]>(parsedManagerEstablishment);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [page, setPage] = useState<number>(1);
     const [pageSize, setPageSize] = useState<number>(100);

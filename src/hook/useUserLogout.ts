@@ -78,7 +78,7 @@ export const logOutUser = {
         await axiosInstance.post('/auth/logoutAllDevices');
     }
 }
-export const clearUserAllData = () => {
+export const clearUserAllData = async () => {
     localStorage.removeItem(ACCESS_TOKEN_KEY);
     localStorage.removeItem(REFRESH_TOKEN_KEY);
     localStorage.removeItem(localKeyLeaveCommentAs);

@@ -6,12 +6,12 @@ type TVariant = {
 }
 
 export interface IVariant {
-    variant: 'variant_1' | 'variant_2',
+    variant: 'variant_2' | 'variant_1',
     newsVariant: 'variant_1' | 'variant_2'
 }
 type TVariantShowItems = {
-    establishment: IVariant['variant'] | 'variant_1',
-    news: IVariant['variant'] | 'variant_1',
+    establishment: IVariant['variant'],
+    news: IVariant['variant'],
 }
 export const VariantContext = createContext<TVariant>({} as TVariant);
 
@@ -19,7 +19,7 @@ const VSI = 'variant_show_items';
 export const VariantProvider: FC<PropsWithChildren> = ({children}) => {
     const selectedVariants = window.localStorage.getItem("variant_show_items") as string;
 
-    const [variantShowItems, setVariantShowItems] = useState<TVariantShowItems>(selectedVariants ? JSON.parse(selectedVariants) : {establishment: "variant_1", news: "variant_1"} as TVariant["variantShowItems"]);
+    const [variantShowItems, setVariantShowItems] = useState<TVariantShowItems>(selectedVariants ? JSON.parse(selectedVariants) : {establishment: "variant_2", news: "variant_1"} as TVariant["variantShowItems"]);
 
     useEffect(() => {
         window.localStorage.setItem(VSI, JSON.stringify(variantShowItems));

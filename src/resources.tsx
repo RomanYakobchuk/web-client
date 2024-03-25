@@ -1,7 +1,7 @@
 import {
     Apartment, DashboardOutlined,
     ForumOutlined,
-    Home as HomeIcon,
+    HomeRounded,
     NewspaperOutlined,
     Person,
     Star,
@@ -23,7 +23,7 @@ const resources = [
     {
         name: `${HOME}`,
         meta: {
-            icon: <HomeIcon/>,
+            icon: <HomeRounded/>,
         },
         list: `/${HOME}`,
         show: `/${HOME}/${SHOW}/:id`,
@@ -75,9 +75,10 @@ const resources = [
         name: `${CHATS}`,
         list: `/${CHATS}`,
         meta: {
-            icon: <ForumOutlined/>
+            icon: <ForumOutlined/>,
         },
-        show: `/${CHATS}/:userId/:establishmentId`
+        create: `/${CHATS}/${CREATE}`,
+        show: `/${CHATS}/${SHOW}/:conversationId?`
     },
     {
         name: `${PROFILE}`,
@@ -89,6 +90,13 @@ const resources = [
         show: `/${PROFILE}/${SHOW}/:id`,
         edit: `/${PROFILE}/${EDIT}`
     },
+    {
+        name: 'test',
+        list: '/test',
+        meta: {
+            icon: <></>
+        }
+    }
 ];
 
 export {

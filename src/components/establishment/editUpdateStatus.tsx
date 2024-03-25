@@ -3,7 +3,7 @@ import React, {ComponentProps, MouseEvent, useContext, useEffect, useState} from
 import {useNotification, useTranslate} from "@refinedev/core";
 import {Edit} from "@mui/icons-material";
 
-import {PropertyProps} from "@/interfaces/common";
+import {IEstablishment} from "@/interfaces/common";
 import {ColorModeContext} from "@/contexts";
 import {TagField} from "@refinedev/mui";
 import {axiosInstance} from "@/authProvider";
@@ -11,7 +11,7 @@ import {ESTABLISHMENT} from "@/config/names";
 
 
 type TProps = {
-    establishment: PropertyProps
+    establishment: IEstablishment
 }
 const EditUpdateStatus = ({establishment}: TProps) => {
 

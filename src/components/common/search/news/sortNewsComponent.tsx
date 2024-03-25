@@ -1,7 +1,7 @@
 import React, {useMemo} from "react";
 import {CrudSorting, useTranslate} from "@refinedev/core";
 import {SxProps} from "@mui/material";
-import {HeadlessSelect} from "@/components/common/search/utils/headlessSelect";
+import {HeadlessSelect} from "@/components/headlessUI/headlessSelect";
 
 type TProps = {
     newSorters: CrudSorting,

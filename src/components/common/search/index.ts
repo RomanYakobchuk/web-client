@@ -1,6 +1,7 @@
 import SearchByTypeComponent from "./searchByTypeComponent";
 import SearchByAverageCheckComponent from "./establishment/searchByAverageCheckComponent";
 import SearchByFreeSeats from "./establishment/searchByFreeSeats";
+import {CustomSelectPopover} from "../custom/customSelectPopover";
 
 import SortNewsComponent from "./news/sortNewsComponent";
 
@@ -16,5 +17,6 @@ export {
     SearchByAverageCheckComponent,
     SearchByFreeSeats,
     SortNewsComponent,
-    SortCapl
+    SortCapl,
+    CustomSelectPopover
 }

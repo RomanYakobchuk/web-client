@@ -4,12 +4,12 @@ import React, {Dispatch} from "react";
 
 import {Loading, PaginationComponent} from "../../../index";
 import PropertiesList from "./propertiesList";
-import {PropertyProps} from "../../../../interfaces/common";
-import {useMobile} from "../../../../hook";
+import {IEstablishment} from "@/interfaces/common";
+import {useMobile} from "@/hook";
 
 type IProps = {
     isLoading: boolean,
-    allEstablishments: PropertyProps[],
+    allEstablishments: IEstablishment[],
     total: number,
     data: GetListResponse<BaseRecord> | undefined,
     current: number,

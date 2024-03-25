@@ -1,12 +1,12 @@
 import {FieldValues, UseFormHandleSubmit} from "react-hook-form";
 import {Dispatch, SetStateAction} from "react";
-import {IFreeSeatsList, IMDEditor, INewsDateEvent, IPicture, IWorkDay, PropertyProps} from "./common";
+import {IFreeSeatsList, IMDEditor, INewsDateEvent, IPicture, IWorkDay, IEstablishment} from "./common";
 import {BaseRecord, CreateResponse, UpdateResponse} from "@refinedev/core";
 
 export interface IFormDataSeats {
     onFinishHandler: (data: FieldValues) => Promise<void> | void,
     handleSubmit: UseFormHandleSubmit<FieldValues, undefined>,
-    establishmentId: string | PropertyProps,
+    establishmentId: string | IEstablishment,
     list: IFreeSeatsList[],
     setList: Dispatch<SetStateAction<IFreeSeatsList[]>>
 }
@@ -14,11 +14,11 @@ export interface IFormDataSeats {
 export interface INewsDataProps {
     handleSubmit: UseFormHandleSubmit<FieldValues, undefined>,
     onFinishHandler: (data: FieldValues) => Promise<void> | void,
-    establishmentInfo: PropertyProps,
+    establishmentInfo: IEstablishment | null,
     defaultPictures: IPicture[],
     pictures: IPicture[] | File[],
     setPictures: Dispatch<SetStateAction<IPicture[] | File[]>>,
-    setEstablishmentInfo: Dispatch<SetStateAction<PropertyProps>>,
+    setEstablishmentInfo: Dispatch<SetStateAction<IEstablishment | null>>,
     title: string,
     setTitle: (value: string) => void,
     category: string,
@@ -52,7 +52,7 @@ export interface IEstablishmentFormProps {
     pictures: IPicture[] | File[],
     type: string,
     setType: (item: string) => void,
-    workScheduleWeekend: PropertyProps["workSchedule"]["weekend"],
+    workScheduleWeekend: IEstablishment["workSchedule"]["weekend"],
     setWorkScheduleWeekend: (item: setWorkScheduleWeekend) => void,
     location: google.maps.LatLngLiteral | { lat: number, lng: number },
     setLocation: (item: { lat: number, lng: number }) => void,
@@ -64,10 +64,10 @@ export interface IEstablishmentFormProps {
     setFeatures: (item: any) => void,
     contacts: Array<any> | any,
     setContacts: (item: any) => void,
-    workSchedule?: PropertyProps["workSchedule"] | any,
-    setWorkSchedule?: (item: PropertyProps["workSchedule"] | any) => void,
+    workSchedule?: IEstablishment["workSchedule"] | any,
+    setWorkSchedule?: (item: IEstablishment["workSchedule"] | any) => void,
     workDays: IWorkDay[],
-    setWorkDays: (item: PropertyProps["workSchedule"]["workDays"]) => void,
+    setWorkDays: (item: IEstablishment["workSchedule"]["workDays"]) => void,
     description: string,
     setDescription: (value?: string, event?: any, state?: any) => void,
     createdBy: string,

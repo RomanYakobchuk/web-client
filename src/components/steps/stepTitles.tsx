@@ -46,7 +46,7 @@ export const StepTitles = ({currentStep, stepTitles, styleContainer, gotoStep}: 
                                 fontWeight: 600,
                                 fontSize: '16px',
                                 transition: '300ms linear',
-                                color: 'common.black',
+                                color: (currentStep === index || currentStep > index) ? '#f1f1f1' : 'common.black',
                                 "&:hover": {
                                     bgcolor: '#12a5ee'
                                 },

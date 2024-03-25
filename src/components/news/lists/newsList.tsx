@@ -2,9 +2,10 @@ import {Box, SxProps} from "@mui/material";
 import {useContext} from "react";
 
 import {INews} from "@/interfaces/common";
-import NewsItem1 from "../cards/newsItem1";
-import NewsItemV2 from "../cards/newsItemV2";
+import NewsItem1 from "@/components/cards/newsCards/newsItem1";
+import NewsItemV2 from "@/components/cards/newsCards/newsItemV2";
 import {VariantContext} from "@/settings/variantEstablishment";
+import {NewsSimpleCard} from "@/components/cards/NewsSimpleCard";
 
 type IProps = {
     news: INews[]
@@ -21,11 +22,20 @@ const NewsList = ({news}: IProps) => {
     } : {
         display: 'grid',
         // gridTemplateColumns: `repeat(auto-fit, minmax(160px, 1fr))`,
-        gridTemplateColumns: `repeat(2, 1fr)`,
-        "@media screen and (min-width: 600px)": {
+        gridTemplateColumns: `repeat(1, 1fr)`,
+        "@media screen and (min-width: 500px)": {
+            gridTemplateColumns: `repeat(2, 1fr)`,
+        },
+        "@media screen and (min-width: 800px)": {
             gridTemplateColumns: `repeat(3, 1fr)`,
         },
-        "@media screen and (min-width: 1200px)": {
+        "@media screen and (min-width: 900px)": {
+            gridTemplateColumns: `repeat(2, 1fr)`,
+        },
+        "@media screen and (min-width: 1100px)": {
+            gridTemplateColumns: `repeat(3, 1fr)`,
+        },
+        "@media screen and (min-width: 1300px)": {
             gridTemplateColumns: `repeat(4, 1fr)`,
         },
         "@media screen and (min-width: 1500px)": {
@@ -33,6 +43,21 @@ const NewsList = ({news}: IProps) => {
         },
         gap: {xs: 1, sm: 1.5}
     }
+    // {
+    //     display: 'grid',
+    //         // gridTemplateColumns: `repeat(auto-fit, minmax(160px, 1fr))`,
+    //         gridTemplateColumns: `repeat(1, 1fr)`,
+    //     "@media screen and (min-width: 600px)": {
+    //     gridTemplateColumns: `repeat(2, 1fr)`,
+    // },
+    //     "@media screen and (min-width: 1200px)": {
+    //     gridTemplateColumns: `repeat(3, 1fr)`,
+    // },
+    //     "@media screen and (min-width: 1500px)": {
+    //     gridTemplateColumns: `repeat(5, 1fr)`,
+    // },
+    //     gap: {xs: 1, sm: 1.5}
+    // }
 
     return (
         <Box sx={{
@@ -57,9 +82,12 @@ const NewsList = ({news}: IProps) => {
                                 )
                             }
                             return (
-                                <NewsItemV2
-                                    news={itemNews}
-                                    key={itemNews?._id}/>
+                                <NewsSimpleCard
+                                    key={itemNews?._id}
+                                    news={itemNews}/>
+                                // <NewsItemV2
+                                //     news={itemNews}
+                                //     key={itemNews?._id}/>
                             )
                         }
                     )

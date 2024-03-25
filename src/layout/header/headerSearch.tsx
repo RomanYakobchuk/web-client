@@ -5,7 +5,7 @@ import {Box, IconButton} from "@mui/material";
 import {useDebounce} from "use-debounce";
 import {Input} from "antd";
 
-import {INews, IOptions, PropertyProps} from "@/interfaces/common";
+import {INews, IOptions, IEstablishment} from "@/interfaces/common";
 import {renderItem, renderTitle} from "@/components/render";
 import {Loading, ModalWindow} from "@/components";
 import {ColorModeContext} from "@/contexts";
@@ -29,7 +29,7 @@ const HeaderSearch = ({openModal, setOpenModal}: TProps) => {
     const [debounceValue, _] = useDebounce(value ?? '', 500);
 
 
-    const {refetch: refetchPlaces, isRefetching: isRefetchPlace, isLoading: isLoadPlace} = useList<PropertyProps>({
+    const {refetch: refetchPlaces, isRefetching: isRefetchPlace, isLoading: isLoadPlace} = useList<IEstablishment>({
         resource: `${ESTABLISHMENT}/all`,
         filters: [{field: "title", operator: "contains", value: value}],
         queryOptions: {

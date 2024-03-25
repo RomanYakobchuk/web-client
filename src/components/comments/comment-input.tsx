@@ -78,6 +78,7 @@ const CommentInput = ({
         }
     }
 
+    const bgColor = 'modern.modern_2.main';
     return (
         <Box
             component="form"
@@ -92,7 +93,7 @@ const CommentInput = ({
             }}>
             <Box sx={{
                 borderRadius: '15px 15px 3px 3px',
-                bgcolor: 'common.black',
+                bgcolor: bgColor,
                 p: 2,
                 width: '100%',
                 display: 'flex',
@@ -128,7 +129,8 @@ const CommentInput = ({
                 <Box sx={{
                     width: '100%',
                     display: 'flex',
-                    justifyContent: 'end'
+                    justifyContent: 'end',
+                    color: 'common.white'
                 }}>
                     {value?.length}/{maxTextLength}
                 </Box>
@@ -148,7 +150,7 @@ const CommentInput = ({
                     height: '60px',
                     width: '60px',
                     borderRadius: '3px 3px 3px 15px',
-                    bgcolor: 'common.black',
+                    bgcolor: bgColor,
                     alignItems: 'center',
                     justifyContent: 'center'
                 }}>
@@ -159,7 +161,7 @@ const CommentInput = ({
                         display: 'flex',
                         height: '60px',
                         borderRadius: '3px 3px 15px 3px',
-                        bgcolor: 'common.black',
+                        bgcolor: bgColor,
                         alignItems: 'center',
                         width: 'calc(100% - 60px)',
                         justifyContent: value?.length > 0 ? 'space-evenly' : 'center'

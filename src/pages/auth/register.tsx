@@ -6,14 +6,13 @@ import {
     Avatar,
     Button,
     TextField,
-    FormControl, CircularProgress, MenuItem, SxProps
+    FormControl, MenuItem, SxProps, FormHelperText
 } from "@mui/material";
 import {useStepsForm} from "@refinedev/react-hook-form";
 import React, {ChangeEvent, useContext, useEffect, useState} from "react";
 import {FieldValues} from "react-hook-form";
 import {HttpError, useNotification, useTranslate} from "@refinedev/core";
 import {
-    Check,
     ErrorOutlineOutlined,
     VisibilityOffOutlined,
     VisibilityOutlined
@@ -21,14 +20,15 @@ import {
 import {Link, useNavigate} from "react-router-dom";
 import dayjs from "dayjs";
 
-import {ColorModeContext} from "../../contexts";
-import {buttonStyle, selectStyle, textFieldStyle} from "../../styles";
+import {ColorModeContext} from "@/contexts";
+import {buttonStyle, textFieldStyle} from "@/styles";
 import ContainerComponent from "./utills/containerComponent";
 import {ModalWindow} from "@/components";
 import OrPart from "./utills/orPart";
 import UserAgreement from "./utills/userAgreement";
 import {StepTitles} from "@/components/steps/stepTitles";
 import {StepButtons} from "@/components/steps/stepButtons";
+import {Calendar} from "@/components/time";
 
 const Register = () => {
     const translate = useTranslate();
@@ -36,15 +36,23 @@ const Register = () => {
     const {mode} = useContext(ColorModeContext);
     const {open} = useNotification();
 
+    const now = new Date();
+    const maxDate = dayjs(new Date(now.getFullYear() - 18, now.getMonth(), now.getDate()))?.format('YYYY-MM-DD');
+    const [dOB, setDOB] = useState<Date | null>(new Date(maxDate?.toString()));
     const [show, setShow] = useState(false);
     const [error, setError] = useState<any>([]);
     const [accept, setAccept] = useState(false);
     const [showPass, setShowPass] = useState(false);
     const [openModal, setOpenModal] = useState(false);
 
+    useEffect(() => {
+        setDOB(new Date(maxDate?.toString()))
+    }, []);
     const {
         refineCore: {onFinish, formLoading},
         register,
+        setValue,
+        getValues,
         handleSubmit,
         steps: {gotoStep, currentStep},
         formState: {errors}
@@ -63,21 +71,28 @@ const Register = () => {
     },);
 
     const stepTitles = [translate('pages.register.steps.first'), translate('pages.register.steps.second')]
-
     const onFinishHandler = async (data: FieldValues) => {
-        if (!accept) return alert(translate("agreement.alert"));
+        try {
+            if (!accept) return alert(translate("agreement.alert"));
 
-        if (data?.dOB > (new Date().getFullYear() - 18)) {
-            return alert(translate("account.edit.alert"))
-        }
-        const response: any = await onFinish({
-            ...data,
-            registerBy: "Email"
-        } as IRegister);
-        if (response?.data) {
-            if (!response?.data?.isVerify) {
-                setOpenModal(true)
+            const currentDate = new Date();
+            currentDate?.setHours(0, 0, 0, 0);
+            currentDate?.setFullYear(currentDate.getFullYear() - 18);
+
+            if (data?.dOB?.toISOString() < currentDate?.toISOString()) {
+                return alert(translate("account.edit.alert"))
             }
+            const response: any = await onFinish({
+                ...data,
+                registerBy: "Email"
+            } as IRegister);
+            if (response?.data) {
+                if (!response?.data?.isVerify) {
+                    setOpenModal(true)
+                }
+            }
+        } catch (e: any) {
+            console.log(e)
         }
     };
 
@@ -105,12 +120,23 @@ const Register = () => {
         gap: 2,
         width: '100%'
     }
-    const now = new Date();
     const color = "secondary";
 
     const textFieldCurrentStyle = {
         ...textFieldStyle
     }
+    useEffect(() => {
+        const v = dOB ? dayjs(dOB)?.format('YYYY-MM-DD') : "";
+        register('dOB', {
+            value: new Date(dOB as Date),
+            required: requiredText('dOB'),
+            max: {
+                value: maxDate,
+                message: 'Only 18+'
+            }
+        })
+        setValue('dOB', new Date(dOB as Date));
+    }, [register, setValue, dOB]);
 
     const renderFormByStep = (step: number) => {
         switch (step) {
@@ -119,88 +145,124 @@ const Register = () => {
                     <Box
                         key={'0'}
                         sx={{
-                            ...itemContainerStepStyle
+                            ...itemContainerStepStyle,
+                            display: 'grid',
+                            gridTemplateColumns: {xs: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)'}
                         }}
                     >
-                        <FormControl>
-                            <TextField
-                                required
-                                size={size}
-                                fullWidth
-                                id="phone"
-                                variant={variant}
-                                // sx={textFieldStyle}
-                                color={color}
-                                label={translate("pages.register.fields.phone")}
-                                defaultValue={'+380'}
+                        <Box
+                            sx={{
+                                width: '100%',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: 2
+                            }}
+                        >
+                            <FormControl>
+                                <TextField
+                                    required
+                                    size={size}
+                                    fullWidth
+                                    id="phone"
+                                    variant={variant}
+                                    // sx={textFieldStyle}
+                                    color={color}
+                                    label={translate("pages.register.fields.phone")}
+                                    defaultValue={'+380'}
+                                    sx={{
+                                        ...textFieldCurrentStyle
+                                    }}
+                                    // type={'tel'}
+                                    // inputProps={{pattern: }}
+                                    {...register('phone', {
+                                        required: requiredText('phone'),
+                                        pattern: {
+                                            value: /^\+?3?8?(0\d{9})$/,
+                                            message: 'Phone number not valid'
+                                        }
+                                    })}
+                                />
+                                {errors.phone && (
+                                    <span>{errors?.phone?.message as string}</span>
+                                )}
+                            </FormControl>
+                            {/*<FormControl>*/}
+                            {/*    <TextField*/}
+                            {/*        fullWidth*/}
+                            {/*        required*/}
+                            {/*        size={size}*/}
+                            {/*        id={"dOB"}*/}
+                            {/*        variant={variant}*/}
+                            {/*        color={color}*/}
+                            {/*        type={"date"}*/}
+                            {/*        sx={{*/}
+                            {/*            ...textFieldCurrentStyle*/}
+                            {/*        }}*/}
+                            {/*        inputProps={{*/}
+                            {/*            max: maxDate*/}
+                            {/*        }}*/}
+                            {/*        // sx={textFieldStyle}*/}
+                            {/*        defaultValue={"2000-01-01"}*/}
+                            {/*        label={translate("pages.register.fields.dOB")}*/}
+                            {/*        {...register('dOB', {*/}
+                            {/*            required: requiredText('dOB'),*/}
+                            {/*            max: {*/}
+                            {/*                value: maxDate,*/}
+                            {/*                message: 'Only 18+'*/}
+                            {/*            }*/}
+                            {/*        })}*/}
+                            {/*    />*/}
+
+                            {/*</FormControl>*/}
+                            <FormControl>
+                                <TextField
+                                    required
+                                    fullWidth
+                                    select
+                                    size={size}
+                                    color={color}
+                                    defaultValue={'user'}
+                                    id={'status'}
+                                    sx={{
+                                        ...textFieldCurrentStyle
+                                    }}
+                                    // sx={selectStyle}
+                                    variant={variant}
+                                    label={translate('pages.login.fields.role')}
+                                    {...register('status', {required: requiredText('role')})}
+                                >
+                                    <MenuItem value={'user'}>{translate("roles.user")}</MenuItem>
+                                    <MenuItem value={'manager'}>{translate("roles.manager")}</MenuItem>
+                                </TextField>
+                                {errors.status && (
+                                    <span>{errors?.status?.message as string}</span>
+                                )}
+                            </FormControl>
+                        </Box>
+                        <Box
+                            sx={{
+                                order: 3,
+                                // gridColumn: 'span 2'
+                            }}
+                        >
+                            <FormHelperText
+                                variant={'filled'}
                                 sx={{
-                                    ...textFieldCurrentStyle
+                                    fontSize: '14px'
                                 }}
-                                // type={'tel'}
-                                // inputProps={{pattern: }}
-                                {...register('phone', {
-                                    required: requiredText('phone'),
-                                    pattern: {
-                                        value: /^\+?3?8?(0\d{9})$/,
-                                        message: 'Phone number not valid'
-                                    }
-                                })}
-                            />
-                            {errors.phone && (
-                                <span>{errors?.phone?.message as string}</span>
-                            )}
-                        </FormControl>
-                        <FormControl>
-                            <TextField
-                                fullWidth
-                                required
-                                size={size}
-                                id={"dOB"}
-                                variant={variant}
-                                color={color}
-                                type={"date"}
-                                sx={{
-                                    ...textFieldCurrentStyle
-                                }}
-                                // sx={textFieldStyle}
-                                defaultValue={"2000-01-01"}
-                                label={translate("pages.register.fields.dOB")}
-                                {...register('dOB', {
-                                    required: requiredText('dOB'),
-                                    max: {
-                                        value: dayjs(new Date(now.getFullYear() - 18, now.getMonth(), now.getDate()))?.format('YYYY-MM-DD'),
-                                        message: 'Only 18+'
-                                    }
-                                })}
+                            >
+                                {translate("pages.register.fields.dOB")}
+                            </FormHelperText>
+                            <Calendar
+                                isShowTodayBtn={false}
+                                value={dOB}
+                                setValue={setDOB}
+                                maxDate={new Date(maxDate?.toString())}
                             />
                             {errors.dOB && (
                                 <span>{errors?.dOB?.message as string}</span>
                             )}
-                        </FormControl>
-                        <FormControl>
-                            <TextField
-                                required
-                                fullWidth
-                                select
-                                size={size}
-                                color={color}
-                                defaultValue={'user'}
-                                id={'status'}
-                                sx={{
-                                    ...textFieldCurrentStyle
-                                }}
-                                // sx={selectStyle}
-                                variant={variant}
-                                label={translate('pages.login.fields.role')}
-                                {...register('status', {required: requiredText('role')})}
-                            >
-                                <MenuItem value={'user'}>{translate("roles.user")}</MenuItem>
-                                <MenuItem value={'manager'}>{translate("roles.manager")}</MenuItem>
-                            </TextField>
-                            {errors.status && (
-                                <span>{errors?.status?.message as string}</span>
-                            )}
-                        </FormControl>
+                        </Box>
                     </Box>
                 );
             case 1:
@@ -324,8 +386,8 @@ const Register = () => {
                     flexDirection: 'column',
                     alignItems: 'center',
                     margin: '0 auto',
-                    width: {xs: '90%', md: '700px'},
-                    maxWidth: '700px',
+                    width: {xs: '90%', md: '800px'},
+                    maxWidth: {xs: '500px', md: '800px'},
                 }}
             >
                 <Avatar src={`/images/logo.png`} onClick={() => navigate('/welcome')}
@@ -343,7 +405,7 @@ const Register = () => {
                 </Typography>
                 <Box sx={{
                     width: '100%',
-                    maxWidth: '500px',
+                    maxWidth: '100%',
                     p: 3,
                     borderRadius: '10px',
                     border: '2px solid cornflowerblue'
@@ -359,7 +421,7 @@ const Register = () => {
                         sx={{
                             width: '100%',
                             // mt: '30px',
-                            maxWidth: '350px',
+                            maxWidth: '90%',
                             margin: '30px auto 0',
                             display: 'flex',
                             flexDirection: 'column',

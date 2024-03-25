@@ -1,0 +1,115 @@
+:root {
+    --messages-text-size: 16px;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    --font-regular: "Roboto", -apple-system, apple color emoji, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    --white: #ffffff;
+    --messages-time-text-size: calc(var(--messages-text-size) - 4px);
+    --message-out-primary-color: #c1dec0;
+    --primary-text-color: #000000;
+    --message-out-status-color: var(--message-out-primary-color);
+    --message-out-time-color: var(--message-out-status-color);
+    --message-time-color: var(--message-out-time-color);
+    --message-status-color: var(--message-out-status-color);
+    --messages-line-height: 1.3125;
+    --line-height: var(--messages-line-height);
+}
+
+.message {
+    padding: 4px 8px 5px;
+    max-width: 480px;
+    box-sizing: inherit;
+    unicode-bidi: plaintext;
+    color: var(--white);
+    line-height: var(--line-height);
+    font-family: var(--font-regular);
+    font-size: var(--messages-text-size);
+    word-break: break-word;
+    white-space: pre-wrap;
+    position: relative;
+    user-select: none;
+    margin: 0 4px;
+    z-index: 1;
+}
+.message a {
+    color: var(--white);
+}
+[dir=auto] {
+    unicode-bidi: plaintext;
+}
+.time {
+    visibility: hidden;
+    font-size: var(--messages-time-text-size);
+    height: var(--messages-time-text-size);
+    user-select: none;
+    line-height: 1;
+    vertical-align: middle;
+    pointer-events: none;
+    display: inline-flex;
+    z-index: 1;
+    cursor: pointer;
+    direction: ltr;
+    float: right;
+}
+
+.time-inner {
+    pointer-events: all;
+    position: absolute;
+    inset-inline-end: 0;
+    display: flex;
+    align-items: center;
+    line-height: 1;
+    padding: inherit;
+    white-space: nowrap;
+    height: var(--messages-time-text-size);
+    visibility: visible;
+    color: var(--message-time-color);
+    bottom: 4px;
+}
+
+.time-sending-status {
+    order: 5;
+    font-size: calc(var(--messages-text-size) + 3px);
+    line-height: var(--messages-time-text-size);
+    color: var(--message-status-color);
+}
+
+.i18n {
+    pointer-events: all;
+    line-height: 1;
+    white-space: nowrap;
+    visibility: visible;
+    color: var(--message-time-color);
+    box-sizing: inherit;
+    unicode-bidi: plaintext;
+}
+
+.time-edited {
+    font-family: var(--font-regular);
+    color: var(--primary-text-color);
+    word-break: break-word;
+    white-space: pre-wrap;
+    visibility: hidden;
+    user-select: none;
+    line-height: 1;
+    pointer-events: none;
+    cursor: pointer;
+    direction: ltr;
+    box-sizing: inherit;
+    margin-inline-end: .375rem;
+    overflow: visible;
+    font-size: inherit;
+}
+.tgico {
+    pointer-events: none;
+}
+.tgico {
+    font-family: tgico, serif !important;
+    speak: never;
+    font-style: normal;
+    font-weight: 400;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}

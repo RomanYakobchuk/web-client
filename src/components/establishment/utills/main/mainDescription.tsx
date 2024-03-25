@@ -12,7 +12,7 @@ export const MainDescription = ({description}: TProps) => {
     const {mode} = useContext(ColorModeContext);
     return (
         <Box sx={{
-            bgcolor: 'modern.modern_1.second',
+            bgcolor: 'modern.modern_1.main',
             p: '10px',
             borderRadius: '15px',
         }}>

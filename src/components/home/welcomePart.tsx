@@ -1,9 +1,10 @@
 import {Box, Button, Typography} from "@mui/material";
-import {buttonStyle} from "../../styles";
-import {useContext} from "react";
-import {ColorModeContext} from "../../contexts";
-import {useMobile} from "../../hook";
 import {useTranslate} from "@refinedev/core";
+import {useContext} from "react";
+
+import {buttonStyle} from "@/styles";
+import {ColorModeContext} from "@/contexts";
+import {useMobile} from "@/hook";
 import {ESTABLISHMENT} from "@/config/names";
 
 const WelcomePart = () => {
@@ -59,7 +60,7 @@ const WelcomePart = () => {
                                 WebkitMaskPosition: 'center',
                             }
                         }}>
-                            <img src={'images/home/restaurant.png'} alt={'restaurantPicture'}/>
+                            <img src={'/images/home/restaurant.png'} alt={'restaurantPicture'}/>
                         </Box>
                     )
                 }
@@ -142,7 +143,7 @@ const WelcomePart = () => {
                         WebkitMaskPosition: 'center',
                     }
                 }}>
-                    <img src={'images/home/cafe.png'} alt={'cafePicture'}/>
+                    <img src={'/images/home/cafe.png'} alt={'cafePicture'}/>
                 </Box>
             </Box>
             <Box className="waveWrapper waveAnimation">
@@ -152,7 +153,7 @@ const WelcomePart = () => {
                      }}>
                     <Box className="wave waveTop"
                          sx={{
-                             backgroundImage: "url('images/home/wave/wave-1.png')",
+                             backgroundImage: "url('/images/home/wave/wave-1.png')",
                              filter: mode === 'dark' ? filter1 : 'unset'
                          }}></Box>
                 </Box>
@@ -163,7 +164,7 @@ const WelcomePart = () => {
                 >
                     <Box className="wave waveMiddle"
                          sx={{
-                             backgroundImage: "url('images/home/wave/wave-2.png')",
+                             backgroundImage: "url('/images/home/wave/wave-2.png')",
                              filter: mode === 'dark' ? filter2 : 'unset'
                          }}></Box>
                 </Box>
@@ -174,7 +175,7 @@ const WelcomePart = () => {
                 >
                     <Box className="wave waveBottom"
                          sx={{
-                             backgroundImage: "url('images/home/wave/wave-3.png')",
+                             backgroundImage: "url('/images/home/wave/wave-3.png')",
                              filter: mode === 'dark' ? filter3 : 'unset'
                          }}></Box>
                 </Box>

@@ -4,8 +4,8 @@ import {useEffect, useState} from "react";
 import {IComment, IReviews} from "@/interfaces/common";
 import {Box} from "@mui/material";
 import {Loading} from "@/components";
-import ReviewCard from "@/components/establishment/cards/reviewCard";
-import MoreButton from "@/components/common/buttons/MoreButton";
+import ReviewCard from "@/components/cards/reviewCard";
+import MoreButton from "@/components/buttons/MoreButton";
 
 interface IProps {
     id: string

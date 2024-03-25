@@ -1,11 +1,11 @@
 import {Box, Button} from "@mui/material";
-import CommentCard from "../../comments/commentCard";
+import CommentCard from "../../cards/commentCard";
 import React, {useEffect, useState} from "react";
 import {IComment} from "@/interfaces/common";
 import {useNavigate} from "react-router-dom";
 import {useInfiniteList, usePermissions, useTranslate} from "@refinedev/core";
 import {Loading} from "@/components";
-import MoreButton from "@/components/common/buttons/MoreButton";
+import MoreButton from "@/components/buttons/MoreButton";
 import {useLeaveManagerCommentAs, useUserInfo} from "@/hook";
 import ChooseManagerRole from "@/components/common/choose/chooseManagerRole";
 import {ESTABLISHMENT, SHOW} from "@/config/names";

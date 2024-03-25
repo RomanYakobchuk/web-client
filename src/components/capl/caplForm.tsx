@@ -4,11 +4,12 @@ import React, {Dispatch, SetStateAction, useContext} from "react";
 import {Switch} from "antd";
 
 import {ColorModeContext} from "@/contexts";
-import {IReserve, PropertyProps} from "@/interfaces/common";
+import {IReserve, IEstablishment} from "@/interfaces/common";
 import SearchEstablishments from "../search/searchEstablishments";
 import {useUserInfo} from "@/hook";
 import dayjs from "dayjs";
 import ChooseNewStatus from "@/components/common/choose/chooseNewStatus";
+import {TStatus} from "@/interfaces/types";
 
 
 type TProps = Omit<IReserve, "_id" | "establishment" | "userStatus" | "establishmentStatus" | "isClientAppeared"> & {
@@ -20,8 +21,8 @@ type TProps = Omit<IReserve, "_id" | "establishment" | "userStatus" | "establish
     setDesiredAmount: Dispatch<SetStateAction<number>>,
     setNumberPeople: Dispatch<SetStateAction<number>>,
     setEventType: Dispatch<SetStateAction<string>>,
-    searchPlace: PropertyProps,
-    setSearchPlace: Dispatch<SetStateAction<PropertyProps>>,
+    searchPlace: IEstablishment | null,
+    setSearchPlace: Dispatch<SetStateAction<IEstablishment | null>>,
     type: "edit" | "create",
     userStatus?: IReserve['userStatus'],
     establishmentStatus?: IReserve['establishmentStatus'],
@@ -34,7 +35,6 @@ type TProps = Omit<IReserve, "_id" | "establishment" | "userStatus" | "establish
     setIsAllowedEdit: Dispatch<SetStateAction<boolean>>,
     currentDataCapl?: IReserve
 }
-type TStatus = "draft" | "rejected" | "accepted";
 const CaplForm = (props: TProps) => {
 
     const {
@@ -138,7 +138,7 @@ const CaplForm = (props: TProps) => {
             >
                 <SearchEstablishments
                     isOnlyShowInfo={type === 'edit'}
-                    searchEstablishment={searchPlace as PropertyProps}
+                    searchEstablishment={searchPlace as IEstablishment}
                     setSearchEstablishment={setSearchPlace}
                     typeSearch={'all'}/>
             </FormControl>
@@ -355,7 +355,7 @@ const CaplForm = (props: TProps) => {
                     <ChooseNewStatus
                         value={userStatus?.value as TStatus}
                         disabled={isAllowedUser}
-                        label={translate('capl.status.userStatus')}
+                        label={translate('capl.status.userStatus.title')}
                         onChange={(event) => setUserStatus && setUserStatus((prevState) => ({
                             ...prevState,
                             value: event.target.value as TStatus
@@ -409,7 +409,7 @@ const CaplForm = (props: TProps) => {
                         <ChooseNewStatus
                             value={establishmentStatus?.value as TStatus}
                             disabled={type === 'edit' ? isAllowedManager : false}
-                            label={translate('capl.status.establishmentStatus')}
+                            label={translate('capl.status.establishmentStatus.title')}
                             onChange={(event) => setEstablishmentStatus && setEstablishmentStatus((prevState) => ({
                                 ...prevState,
                                 value: event.target.value as TStatus

@@ -7,6 +7,7 @@ i18n.use(Backend)
     .use(detector)
     .use(initReactI18next)
     .init({
+        lng: 'ua',
         supportedLngs: ["ua", "en"],
         backend: {
             loadPath: "/locales/{{lng}}/{{ns}}.json",

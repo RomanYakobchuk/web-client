@@ -2,7 +2,7 @@ import React, {Dispatch, SetStateAction, useEffect, useState} from "react";
 import {useInfiniteList, useNotification} from "@refinedev/core";
 import {Box} from "@mui/material";
 
-import MoreButton, {IMoreButton} from "@/components/common/buttons/MoreButton";
+import MoreButton, {IMoreButton} from "@/components/buttons/MoreButton";
 import {NotificationCard} from "@/components/notifications";
 import {INotification} from "@/interfaces/common";
 import {axiosInstance} from "@/authProvider";

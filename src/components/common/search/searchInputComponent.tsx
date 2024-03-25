@@ -35,7 +35,6 @@ const SearchInputComponent = ({
     const [useDebounce1] = useDebounce(searchValue, 1000);
     const search = () => {
         if (handleSearchByValue) {
-            console.log('handleSearchByValue')
             handleSearchByValue(searchValue);
         }
     }

@@ -7,9 +7,10 @@ type TProps = {
     setOpenFilter: (value: boolean) => void,
     handleReplace: () => void,
     handleSearch: () => void,
-    styleSx?: SxProps
+    styleSx?: SxProps,
+    isOnlySearch?: boolean
 }
-const SearchButtonFilterComponent = ({setOpenFilter, handleReplace, handleSearch, styleSx}: TProps) => {
+const SearchButtonFilterComponent = ({setOpenFilter, isOnlySearch = false, handleReplace, handleSearch, styleSx}: TProps) => {
 
     const translate = useTranslate();
 
@@ -27,39 +28,43 @@ const SearchButtonFilterComponent = ({setOpenFilter, handleReplace, handleSearch
             },
             ...styleSx
         }}>
-            <Box sx={{
-                width: '100%',
-                display: 'flex',
-                flexDirection: 'row',
-                gap: 1
-            }}>
-                <Button
-                    onClick={handleReplace}
-                    color={"inherit"}
-                    variant={"outlined"}
-                    sx={{
+            {
+                !isOnlySearch && (
+                    <Box sx={{
                         width: '100%',
-                        borderRadius: bRButtonFilter
-                    }}
-                >
-                    {
-                        translate("home.reset")
-                    }
-                </Button>
-                <Button
-                    sx={{
-                        width: '100%',
-                        borderRadius: bRButtonFilter
-                    }}
-                    color={"error"}
-                    variant={"contained"}
-                    onClick={() => {
-                        setOpenFilter(false)
-                    }}
-                >
-                    {translate("buttons.close")}
-                </Button>
-            </Box>
+                        display: 'flex',
+                        flexDirection: 'row',
+                        gap: 1
+                    }}>
+                        <Button
+                            onClick={handleReplace}
+                            color={"inherit"}
+                            variant={"outlined"}
+                            sx={{
+                                width: '100%',
+                                borderRadius: bRButtonFilter
+                            }}
+                        >
+                            {
+                                translate("home.reset")
+                            }
+                        </Button>
+                        <Button
+                            sx={{
+                                width: '100%',
+                                borderRadius: bRButtonFilter
+                            }}
+                            color={"error"}
+                            variant={"contained"}
+                            onClick={() => {
+                                setOpenFilter(false)
+                            }}
+                        >
+                            {translate("buttons.close")}
+                        </Button>
+                    </Box>
+                )
+            }
             <Button
                 variant={"contained"}
                 color={"info"}

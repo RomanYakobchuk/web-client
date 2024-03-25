@@ -1,7 +1,7 @@
 import {Box, Paper} from "@mui/material";
 import {useTranslate} from "@refinedev/core";
 import {useContext} from "react";
-import {ColorModeContext} from "../../contexts";
+import {ColorModeContext} from "@/contexts";
 import CountType from "./countType";
 
 const TypePart = () => {
@@ -12,7 +12,7 @@ const TypePart = () => {
 
     return (
         <Box sx={{
-            width: '90%',
+            width: {xs: '90vw', md: '90%'},
             margin: '0 auto',
             height: {xs: 'fit-content',},
             // clipPath: 'polygon(0 10%, 100% 0, 100% 90%, 0 100%)',

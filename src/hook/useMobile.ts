@@ -23,7 +23,7 @@ export const useMobile = (): TMobile => {
     const maxDeviceWidth = Math.min(window.screen.width, innerWidth);
 
     const [layoutWidth, setLayoutWidth] = useState<number>(
-        innerWidth > 900 ? (collapsed ? Math.min(width - 64, maxDeviceWidth) : Math.min(width - 200, maxDeviceWidth)) : innerWidth
+        width > 900 ? (collapsed ? Math.min(width - 64, maxDeviceWidth) : Math.min(width - 200, maxDeviceWidth)) : width
     );
 
     const handleCheckLayout = () => {

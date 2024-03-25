@@ -1,71 +1,65 @@
 import {Dispatch, SetStateAction, useEffect, useState} from "react";
-import {Box} from "@mui/material";
 
 import {IConversation, IConvMembers} from "@/interfaces/common";
 import {ChatHeader} from "@/components/chats/chatBox/chatBox";
 import {CurrentChatContainer, Loading} from "@/components";
-import {ACCESS_TOKEN_KEY} from "@/config/const";
 import {axiosInstance} from "@/authProvider";
 import {ScaleWindow} from "@/components/window/scaleWindow";
 import {useMobile, useUserInfo} from "@/hook";
 
 type TProps = {
-    chatFieldName: IConversation['chatInfo']['field']['name'],
-    chatFieldId: string,
+    chatDependItem: IConversation['depend']['item'],
+    chatDependId: string,
     chatName?: string,
     members?: IConvMembers[],
-    chatType: IConversation['chatInfo']['type'],
+    type: IConversation['type'],
     isOpen: boolean,
     setIsOpen: Dispatch<SetStateAction<boolean>>,
 }
 
-const ACCESS = localStorage.getItem(ACCESS_TOKEN_KEY);
 export const CustomChatShowContainer = ({
-                                            chatFieldId,
-                                            chatType,
+                                            chatDependId,
+                                            type,
                                             chatName,
-                                            chatFieldName,
+                                            chatDependItem,
                                             members,
                                             isOpen,
                                             setIsOpen
                                         }: TProps) => {
 
-    const {user} = useUserInfo();
+    const {user, access_token} = useUserInfo();
     const {device} = useMobile();
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [chat, setChat] = useState<IConversation | null>(null);
-    const findChat = async () => {
-        try {
-            if (chatFieldName && chatFieldId && chatType && ACCESS) {
-                setIsLoading(true)
-                const res = await axiosInstance.post(`/conversation/create`, {
-                    chatFieldName: chatFieldName,
-                    chatFieldId: chatFieldId,
-                    chatName: chatName,
-                    members: members,
-                    chatType: chatType
-                }, {
-                    headers: {
-                        Authorization: ACCESS
-                    }
-                });
-                if (res?.data?.chat?._id) {
-                    setChat(res?.data?.chat);
-                }
-            }
-            setIsLoading(false)
-        } catch (e) {
-            setIsLoading(false)
-        } finally {
-            setIsLoading(false)
-        }
-    }
 
     useEffect(() => {
-        if (chatFieldId && isOpen && user?._id) {
+        if (chatDependId && isOpen && user?._id) {
+            const findChat = async () => {
+                try {
+                    if (chatDependItem && chatDependId && type) {
+                        setIsLoading(true)
+                        const res = await axiosInstance.post(`/conversation/create`, {
+                            dependItem: chatDependItem,
+                            dependId: chatDependId,
+                            chatName: chatName,
+                            members: members,
+                            type: type,
+                            access: 'private'
+                        });
+                        if (res?.data?.chat?._id) {
+                            setChat(res?.data?.chat);
+                        }
+                    }
+                    setIsLoading(false)
+                } catch (e) {
+                    setIsLoading(false)
+                } finally {
+                    setIsLoading(false)
+                }
+            }
             findChat();
         }
-    }, [chatFieldId, isOpen, user?._id]);
+    }, [chatDependId, isOpen, user?._id]);
 
     return (
         <ScaleWindow

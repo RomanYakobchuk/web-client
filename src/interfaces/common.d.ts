@@ -37,7 +37,7 @@ export interface IData {
     refresh_token: string,
     error?: any,
     favoritePlaces: string[],
-    subscribedEstablishments: [{id: string}];
+    subscribedEstablishments: [{ id: string }];
     countNotReadNotifications: number
 }
 
@@ -98,7 +98,7 @@ export interface IProfilePropsFilterVariables {
     title: string
 }
 
-export interface PropertyProps {
+export interface IEstablishment {
     otherProps?: any,
     _id: string,
     title: string,
@@ -144,7 +144,7 @@ export interface PropertyProps {
 
 export interface IFreeSeats {
     _id: string,
-    establishmentId: string | PropertyProps,
+    establishmentId: string | IEstablishment,
     list: IFreeSeatsList[],
     allFreeSeats: number,
     isCombineTheSeats: boolean,
@@ -158,6 +158,7 @@ export interface IFreeSeatsList {
     status: "free" | "reserved" | "",
     description?: string
 }
+
 export interface IUserAgent {
     browser: {
         name: string,
@@ -178,6 +179,7 @@ export interface IUserAgent {
         version: string
     }
 }
+
 export interface IOAuth {
     userId: string | ProfileProps,
     access_token: string,
@@ -187,12 +189,14 @@ export interface IOAuth {
     createdAt?: Date,
     updatedAt?: Date
 }
+
 export interface IFreeSeatsProps {
     isCombineTheSeats: boolean,
     table: number,
     numberOfSeats: number,
     status: IFreeSeatsList['status']
 }
+
 export interface IPropertyPropsFilterVariables {
     averageCheck_gte: number,
     averageCheck_lte: number,
@@ -211,9 +215,18 @@ export interface IReviews {
     },
     _id: string,
     grade: number,
-    establishmentId: PropertyProps | any,
+    establishmentId: IEstablishment | any,
     createdBy: ProfileProps | any,
     createdAt: Date
+}
+
+export interface INewReview {
+    score: number | null,
+    title: string,
+    text: string,
+    quality: number | null,
+    atmosphere: number | null,
+    service: number | null
 }
 
 export interface IComment {
@@ -303,7 +316,7 @@ export interface IStar {
 
 export interface INews {
     _id: string,
-    establishmentId?: string | PropertyProps,
+    establishmentId?: string | IEstablishment,
     title: string,
     index?: number,
     createdAt: Date | any,
@@ -337,7 +350,7 @@ export interface IOptionGroup {
     userId?: string,
     title?: string,
     id?: string,
-    allInfo?: PropertyProps,
+    allInfo?: IEstablishment,
     key?: string
 }
 
@@ -346,7 +359,7 @@ export interface IOptions {
     options: IOptionGroup[];
     title?: string,
     userId?: string,
-    allInfo?: PropertyProps,
+    allInfo?: IEstablishment,
     id?: string,
     value?: string,
     key?: string
@@ -429,44 +442,47 @@ export interface IMessage {
     memberType?: 'user' | 'establishment',
     createdAt?: Date | any,
     updatedAt?: Date | any,
-    isSent: boolean,
-    isDelivered: boolean,
-    isRead: boolean,
-    isError: boolean
+    status: 'sent' | 'read',
+    read: string[]
 }
+
 export interface IConvMembers {
     user: ProfileProps | string,
     connectedAt: Date,
     indicator?: null | string,
-    role: "admin" | "manager" | "user",
-    conversationTitle: string
+    userId?: string,
+    showInfoAs: {
+        item: "user" | "establishment",
+        id?: string | null
+    }
 }
+
 export interface IConversation {
     _id: string,
+    id: string | number,
     members: IConvMembers[],
     lastMessage: {
         sender: string,
         text: string,
+        status: "sent" | "read",
         updatedAt: Date
     },
-    chatInfo: {
-        status: "public" | "private",
-        type: "group" | "oneByOne",
-        field: {
-            name: "establishment" | "user" | "capl",
-            id: string | {_id: string, avatar: string, name: string} | PropertyProps
-        },
-        chatName: string,
-        picture: string,
-        creator: string | ProfileProps
+    access: "public" | "private",
+    type: "group" | "private",
+    depend: {
+        item: "establishment" | "user" | "capl",
+        id: string | { _id: string, avatar: string, name: string } | IEstablishment | ProfileProps | IReserve
     },
+    chatName: string,
+    picture: string,
+    admin: string | ProfileProps,
     createdAt?: Date,
     updatedAt?: Date
 }
 
 
 export interface IReserve {
-    establishment: PropertyProps | string | any,
+    establishment: IEstablishment | string | any,
     _id: string,
     isAllowedEdit: boolean,
     fullName: string,
@@ -488,7 +504,7 @@ export interface IReserve {
     establishmentStatus: {
         value: "accepted" | "rejected" | "draft",
         reasonRefusal?: string,
-        freeDateFor: [Date | null] | null
+        freeDateFor?: [Date | null] | null
     }
 }
 
@@ -531,7 +547,7 @@ export interface INotification {
     userId: string | ProfileProps,
     message: string,
     description: string,
-    type: "newReservation" | "newMessage" | "newNews" |"newFunctional" | "newEstablishment" | "newUser",
+    type: "newReservation" | "newMessage" | "newNews" | "newFunctional" | "newEstablishment" | "newUser",
     isRead: boolean,
     createdAt: Date,
     updateAt: Date

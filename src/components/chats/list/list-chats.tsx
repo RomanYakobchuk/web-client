@@ -1,253 +1,273 @@
-import React, {Dispatch, SetStateAction, useEffect, useState} from "react";
-import {Box, Button, FormControl, TextField} from "@mui/material";
+import React, {useEffect, useState} from "react";
+import {Box, FormControl, InputAdornment, TextField} from "@mui/material";
 import {useInfiniteList, useTranslate} from "@refinedev/core";
-import {useSearchParams} from "react-router-dom";
+import {SearchRounded} from "@mui/icons-material";
 import {useDebounce} from "use-debounce";
-import {Add} from "@mui/icons-material";
 
-import {CreateChatBox} from "@/components/chats/create/createChatBox";
-import MoreButton from "@/components/common/buttons/MoreButton";
-import SwipeComponent from "@/components/swipe/swipeComponent";
+import {ChatTabs} from "@/components/chats/list/chat-tabs";
+import MoreButton from "@/components/buttons/MoreButton";
 import {IConversation} from "@/interfaces/common";
 import {useMobile, useUserInfo} from "@/hook";
-import Loading from "../../loading/loading";
 import ListChatCard from "./list-chat-card";
 import {scrollBarStyle} from "@/styles";
+import {useChats, useMessages} from "@/indexedDB";
+import {CreateChatBtn} from "./createChatBtn";
 import {socket} from "@/socketClient";
-import {useChats} from "@/indexedDB";
+import {HeadSetupList} from "@/components/chats/list/headSetupList";
+import {useParams} from "react-router-dom";
+import {AnimatePresence, Reorder} from "framer-motion";
+import {useStore} from "@/store";
 
-interface IProps {
-    setCurrentChat: Dispatch<SetStateAction<IConversation | null>>,
-    setOpenDrawer: Dispatch<SetStateAction<boolean>>
-}
 
-const ListChats = ({setCurrentChat, setOpenDrawer}: IProps) => {
-    const {user} = useUserInfo();
-    const translate = useTranslate();
-    const {device} = useMobile();
+const ListChats = () => {
 
-    const [_, setSearchParams] = useSearchParams();
-    const {chats: dbChats, addManyChats} = useChats();
+        const {user} = useUserInfo();
+        const translate = useTranslate();
+        const {device} = useMobile();
+        const {chatEditMode} = useStore();
+        const {clearMessages} = useMessages();
+        const {conversationId} = useParams();
+        const {chats: dbChats, addManyChats, clearChats} = useChats();
 
-    const [isVisible, setIsVisible] = useState<boolean>(false);
-    const [isOpenCreateNewChat, setIsOpenCreateNewChat] = useState<boolean>(false);
-    const [chats, setChats] = useState<IConversation[]>(dbChats || [] as IConversation[]);
-    const [title, setTitle] = useState<string>('');
-    const [debouncedSearchText] = useDebounce(title, 500);
-    const [updatedChat, setUpdatedChat] = useState<IConversation>({} as IConversation)
-    const [establishmentId, setestablishmentId] = useState<string>('');
+        const [updatedChat, setUpdatedChat] = useState<IConversation | null>(null);
 
-    const {
-        data,
-        isLoading,
-        isError,
-        hasNextPage,
-        fetchNextPage,
-        isFetchingNextPage
-    } = useInfiniteList<IConversation>({
-        resource: `conversation/findChat/${user?._id}`,
-        queryOptions: {
-            retry: false,
-        },
-        filters: [
-            {field: 'userId', value: user?._id, operator: 'eq'},
-            {field: 'establishmentId', value: establishmentId, operator: 'eq'},
-            {field: 'title', value: debouncedSearchText, operator: 'contains'},
-        ],
-        pagination: {
-            pageSize: 50
+        const [currentTab, setCurrentTab] = useState<string>("");
+        const [chats, setChats] = useState<IConversation[]>([] as IConversation[]);
+        const [ids, setIds] = useState<string[]>(chats?.map((chat) => chat?._id));
+        const [title, setTitle] = useState<string>('');
+        const [debouncedSearchText] = useDebounce(title, 500);
+
+        const resFromDb = async (tab: string) => {
+            const c = await dbChats(tab);
+            if (c) {
+                setChats(c?.map((chat, index) => ({...chat, id: index})));
+            }
         }
-    });
+        useEffect(() => {
+            if (chats) {
+                setIds(chats?.map((chat) => chat?._id))
+            }
+        }, [chats]);
+        useEffect(() => {
+            resFromDb(currentTab);
+        }, [currentTab]);
+        const {
+            data,
+            hasNextPage,
+            fetchNextPage,
+            isFetchingNextPage
+        } = useInfiniteList<IConversation>({
+            resource: `conversation/findChat/${user?._id}`,
+            queryOptions: {
+                retry: false,
+            },
+            filters: [
+                {field: 'userId', value: user?._id, operator: 'eq'},
+                {field: "dependItem", value: currentTab || "", operator: 'eq'},
+                {field: 'title', value: debouncedSearchText, operator: 'contains'},
+            ],
+            pagination: {
+                pageSize: 50
+            }
+        });
 
-    useEffect(() => {
-        socket.on("getLastMessage", (data: any) => {
-            setUpdatedChat((prevState) => {
-                return {
-                    ...prevState,
-                    _id: data?.chatId,
+        useEffect(() => {
+            if (data?.pages) {
+                const res = async () => {
+                    let list = [].concat(...((data?.pages as any ?? [])?.map((page: {
+                        data: IConversation[],
+                        total: number
+                    }) => page?.data ?? [])));
+                    if (list?.length <= 0) {
+                        await clearChats();
+                        await clearMessages();
+                    } else {
+                        await addManyChats(list as IConversation[]);
+                    }
+                    await resFromDb(currentTab)
+                }
+                res();
+            }
+        }, [data?.pages, currentTab]);
+
+        const total = data?.pages?.length && data?.pages?.length > 0 ? data?.pages[0]?.total : 0;
+
+        const scrollBar = !device ? scrollBarStyle : {};
+
+        useEffect(() => {
+            socket?.on("getLastMessage", (data: any) => {
+                setUpdatedChat({
+                    _id: data?.conversationId,
                     lastMessage: {
                         sender: data?.sender,
                         text: data?.text,
-                        updatedAt: data?.updatedAt
+                        updatedAt: data?.updatedAt,
+                        status: data?.status
                     },
                     updatedAt: data?.updatedAt
-                }
+                } as IConversation)
             })
-        })
-        return () => {
-            socket.off('getLastMessage');
-        };
-    }, [socket]);
+            return () => {
+                socket.off('getLastMessage');
+            };
+        }, [socket]);
 
-    useEffect(() => {
-        (async () => {
+        useEffect(() => {
             if (updatedChat) {
-                const newChats = chats?.map((chat) => {
-                        if (chat?._id === updatedChat?._id) {
-                            return {
-                                ...chat,
-                                ...updatedChat
+                const update = async () => {
+                    const newChats = chats?.map((chat) => {
+                            if (chat?._id === updatedChat?._id) {
+                                return {
+                                    ...chat,
+                                    ...updatedChat,
+                                }
                             }
+                            return chat;
                         }
-                        return chat;
+                    )
+                    if (newChats) {
+                        await addManyChats(newChats);
+                        setChats(newChats)
                     }
-                )
-                if (newChats) {
-                    await addManyChats(newChats)
+                    setUpdatedChat(null);
                 }
+                update();
             }
-        })()
-    }, [updatedChat]);
+        }, [updatedChat]);
+        const sortedChats = chats?.sort((a: IConversation, b: IConversation) => {
+            const dateA = new Date(a?.lastMessage?.updatedAt as Date || a?.createdAt)?.getTime();
+            const dateB = new Date(b?.lastMessage?.updatedAt as Date || b?.createdAt)?.getTime();
 
-    useEffect(() => {
-        (async () => {
-            if (data?.pages) {
-                const list = [].concat(...((data?.pages as any ?? [])?.map((page: {
-                    data: IConversation[],
-                    total: number
-                }) => page?.data ?? [])));
-                // setChats(list);
-                await addManyChats(list as IConversation[])
-            }
-        })();
-    }, [data]);
-    useEffect(() => {
-        if (dbChats && dbChats?.length > 0) {
-            setChats(dbChats);
+            return dateA >= dateB ? -1 : 1;
+        });
+
+        const handleDeleteChat = (chat: IConversation) => {
+            setChats((prevState) => prevState?.filter((item) => item?._id !== chat?._id));
         }
-    }, [dbChats]);
-    const total = data?.pages?.length && data?.pages?.length > 0 ? data?.pages[0]?.total : 0;
 
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setIsVisible(isOpenCreateNewChat)
-        }, 500);
-        return () => {
-            clearTimeout(timer)
-        }
-    }, [isOpenCreateNewChat]);
-
-    const scrollBar = !device ? scrollBarStyle : {};
-
-    const sortedChats = chats?.sort((a: IConversation, b: IConversation) => {
-        const dateA = new Date(a?.lastMessage?.updatedAt as Date || a?.createdAt)?.getTime();
-        const dateB = new Date(b?.lastMessage?.updatedAt as Date || b?.createdAt)?.getTime();
-
-        return dateA >= dateB ? -1 : 1;
-    });
-
-    return (
-        <Box sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 1,
-            width: '100%',
-            position: {lg: 'relative'}
-        }}>
-            <FormControl
-                fullWidth
-            >
-                <TextField fullWidth variant={"outlined"} color={"secondary"}
-                           sx={{
-                               fontSize: {xs: '10px', sm: '16px'},
-                               "> div": {
-                                   borderRadius: '30px',
-                               },
-                               "& div input": {
-                                   pr: '30px'
-                               }
-                           }}
-                           size="small"
-                           placeholder={'Search'}
-                           value={title ? title : ""}
-                           onChange={(e) => {
-                               setTitle(e.target.value)
-                           }}/>
-            </FormControl>
-            {
-                isLoading && chats?.length <= 0 ?
-                    <Loading height={'200px'}/>
-                    : isError ? <div>Error</div> :
-                        <Box sx={{
-                            overflowX: 'hidden',
-                            overflowY: 'auto',
-                            WebkitOverflowScrolling: 'touch',
-                            height: 'fit-content',
-                            "@media screen and (min-width: 1200px)": {
-                                height: 'calc(100vh - 175px)',
+        return (
+            <Box sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 1,
+                height: '100%',
+                width: '100%',
+                "@media screen and (min-width: 768px)": {
+                    position: 'relative'
+                },
+            }}>
+                <HeadSetupList/>
+                <FormControl
+                    fullWidth
+                    sx={{
+                        p: 1
+                    }}
+                >
+                    <TextField
+                        fullWidth
+                        variant={"outlined"}
+                        color={"secondary"}
+                        disabled={chatEditMode}
+                        sx={{
+                            borderRadius: '12px',
+                            bgcolor: 'modern.modern_4.main',
+                            fontSize: {xs: '10px', sm: '16px'},
+                            "> div": {
+                                borderRadius: '30px',
                             },
-                            ...scrollBar
-                        }}>
-                            <Box sx={{
-                                position: {xs: 'fixed', lg: 'absolute'},
-                                bottom: {xs: '20px', lg: '0'},
-                                zIndex: 1,
-                                right: {xs: '20px', lg: '0'},
-                                height: 'fit-content',
-                                width: 'fit-content',
-                            }}>
-                                <Button
-                                    color={'info'}
-                                    variant={'contained'}
+                            "& div input": {
+                                "&::placeholder": {
+                                    color: 'common.white'
+                                }
+                                // pr: '30px'
+                            },
+                            "& fieldset": {
+                                border: 'none !important'
+                            },
+                        }}
+                        InputProps={{
+                            startAdornment: <InputAdornment position={'start'}>
+                                <SearchRounded
                                     sx={{
-                                        textTransform: 'inherit',
-                                        fontSize: {xs: '16px', md: '18px'},
-                                        display: 'flex',
-                                        minWidth: '30px',
-                                        alignItems: 'center',
-                                        width: {xs: '48px', sm: '56px', md: '64px'},
-                                        height: {xs: '48px', sm: '56px', md: '64px'},
-                                        borderRadius: '50%',
-                                        p: 0
+                                        color: 'common.white'
                                     }}
-                                    onClick={() => setIsOpenCreateNewChat(true)}
-                                >
-                                    <Add fontSize={'large'}/>
-                                </Button>
-                                <CreateChatBox setNewChat={setCurrentChat} isOpen={isOpenCreateNewChat}
-                                               setIsOpen={setIsOpenCreateNewChat}/>
-                            </Box>
-                            <Box sx={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                gap: 1.5,
-                            }}>
+                                />
+                            </InputAdornment>
+                        }}
+                        size="small"
+                        placeholder={translate('buttons.search')}
+                        value={title ? title : ""}
+                        onChange={(e) => {
+                            setTitle(e.target.value)
+                        }}/>
+                </FormControl>
+                <ChatTabs
+                    currentTab={currentTab}
+                    setCurrentTab={setCurrentTab}
+                />
+                {
+                    chats?.length >= 0 &&
+                    <Box sx={{
+                        overflowX: 'hidden',
+                        overflowY: 'auto',
+                        px: 1,
+                        mt: '-10px',
+                        WebkitOverflowScrolling: 'touch',
+                        height: 'fit-content',
+                        "@media screen and (min-width: 1200px)": {
+                            height: '100%',
+                            maxHeight: 'calc(100vh - 225px)',
+                        },
+                        ...scrollBar,
+                        "& ul": {
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: 0.5,
+                        }
+                    }}>
+                        <Reorder.Group
+                            axis="y"
+                            values={ids}
+                            onReorder={setIds}
+                            style={{
+                                paddingLeft: 0
+                            }}
+                        >
+                            <AnimatePresence
+                                initial={false}
+                            >
                                 {
-                                    sortedChats?.map((item: IConversation) => (
-                                            <SwipeComponent
-                                                uniqueKey={item?._id}
-                                                key={item?._id}
-                                                isSwipeable={false}
-                                                isSwipeRight={false}
-                                                isSwipeLeft={false}
-                                            >
-                                                <Box
-                                                    onClick={(event) => {
-                                                        event.preventDefault();
-                                                        event.stopPropagation();
-                                                        setCurrentChat(item)
-                                                        setOpenDrawer(true)
-                                                        setSearchParams({'conversationId': item?._id})
-                                                    }}
-                                                >
-                                                    <ListChatCard
-                                                        conversation={item}
-                                                    />
-                                                </Box>
-                                            </SwipeComponent>
-                                        )
+                                    ids?.length > 0 && ids?.map((newOrderChat, i) => {
+                                            const item = chats?.find((chat) => chat?._id === newOrderChat);
+                                            if (!item) {
+                                                return;
+                                            }
+                                            return (
+                                                <ListChatCard
+                                                    index={i}
+                                                    key={item?._id}
+                                                    handleDeleteChat={handleDeleteChat}
+                                                    conversation={item}
+                                                    isSelectedChat={conversationId === item?._id}
+                                                />
+                                            )
+                                        }
                                     )
                                 }
-                                <MoreButton
-                                    total={total}
-                                    fetchNextPage={fetchNextPage}
-                                    isFetchingNextPage={isFetchingNextPage}
-                                    hasNextPage={hasNextPage && total !== dbChats?.length}
-                                />
-                            </Box>
-                        </Box>
-            }
-        </Box>
-    );
-};
+                            </AnimatePresence>
+                        </Reorder.Group>
+                    </Box>
+                }
+                <MoreButton
+                    total={total}
+                    fetchNextPage={fetchNextPage}
+                    isFetchingNextPage={isFetchingNextPage}
+                    hasNextPage={hasNextPage && total !== dbChats?.length}
+                />
+                <CreateChatBtn/>
+            </Box>
+        )
+            ;
+    }
+;
 export default ListChats;

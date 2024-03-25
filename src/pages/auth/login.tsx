@@ -45,19 +45,16 @@ const Login = () => {
         refineCoreProps: {
             resource: 'auth/login',
             action: 'create',
-            meta: {
-                headers: {
-                    "User-Agent": window.navigator.userAgent
-                }
-            },
+            mutationMode: "optimistic",
             onMutationError: (data) => {
                 setError(data?.response?.data)
             },
             onMutationSuccess: (data) => {
                 const dataRes = data?.data as IData;
-                const user = dataRes?.user ? parseJwt(dataRes?.user) : null
+                const user = dataRes?.user ? parseJwt(dataRes?.user) : null;
+                console.log(user)
                 if (user?.isActivated) {
-                    login(dataRes)
+                    return login(dataRes)
                 }
             },
             successNotification: (data: any) => {
@@ -293,7 +290,7 @@ const Login = () => {
                 <OrPart
                     githubType={'login_github'}
                     googleType={'login'} googleText={'signin_with'} facebookType={'login'}
-                        facebookText={'signin_with'}/>
+                    facebookText={'signin_with'}/>
                 <Grid container sx={{
                     display: 'flex',
                     mt: 4,

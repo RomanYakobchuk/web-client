@@ -115,7 +115,7 @@ const FacebookAuth: FC<IProps> = ({type, text, isUserAggre}: IProps) => {
                             gap: '16px',
                             textTransform: 'inherit',
                             p: '5px',
-                            fontSize: {sm: '20px'},
+                            fontSize: {md: '20px'},
                             "& svg": {
                                 fontSize: '40px'
                             }

@@ -33,7 +33,7 @@ const CustomOpenContentBtn = ({children, openEndIcon, closeEndIcon, openText, cl
                 width: '100%',
                 borderRadius: '5px',
                 bgcolor: 'common.black',
-                boxShadow: `0px 0px 5px 1px ${mode === 'dark' ? "#1d1d1d" : "#f1f1f1"}`,
+                boxShadow: `0px 0px 5px 3px ${mode === 'dark' ? "#1d1d1d" : "#cccccc"}`,
                 "& button.handle-change-open-state": {
                     textTransform: 'inherit',
                     bgcolor: 'transparent',

@@ -1,14 +1,15 @@
 import React, {Dispatch, SetStateAction, useContext} from "react";
 import {Box, Grid, SxProps} from "@mui/material";
 
-import {PropertyProps} from "@/interfaces/common";
+import {IEstablishment} from "@/interfaces/common";
 import {Variant1EstablishmentCard} from "../../../index";
 import {VariantContext} from "@/settings/variantEstablishment";
-import Variant2EstablishmentCard from "../../cards/variant2EstablishmentCard";
+import EstablishmentCard from "../../../cards/EstablishmentCard";
 import {useMobile} from "@/hook";
+import {For} from "million/react";
 
 interface IProps {
-    items: PropertyProps[],
+    items: IEstablishment[],
     setIsOpen?: Dispatch<SetStateAction<boolean>>,
     numberOfColumnsByWidth?: number
 }
@@ -49,8 +50,9 @@ const PropertiesList = ({items, setIsOpen, numberOfColumnsByWidth}: IProps) => {
             <Box sx={{
                 ...style
             }}>
-                {
-                    items.map((establishment: PropertyProps) => {
+                <For each={items}>
+                    {
+                        (establishment: IEstablishment) => {
                             if (variantShowItems?.establishment === 'variant_2') {
                                 return (
                                     <Box
@@ -65,7 +67,7 @@ const PropertiesList = ({items, setIsOpen, numberOfColumnsByWidth}: IProps) => {
                                             position: 'relative',
                                         }}
                                     >
-                                        <Variant2EstablishmentCard establishment={establishment}/>
+                                        <EstablishmentCard establishment={establishment}/>
                                     </Box>
                                 )
                             }
@@ -97,8 +99,8 @@ const PropertiesList = ({items, setIsOpen, numberOfColumnsByWidth}: IProps) => {
                                 </Grid>
                             )
                         }
-                    )
-                }
+                    }
+                </For>
             </Box>
         </Box>
     );

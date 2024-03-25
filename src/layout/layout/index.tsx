@@ -26,6 +26,8 @@ import {FloatButton} from "antd";
 import EditNoteRoundedIcon from '@mui/icons-material/EditNoteRounded';
 import {CAPL, CHATS, CREATE} from "@/config/names";
 
+import {SolarSystem} from "@/layout/layout/solarSystem";
+
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -46,7 +48,7 @@ export const Layout: React.FC<LayoutProps> = ({
     const {device} = useMobile();
     const {styles} = useSchema();
     const {user} = useUserInfo();
-    const {mode} = useContext(ColorModeContext);
+    const {mode, collapsed} = useContext(ColorModeContext);
     const {open, close} = useNotification();
     const navigate = useNavigate();
     const {pathname} = useLocation();
@@ -145,6 +147,8 @@ export const Layout: React.FC<LayoutProps> = ({
                     scrollBehavior: 'smooth',
                     gap: styles?.gapS,
                     height: '100%',
+                    position: 'relative',
+                    bgcolor: 'common.black',
                 }}
             >
                 {
@@ -152,29 +156,26 @@ export const Layout: React.FC<LayoutProps> = ({
                         <HeaderToRender/>
                     )
                 }
+                <SolarSystem timer={1000 * 60 * 5} speed={2}/>
                 <Box
                     ref={ref}
                     component="main"
                     id={'mainLayout'}
                     sx={{
+                        position: 'relative',
+                        maxWidth: {xs: '100vw', md: `calc(${collapsed ? '100vw - 64px' : '100vw - 200px'})`},
                         height: styles.heightLayoutS,
                         overflowY: 'auto',
                         overflowX: 'hidden',
+                        // bgcolor: 'modern.modern_4.main',
+                        transition: '200ms linear',
                         borderRadius: styles.borderRadiusS,
-                        // background: 'rgb(85,84,107)',
-                        backgroundSize: '300% 300%',
-                        backgroundImage: mode === 'dark'
-                            ? 'radial-gradient(circle, rgba(32,31,47,1) 0%, rgba(58,58,65,1) 20%, rgba(82,79,98,1) 40%, rgba(55,52,73,1) 60%, rgba(66,62,78,1) 80%, rgba(31,30,33,1) 100%)'
-                            // ? 'linear-gradient(180deg, rgba(32,31,47,1) 0%, rgba(58,58,65,1) 20%, rgba(82,79,98,1) 40%, rgba(55,52,73,1) 60%, rgba(66,62,78,1) 80%, rgba(31,30,33,1) 100%)'
-                            : 'radial-gradient(circle, rgba(249,249,249,1) 0%, rgb(158 185 235) 20%, rgba(235,234,242,1) 40%, rgb(157 188 227) 60%, rgba(237,233,244,1) 80%, rgba(234,232,237,1) 100%)',
-                        // : 'linear-gradient(180deg, rgba(249,249,249,1) 0%, rgba(236,236,245,1) 20%, rgba(235,234,242,1) 40%, rgba(246,246,246,1) 60%, rgba(237,233,244,1) 80%, rgba(234,232,237,1) 100%)',
-                        // WebkitAnimation: 'bgcolorGradientAnimation320s ease infinite',
-                        // MozAnimation: 'bgcolorGradientAnimation 30s ease infinite',
-                        // animation: 'bgcolorGradientAnimation 30s ease infinite',
+                        // backgroundSize: '300% 300%',
+                        // backgroundImage: mode === 'dark'
+                        //     ? 'radial-gradient(circle, rgba(32,31,47,1) 0%, rgba(58,58,65,1) 20%, rgba(82,79,98,1) 40%, rgba(55,52,73,1) 60%, rgba(66,62,78,1) 80%, rgba(31,30,33,1) 100%)'
+                        //     : 'radial-gradient(circle, rgba(249,249,249,1) 0%, rgb(158 185 235) 20%, rgba(235,234,242,1) 40%, rgb(157 188 227) 60%, rgba(237,233,244,1) 80%, rgba(234,232,237,1) 100%)',
                         ...someStyle,
-                        // WebkitOverflowScrolling: 'touch'
-                        // paddingTop: schema === 'schema_1' ? '80px' : '0',
-                        "& div.MuiInputBase-root": {
+                        "& div.MuiInputBase-root:not(.nextui)": {
                             borderRadius: '7px',
                             color: 'common.white',
                             "&::placeholder": {
@@ -184,13 +185,24 @@ export const Layout: React.FC<LayoutProps> = ({
                                 borderColor: `${mode === 'dark' ? '#fff' : '#000'} !important`
                             }
                         },
-                        "& .ant-select-auto-complete input": {
+                        "& .ant-select-auto-complete:not(.nextui) input:not(.nextui)": {
                             borderColor: 'common.white'
                         },
-                        '& label': {
+                        "& .nextui div[data-slot='input-wrapper']": {
+                            bgcolor: 'common.black',
+                            color: 'common.white',
+                            "*": {
+                                color: 'common.white',
+                            },
+                            "& input, label": {
+                                color: 'common.white',
+                                border: 'transparent'
+                            }
+                        },
+                        '& label:not(.nextui)': {
                             color: 'secondary.main',
                         },
-                        '& .MuiOutlinedInput-root': {
+                        '& .MuiOutlinedInput-root:not(.nextui)': {
                             '& fieldset': {
                                 borderColor: 'common.white',
                             },
@@ -201,7 +213,7 @@ export const Layout: React.FC<LayoutProps> = ({
                                 borderColor: 'common.white',
                             },
                         },
-                        "& label, & label.Mui-focused": {
+                        "& label:not(.nextui), & label.Mui-focused": {
                             color: 'common.white'
                         },
                         "& *:not(button).Mui-disabled": {
@@ -220,7 +232,10 @@ export const Layout: React.FC<LayoutProps> = ({
                         "& div.w-md-editor": {
                             minHeight: '250px !important'
                         },
-                        "& button > div.ant-float-btn-body": {
+                        "& .MuiDivider-root::before, & .MuiDivider-root::after":{
+                            borderTop: 'thin solid rgba(173, 215, 211, 1)'
+                        },
+                        "& button:not(.nextui) > div.ant-float-btn-body": {
                             background: mode === 'light' ? '#f1f1f1' : '#070707',
                             color: mode === 'dark' ? '#f1f1f1' : '#070707',
                             transition: '0.2s linear',
@@ -251,6 +266,7 @@ export const Layout: React.FC<LayoutProps> = ({
                                     color: 'common.white'
                                 }}/>}
                                 style={{
+                                    zIndex: 999,
                                     width: '48px',
                                     height: '48px',
                                 }}
@@ -258,7 +274,11 @@ export const Layout: React.FC<LayoutProps> = ({
                         )
                     }
                     <Outlet/>
-                    <FooterToRender/>
+                    {
+                        currentPathName !== `${CHATS}` && (
+                            <FooterToRender/>
+                        )
+                    }
                 </Box>
             </Box>
             {OffLayoutArea && <OffLayoutArea/>}

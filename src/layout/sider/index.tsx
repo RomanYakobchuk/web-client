@@ -24,7 +24,7 @@ import {SchemaContext} from "@/settings/schema";
 export const Sider: typeof DefaultSider = ({render}) => {
 
     const {schema} = useContext(SchemaContext);
-    const {open: openSider, setOpen: setOpenSider, collapsed, setCollapsed} = useContext(ColorModeContext);
+    const {mode, open: openSider, setOpen: setOpenSider, collapsed, setCollapsed} = useContext(ColorModeContext);
 
     const drawerWidth = () => {
         if (collapsed) return 64;
@@ -73,7 +73,7 @@ export const Sider: typeof DefaultSider = ({render}) => {
 
     const renderTreeView = (tree: ITreeMenu[], selectedKey: string) => {
         return tree.map((item: ITreeMenu) => {
-            const {name, children, meta: {icon, parent: parentName}, route}: any = item;
+            const {name, children, list, meta: {icon, parent: parentName}, route}: any = item;
             const isOpen = open[name || ""] || false;
             const isSelected = route === path;
             const isNested = !(parentName === undefined);
@@ -81,8 +81,8 @@ export const Sider: typeof DefaultSider = ({render}) => {
             if (children.length > 0) {
                 return (
                     <CanAccess
-                        key={name}
-                        resource={name.toLowerCase()}
+                        key={list}
+                        resource={list.toLowerCase()}
                         action="list"
                         params={{
                             resource: item,
@@ -275,6 +275,8 @@ export const Sider: typeof DefaultSider = ({render}) => {
         </MuiList>
     );
 
+    const drawerBgColor = mode === 'dark' ? '#2f2d3d' : '#fafafa'
+
     return (
         <Box>
             <Box
@@ -310,7 +312,8 @@ export const Sider: typeof DefaultSider = ({render}) => {
                             width: drawerXsWidth,
                             transition:
                                 "width 200ms cubic-bezier(0.4, 0, 0.6, 1) 0ms",
-                            bgcolor: 'common.black',
+                            // bgcolor: 'common.black',
+                            bgcolor: drawerBgColor,
                             backdropFilter: 'blur(3px)',
                             margin: styles.marginSiderS,
                             borderRight: '1px solid silver',
@@ -365,7 +368,8 @@ export const Sider: typeof DefaultSider = ({render}) => {
                         "& .MuiDrawer-paper": {
                             // borderRight: schema === 'schema_1' ? '1px dashed silver' : '',
                             width: drawerWidth,
-                            bgcolor: 'common.black',
+                            // bgcolor: 'common.black',
+                            bgcolor: drawerBgColor,
                             overflow: "hidden",
                             transition:
                                 "width 200ms cubic-bezier(0.4, 0, 0.6, 1) 0ms",

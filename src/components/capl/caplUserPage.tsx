@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {Box, Button, Typography} from "@mui/material";
 import {CanAccess, CrudFilter, useTable, useTranslate} from "@refinedev/core";
 import {useNavigate} from "react-router-dom";
@@ -29,10 +29,7 @@ const CaplUserPage = () => {
     const navigate = useNavigate();
     const {width} = useMobile();
 
-    const [sortBy, setSortBy] = useState("");
-    const [type, setType] = useState<string>("")
-    const [searchValue, setSearchValue] = useState<string>("");
-    const {
+   const {
         tableQueryResult: {data, isLoading, isError},
         sorters,
         setSorters,
@@ -61,16 +58,6 @@ const CaplUserPage = () => {
     // }, [searchValue]);
 
 
-    // useEffect(() => {
-    //     setFilters([
-    //         {
-    //             value: type,
-    //             field: 'active',
-    //             operator: "eq"
-    //         }
-    //     ])
-    // }, [type]);
-
     const currentFilterValues = useMemo(() => {
         const logicalFilters = filters!?.flatMap((item: CrudFilter) =>
             "field" in item ? item : [],
@@ -86,6 +73,19 @@ const CaplUserPage = () => {
             //     logicalFilters?.find((item: any) => item.field === "city")?.value || ""
         };
     }, [filters]);
+    const [sortBy, setSortBy] = useState("");
+    const [type, setType] = useState<string>(currentFilterValues.active || "")
+    const [searchValue, setSearchValue] = useState<string>(currentFilterValues.search || "");
+
+    useEffect(() => {
+        setFilters([
+            {
+                value: type,
+                field: 'active',
+                operator: "eq"
+            }
+        ])
+    }, [type]);
     return (
         <Box sx={{
             width: '100%'
@@ -98,9 +98,9 @@ const CaplUserPage = () => {
                     alignItems: 'center',
                 }}>
                     <Button
-                        variant={'contained'}
+                        variant={'text'}
                         startIcon={<Edit/>}
-                        color={"primary"}
+                        color={"secondary"}
                         sx={{
                             textTransform: 'inherit',
                             fontSize: {xs: '14px', md: '16px'},

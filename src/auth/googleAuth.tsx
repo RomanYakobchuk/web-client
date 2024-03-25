@@ -82,7 +82,7 @@ const GoogleButton = ({type, text = "signin_with", isUserAggre}: IProps): JSX.El
                     display: 'flex',
                     gap: 2,
                     alignItems: 'center',
-                    fontSize: {sm: '20px'},
+                    fontSize: {md: '20px'},
                     textTransform: 'inherit',
                     width: '100%',
                     minWidth: '48px',

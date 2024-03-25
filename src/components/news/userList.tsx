@@ -51,10 +51,10 @@ const UserList = () => {
 
     return (
         <Box sx={{
-            maxWidth: {xs: '95%', lg: '1100px'},
+            maxWidth: {xs: '95%', lg: '1400px'},
             margin: '0 auto'
         }}>
-            <FullPageLoading isOpen={isFetching}/>
+            {/*<FullPageLoading isOpen={isFetching}/>*/}
             <Box sx={{
                 display: 'flex',
                 flexDirection: 'column',

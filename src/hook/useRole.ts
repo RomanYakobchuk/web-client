@@ -1,11 +1,11 @@
 import {useEffect, useState} from "react";
 import {parseJwt} from "@/utils";
-import {ProfileProps, PropertyProps} from "@/interfaces/common";
+import {ProfileProps, IEstablishment} from "@/interfaces/common";
 
 export const useRole = () => {
     const [role, setRole] = useState<"admin" | "manager" | 'user' | string>("");
     const [user, setUser] = useState<ProfileProps>({} as ProfileProps);
-    // const [establishment, setestablishment] = useState<PropertyProps[]>([]);
+    // const [establishment, setestablishment] = useState<IEstablishment[]>([]);
     // useEffect(() => {
     //     if (user?._id && user?.status === 'manager') {
     //         const x = async () => {

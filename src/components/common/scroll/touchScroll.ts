@@ -1,4 +1,4 @@
-export const touchScroll = ($bind = '') => {
+export const touchScroll = ($bind = '', scrollSpeed: number = 3) => {
     const slider = document.querySelector($bind) as HTMLElement | null;
     let isDown = false;
     let startX: number;
@@ -28,7 +28,7 @@ export const touchScroll = ($bind = '') => {
             if (!isDown) return;
             e.preventDefault();
             const x = e.pageX - slider.offsetLeft;
-            const walk = (x - startX) * 3; //scroll-fast
+            const walk = (x - startX) * scrollSpeed; //scroll-fast
             let prevScrollLeft = slider.scrollLeft;
             slider.scrollLeft = scrollLeft - walk;
             velX = slider.scrollLeft - prevScrollLeft;

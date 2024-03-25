@@ -8,5 +8,5 @@ export type TChatTable = {
 }
 
 export const chatsSchema = {
-    chats: '_id, members, lastMessage, chatInfo, createdAt, updatedAt'
+    chats: '_id, members, lastMessage, depend.item, depend.id, createdAt, updatedAt'
 }

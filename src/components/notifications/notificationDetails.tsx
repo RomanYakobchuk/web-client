@@ -3,17 +3,17 @@ import {useShow, useTranslate} from "@refinedev/core";
 import {useEffect, useState} from "react";
 import {Box} from "@mui/material";
 
-import {INotification, ProfileProps, PropertyProps, IReserve, IReviews, IMessage, INews} from "@/interfaces/common";
+import {INotification, ProfileProps, IEstablishment, IReserve, IReviews, IMessage, INews} from "@/interfaces/common";
 import {NewReservation, NewNews} from "./components";
 import {ShowTimeComponent} from "@/components/time";
-import {DetailsSkeleton} from "@/components/notifications/components/detailsSkeleton";
+import {LoadingShowNotification} from "@/components/loading/loadingShowNotification";
 
 type TProps = {
     id: string
 }
 
 type NotificationDetails = {
-    typeNotification: PropertyProps | ProfileProps | IReviews | IReserve | IMessage | INews,
+    typeNotification: IEstablishment | ProfileProps | IReviews | IReserve | IMessage | INews,
     notification: INotification
 }
 
@@ -54,7 +54,7 @@ const NotificationDetails = ({id}: TProps) => {
         >
             {
                 isLoading
-                    ? <DetailsSkeleton/>
+                    ? <LoadingShowNotification/>
                     : <>
                         <Box sx={{
                             fontSize: {xs: '20px', md: '24px'},

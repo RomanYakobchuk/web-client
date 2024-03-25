@@ -1,12 +1,12 @@
-import Dexie from "dexie";
 import {useLiveQuery} from "dexie-react-hooks"
+import {liveQuery} from "dexie"
 
 import {db} from "./indexedDBInit";
 
 
 interface ITableConfig<T> {
     tableName: string;
-    params?: Partial<T>
+    params?: T & {} | {}
 }
 export interface ITable<T> {
     // data: (params?: Partial<T>) => T[] | undefined,
@@ -14,31 +14,18 @@ export interface ITable<T> {
     add: (item: T) => Promise<string>,
     update: (id: string, updatedItem: Partial<T>) => Promise<void>,
     remove: (id: string) => Promise<void>,
+    clearTable: () => Promise<void>,
     findOne: (query: {[keyPath: string]: any}) => Promise<T | undefined>,
     addMany: (items: T[]) => Promise<string[]>
 }
 
-const useTableDb = <T extends {_id: string}>(config: ITableConfig<T>): ITable<T> => {
-
+const useTableDb = <T extends {_id: string}>({tableName, params}: ITableConfig<T>): ITable<T> => {
     db.open();
-    // const db = new Dexie('capl-db');
-    //
-    // const storeConfig: Record<string, string> = {
-    //     [config.tableName]: `${String(config.keyPath)}, ${config.fields.join(', ')}`
-    // }
-    //
-    // db.version(1).stores(storeConfig);
 
-    const table = db.table<T, string>(config.tableName);
+    const table = db.table<T, string>(tableName);
     const data = useLiveQuery(() => {
-        return config?.params ? table.where(config.params).toArray() : table.toArray();
-    }, [config?.params])
-    // const data = (params?: Partial<T>) => {
-    //     return params ? table.where(params).toArray() : table.toArray();
-    // };
-
-        // useLiveQuery(() => {
-    // }, []);
+        return params ? table.where(params).toArray() : table.toArray();
+    }, [])
 
     const add = (item: T) => table.add(item).then(String);
 
@@ -50,8 +37,9 @@ const useTableDb = <T extends {_id: string}>(config: ITableConfig<T>): ITable<T>
     };
 
     const remove = (id: string) => table.delete(id);
+    const clearTable = () => table.clear();
 
-    const findOne = async (query: { [keyPath: string]: any }) => table.where(query).first();
+    const findOne = async (query: { [keyPath: string]: any }) => table?.where(query)?.first() || undefined;
 
     const addMany = async (items: T[]) => {
         const addedIds = await table.bulkPut(items, {allKeys: true});
@@ -64,7 +52,8 @@ const useTableDb = <T extends {_id: string}>(config: ITableConfig<T>): ITable<T>
         remove,
         update,
         addMany,
-        findOne
+        findOne,
+        clearTable
     }
 }
 

@@ -20,10 +20,23 @@ type TProps = {
     breadCrumbItems?: ItemType[],
     headerTitle?: string,
     saveButtonText?: string,
-    maxWidth?: string
+    maxWidth?: string,
+    isShowSaveButton?: boolean,
+    customHandleOnCancel?: () => void
 }
 
-const CustomCreate = ({isLoading, children, bgColor, onClick, breadCrumbItems, headerTitle, saveButtonText, maxWidth}: TProps) => {
+const CustomCreate = ({
+                          isLoading,
+                          children,
+                          bgColor,
+                          onClick,
+                          breadCrumbItems,
+                          headerTitle,
+                          saveButtonText,
+                          maxWidth,
+                          isShowSaveButton = true,
+                          customHandleOnCancel
+                      }: TProps) => {
     const {mode} = useContext(ColorModeContext);
     const translate = useTranslate();
     const navigate = useNavigate();
@@ -34,7 +47,7 @@ const CustomCreate = ({isLoading, children, bgColor, onClick, breadCrumbItems, h
                 bgcolor: 'transparent !important',
                 borderTop: 'unset !important'
             },
-            "& li span div.ant-space": {
+            "& li:not(.nextui) span div.ant-space": {
                 mr: 'unset !important',
                 float: 'unset !important',
                 width: '100% !important',
@@ -76,8 +89,11 @@ const CustomCreate = ({isLoading, children, bgColor, onClick, breadCrumbItems, h
                         display: 'flex',
                         gap: 2,
                         flexWrap: 'wrap',
+                        alignItems: 'center',
+                        justifyContent: 'center',
                         "& button": {
-                            flex: '1 1 150px'
+                            flex: '1 1 150px',
+                            maxWidth: '400px'
                         }
                     }}>
                         <Button
@@ -88,12 +104,14 @@ const CustomCreate = ({isLoading, children, bgColor, onClick, breadCrumbItems, h
                                 alignItems: 'center',
                                 justifyContent: 'center',
                             }}
-                            onClick={() => navigate(-1)}
+                            onClick={() => {
+                                customHandleOnCancel ? customHandleOnCancel() : navigate(-1)
+                            }}
                             icon={<Close/>}
                         >
                             {translate('buttons.cancel')}
                         </Button>
-                        {saveButtonProps && (
+                        {isShowSaveButton && saveButtonProps && (
                             <SaveButton size={"large"} style={{
                                 background: '#2874CB'
                             }} {...saveButtonProps} onClick={onClick}>{saveButtonText && saveButtonText}</SaveButton>

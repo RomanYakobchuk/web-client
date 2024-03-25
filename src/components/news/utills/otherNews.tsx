@@ -1,9 +1,10 @@
 import {useInfiniteList, useTranslate} from "@refinedev/core";
-import {INews} from "../../../interfaces/common";
-import Loading from "../../loading/loading";
 import {Box, Button} from "@mui/material";
-import NewsCard from "../cards/NewsCard";
 import React from "react";
+
+import {INews} from "@/interfaces/common";
+import Loading from "../../loading/loading";
+import NewsCard from "@/components/cards/newsCards/NewsCard";
 
 interface IProps {
     establishmentId: string,

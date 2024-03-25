@@ -1,15 +1,16 @@
 import {useList, useTranslate} from "@refinedev/core";
-import React, {Dispatch, SetStateAction, useContext, useEffect, useState} from "react";
-import {AutoComplete, Image, Input, Typography as TypographyAntd} from "antd";
-import {Box, FormControl, FormHelperText, IconButton, Typography} from "@mui/material";
-import {Clear, PlaceOutlined} from "@mui/icons-material";
+import React, {Dispatch, SetStateAction, useContext, useEffect, useRef, useState} from "react";
+import {AutoComplete, Input, Typography as TypographyAntd} from "antd";
+import {Box, FormControl, FormHelperText, IconButton} from "@mui/material";
+import {Clear} from "@mui/icons-material";
 import {useDebounce} from "use-debounce";
 
-import {INews, IOptions, PropertyProps} from "@/interfaces/common";
+import {INews, IOptions, IEstablishment} from "@/interfaces/common";
 import {ColorModeContext} from "@/contexts";
 import {ESTABLISHMENT} from "@/config/names";
 import {ChooseSavedEstablishment} from "@/components/common/search/establishment/chooseSavedEstablishment";
-import {useUserInfo} from "@/hook";
+import {useMobile, useUserInfo} from "@/hook";
+import {CaplEstablishmentInfo} from "@/components/capl/details/caplEstablishmentInfo";
 
 const {Text} = TypographyAntd;
 const renderTitle = (title: string) => {
@@ -20,7 +21,7 @@ const renderTitle = (title: string) => {
     );
 };
 
-const renderItem = (title: string, street: string, photo: string, _id: string, allInfo: PropertyProps) => {
+const renderItem = (title: string, street: string, photo: string, _id: string, allInfo: IEstablishment) => {
     return {
         value: title,
         allInfo,
@@ -64,8 +65,8 @@ const renderItem = (title: string, street: string, photo: string, _id: string, a
 };
 
 interface IProps {
-    searchEstablishment: PropertyProps,
-    setSearchEstablishment: Dispatch<SetStateAction<PropertyProps | null>>,
+    searchEstablishment: IEstablishment | null,
+    setSearchEstablishment: Dispatch<SetStateAction<IEstablishment | null>>,
     typeSearch: 'userEstablishments' | string,
     showEstablishmentInfo?: boolean,
     showEstablishmentInfoLabel?: boolean,
@@ -89,10 +90,14 @@ const SearchEstablishments = ({
 
     const {mode} = useContext(ColorModeContext);
     const {user} = useUserInfo();
+    const {width} = useMobile();
     const translate = useTranslate();
 
+    const parentRef = useRef<null | HTMLDivElement>(null);
+
+    const [parentWidth, setParentWidth] = useState<number>(300);
     const [searchPlaceInput, setSearchPlaceInput] = useState<string>('');
-    const [data, setData] = useState<PropertyProps[]>([] as PropertyProps[]);
+    const [data, setData] = useState<IEstablishment[]>([] as IEstablishment[]);
     const [searchInputValue, setSearchInputValue] = useState<string>('');
     const [options, setOptions] = useState<IOptions[]>([]);
     const [currentEstablishment, setCurrentEstablishment] = useState<{ title: string, _id: string } | null>(null);
@@ -107,7 +112,7 @@ const SearchEstablishments = ({
             setCurrentEstablishment(searchEstablishment)
         }
     }, [searchEstablishment]);
-    const {refetch,} = useList<PropertyProps>({
+    const {refetch,} = useList<IEstablishment>({
         resource: `${ESTABLISHMENT}/${typeSearch}`,
         filters: [{field: 'title', operator: 'eq', value: value}],
         queryOptions: {
@@ -158,7 +163,7 @@ const SearchEstablishments = ({
     }, [currentEstablishment?.title]);
 
     const handleClear = () => {
-        if (isCanClear) {
+        if (isCanClear && searchEstablishment) {
             setCurrentEstablishment(null);
             setSearchEstablishment(null);
             setSearchPlaceInput("");
@@ -166,18 +171,24 @@ const SearchEstablishments = ({
         }
     }
 
+    useEffect(() => {
+        if (parentRef.current) {
+            console.log(parentRef?.current?.offsetWidth)
+            setParentWidth(parentRef.current?.offsetWidth)
+        }
+    }, [parentRef, isChooseFromSaved, searchEstablishment, width]);
     return (
         <Box sx={{
             width: '100%',
             display: 'flex',
-            flexDirection: {xs: 'column', sm: 'row'},
+            flexDirection: {xs: 'column', md: 'row'},
             gap: showEstablishmentInfo ? 2 : 0,
 
         }}>
             {
                 !isOnlyShowInfo && (
                     <FormControl
-                        id={'searchEstablishmentFromControl'}
+                        // id={'searchEstablishmentFromControl'}
                         fullWidth
                     >
                         {
@@ -195,6 +206,7 @@ const SearchEstablishments = ({
                             )
                         }
                         <Box
+                            ref={parentRef}
                             sx={{
                                 width: '100%',
                                 display: 'flex',
@@ -216,7 +228,7 @@ const SearchEstablishments = ({
                                 onSearch={onSearch}
                                 onSelect={(selectValue, option) => {
                                     const {allInfo} = option;
-                                    setSearchEstablishment((prev) => ({...prev as PropertyProps, ...allInfo}))
+                                    setSearchEstablishment((prev) => ({...prev as IEstablishment, ...allInfo}))
                                     setSearchPlaceInput(selectValue);
                                     setSearchInputValue(selectValue)
                                 }}
@@ -250,9 +262,10 @@ const SearchEstablishments = ({
                                     mt: 1
                                 }}>
                                     <ChooseSavedEstablishment
-                                        parentQuerySelectorForSetWidth={'#searchEstablishmentFromControl'}
+                                        parentWidth={parentWidth}
+                                        // parentQuerySelectorForSetWidth={'#searchEstablishmentFromControl'}
                                         checkedItem={searchEstablishment}
-                                        setCheckedItem={setSearchEstablishment as Dispatch<SetStateAction<PropertyProps | null | INews>>}
+                                        setCheckedItem={setSearchEstablishment as Dispatch<SetStateAction<IEstablishment | null | INews>>}
                                         userId={user?._id}
                                     />
                                 </Box>
@@ -280,74 +293,7 @@ const SearchEstablishments = ({
                         }
                         {
                             searchEstablishment?._id && (
-                                <Box sx={{
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    gap: 1
-                                }}>
-                                    <Box sx={{
-                                        width: '100%',
-                                        maxWidth: '350px',
-                                        height: {xs: '200px', sm: '250px', md: '300px'},
-                                        "& img": {
-                                            borderRadius: '10px',
-                                            objectFit: 'cover'
-                                        }
-                                    }}>
-                                        {
-                                            searchEstablishment?.pictures?.length > 0 && (
-                                                <Image
-                                                    src={searchEstablishment?.pictures[0]?.url}
-                                                    width={'100%'}
-                                                    height={'100%'}
-                                                />
-                                            )
-                                        }
-                                    </Box>
-                                    <Box sx={{
-                                        color: 'common.white',
-                                        width: '100%',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: 2
-                                    }}>
-                                        <Typography
-                                            sx={{
-                                                fontSize: {xs: '18px', md: '20px'},
-                                                fontWeight: 600
-                                            }}
-                                        >
-                                            {searchEstablishment?.title}
-                                        </Typography>
-                                        <span>
-                                            {translate(`home.sortByType.${searchEstablishment?.type}`)}
-                                        </span>
-                                    </Box>
-                                    <Box sx={{
-                                        color: 'common.white',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: 1
-                                    }}>
-                                        <PlaceOutlined
-                                            sx={{
-                                                fontSize: '30px'
-                                            }}
-                                        />
-                                        <Box sx={{
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            gap: 0.5
-                                        }}>
-                                    <span>
-                                        {searchEstablishment?.place?.city}
-                                    </span>
-                                            <span>
-                                        {searchEstablishment?.place?.address}
-                                    </span>
-                                        </Box>
-                                    </Box>
-                                </Box>
+                                <CaplEstablishmentInfo establishment={searchEstablishment}/>
                             )
                         }
                     </FormControl>

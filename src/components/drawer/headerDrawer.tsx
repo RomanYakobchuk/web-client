@@ -11,9 +11,18 @@ type TProps = {
     button: ReactNode,
     anchor: "left" | "top" | "bottom" | "right",
     onClick?: () => void,
-    isForSwipe?: boolean
+    isForSwipe?: boolean,
+    isShowCloseButton?: boolean,
 }
-const HeaderDrawer = ({toggleDrawer, button, title, anchor, onClick, isForSwipe = false}: TProps) => {
+const HeaderDrawer = ({
+                          toggleDrawer,
+                          button,
+                          title,
+                          isShowCloseButton = true,
+                          anchor,
+                          onClick,
+                          isForSwipe = false
+                      }: TProps) => {
     const {width, device} = useMobile();
     return (
         <>
@@ -46,18 +55,22 @@ const HeaderDrawer = ({toggleDrawer, button, title, anchor, onClick, isForSwipe 
                         gap: 2
                     }}>
                         {button}
-                        <CloseOutlined
-                            sx={{
-                                cursor: 'pointer'
-                            }}
-                            onClick={(event) => {
-                                event.preventDefault();
-                                event.stopPropagation();
-                                toggleDrawer(false)
-                                if (onClick) {
-                                    onClick();
-                                }
-                            }}/>
+                        {
+                            isShowCloseButton && (
+                                <CloseOutlined
+                                    sx={{
+                                        cursor: 'pointer'
+                                    }}
+                                    onClick={(event) => {
+                                        event.preventDefault();
+                                        event.stopPropagation();
+                                        toggleDrawer(false)
+                                        if (onClick) {
+                                            onClick();
+                                        }
+                                    }}/>
+                            )
+                        }
                     </Box>
                 </Box>
             </StyledBox>
@@ -72,23 +85,27 @@ const HeaderDrawer = ({toggleDrawer, button, title, anchor, onClick, isForSwipe 
                         <span>
                         {title}
                         </span>
-                <IconButton
-                    sx={{
-                        position: 'absolute',
-                        top: '0',
-                        left: '0',
-                        cursor: 'pointer'
-                    }}
-                    onClick={(event) => {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        toggleDrawer(false)
-                        if (onClick) {
-                            onClick();
-                        }
-                    }}>
-                    <Close/>
-                </IconButton>
+                {
+                    isShowCloseButton && (
+                        <IconButton
+                            sx={{
+                                position: 'absolute',
+                                top: '0',
+                                left: '0',
+                                cursor: 'pointer'
+                            }}
+                            onClick={(event) => {
+                                event.preventDefault();
+                                event.stopPropagation();
+                                toggleDrawer(false)
+                                if (onClick) {
+                                    onClick();
+                                }
+                            }}>
+                            <Close/>
+                        </IconButton>
+                    )
+                }
             </Box>
         </>
     );

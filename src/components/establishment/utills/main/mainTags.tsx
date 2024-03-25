@@ -1,4 +1,4 @@
-import {PropertyProps} from "@/interfaces/common";
+import {IEstablishment} from "@/interfaces/common";
 import {Box, Chip, Typography} from "@mui/material";
 import {ESTABLISHMENT} from "@/config/names";
 import React from "react";
@@ -6,7 +6,7 @@ import {useTranslate} from "@refinedev/core";
 import {Link} from "react-router-dom";
 
 type TProps = {
-    tags: PropertyProps['tags']
+    tags: IEstablishment['tags']
 }
 export const MainTags = ({tags}: TProps) => {
     const translate = useTranslate();

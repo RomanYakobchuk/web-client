@@ -2,7 +2,9 @@ import {FC} from "react";
 
 export const Footer: FC = () => {
     return (
-        <div>
+        <div style={{
+            height: '200px'
+        }}>
             Footer
         </div>
     );

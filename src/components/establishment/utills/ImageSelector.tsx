@@ -224,6 +224,7 @@ const ImageSelector = ({
                         ...antdInputStyle
                     }}>
                         <Input
+                            size={'large'}
                             value={addUrl ?? ''}
                             placeholder={'Enter image url...'}
                             onChange={(event) => setAddUrl(event.target.value)}

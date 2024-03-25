@@ -1,5 +1,6 @@
 import {IFavPlaces} from "@/interfaces/types";
 import useTableDB, {ITable} from "@/indexedDB/useTableDB";
+import {db} from "@/indexedDB/indexedDBInit";
 
 type ISaved = IFavPlaces & {
     _id: string
@@ -15,6 +16,8 @@ interface IRes {
 
 const tableName = 'savedPlaces';
 const useSavedPlaces = (): IRes => {
+    db.open();
+
     const {data, add, update, remove, addMany, findOne} = useTableDB<ISaved>({
         tableName,
     });

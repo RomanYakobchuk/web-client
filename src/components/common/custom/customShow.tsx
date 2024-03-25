@@ -5,21 +5,23 @@ import {ArrowBackOutlined} from "@mui/icons-material";
 import {Box, Typography as MuiTypography} from "@mui/material";
 import {Breadcrumb} from "@refinedev/antd";
 import React, {ReactNode, useContext} from "react";
+import {Button} from "antd";
 
 import {ColorModeContext} from "@/contexts";
+import {TButtonVariant} from "@/interfaces/types"
 
 import './custom.css';
-import {Button} from "antd";
 
 type TProps = {
     isLoading: boolean,
     children: ReactNode,
     isShowButtons?: boolean,
     bgColor?: "transparent" | string,
-    maxWidth?: string
+    maxWidth?: string,
+    editButtonVariant?: TButtonVariant
 }
 
-const CustomShow = ({isLoading, children, isShowButtons, bgColor, maxWidth = '1100px'}: TProps) => {
+const CustomShow = ({isLoading, children, isShowButtons, bgColor, maxWidth = '1100px', editButtonVariant = 'outlined'}: TProps) => {
     const {mode} = useContext(ColorModeContext);
     const translate = useTranslate();
     const back = useBack();
@@ -36,7 +38,7 @@ const CustomShow = ({isLoading, children, isShowButtons, bgColor, maxWidth = '11
               }}
               headerButtons={isShowButtons ?
                   [
-                      <EditButton style={{textTransform: 'inherit', borderRadius: '7px'}} color={'secondary'} variant={'outlined'} key={'edit'}/>
+                      <EditButton style={{textTransform: 'inherit', borderRadius: '7px'}} color={'secondary'} variant={editButtonVariant} key={'edit'}/>
                   ] : []
               }
               headerProps={{

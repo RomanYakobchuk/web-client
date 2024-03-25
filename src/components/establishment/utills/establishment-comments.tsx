@@ -4,15 +4,15 @@ import React, {useEffect, useState} from "react";
 
 import CommentInput from "../../comments/comment-input";
 import {CommentsList, Loading} from "../../index";
-import {IComment, PropertyProps} from "@/interfaces/common";
+import {IComment, IEstablishment} from "@/interfaces/common";
 import ChooseManagerRole from "../../common/choose/chooseManagerRole";
 import {useLeaveManagerCommentAs} from "@/hook";
 import {IDataList} from "../../common/lists/comments-list";
-import MoreButton from "../../common/buttons/MoreButton";
+import MoreButton from "@/components/buttons/MoreButton";
 import {INewComment} from "../../comments/commentAnswers";
 
 type IProps = {
-    establishment: PropertyProps,
+    establishment: IEstablishment,
 }
 
 const EstablishmentComments = ({establishment}: IProps) => {
@@ -34,7 +34,7 @@ const EstablishmentComments = ({establishment}: IProps) => {
         fetchNextPage,
         isFetchingNextPage,
     } = useInfiniteList<IComment>({
-        resource: `comment/allByestablishmentId/${establishmentId}`,
+        resource: `comment/allByEstablishmentId/${establishmentId}`,
         pagination: {
             pageSize: 10
         },
@@ -66,7 +66,7 @@ const EstablishmentComments = ({establishment}: IProps) => {
                 gap: 2.5,
                 flex: 1,
                 position: 'relative',
-                maxWidth: {xs: '93vw', md: '100%'},
+                maxWidth: {xs: '95vw', md: '100%'},
                 width: '100%',
             }}
         >
@@ -108,8 +108,6 @@ const EstablishmentComments = ({establishment}: IProps) => {
                     )
                 }
                 <Box sx={{
-                    // border: '2px solid cornflowerblue',
-
                     maxWidth: '800px'
                 }}>
                     <CommentInput

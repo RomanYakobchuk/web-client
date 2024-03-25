@@ -27,7 +27,7 @@ export const Title: React.FC<TitleProps> = ({collapsed}) => {
                         alignItems: 'center',
                         gap: 1,
                     }}>
-                        <LottieComponent item={Logo} loop={false} size={30}/>
+                        <LottieComponent item={Logo} loop={true} size={30}/>
 
                         {/*<img src="/images/logo.png" alt="Refine" width={"28px"}/>*/}
                         <Typography sx={{
