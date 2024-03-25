@@ -8,10 +8,12 @@
 
 .carousel > button.react-multiple-carousel__arrow--left {
     left: 15px;
+    z-index: 100;
 }
 
 .carousel > button.react-multiple-carousel__arrow--right {
     right: 15px;
+    z-index: 100;
 }
 
 /*@media screen and (max-width: 500px){*/

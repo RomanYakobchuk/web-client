@@ -58,7 +58,7 @@
       "steps": {
         "first": "First",
         "second": "Second",
-        "third":"Third",
+        "third": "Third",
         "last": "Last"
       },
       "errors": {
@@ -99,6 +99,7 @@
     "confirmDelete": "Are you sure you want to delete {{value}}?"
   },
   "buttons": {
+    "join": "Join",
     "goTo": "Go to",
     "copy": "Copy",
     "share": "To share:",
@@ -132,7 +133,7 @@
     "clone": "Clone",
     "answer": "Answer",
     "submitting": "Submitting...",
-    "notAccessTitle": "You don't have permission to access",
+    "notAccessTitle": "You don`t have permission to access",
     "isPublished": "Published",
     "isDraft": "Expect",
     "isRejected": "Rejected",
@@ -368,13 +369,34 @@
       "workSchedule": {
         "title": "Work schedule",
         "dayName": {
-          "1": "Monday",
-          "2": "Tuesday",
-          "3": "Wednesday",
-          "4": "Thursday",
-          "5": "Friday",
-          "6": "Saturday",
-          "7": "Sunday"
+          "1": {
+            "full": "Monday",
+            "short": "Mon"
+          },
+          "2": {
+            "full": "Tuesday",
+            "short": "Tue"
+          },
+          "3": {
+            "full": "Wednesday",
+            "short": "Wed"
+          },
+          "4": {
+            "full": "Thursday",
+            "short": "Thu"
+          },
+          "5": {
+            "full": "Friday",
+            "short": "Fri"
+          },
+          "6": {
+            "full": "Saturday",
+            "short": "Sat"
+          },
+          "7": {
+            "full": "Sunday",
+            "short": "Sun"
+          }
         },
         "workDays": {
           "title": "Working days",
@@ -425,6 +447,7 @@
       "delFromFav": "Remove from saved",
       "reviews": {
         "title": "Reviews",
+        "one": "Review",
         "notHave": "There are no reviews",
         "like": "Liked it",
         "notLike": "Didn`t like it",
@@ -522,9 +545,20 @@
         "message": "Reserve a place one hour before the event"
       }
     },
+    "required": "Field: {{field}} - required",
+    "fullNameError": "{{field}} must include {{number}} values",
     "status": {
-      "userStatus": "Client status",
-      "establishmentStatus": "Establishment status",
+      "userStatus": {
+        "title": "Client status",
+        "message": {
+          "draft": "This will be added as saved, can be changed at any time. The establishment will not see it",
+          "accepted": "Reserve now",
+          "rejected": "Reject reservation"
+        }
+      },
+      "establishmentStatus": {
+        "title": "Establishment status"
+      },
       "accepted": "Accepted",
       "draft": "Is waiting",
       "rejected": "Rejected",
@@ -538,8 +572,6 @@
         "false": "Did not appear"
       }
     },
-    "required": "Field: {{field}} - required",
-    "fullNameError": "The name must include 2 fields",
     "list": {
       "title": "List of reservations ",
       "write": "Write"
@@ -661,6 +693,26 @@
     "ordinaryUser": "Ordinary user"
   },
   "text": {
+    "text": "Text",
+    "title": "Title",
+    "map": {
+      "view": "View on map"
+    },
+    "score": {
+      "title": "Score",
+      "bad": "Bad",
+      "poor": "Poor",
+      "average": "Average",
+      "great": "Great",
+      "excellent": "Excellent",
+      "service": "Service",
+      "atmosphere": "Atmosphere",
+      "quality": "Quality"
+    },
+    "write": "Write",
+    "preview": "Preview",
+    "from": "From",
+    "to": "To",
     "info": "Information",
     "yes": "Yes",
     "no": "No",
@@ -672,7 +724,7 @@
       "searchPlace2": "a drink with friends?",
       "byPlace": "Welcome to our platform, where your time will always have a special place. We understand the importance of finding the perfect spot for relaxation and a casual atmosphere.",
       "findYourSelf": "Choose an establishment specifically for you and find the ideal place yourself.",
-      "byType": "We offer a variety of atmospheres and types of entertainment. Do you enjoy upscale restaurants with gastronomic masterpieces, or are you looking to treat yourself and friends in cozy cafes? Perhaps you're seeking nightlife at vibrant bars, where the rhythm of the night comes alive."
+      "byType": "We offer a variety of atmospheres and types of entertainment. Do you enjoy upscale restaurants with gastronomic masterpieces, or are you looking to treat yourself and friends in cozy cafes? Perhaps you`re seeking nightlife at vibrant bars, where the rhythm of the night comes alive."
     },
     "current": "Current value"
   },
@@ -702,7 +754,7 @@
       "type": {
         "title": "Chat type",
         "group": "Group",
-        "oneByOne": "One by one"
+        "private": "Private"
       },
       "status": {
         "title": "Status",
@@ -726,6 +778,7 @@
     }
   },
   "dates": {
+    "date": "Date",
     "today": "Today",
     "yesterday": "Yesterday",
     "months": {
@@ -780,5 +833,37 @@
         "offline": "Offline"
       }
     }
+  },
+  "cuisine": {
+    "title": "Cuisine",
+    "american": "American",
+    "mexican": "Mexican",
+    "italian": "Italian",
+    "chinese": "Chinese",
+    "japanese": "Japanese",
+    "indian": "Indian",
+    "french": "French",
+    "thai": "Thai",
+    "mediterranean": "Mediterranean",
+    "spanish": "Spanish",
+    "greek": "Greek",
+    "german": "German",
+    "brazilian": "Brazilian",
+    "vietnamese": "Vietnamese",
+    "korean": "Korean",
+    "lebanese": "Lebanese",
+    "turkish": "Turkish",
+    "moroccan": "Moroccan",
+    "african": "African",
+    "caribbean": "Caribbean",
+    "peruvian": "Peruvian",
+    "british": "British",
+    "israeli": "Israeli",
+    "ukrainian": "Ukrainian",
+    "arabic": "Arabic",
+    "cuba": "Cuba",
+    "argentinian": "Argentinian",
+    "swedish": "Swedish",
+    "international": "International"
   }
 }

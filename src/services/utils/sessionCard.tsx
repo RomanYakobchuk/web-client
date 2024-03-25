@@ -3,9 +3,13 @@ import {IOAuth} from "@/interfaces/common";
 import {AndroidOutlined, AppleOutlined, DesktopOutlined, WindowsOutlined} from "@ant-design/icons";
 import {DesktopMacOutlined, Logout} from "@mui/icons-material";
 import {ShowTimeComponent} from "@/components/time";
+import {Dispatch, SetStateAction} from "react";
+import {axiosInstance} from "@/authProvider";
 
 type TProps = {
-    session: IOAuth
+    session: IOAuth,
+    setSessions?: Dispatch<SetStateAction<IOAuth[]>>,
+    isCurrentSession?: boolean
 }
 const iconByOsName = {
     linux: <DesktopOutlined/>,
@@ -15,16 +19,23 @@ const iconByOsName = {
     windows: <WindowsOutlined/>,
     ios: <AppleOutlined/>
 }
-export const SessionCard = ({session}: TProps) => {
+export const SessionCard = ({session, setSessions, isCurrentSession = false}: TProps) => {
     const {userAgent} = session;
+    const handleLogoutSpecificDevice = async () => {
+        try {
+            await axiosInstance.post(`/auth/logoutSpecificDevices/${session?._id}`);
+            if (setSessions) {
+                setSessions((prevState) => ([...prevState?.filter((value) => value?._id !== session?._id)]))
+            }
+        } catch (e: any) {
+            console.log(e?.response)
+        }
+    }
     return (
-        <Paper
-            elevation={1}
+        <Box
             sx={{
                 width: '100%',
                 height: 'fit-content',
-                borderRadius: '10px',
-                bgcolor: 'modern.modern_1.second',
                 p: 1,
                 display: 'flex',
                 flexDirection: 'row',
@@ -54,9 +65,6 @@ export const SessionCard = ({session}: TProps) => {
                         width: 'fit-content',
                     }}>
                         <Box sx={{
-                            p: 1,
-                            bgcolor: 'common.black',
-                            borderRadius: '5px',
                             height: '100%',
                             display: 'flex',
                             alignItems: 'center',
@@ -70,10 +78,7 @@ export const SessionCard = ({session}: TProps) => {
                             {iconByOsName[userAgent?.os?.name?.toLowerCase() as keyof typeof iconByOsName]}
                         </Box>
                         <Box sx={{
-                            p: 0.5,
                             height: '100%',
-                            bgcolor: 'common.black',
-                            borderRadius: '5px',
                             width: 'fit-content',
                             display: 'flex',
                             alignItems: 'start',
@@ -169,27 +174,32 @@ export const SessionCard = ({session}: TProps) => {
                     />
                 </Box>
             </Box>
-            <Box sx={{
-                height: '100%',
-                width: 'fit-content',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-            }}>
-                <Button
-                    variant={'contained'}
-                    color={'error'}
-                    sx={{
-                        minWidth: '30px',
+            {
+                !isCurrentSession && (
+                    <Box sx={{
+                        height: '100%',
                         width: 'fit-content',
-                        "& svg": {
-                            fontSize: '30px'
-                        }
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
                     }}>
-                    <Logout/>
-                </Button>
-            </Box>
-        </Paper>
+                        <Button
+                            variant={'contained'}
+                            color={'error'}
+                            onClick={handleLogoutSpecificDevice}
+                            sx={{
+                                minWidth: '30px',
+                                width: 'fit-content',
+                                "& svg": {
+                                    fontSize: '30px'
+                                }
+                            }}>
+                            <Logout/>
+                        </Button>
+                    </Box>
+                )
+            }
+        </Box>
     );
 };
 

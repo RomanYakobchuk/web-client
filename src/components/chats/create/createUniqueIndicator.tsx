@@ -5,7 +5,7 @@ import React, {Dispatch, SetStateAction, useState} from "react";
 import {useUserInfo, useUserProperties} from "@/hook";
 import {ProfileProps} from "@/interfaces/common";
 import {ModalShowContent} from "@/components";
-import {HeadlessSelect} from "@/components/common/search/utils/headlessSelect";
+import {HeadlessSelect} from "@/components/headlessUI/headlessSelect";
 
 type TProps = {
     isShow?: boolean,

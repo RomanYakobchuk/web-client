@@ -2,13 +2,16 @@ import {CrudSorting, useTranslate} from "@refinedev/core";
 import React, {useMemo} from "react";
 
 import "@/main.css"
-import {HeadlessSelect} from "@/components/common/search/utils/headlessSelect";
+import {HeadlessSelect} from "@/components/headlessUI/headlessSelect";
 
 type TProps = {
     sorters: CrudSorting,
     defaultSetSorters: (sorter: CrudSorting) => void,
+    btnWidth?: string,
+    position?: "left" | "right",
+    btnHeight?: string
 }
-const SortEstablishmentComponent = ({sorters, defaultSetSorters}: TProps) => {
+const SortEstablishmentComponent = ({sorters, btnHeight, defaultSetSorters, position, btnWidth}: TProps) => {
 
     const translate = useTranslate();
 
@@ -84,7 +87,10 @@ const SortEstablishmentComponent = ({sorters, defaultSetSorters}: TProps) => {
     const currentSorters = options?.sort((a) => (a?.value === (sorters?.length > 0 ? sorters[0]?.field : '')) ? -1 : 1)[0];
     return (
         <HeadlessSelect
+            btnWidth={btnWidth}
+            position={position}
             current={currentSorters}
+            btnHeight={btnHeight}
             options={options}
             toggleSort={toggleSort}
         />

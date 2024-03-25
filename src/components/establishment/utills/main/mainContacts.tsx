@@ -1,10 +1,10 @@
-import {PropertyProps} from "@/interfaces/common";
+import {IEstablishment} from "@/interfaces/common";
 import {useTranslate} from "@refinedev/core";
 import {Box, Typography} from "@mui/material";
 import React from "react";
 
 type TProps = {
-    contacts: PropertyProps['contacts']
+    contacts: IEstablishment['contacts']
 }
 export const MainContacts = ({contacts}: TProps) => {
     const translate = useTranslate();

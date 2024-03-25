@@ -29,6 +29,7 @@ export const FullPageLoading = ({isOpen}: TFullPageLoading) => {
             }
         }
     }, [isOpen]);
+
     const spinnerColor = mode === 'dark' ? 'secondary' : 'primary';
     return createPortal(
         <Box sx={{

@@ -20,7 +20,7 @@ const Home: FC = () => {
         }}>
             <WelcomePart/>
             <Box sx={{
-                width: '90%',
+                width: {xs: '90vw', md: '90%'},
                 margin: '0 auto',
             }}>
                 <CountCities/>

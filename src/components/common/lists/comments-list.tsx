@@ -1,10 +1,10 @@
 import {Box} from "@mui/material";
-import React, {Dispatch, SetStateAction, useContext} from "react";
+import React, {Dispatch, SetStateAction} from "react";
 
 
-import CommentCard from "../../comments/commentCard";
+import CommentCard from "../../cards/commentCard";
 import {IComment} from "@/interfaces/common";
-import { ColorModeContext } from "@/contexts";
+import {For} from "million/react";
 
 interface IProps {
     comments: IComment[],
@@ -24,7 +24,6 @@ export type IForDelete = {
 }
 
 const CommentsList = ({comments, setComments}: IProps) => {
-    const {mode} = useContext(ColorModeContext);
 
     return (
         <Box sx={{
@@ -36,27 +35,17 @@ const CommentsList = ({comments, setComments}: IProps) => {
             flexDirection: 'column',
             gap: 2,
         }}>
-            {
-                comments?.map((comment, index) => (
-                        <Box key={comment?._id + index}
-                             sx={{
-                                 width: '100%',
-                             }}
-                        >
-                            <CommentCard
-                                style={{
-                                    width: '100%',
-                                    p: 1.5,
-                                    borderRadius: '7px',
-                                    bgcolor: mode === 'dark' ? '#53565b' : 'common.black',
-                                }}
-                                setComments={setComments}
-                                comment={comment}
-                            />
-                        </Box>
+            <For each={comments}>
+                {
+                    (comment, index) => (
+                        <CommentCard
+                            key={comment?._id + index}
+                            setComments={setComments}
+                            comment={comment}
+                        />
                     )
-                )
-            }
+                }
+            </For>
         </Box>
     );
 };

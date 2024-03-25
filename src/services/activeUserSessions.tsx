@@ -44,18 +44,27 @@ export const ActiveUserSessions = ({userId}: TProps) => {
         refresh_token: refresh_token
     }
     return (
-        <Box sx={{
-            display: 'grid',
-            width: '100%',
-            gridTemplateColumns: 'repeat(1, 1fr)',
-            gap: 2,
-            p: 1
-        }}>
-            <Box>
+        <Box
+            sx={{
+                display: 'grid',
+                width: '100%',
+                gridTemplateColumns: 'repeat(1, 1fr)',
+                gap: 2,
+                p: 1
+            }}>
+            <Box
+                sx={{
+                    borderRadius: '10px',
+                    bgcolor: 'modern.modern_1.main',
+                    p: 1
+                }}
+            >
                 <Box>
                     CURRENT SESSION
                 </Box>
-                <SessionCard session={currentSession}/>
+                <SessionCard
+                    isCurrentSession={true}
+                    session={currentSession}/>
             </Box>
             {
                 isLoading ? [1, 2, 3]?.map(value => (
@@ -64,17 +73,20 @@ export const ActiveUserSessions = ({userId}: TProps) => {
                     >
                         <LoadSessionCard/>
                     </Box>
-                )) : sessions?.length > 0 && sortByCurrentSession(sessions)?.map((session, index) => {
-                        if (access_token !== session?.access_token) {
-                            return (
-                                <Box
-                                    key={session?._id}
-                                >
-                                    <SessionCard session={session}/>
-                                </Box>
-                            )
-                        }
-                        return (<></>);
+                )) : sessions?.length > 0 && sortByCurrentSession(sessions)?.filter((session) => session?.access_token !== access_token)?.map((session, index) => {
+                        return (
+                            <Box
+                                key={session?._id + Math.random() * 100 + index}
+                                sx={{
+                                    borderRadius: '10px',
+                                    bgcolor: 'modern.modern_1.second',
+                                }}
+                            >
+                                <SessionCard
+                                    setSessions={setSessions}
+                                    session={session}/>
+                            </Box>
+                        )
                     }
                 )
             }

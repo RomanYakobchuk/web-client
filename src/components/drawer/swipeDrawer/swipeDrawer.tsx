@@ -84,6 +84,7 @@ const SwipeDrawer = ({isVisible, toggleDrawer, header, children, defaultSnap, sn
                     600,
                     maxHeight * 0.6,
                 ]}
+
                 className={(mode === 'dark' ? 'dark' : '') + ' ' + classes}
                 // expandOnContentDrag={expandOnContentDrag}
                 // Коли це true то ніякі події не працюють

@@ -8,5 +8,5 @@ export type TMessageTable = {
 }
 
 export const messagesSchema = {
-    messages: '_id, conversationId, sender, text, memberType, createdAt, updatedAt, isRead, isSent, isError'
+    messages: '_id, conversationId, sender, text, memberType, createdAt, updatedAt, status, read'
 }

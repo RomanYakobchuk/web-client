@@ -5,7 +5,7 @@ import {Box, IconButton, Typography as MuiTypography} from "@mui/material";
 import CountUp from "react-countup";
 import {Typography} from "antd";
 
-import MoreButton from "@/components/common/buttons/MoreButton";
+import MoreButton from "@/components/buttons/MoreButton";
 import {DeletedNotifications, NotificationCard} from "@/components/notifications";
 import {useMobile, useUserProperties} from "@/hook";
 import {INotification} from "@/interfaces/common";

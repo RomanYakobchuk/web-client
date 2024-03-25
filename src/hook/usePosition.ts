@@ -1,8 +1,8 @@
 import {useEffect, useState} from "react";
-import {PropertyProps} from "@/interfaces/common";
+import {IEstablishment} from "@/interfaces/common";
 
 interface IProps {
-    position: PropertyProps['location'],
+    position: IEstablishment['location'],
     error: string | null
 }
 

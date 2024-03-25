@@ -5,14 +5,14 @@ import {useDebounce} from "use-debounce";
 import {Input, Select, Space} from "antd";
 import {Close, Delete, Edit} from "@mui/icons-material";
 
-import {PropertyProps} from "@/interfaces/common";
+import {IEstablishment} from "@/interfaces/common";
 import {useMobile} from "@/hook";
 import {scrollBarStyle} from "@/styles";
 import CustomOpenContentBtn from "../custom/CustomOpenContentBtn";
-import ChangeLocation from "../google/changeLocation";
+import ChangeLocation from "@/components/google/changeLocation";
 import PropertiesList from "../../establishment/utills/lists/propertiesList";
-import MoreButton from "../buttons/MoreButton";
-import VariantComponent from "../buttons/variantComponent";
+import MoreButton from "@/components/buttons/MoreButton";
+import VariantComponent from "@/components/buttons/variantComponent";
 import LottieComponent from "@/lotties/LottieComponent";
 import RadarWhiteLottie from "@/lotties/properties/radar_white.json";
 import RadarBlackLottie from "@/lotties/properties/radar_black.json";
@@ -24,7 +24,7 @@ type TProps = {
         lat: number,
         lng: number
     },
-    establishment?: PropertyProps,
+    establishment?: IEstablishment,
     setOpenDrawer: Dispatch<SetStateAction<boolean>>
 }
 
@@ -62,8 +62,8 @@ const FindNearbyPlaces = ({location, establishment, setOpenDrawer}: TProps) => {
 
     const [locationData, setLocationData] = useState<TAddress>({} as TAddress);
     const [currentLocation, setCurrentLocation] = useState<TProps['location']>(location);
-    const [currentEstablishment, setCurrentEstablishment] = useState<PropertyProps>({} as PropertyProps);
-    const [establishmentList, setEstablishmentList] = useState<PropertyProps[]>([]);
+    const [currentEstablishment, setCurrentEstablishment] = useState<IEstablishment>({} as IEstablishment);
+    const [establishmentList, setEstablishmentList] = useState<IEstablishment[]>([]);
     const [maxDistance, setMaxDistance] = useState<TNearbyF['maxDistance']>({
         value: 5000,
         unit: 'm'
@@ -112,7 +112,7 @@ const FindNearbyPlaces = ({location, establishment, setOpenDrawer}: TProps) => {
     useEffect(() => {
         if (data?.pages) {
             const list = [].concat(...((data?.pages as any ?? [])?.map((page: {
-                data: PropertyProps[],
+                data: IEstablishment[],
                 total: number
             }) => page?.data ?? [])));
             setEstablishmentList(list);
@@ -135,7 +135,7 @@ const FindNearbyPlaces = ({location, establishment, setOpenDrawer}: TProps) => {
         }
     }
     const handleClearEstablishment = () => {
-        setCurrentEstablishment({} as PropertyProps)
+        setCurrentEstablishment({} as IEstablishment)
     }
 
     const disabled = currentLocation?.lng !== location?.lng || currentLocation?.lat !== location?.lat || maxDistance?.unit !== 'm' || maxDistance?.value !== 5000 || (establishment?._id !== currentEstablishment?._id);

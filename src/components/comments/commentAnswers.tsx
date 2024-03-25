@@ -4,12 +4,12 @@ import {Box} from "@mui/material";
 import {useParams} from "react-router-dom";
 
 import {IComment} from "@/interfaces/common";
-import CommentCard from "./commentCard";
+import CommentCard from "../cards/commentCard";
 import {CustomDrawer, Loading} from "../index";
 import {useMobile} from "@/hook";
 import ChooseManagerRole from "../common/choose/chooseManagerRole";
 import {IDataList} from "../common/lists/comments-list";
-import MoreButton from "@/components/common/buttons/MoreButton";
+import MoreButton from "@/components/buttons/MoreButton";
 
 export type INewComment = {
     comment: IComment,
@@ -53,7 +53,7 @@ const CommentAnswers = ({comment, setComment, isLoadAnswers, setIsLoadAnswers, n
                         alignItems: 'start',
                         justifyContent: 'start',
                         width: '100%',
-                        p: '16px 0px 0px 16px'
+                        p: '16px 0px 0px 0px'
                         // "& < div": {
                         //     width: '100%',
                         //     maxWidth: {xs: '100%', lg: '40%'}
@@ -120,11 +120,12 @@ const CommentAnswers = ({comment, setComment, isLoadAnswers, setIsLoadAnswers, n
                     >
                         <Box sx={{
                             width: '100%',
-                            p: '10px',
-                            borderBottom: '2px solid silver',
+                            py: 1.5,
+                            // borderBottom: '2px solid silver',
                             overflow: 'hidden'
                         }}>
                             <CommentCard
+                                elevation={0}
                                 isAnswers={true}
                                 comment={currentComment}
                                 isShowAnswer={false}
@@ -135,14 +136,21 @@ const CommentAnswers = ({comment, setComment, isLoadAnswers, setIsLoadAnswers, n
                         </Box>
                         {
                             isShowAnswers && isLoadAnswers && (
-                                <AnswersComponent
-                                    comment={comment}
-                                    setComment={setComment}
-                                    currentComment={currentComment}
-                                    newAnswer={newAnswer}
-                                    newComment={newComment}
-                                    setNewAnswer={setNewAnswer}
-                                />
+                                <Box
+                                    sx={{
+                                        width: '100%',
+                                        // pl: 4
+                                    }}
+                                >
+                                    <AnswersComponent
+                                        comment={comment}
+                                        setComment={setComment}
+                                        currentComment={currentComment}
+                                        newAnswer={newAnswer}
+                                        newComment={newComment}
+                                        setNewAnswer={setNewAnswer}
+                                    />
+                                </Box>
                             )
                         }
                     </Box>
@@ -160,7 +168,14 @@ type TAnswersComment = {
     newAnswer: INewComment | null,
     setNewAnswer: Dispatch<SetStateAction<INewComment | null>>
 }
-const AnswersComponent = ({comment, newComment, setComment, currentComment, newAnswer, setNewAnswer}: TAnswersComment) => {
+const AnswersComponent = ({
+                              comment,
+                              newComment,
+                              setComment,
+                              currentComment,
+                              newAnswer,
+                              setNewAnswer
+                          }: TAnswersComment) => {
 
     const {id} = useParams();
 
@@ -174,7 +189,7 @@ const AnswersComponent = ({comment, newComment, setComment, currentComment, newA
         fetchNextPage,
         isFetchingNextPage,
     } = useInfiniteList<IComment>({
-        resource: `comment/allByestablishmentId/${id as string}`,
+        resource: `comment/allByEstablishmentId/${id as string}`,
         pagination: {
             pageSize: 10
         },
@@ -238,12 +253,19 @@ const AnswersComponent = ({comment, newComment, setComment, currentComment, newA
                     isLoading={isLoading}
                 />
             </Box>
-            <MoreButton
-                hasNextPage={hasNextPage}
-                isFetchingNextPage={isFetchingNextPage}
-                fetchNextPage={fetchNextPage}
-                total={total}
-            />
+            <Box
+                sx={{
+                    width: '100%',
+                    textAlign: 'center'
+                }}
+            >
+                <MoreButton
+                    hasNextPage={hasNextPage}
+                    isFetchingNextPage={isFetchingNextPage}
+                    fetchNextPage={fetchNextPage}
+                    total={total}
+                />
+            </Box>
         </>
     )
 }
@@ -259,7 +281,7 @@ const CommentAnswersList = ({answers, setAnswers, setNewComment, isLoading}: TCo
             width: '100%',
             display: 'flex',
             flexDirection: 'column',
-            gap: {xs: 1, md: 2},
+            gap: 2,
         }}>
             {
                 isLoading ? <Loading height={'200px'}/> :
@@ -267,23 +289,19 @@ const CommentAnswersList = ({answers, setAnswers, setNewComment, isLoading}: TCo
                     answers?.map((answer, index) => (
                         <Box
                             key={answer?._id + index}
-                            sx={{
-                                position: 'relative',
-                                // "&:not(:last-child)::after": {
-                                //     position: 'absolute',
-                                //     content: "''",
-                                //     width: '100%',
-                                //     height: '1px',
-                                //     bgcolor: 'silver',
-                                //     bottom: 0,
-                                // }
-                            }}
                         >
                             <CommentCard
                                 style={{
-                                    p: 1,
-                                    bgcolor: 'common.black',
-                                    borderRadius: '10px',
+                                    position: 'relative',
+                                    "&::before": {
+                                        content: "''",
+                                        position: 'absolute',
+                                        left: '-10px',
+                                        height: '100%',
+                                        top: 0,
+                                        bgcolor: 'silver',
+                                        width: '2px'
+                                    }
                                 }}
                                 setNewComment={setNewComment}
                                 comment={answer}

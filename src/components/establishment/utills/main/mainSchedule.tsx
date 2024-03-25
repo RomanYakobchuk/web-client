@@ -1,10 +1,10 @@
 import {Box, Stack, Typography} from "@mui/material";
 import React from "react";
-import {PropertyProps} from "@/interfaces/common";
+import {IEstablishment} from "@/interfaces/common";
 import {useTranslate} from "@refinedev/core";
 
 type TProps = {
-    workSchedule: PropertyProps['workSchedule']
+    workSchedule: IEstablishment['workSchedule']
 }
 export const MainSchedule = ({workSchedule}: TProps) => {
 
@@ -18,7 +18,7 @@ export const MainSchedule = ({workSchedule}: TProps) => {
             p: '10px',
             borderRadius: '15px',
             justifyContent: 'start',
-            bgcolor: 'modern.modern_1.second',
+            bgcolor: 'modern.modern_1.main',
             alignItems: 'start',
             color: 'common.white'
         }}>
@@ -40,12 +40,22 @@ export const MainSchedule = ({workSchedule}: TProps) => {
                             alignItems: 'start',
                             ml: 1
                         }}>
-                                                <span>
-                                                    {translate(`home.create.workSchedule.dayName.${workDay?.days?.from}`)} - {translate(`home.create.workSchedule.dayName.${workDay?.days?.to}`)}
-                                                </span>
-                            <span>
-                                                    {workDay?.time?.from} - {workDay?.time?.to}
-                                                </span>
+                            <Box
+                                component="span"
+                            >
+                                {
+                                    translate(`home.create.workSchedule.dayName.${workDay?.days?.from}.full`)
+                                }
+                                -
+                                {
+                                    translate(`home.create.workSchedule.dayName.${workDay?.days?.to}.full`)
+                                }
+                            </Box>
+                            <Box
+                                component="span"
+                            >
+                                {workDay?.time?.from} - {workDay?.time?.to}
+                            </Box>
                         </Box>
                     ))
                 }

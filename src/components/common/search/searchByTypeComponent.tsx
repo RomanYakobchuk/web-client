@@ -64,22 +64,12 @@ const SearchByTypeComponent = <T, >({
         if (setCurrent) {
             setCurrent(1)
         }
-        if (isShowAllFilters) {
-            if (defaultSetFilters) {
-                defaultSetFilters([{
-                    field: fieldName,
-                    value: value,
-                    operator: 'eq'
-                }])
-            }
-        } else {
-            if (setFilters) {
-                setFilters([{
-                    field: fieldName,
-                    value: value,
-                    operator: 'eq'
-                }])
-            }
+        if (defaultSetFilters) {
+            defaultSetFilters([{
+                field: fieldName,
+                value: value,
+                operator: 'eq'
+            }])
         }
     }
 

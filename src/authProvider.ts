@@ -39,9 +39,9 @@ const onTokenRefreshed = () => {
     _refreshSubscribers.map((cb) => cb());
 };
 
-const access_token = localStorage.getItem(ACCESS_TOKEN_KEY);
-axiosInstance.defaults.headers.common['Authorization'] = access_token;
+axiosInstance.defaults.headers.common['Authorization'] = localStorage.getItem(ACCESS_TOKEN_KEY);
 axiosInstance.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
+        const access_token = localStorage.getItem(ACCESS_TOKEN_KEY);
         if (access_token && isAccessTokenExpired(access_token)) {
             if (config.headers) {
                 config.headers["Authorization"] = access_token;
@@ -150,7 +150,7 @@ export const authProvider: AuthBindings = {
         };
     },
     logout: async () => {
-        clearUserAllData();
+        await clearUserAllData();
         axios.defaults.headers.common = {};
         return {
             success: true,

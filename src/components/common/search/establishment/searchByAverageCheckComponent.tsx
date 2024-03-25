@@ -2,8 +2,8 @@ import {Box, FormControl, FormHelperText, Slider, TextField} from "@mui/material
 import React, {ChangeEvent} from "react";
 import {useTranslate} from "@refinedev/core";
 
-import {textFieldStyle} from "../../../../styles";
-import {SetFilterType} from "../../../../interfaces/types";
+import {SetFilterType} from "@/interfaces/types";
+import {textFieldStyle} from "@/styles";
 
 
 type TProps = {
@@ -11,22 +11,46 @@ type TProps = {
     setValueGte: (value: number) => void,
     valueLte: number,
     setValueLte: (value: number) => void,
-    setFilters: SetFilterType
+    setFilters: SetFilterType,
+    minValue: number,
+    maxValue: number,
 }
-const SearchByAverageCheckComponent = ({valueGte, valueLte, setValueLte, setValueGte, setFilters}: TProps) => {
+const SearchByAverageCheckComponent = ({
+                                           valueGte,
+                                           minValue,
+                                           maxValue,
+                                           valueLte,
+                                           setValueLte,
+                                           setValueGte,
+                                           setFilters,
+                                       }: TProps) => {
 
     const translate = useTranslate();
 
     const handleChange = (newValue: number | number[]) => {
         if (Array.isArray(newValue)) {
-            setValueGte(newValue[0])
             setValueLte(newValue[1])
+            setValueGte(newValue[0])
+            setFilters([
+                {
+                    field: 'averageCheck',
+                    operator: 'lte',
+                    value: newValue[1]
+                },
+                {
+                    field: 'averageCheck',
+                    operator: 'gte',
+                    value: newValue[0]
+                }
+            ])
         }
     };
 
     return (
         <FormControl
-            sx={{width: '100%',}}>
+            sx={{
+                width: '100%', minWidth: '250px'
+            }}>
             <FormHelperText
                 sx={{
                     fontSize: '14px',
@@ -37,7 +61,7 @@ const SearchByAverageCheckComponent = ({valueGte, valueLte, setValueLte, setValu
                 {translate('home.create.averageCheck')}
             </FormHelperText>
             <Box sx={{
-                width: '100%'
+                width: '100%',
             }}>
                 <Box sx={{
                     display: 'flex',
@@ -62,7 +86,8 @@ const SearchByAverageCheckComponent = ({valueGte, valueLte, setValueLte, setValu
                         }}
                         InputProps={{
                             inputProps: {
-                                min: 0
+                                min: minValue,
+                                max: maxValue
                             }
                         }}
                         value={valueGte}
@@ -85,7 +110,8 @@ const SearchByAverageCheckComponent = ({valueGte, valueLte, setValueLte, setValu
                         }}
                         InputProps={{
                             inputProps: {
-                                min: 0
+                                min: minValue,
+                                max: maxValue
                             }
                         }}
                         id="outlined-number-2"
@@ -112,8 +138,8 @@ const SearchByAverageCheckComponent = ({valueGte, valueLte, setValueLte, setValu
                     <Slider
                         color={"secondary"}
                         value={[Number(valueGte), Number(valueLte)]}
-                        min={0}
-                        max={100000}
+                        min={minValue}
+                        max={maxValue}
                         onChange={(__: any, value: any) => {
                             handleChange(value);
                         }}

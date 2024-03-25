@@ -1,5 +1,5 @@
 import {SxProps} from "@mui/material";
-import React, {CSSProperties, Dispatch, ReactNode, SetStateAction, useEffect, useState} from "react";
+import React, {Dispatch, ReactNode, SetStateAction, useEffect, useState} from "react";
 import 'react-spring-bottom-sheet/dist/style.css'
 
 import {useMobile} from "@/hook";
@@ -28,7 +28,10 @@ type TProps = {
     swiperSnapPoints?: number[],
     swiperDefaultSnap?: number,
     swiperStyles?: SxProps,
-    swiperClasses?: string
+    swiperClasses?: string,
+    isShowCloseButton?: boolean
+    isShowHeader?: boolean,
+    isOnlyOpen?: boolean
 }
 
 
@@ -45,6 +48,9 @@ const CustomDrawer = ({
                           contentStyle,
                           bgColor = '',
                           isScaleRoot = false,
+                          isOnlyOpen = false,
+                          isShowCloseButton = true,
+                          isShowHeader = true,
                           drawerHeight,
                           showDefaultHeader = true,
                           isOnlySwiper = false,
@@ -58,15 +64,19 @@ const CustomDrawer = ({
     const [isVisible, setIsVisible] = useState<boolean>(false);
 
     useEffect(() => {
-        if (open) {
-            setIsVisible(true)
+        if (!isOnlyOpen) {
+            if (open) {
+                setIsVisible(true)
+            } else {
+                const timeoutId = setTimeout(() => {
+                    setIsVisible(false)
+                }, 500);
+                return () => clearTimeout(timeoutId);
+            }
         } else {
-            const timeoutId = setTimeout(() => {
-                setIsVisible(false)
-            }, 500);
-            return () => clearTimeout(timeoutId);
+            setIsVisible(true)
         }
-    }, [open]);
+    }, [open, isOnlyOpen]);
 
     useEffect(() => {
         if (isScaleRoot) {
@@ -91,14 +101,16 @@ const CustomDrawer = ({
                         styles={swiperStyles}
                         classes={swiperClasses}
                         header={
-                            <HeaderDrawer
-                                isForSwipe={true}
-                                anchor={anchor}
-                                title={title}
-                                toggleDrawer={toggleDrawer}
-                                button={button}
-                                onClick={closeWithOtherData}
-                            />
+                            isShowHeader ?
+                                <HeaderDrawer
+                                    isShowCloseButton={isShowCloseButton}
+                                    isForSwipe={true}
+                                    anchor={anchor}
+                                    title={title}
+                                    toggleDrawer={toggleDrawer}
+                                    button={button}
+                                    onClick={closeWithOtherData}
+                                /> : ''
                         }
                     >
                         {children}

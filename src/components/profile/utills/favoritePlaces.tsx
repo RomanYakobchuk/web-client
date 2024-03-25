@@ -2,11 +2,11 @@ import React, {useEffect, useState} from "react";
 import {Box} from "@mui/material";
 import {useInfiniteList} from "@refinedev/core";
 
-import {INews, PropertyProps} from "@/interfaces/common";
+import {INews, IEstablishment} from "@/interfaces/common";
 import {Loading} from "../../index";
-import MoreButton from "@/components/common/buttons/MoreButton";
-import {Variant2EstablishmentCard, VariantComponent} from "@/components";
-import NewsItem1 from "@/components/news/cards/newsItem1";
+import MoreButton from "@/components/buttons/MoreButton";
+import {EstablishmentCard, VariantComponent} from "@/components";
+import NewsItem1 from "@/components/cards/newsCards/newsItem1";
 import {SearchByTypeComponent} from "@/components/common/search";
 import {GridViewSharp, ViewComfySharp, ViewStreamSharp} from "@mui/icons-material";
 import {useMobile} from "@/hook";
@@ -19,7 +19,7 @@ type IProps = {
 type TSavedPlaces = {
     _id: string,
     type: "establishment" | "establishmentNews",
-    item: INews | PropertyProps,
+    item: INews | IEstablishment,
     userId: string
 }
 const arrayType = [
@@ -53,7 +53,7 @@ const FavoritePlaces = ({id}: IProps) => {
         fetchNextPage,
         isFetching,
         isFetchingNextPage,
-    } = useInfiniteList<PropertyProps>({
+    } = useInfiniteList<IEstablishment>({
         resource: `users/getByUserIdFavPlaces/${id}`,
         pagination: {
             pageSize: 20
@@ -75,7 +75,7 @@ const FavoritePlaces = ({id}: IProps) => {
     useEffect(() => {
         if (data?.pages) {
             const list = [].concat(...((data?.pages as any ?? [])?.map((page: {
-                data: PropertyProps[],
+                data: IEstablishment[],
                 total: number
             }) => page?.data ?? [])));
             setSavedPlaces(list);
@@ -108,7 +108,7 @@ const FavoritePlaces = ({id}: IProps) => {
                             >
                                 {
                                     value?.type === 'establishment'
-                                        ? value?.item ? <Variant2EstablishmentCard establishment={value?.item as PropertyProps}/> : ''
+                                        ? value?.item ? <EstablishmentCard establishment={value?.item as IEstablishment}/> : ''
                                         : value?.item ? <NewsItem1 itemNews={value?.item as INews}/> : ''
                                 }
                             </Box>
@@ -121,7 +121,7 @@ const FavoritePlaces = ({id}: IProps) => {
                         ...renderStyle
                     }}
                     key={'2'}>
-                    <PropertiesList items={savedPlaces?.map((item) => item?.item as PropertyProps)}/>
+                    <PropertiesList items={savedPlaces?.map((item) => item?.item as IEstablishment)}/>
                 </Box>
             case "establishmentNews":
                 return <Box

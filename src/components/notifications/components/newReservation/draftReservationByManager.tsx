@@ -4,7 +4,7 @@ import {Box, Button, TextField} from "@mui/material";
 import {Add, RemoveRounded} from "@mui/icons-material";
 import dayjs from "dayjs";
 
-import {AdornmentBtn} from "@/components/establishment/utills/establishment-reviews";
+import {AdornmentBtn} from "@/components/establishment/utills/establishmentReviews/establishment-reviews";
 import {axiosInstance} from "@/authProvider";
 import {useSendNotification, useUserInfo} from "@/hook";
 import {INotification, IReserve} from "@/interfaces/common";

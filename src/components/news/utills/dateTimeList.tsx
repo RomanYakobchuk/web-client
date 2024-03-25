@@ -111,8 +111,8 @@ const DateTimeList = ({onSubmit, elements, onDelete, dataLabel, style}: Props) =
                                                     setDateEvent((prevState) => ({
                                                         ...prevState,
                                                         schedule: {
-                                                            from: dateString,
-                                                            to: dateEvent?.schedule?.to
+                                                            from: dateString as string,
+                                                            to: prevState?.schedule?.to as string
                                                         }
                                                     }))
                                                 }}
@@ -123,13 +123,15 @@ const DateTimeList = ({onSubmit, elements, onDelete, dataLabel, style}: Props) =
                                             <DatePicker
                                                 value={dateEvent?.schedule?.to ? dayjs(dateEvent?.schedule?.to) : null}
                                                 onChange={(_, dateString) => {
-                                                    setDateEvent((prevState) => ({
-                                                        ...prevState,
-                                                        schedule: {
-                                                            from: dateEvent?.schedule?.from,
-                                                            to: dateString,
+                                                    setDateEvent((prevState) => {
+                                                        return {
+                                                            ...prevState,
+                                                            schedule: {
+                                                                from: prevState?.schedule?.from as string,
+                                                                to: dateString as string,
+                                                            }
                                                         }
-                                                    }))
+                                                    })
                                                 }}
                                             />
                                         </FormControl>

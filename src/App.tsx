@@ -17,16 +17,13 @@ import dataProvider from "@refinedev/simple-rest";
 import {GoogleOAuthProvider} from "@react-oauth/google";
 import {useTranslation} from "react-i18next";
 
-// import {} from "use-view-transitions";
-
 import {ColorModeContextProvider} from "./contexts";
 import {authProvider, axiosInstance} from "./authProvider";
 import {SchemaProvider} from "./settings/schema";
 import {VariantProvider} from "./settings/variantEstablishment";
 import {resources} from "./resources";
-// import {axiosInstance as aI} from "@refinedev/simple-rest/src/utils/axios";
 import {CommentCreatorDataProvider} from "./contexts/CommentCreatorDataContext";
-import {CaplRoutes} from "@/services";
+import AppRoutes from "@/appRoutes";
 
 
 const API_URL = import.meta.env.VITE_APP_API;
@@ -51,40 +48,40 @@ function App() {
                 {/*<DevtoolsPanel/>*/}
                 <ColorModeContextProvider>
                     <SchemaProvider>
-                        <GoogleOAuthProvider clientId={clientId}>
-                            <VariantProvider>
-                                <CssBaseline/>
-                                <GlobalStyles styles={{html: {WebkitFontSmoothing: "auto"}}}/>
-                                <RefineSnackbarProvider>
-                                    <Refine
-                                        dataProvider={{
-                                            default: dataProvider(`${API_URL}/api/v1`, axiosInstance as any),
-                                            statistics: dataProvider(`${STATISTIC_API_URL}/statistics_api/v1`, axiosInstance as any),
-                                            socket: dataProvider(`${SOCKET_API_URL}/socket.io/api/v1`, axiosInstance as any)
-                                        }}
-                                        notificationProvider={notificationProvider}
-                                        resources={resources}
-                                        accessControlProvider={accessControlProvider}
-                                        routerProvider={routerBindings}
-                                        authProvider={authProvider}
-                                        i18nProvider={i18nProvider}
-                                        options={{
-                                            syncWithLocation: true,
-                                            mutationMode: 'undoable',
-                                            liveMode: 'auto',
-                                            warnWhenUnsavedChanges: true,
-                                            useNewQueryKeys: true
-                                        }}
-                                    >
-                                        <CommentCreatorDataProvider>
-                                            <CaplRoutes/>
-                                        </CommentCreatorDataProvider>
-                                        <RefineKbar/>
-                                        <UnsavedChangesNotifier/>
-                                    </Refine>
-                                </RefineSnackbarProvider>
-                            </VariantProvider>
-                        </GoogleOAuthProvider>
+                            <GoogleOAuthProvider clientId={clientId}>
+                                <VariantProvider>
+                                    <CssBaseline/>
+                                    <GlobalStyles styles={{html: {WebkitFontSmoothing: "auto"}}}/>
+                                    <RefineSnackbarProvider>
+                                        <Refine
+                                            dataProvider={{
+                                                default: dataProvider(`${API_URL}/api/v1`, axiosInstance as any),
+                                                statistics: dataProvider(`${STATISTIC_API_URL}/statistics_api/v1`, axiosInstance as any),
+                                                socket: dataProvider(`${SOCKET_API_URL}/socket.io/api/v1`, axiosInstance as any)
+                                            }}
+                                            notificationProvider={notificationProvider}
+                                            resources={resources}
+                                            accessControlProvider={accessControlProvider}
+                                            routerProvider={routerBindings}
+                                            authProvider={authProvider}
+                                            i18nProvider={i18nProvider}
+                                            options={{
+                                                syncWithLocation: true,
+                                                mutationMode: 'undoable',
+                                                liveMode: 'auto',
+                                                warnWhenUnsavedChanges: true,
+                                                useNewQueryKeys: true,
+                                            }}
+                                        >
+                                            <CommentCreatorDataProvider>
+                                                <AppRoutes/>
+                                            </CommentCreatorDataProvider>
+                                            <RefineKbar/>
+                                            <UnsavedChangesNotifier/>
+                                        </Refine>
+                                    </RefineSnackbarProvider>
+                                </VariantProvider>
+                            </GoogleOAuthProvider>
                     </SchemaProvider>
                 </ColorModeContextProvider>
             </RefineKbarProvider>

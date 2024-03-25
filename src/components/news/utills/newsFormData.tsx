@@ -102,7 +102,7 @@ const NewsFormData = (props: INewsDataProps) => {
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
         const checked = event.target.checked;
         setIsEstablishmentLocPlace(checked);
-        if (checked) {
+        if (checked && establishmentInfo) {
             setLocation(establishmentInfo?.location)
             setPlace(establishmentInfo?.place)
         } else {

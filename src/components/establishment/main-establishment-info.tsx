@@ -1,48 +1,32 @@
 import {
     Box,
-    Chip,
     ListItem,
     Rating,
-    Stack,
     List,
     Typography, Divider
 } from "@mui/material";
-import {
-    Place,
-} from "@mui/icons-material";
-import React, {useContext, useEffect, useState} from "react";
-import {Link, useNavigate} from "react-router-dom";
+import React, {useEffect, useState} from "react";
 import {useTranslate} from "@refinedev/core";
 
 import {ShowMap} from "../index";
 import {ImageGalleryV1} from "../gallery"
-import {PropertyProps} from "@/interfaces/common";
-import {ColorModeContext} from "@/contexts";
-import {useStore} from "@/store";
-import MDEditor from "@uiw/react-md-editor";
-import {ESTABLISHMENT} from "@/config/names";
+import {IEstablishment} from "@/interfaces/common";
 import {MainDescription} from "@/components/establishment/utills/main/mainDescription";
 import {MainSchedule} from "@/components/establishment/utills/main/mainSchedule";
 import {MainContacts} from "@/components/establishment/utills/main/mainContacts";
 import {MainTags} from "@/components/establishment/utills/main/mainTags";
+import {MainHeader} from "@/components/establishment/utills/main/mainHeader";
+import {StarRating} from "@/components/establishment/utills/main/starRating";
+
 
 
 interface IProps {
-    establishment: PropertyProps,
+    establishment: IEstablishment,
 }
 
 const MainEstablishmentInfo = ({establishment}: IProps) => {
 
     const translate = useTranslate();
-    const {mode} = useContext(ColorModeContext);
-    const navigate = useNavigate();
-
-
-    const {addEstablishment} = useStore(state => {
-        return {
-            establishmentInfo: state.establishmentInfo, addEstablishment: state.addEstablishment
-        }
-    });
 
     const [postRating, setPostRating] = useState(0);
 
@@ -50,13 +34,7 @@ const MainEstablishmentInfo = ({establishment}: IProps) => {
         setPostRating(establishment?.rating)
     }, [establishment?.rating])
 
-    useEffect(() => {
-        if (establishment?._id) {
-            addEstablishment({...establishment})
-        }
-    }, [establishment?._id]);
-
-    const location: PropertyProps["location"] | google.maps.LatLngLiteral = typeof establishment?.location?.lat !== undefined ? establishment?.location : {} as PropertyProps['location'];
+    const location: IEstablishment["location"] | google.maps.LatLngLiteral = typeof establishment?.location?.lat !== undefined ? establishment?.location : {} as IEstablishment['location'];
 
 
     return (
@@ -75,87 +53,7 @@ const MainEstablishmentInfo = ({establishment}: IProps) => {
                 flexDirection: {xs: 'column',},
                 justifyContent: {xs: 'start', sm: 'space-between'}
             }}>
-                <Box>
-                    <Box sx={{
-                        display: 'flex',
-                        width: '100%',
-                        alignItems: 'center',
-                        "@media screen and (max-width: 800px && min-width: 600px)": {
-                            alignItems: 'start'
-                        },
-                        justifyContent: 'space-between',
-                        flexWrap: 'wrap',
-                        gap: 1
-                    }}>
-                        <Box sx={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            gap: {xs: 3, sm: 6},
-                            alignItems: 'center',
-                            "& a": {
-                                fontSize: {xs: 14, sm: 16},
-                            }
-                        }}>
-                            <Typography
-                                sx={{
-                                    color: 'common.white',
-                                    textTransform: 'capitalize',
-                                    fontSize: {xs: '24px', sm: '30px'},
-                                    fontWeight: 700,
-                                }}>
-                                {establishment.title}
-                            </Typography>
-                            <Link
-                                to={`/${ESTABLISHMENT}?pageSize=10&current=1&sorters[0][field]=createdAt_asc&sorters[0][order]=desc&filters[0][field]=propertyType&filters[0][operator]=eq&filters[0][value]=${establishment.type}`}
-                                style={{
-                                    textDecoration: 'none',
-                                    display: 'flex',
-                                    justifyContent: 'start',
-                                    alignItems: 'center',
-                                    color: '#fff',
-                                    padding: '5px',
-                                    backgroundColor: '#5e49c3',
-                                    borderRadius: '5px',
-                                }}>
-                                {
-                                    translate(`home.create.type.${establishment.type}`)
-                                }
-                            </Link>
-                        </Box>
-                    </Box>
-                    <Box sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        gap: 1,
-                        alignItems: 'center',
-                        m: '10px 0'
-                    }}>
-                        <Place color={'secondary'} sx={{
-                            fontSize: '24px'
-                        }}/>
-                        <Box sx={{
-                            display: 'flex',
-                            flexDirection: 'column'
-                        }}>
-                            <Link
-                                to={`/${ESTABLISHMENT}?pageSize=10&current=1&sorters[0][field]=&sorters[0][order]=asc&filters[0][field]=averageCheck&filters[0][operator]=lte&filters[0][value]=100000&filters[1][field]=averageCheck&filters[1][operator]=gte&filters[1][value]=20&filters[2][field]=tag&filters[2][value]=&filters[2][operator]=contains&filters[3][field]=title&filters[3][value]=&filters[3][operator]=contains&filters[4][field]=propertyType&filters[4][operator]=eq&filters[4][value]=&filters[5][field]=city&filters[5][operator]=contains&filters[5][value]=${establishment?.place?.city}`}
-                                style={{
-                                    fontSize: '14px',
-                                    width: 'fit-content',
-                                    color: mode === 'dark' ? 'silver' : 'blueviolet',
-                                    borderBottom: `1px solid ${mode === 'dark' ? 'silver' : 'blueviolet'}`
-                                }}>
-                                {establishment?.place?.city}
-                            </Link>
-                            <Typography sx={{
-                                fontSize: '13px',
-                                color: 'common.white',
-                            }}>
-                                {establishment?.place?.address}
-                            </Typography>
-                        </Box>
-                    </Box>
-                </Box>
+                <MainHeader establishment={establishment}/>
                 <Box sx={{
                     display: 'flex',
                     flexDirection: {xs: 'column', sm: 'row'},
@@ -173,7 +71,8 @@ const MainEstablishmentInfo = ({establishment}: IProps) => {
                     }}>
                         {
                             establishment?._id && postRating !== undefined && <>
-                                <Rating precision={0.5} name="read-only" value={postRating} readOnly/>
+                                <StarRating value={postRating} readOnly/>
+                                {/*<Rating precision={0.5} name="read-only" value={postRating} readOnly/>*/}
                                 <Box sx={{
                                     color: 'common.white'
                                 }}>
@@ -253,10 +152,7 @@ const MainEstablishmentInfo = ({establishment}: IProps) => {
                 },
 
             }}>
-                {
-                    establishment?.pictures?.length > 0 &&
-                    <ImageGalleryV1 photos={establishment?.pictures}/>
-                }
+                <ImageGalleryV1 photos={establishment?.pictures?.length > 0 ? establishment?.pictures : []}/>
                 <MainDescription description={establishment?.description || ''}/>
                 <MainSchedule workSchedule={establishment?.workSchedule}/>
                 {
@@ -285,7 +181,7 @@ const MainEstablishmentInfo = ({establishment}: IProps) => {
                     p: '15px',
                     color: 'common.white',
                     borderRadius: '15px',
-                    bgcolor: 'modern.modern_1.second',
+                    bgcolor: 'modern.modern_1.main',
                     width: '100%'
                 }}>
                     <MainContacts contacts={establishment?.contacts}/>
@@ -298,7 +194,7 @@ const MainEstablishmentInfo = ({establishment}: IProps) => {
                     p: '15px',
                     borderRadius: '15px',
                     color: 'common.white',
-                    bgcolor: 'modern.modern_1.second',
+                    bgcolor: 'modern.modern_1.main',
                 }}>
                     <Typography>
                         {translate('home.create.features')}
@@ -314,6 +210,22 @@ const MainEstablishmentInfo = ({establishment}: IProps) => {
                     </List>
                 </Box>
             </Box>
+            {/*<Box*/}
+            {/*    sx={{*/}
+            {/*        width: {xs: '100%', sm: '350px'},*/}
+            {/*        maxWidth: '350px'*/}
+            {/*    }}*/}
+            {/*>*/}
+            {/*    <Calendar*/}
+            {/*        styles={{*/}
+            {/*            boxShadow: '0px 0px 5px 3px #f1f1f1'*/}
+            {/*        }}*/}
+            {/*        isTimeExist={true}*/}
+            {/*        minDate={new Date(dayjs()?.add(55, 'minutes')?.toString())}*/}
+            {/*        workSchedule={establishment?.workSchedule}*/}
+            {/*        isShowTodayBtn={true}*/}
+            {/*    />*/}
+            {/*</Box>*/}
         </Box>
     );
 };

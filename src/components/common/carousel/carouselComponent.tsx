@@ -12,7 +12,8 @@ type TProps = {
             items: number
         }
     },
-    autoPlay?: boolean
+    autoPlay?: boolean,
+    autoPlaySpeed?: number
 }
 
 
@@ -34,7 +35,7 @@ const defaultResponsive: ResponsiveType = {
         items: 1
     }
 };
-const CarouselComponent = ({children, responsive = defaultResponsive, autoPlay = true}: TProps) => {
+const CarouselComponent = ({children, responsive = defaultResponsive, autoPlay = true, autoPlaySpeed = 5000}: TProps) => {
 
 
     if (!children) {
@@ -52,6 +53,7 @@ const CarouselComponent = ({children, responsive = defaultResponsive, autoPlay =
                 responsive={responsive}
                 infinite
                 className={'carousel'}
+                autoPlaySpeed={autoPlaySpeed}
                 autoPlay={autoPlay}
             >
                 {children}

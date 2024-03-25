@@ -139,7 +139,11 @@ export const ColorModeContextProvider: React.FC<PropsWithChildren> = ({
                 modern_3: {
                     main: '#e3e8ec',
                     second: '#c2c9d3'
-                }
+                },
+                modern_4: {
+                    main: '#f5f5fa',
+                    second: '#c2c9d3'
+                },
             },
         },
         components: {
@@ -244,7 +248,11 @@ export const ColorModeContextProvider: React.FC<PropsWithChildren> = ({
                 modern_3: {
                     main: '#050217',
                     second: '#14171c'
-                }
+                },
+                modern_4: {
+                    main: '#050217',
+                    second: '#14171c'
+                },
             },
         },
         components: {

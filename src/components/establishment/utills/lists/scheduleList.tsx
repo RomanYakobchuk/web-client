@@ -144,7 +144,7 @@ const ScheduleList = ({
                                                                 <MenuItem
                                                                     key={value}
                                                                     value={value}
-                                                                >{translate(`home.create.workSchedule.dayName.${value}`)}</MenuItem>
+                                                                >{translate(`home.create.workSchedule.dayName.${value}.full`)}</MenuItem>
                                                             )
                                                         )
                                                     }
@@ -176,7 +176,7 @@ const ScheduleList = ({
                                                                 <MenuItem
                                                                     key={value}
                                                                     value={value}
-                                                                >{translate(`home.create.workSchedule.dayName.${value}`)}</MenuItem>
+                                                                >{translate(`home.create.workSchedule.dayName.${value}.full`)}</MenuItem>
                                                             )
                                                         )
                                                     }
@@ -242,7 +242,7 @@ const ScheduleList = ({
                     {elements?.length > 0 ? elements?.map((element: IWorkDay, index: any) => (
                         <Chip
                             key={index}
-                            label={`${translate(`home.create.workSchedule.dayName.${element?.days?.from}`)}-${translate(`home.create.workSchedule.dayName.${element?.days?.to}`)}     ${element?.time?.from}-${element?.time?.to}`}
+                            label={`${translate(`home.create.workSchedule.dayName.${element?.days?.from}.full`)}-${translate(`home.create.workSchedule.dayName.${element?.days?.to}.full`)}     ${element?.time?.from}-${element?.time?.to}`}
                             onDelete={() => onDelete(index)}
                             size={"small"}
                             sx={{

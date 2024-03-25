@@ -5,11 +5,13 @@ import {useTranslate} from "@refinedev/core";
 import dayjs from "dayjs";
 import {Link} from "react-router-dom";
 
-import {INews, PropertyProps} from "@/interfaces/common";
+import {INews, IEstablishment} from "@/interfaces/common";
 import {BookMarkButton} from "@/components";
 import SharedComponent from "@/components/common/shared/sharedComponent";
 import {ColorModeContext} from "@/contexts";
 import {ESTABLISHMENT, SHOW} from "@/config/names";
+import {NewsDateEvent} from "@/components/news/utills/newsDateEvent";
+import {EstablishmentPopoverBtn} from "@/components/buttons/establishmentPopover/EstablishmentPopoverBtn";
 
 type TProps = {
     news: INews
@@ -20,24 +22,13 @@ const NewsMainInfo = ({news}: TProps) => {
     const translate = useTranslate();
     const {_id, title, category, place, establishmentId, dateEvent} = news;
 
-    const [anchorElPopover, setAnchorElPopover] = useState<HTMLButtonElement | null>(null);
-
-    const handleClickPopover = (event: MouseEvent<HTMLButtonElement>) => {
-        setAnchorElPopover(event.currentTarget)
-    }
-    const handleClosePopover = () => {
-        setAnchorElPopover(null);
-    }
-
     const bgColorCategory = category === 'general' ? '#ff5f56' : category === 'events' ? '#f9ab46' : category === 'promotions' ? '#3ebafa' : 'common.white';
 
-    const establishment = establishmentId as PropertyProps;
+    const establishment = establishmentId as IEstablishment;
 
-    const openPopover = Boolean(anchorElPopover);
-    const popoverId = openPopover ? 'establishment_popover' : undefined;
     return (
         <Box sx={{
-            wdith: '100%',
+            width: '100%',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'start',
@@ -153,211 +144,25 @@ const NewsMainInfo = ({news}: TProps) => {
                 justifyContent: {xs: 'space-between', lg: 'start'},
                 flexDirection: {xs: 'row', lg: 'column'}
             }}>
-                {
-                    dateEvent?.length > 0 && (
-                        <Box sx={{
-                            color: 'common.white',
-                            "& div": {
-                                color: 'common.white',
-                            },
-                        }}>
-                            <Typography variant={'subtitle1'} sx={{
-                                fontWeight: 600
-                            }}>
-                                {translate('news.dateEvent.title')}
-                            </Typography>
-                            <Box sx={{
-                                marginLeft: '32px'
-                            }}>
-                                {
-                                    dateEvent?.map((event, index) => (
-                                        <Box key={index} sx={{
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            position: 'relative',
-                                            "::before": {
-                                                content: '""',
-                                                position: 'absolute',
-                                                left: '-15px',
-                                                top: '5px',
-                                                width: '7px',
-                                                height: '7px',
-                                                borderRadius: '50%',
-                                                bgcolor: 'common.white'
-                                            }
-                                        }}>
-                                            <div>
-                                                {
-                                                    event?.schedule?.from && (
-                                                        <span>
-                                                        {dayjs(event?.schedule?.from)?.format('DD/MM/YYYY')}
-                                                    </span>
-                                                    )
-                                                }
-                                                {
-                                                    event?.schedule?.from && event?.schedule?.to && (
-                                                        ' - '
-                                                    )
-                                                }
-                                                {
-                                                    event?.schedule?.to && (
-                                                        <span>
-                                                        {dayjs(event?.schedule?.to)?.format('DD/MM/YYYY')}
-                                                    </span>
-                                                    )
-                                                }
-                                            </div>
-                                            <div>
-                                                {
-                                                    event?.time?.from && (
-                                                        <span>
-                                                        {event?.time?.from as string}
-                                                    </span>
-                                                    )
-                                                }
-                                                {
-                                                    event?.time?.from && event?.time?.to && (
-                                                        ' - '
-                                                    )
-                                                }
-                                                {
-                                                    event?.time?.to && (
-                                                        <span>
-                                                        {event?.time?.to as string}
-                                                    </span>
-                                                    )
-                                                }
-                                            </div>
-                                        </Box>
-                                    ))
-                                }
-                            </Box>
-                        </Box>
-                    )
-                }
-                <Box>
-                    <Button
-                        variant={'text'}
-                        color={'info'}
-                        onClick={handleClickPopover}
-                        aria-describedby={popoverId}
-                        sx={{
-                            textDecoration: 'none',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 1,
-
-                        }}
-                    >
-                        <Apartment/>
-                        {translate('home.one')}
-                    </Button>
-                    <Popover
-                        id={popoverId}
-                        open={openPopover}
-                        anchorEl={anchorElPopover}
-                        onClose={handleClosePopover}
-                        anchorOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'left',
-                        }}
-                        sx={{
-                            "& div.MuiPaper-root": {
-                                backgroundColor: 'modern.modern_2.second',
-                            },
-                            "& div.css-ngp70-MuiPaper-root-MuiPopover-paper": {
-                                boxShadow: `0px 0px 10px 0px ${mode === 'dark' ? '#f1f1f1' : '#424242'}`,
-                                borderRadius: '10px'
-                            }
-                        }}
-                    >
-                        <Box sx={{
-                            p: 1.5,
-                            width: '100%',
-                            maxWidth: '300px',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: 1,
-                            "& a": {
-                                color: '#fff',
-                                bgcolor: 'info.main',
-                                transition: '200ms linear',
-                                "&:hover": {
-                                    bgcolor: 'modern.modern_1.second',
-                                }
-                            }
-                        }}>
-                            {
-                                establishment?._id && (
-                                    <>
-                                        {
-                                            establishment?.pictures?.length > 0 && (
-                                                <Box sx={{
-                                                    width: '100%',
-                                                    height: '200px',
-                                                    "& img": {
-                                                        borderRadius: '7px',
-                                                        objectFit: 'cover'
-                                                    }
-                                                }}>
-                                                    <img
-                                                        style={{
-                                                            width: '100%',
-                                                            height: '100%'
-                                                        }}
-                                                        src={establishment?.pictures[0]?.url}
-                                                        alt={establishment?.pictures[0]?.name}
-                                                    />
-                                                </Box>
-                                            )
-                                        }
-                                        <Box sx={{
-                                            display: 'flex',
-                                            alignItems: 'end',
-                                            gap: 2,
-                                            width: '100%',
-                                            justifyContent: 'space-between',
-                                            flexWrap: 'wrap'
-                                        }}>
-                                            <Typography variant={'h5'} sx={{
-                                                fontSize: '20px',
-                                                whiteSpace: 'break-spaces',
-                                                color: 'common.white'
-                                            }}>
-                                                {establishment?.title}
-                                            </Typography>
-                                            <Box sx={{
-                                                bgcolor: 'common.white',
-                                                color: 'common.black',
-                                                p: '3px 10px',
-                                                borderRadius: '10px'
-                                            }}>
-                                                {translate(`home.create.type.${establishment?.type}`)}
-                                            </Box>
-                                        </Box>
-                                        <Link
-                                            style={{
-                                                textDecoration: 'none',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: '16px',
-                                                margin: '10px 0',
-                                                width: '100%',
-                                                justifyContent: 'center',
-                                                padding: '10px',
-                                                borderRadius: '10px'
-                                            }}
-                                            to={`/${ESTABLISHMENT}/${SHOW}/${establishment?._id}`}
-                                        >
-                                            {translate('home.one')}
-                                            <East/>
-                                        </Link>
-                                    </>
-                                )
-                            }
-                        </Box>
-                    </Popover>
+                <Box sx={{
+                    color: 'common.white',
+                    "& div": {
+                        color: 'common.white',
+                    },
+                }}>
+                    <Typography variant={'subtitle1'} sx={{
+                        fontWeight: 600
+                    }}>
+                        {translate('news.dateEvent.title')}
+                    </Typography>
+                    <Box sx={{
+                        marginLeft: '32px'
+                    }}>
+                        <NewsDateEvent dateEvent={news?.dateEvent}/>
+                    </Box>
                 </Box>
+                <EstablishmentPopoverBtn establishment={establishment}/>
+            {/*    ESTABLSIHMENTBTN*/}
             </Box>
         </Box>
     );

@@ -7,13 +7,13 @@ import {CallMade, PlaceOutlined} from "@mui/icons-material";
 import {useMobile} from "@/hook";
 import {CarouselComponent} from "../index";
 import {ESTABLISHMENT, SHOW} from "@/config/names";
+import {TruncateSingleText} from "@/utils";
 
 const {Text} = TypographyAntd;
 const CountViews = () => {
 
     const translate = useTranslate();
     const {layoutWidth, width} = useMobile();
-
 
     const {data: dataViews, isLoading: isLoadingViews} = useList<any>({
         resource: `${ESTABLISHMENT}/countMoreViews`,
@@ -29,26 +29,58 @@ const CountViews = () => {
             display: "flex",
             flexDirection: 'column',
             gap: 2,
-            width: '100%'
+            margin: '0 auto',
+            width: {xs: '90vw', md: `calc(${layoutWidth}px - 10vw + 10px)`},
+            bgcolor: 'modern.modern_1.main',
+            borderRadius: '15px',
+            p: 2
+            // width: '100%'
         }}>
             {
                 (dataViews?.total! > 0 || isLoadingViews) &&
                 <Typography sx={{
                     fontSize: {xs: '18px', sm: '22px'},
                     fontWeight: 900,
-                    mx: 6,
-                    color: (theme: any) => theme.palette.secondary.main
+                    // mx: 6,
+                    color: 'secondary.main'
                 }}>
                     {translate("home.sortByType.popularPlace")}
                 </Typography>
             }
             <Box sx={{
                 // width: {xs: '80vw', md: `calc(${layoutWidth}px - 160px)`},
-                width: {xs: '100vw', md: `${layoutWidth}px`},
-                margin: '0',
-                position: 'relative'
+                width: {xs: '100%', sm: 'calc(100% - 80px)'},
+                margin: '0 auto',
+                position: 'relative',
+                "& > div":{
+                    borderRadius: '7px'
+                },
+                "& button.react-multiple-carousel__arrow--right":{
+                    right: {sm: '-5px', xl: '-10px'},
+                    transform: {sm: 'translateX(100%)'}
+                },
+                "& button.react-multiple-carousel__arrow--left":{
+                    left: {sm: '-5px', xl: '-10px'},
+                    transform: {sm: 'translateX(-100%)'}
+                },
+                "& ul.react-multi-carousel-dot-list":{
+                    bgcolor: '#f5f5fa',
+                    p: '4px 8px',
+                    width: 'fit-content',
+                    margin: '0 auto 5px',
+                    borderRadius: '15px',
+                    gap: 1,
+                    "& li > button":{
+                        mr: 0,
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                    }
+                },
             }}>
-                <CarouselComponent>
+                <CarouselComponent
+                    autoPlay={true}
+                >
                     {
                         dataViews?.data?.map((item, index) => (
                             <Box key={index} sx={{
@@ -69,6 +101,9 @@ const CountViews = () => {
                                         display: 'flex',
                                         flexDirection: 'column',
                                         justifyContent: 'space-between',
+                                        "& a":{
+                                            margin: {xs: '10px 5px 35px', md: '10px 5px'},
+                                        }
                                     }}>
                                     <Box sx={{
                                         display: 'flex',
@@ -98,8 +133,7 @@ const CountViews = () => {
                                         style={{
                                             textDecoration: 'none',
                                             cursor: 'pointer',
-                                            padding: "10px",
-                                            margin: '10px 5px',
+                                            padding: "4px 8px",
                                             borderRadius: "25px",
                                             background: "rgba(0, 0, 0, 0.2)",
                                             backdropFilter: "blur(4px)",
@@ -115,7 +149,11 @@ const CountViews = () => {
                                             fontWeight: 900,
                                             textTransform: 'capitalize'
                                         }}>
-                                            {item?.viewsWith?.title}
+                                            <TruncateSingleText
+                                                str={item?.viewsWith?.title}
+                                                width={width < 500 ? '100px' : 'fit-content'}
+                                            />
+                                            {/*{item?.viewsWith?.title}*/}
                                         </Text>
                                         <CallMade sx={{
                                             color: '#fff'
@@ -123,10 +161,10 @@ const CountViews = () => {
                                     </Link>
                                     <Box sx={{
                                         position: 'absolute',
-                                        right: {xs: '0px', md: 'unset'},
-                                        left: {xs: 'unset', md: '0px'},
-                                        bottom: {xs: '10px', md: '60px'},
-                                        p: '5px 10px',
+                                        right: {xs: '5px', md: 'unset'},
+                                        left: {xs: 'unset', md: '5px'},
+                                        bottom: {xs: '35px', md: '60px'},
+                                        p: '4px 8px',
                                         bgcolor: 'common.black',
                                         borderRadius: '15px',
                                         "& span": {

@@ -1,0 +1,41 @@
+
+.calendar-container {
+    font-family: Arial, sans-serif;
+}
+.calendar-header {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 4px;
+    gap: 8px;
+}
+.week {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    /*grid-auto-rows: 36px;*/
+    gap: 4px
+}
+
+.day, .dayName {
+    /*flex: 1;*/
+    display: flex;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    padding: 8px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+}
+
+.empty-day {
+    flex: 1;
+}
+
+.disabled {
+    color: #ccc;
+    cursor: not-allowed;
+}

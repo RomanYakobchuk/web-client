@@ -1,38 +1,43 @@
-import {useMobile, useProgressiveImage} from "@/hook";
+import {useProgressiveImage} from "@/hook";
 import {Dispatch, SetStateAction, useEffect, useState} from "react";
 import {Box, Typography} from "@mui/material";
-import {useList, useTranslate} from "@refinedev/core";
+import {useInfiniteList, useTranslate} from "@refinedev/core";
 import {CheckCircle, RadioButtonUnchecked} from "@mui/icons-material";
 
-import {INews, PropertyProps} from "@/interfaces/common";
+import {INews, IEstablishment} from "@/interfaces/common";
 import {IFavPlaces} from "@/interfaces/types";
-import {Loading} from "@/components";
 import PlaceholderIgm from "../../../../../public/images/placeholder.png";
 import {TruncateSingleText} from "@/utils";
+import MoreButton from "@/components/buttons/MoreButton";
 
 type TProps = {
     userId: string,
-    checkedItem: PropertyProps | INews,
-    setCheckedItem: Dispatch<SetStateAction<PropertyProps | INews | null>>,
+    checkedItem: IEstablishment | INews | null,
+    setCheckedItem: Dispatch<SetStateAction<IEstablishment | INews | null>>,
     type?: "establishment" | "establishmentNews",
-    parentQuerySelectorForSetWidth: string
+    parentWidth?: number
 }
 export const ChooseSavedEstablishment = ({
                                              userId,
                                              setCheckedItem,
                                              checkedItem,
                                              type = "establishment",
-                                             parentQuerySelectorForSetWidth
+                                             parentWidth
                                          }: TProps) => {
 
-    const {width: windowWidth, device} = useMobile();
     const translate = useTranslate();
+    const [width, setWidth] = useState<number>(parentWidth || 200);
+    const [savedPlaces, setSavedPlaces] = useState<IEstablishment[] | null>(null);
 
-    const [width, setWidth] = useState<number>(0);
-    const [savedPlaces, setSavedPlaces] = useState<PropertyProps[] | null>(null);
-    const parent = document.querySelector(parentQuerySelectorForSetWidth) as HTMLDivElement | null;
-
-    const {data, isLoading, isError} = useList<IFavPlaces>({
+    const {
+        data,
+        isLoading,
+        isError,
+        hasNextPage,
+        fetchNextPage,
+        isFetching,
+        isFetchingNextPage
+    } = useInfiniteList<IFavPlaces>({
         resource: `users/getByUserIdFavPlaces/${userId}`,
         pagination: {
             current: 1,
@@ -48,34 +53,40 @@ export const ChooseSavedEstablishment = ({
     });
 
     useEffect(() => {
-        if (parent) {
-            setWidth(parent?.offsetWidth)
+        if (parentWidth) {
+            setWidth(parentWidth)
         }
-    }, [parent, windowWidth, device]);
+    }, [parentWidth]);
 
     useEffect(() => {
-        if (data?.data) {
-            const items = data?.data?.map((value: IFavPlaces) => value?.item as PropertyProps)
-            setSavedPlaces(items);
+        if (data?.pages) {
+            const list = [].concat(...((data?.pages as any || [])?.map((page: {
+                data: IFavPlaces[],
+                total: number
+            }) => page?.data || [])))?.map((value: IFavPlaces) => value?.item) as IEstablishment[];
+            setSavedPlaces(list);
         }
     }, [data]);
+    const total = data?.pages?.length && data?.pages?.length > 0 ? data?.pages[0]?.total : 0;
 
     const sortedArray = savedPlaces?.sort((a, b) => (a?._id === checkedItem?._id) ? -1 : (b?._id === checkedItem?._id) ? 1 : a?.title?.localeCompare(b?.title));
 
     return (
         <Box
             sx={{
-                width: {xs: '90vw', md: `${width}px`},
+                width: `${width}px`,
+                maxWidth: '85vw',
                 bgcolor: 'common.black',
+                color: 'common.white',
                 borderRadius: '10px',
-                p: 2,
+                // p: 2,
                 overflow: 'hidden'
             }}
         >
             <Typography
                 variant={'h6'}
             >
-                {translate('profile.my_fav_places', {"length": data?.total})}
+                {translate('profile.my_fav_places', {"length": total})}
             </Typography>
             <Box
                 sx={{
@@ -102,9 +113,10 @@ export const ChooseSavedEstablishment = ({
                     }}
                 >
                     {
-                        isLoading
-                            ? <Loading height={'80px'}/>
-                            : isError ? <p>Something went wrong</p>
+                        // !isLoading
+                        //     ? <Loading height={'80px'}/>
+                        //     :
+                        isError ? <p>Something went wrong</p>
                                 : (savedPlaces && savedPlaces?.length > 0 && sortedArray?.map((savedPlace, index) => (
                                     <SavedPlaceCard
                                         // order={savedPlace?._id === checkedItem?._id ? 0 : index + 1}
@@ -115,6 +127,13 @@ export const ChooseSavedEstablishment = ({
                                     />)
                                 ))
                     }
+                    <MoreButton
+                        hasNextPage={hasNextPage}
+                        isFetchingNextPage={isFetchingNextPage}
+                        fetchNextPage={fetchNextPage}
+                        total={total}
+                        isLoading={isLoading}
+                    />
                 </Box>
             </Box>
         </Box>
@@ -122,9 +141,9 @@ export const ChooseSavedEstablishment = ({
 };
 
 type TSavedPlaceCard = {
-    item: PropertyProps | INews,
-    checkedItem: PropertyProps | INews,
-    setCheckedItem: Dispatch<SetStateAction<PropertyProps | INews | null>>,
+    item: IEstablishment | INews,
+    checkedItem: IEstablishment | INews | null,
+    setCheckedItem: Dispatch<SetStateAction<IEstablishment | INews | null>>,
     order?: number
 }
 const SavedPlaceCard = ({item, checkedItem, setCheckedItem, order}: TSavedPlaceCard) => {
@@ -140,6 +159,7 @@ const SavedPlaceCard = ({item, checkedItem, setCheckedItem, order}: TSavedPlaceC
     return (
         <Box
             sx={{
+                cursor: 'pointer',
                 order: order ? order : 'unset',
                 height: '100%',
                 width: '200px',

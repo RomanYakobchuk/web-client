@@ -1,4 +1,4 @@
-import {PropertyProps} from "../interfaces/common";
+import {IEstablishment} from "../interfaces/common";
 import {useEffect, useState} from "react";
 
 interface IProps {
@@ -35,9 +35,9 @@ export interface IResponseDataLocation {
     type: string
 }
 
-export const useLocationData: (location: PropertyProps['location'], callback?: (locationData: IResponseDataLocation) => void) => {
+export const useLocationData: (location: IEstablishment['location'], callback?: (locationData: IResponseDataLocation) => void) => {
     locationData: IProps['locationData']
-} = (location: PropertyProps['location'], callback?: (locationData: IResponseDataLocation) => void): IProps => {
+} = (location: IEstablishment['location'], callback?: (locationData: IResponseDataLocation) => void): IProps => {
 
     const [locationData, setLocationData] = useState<IResponseDataLocation>({} as IResponseDataLocation);
 

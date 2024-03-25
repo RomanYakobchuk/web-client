@@ -66,6 +66,9 @@ const CountType = () => {
                     bgcolor: 'common.black',
                     "&:hover": {
                         bgcolor: 'info.main',
+                        "& span": {
+                            color: '#f1f1f1',
+                        },
                         "& div.countType_open_btn": {
                             bgcolor: 'common.black'
                         }

@@ -1,9 +1,10 @@
-import {useNavigate} from "react-router-dom";
-import {useUserInfo} from "@/hook";
 import React, {useEffect, useState} from "react";
+import {useNavigate} from "react-router-dom";
+
 import ProfileDataForm, {INewUserData} from "@/components/profile/utills/profileDataForm";
 import {useForm} from "@refinedev/react-hook-form";
 import {CustomEdit} from "@/components";
+import {useUserInfo} from "@/hook";
 
 const EditProfile = () => {
     const navigate = useNavigate();
@@ -12,12 +13,28 @@ const EditProfile = () => {
     const [userDataInfo, setUserDataInfo] = useState<INewUserData>({} as INewUserData);
 
     const {
-        refineCore: {onFinish, formLoading},
+        refineCore: {onFinish},
     } = useForm({
         refineCoreProps: {
             resource: `users/userInfo`,
             action: 'edit',
             id: user?._id as string,
+            onMutationSuccess: (data) => {
+                if (data?.data?.user) {
+                    localStorage.setItem(
+                        "user",
+                        JSON.stringify(data?.data?.user)
+                    );
+                } else if (data?.data) {
+                    localStorage.setItem(
+                        "user",
+                        JSON.stringify(data?.data)
+                    );
+                }
+                setTimeout(() => {
+                    navigate(`/profile`)
+                }, 500)
+            },
             successNotification: (data: any) => {
                 return {
                     type: "success",
@@ -55,21 +72,11 @@ const EditProfile = () => {
         formData.append("dOB", JSON.stringify(userDataInfo?.dOB));
         formData.append("currentId", userDataInfo?.currentId);
 
-        const {data}: any = await onFinish(formData);
-        if (data?.user) {
-            localStorage.setItem(
-                "user",
-                JSON.stringify(data?.user)
-            );
-        } else if (data) {
-            localStorage.setItem(
-                "user",
-                JSON.stringify(data)
-            );
+        try {
+            await onFinish(formData);
+        } catch (e: any) {
+            console.log(e)
         }
-        setTimeout(() => {
-            navigate(`/profile`)
-        }, 500)
     }
 
     return (

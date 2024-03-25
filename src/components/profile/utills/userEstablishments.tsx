@@ -5,8 +5,8 @@ import {useInfiniteList, useTranslate} from "@refinedev/core";
 
 import Loading from "../../loading/loading";
 import {useMobile} from "@/hook";
-import {PropertyProps} from "@/interfaces/common";
-import MoreButton from "@/components/common/buttons/MoreButton";
+import {IEstablishment} from "@/interfaces/common";
+import MoreButton from "@/components/buttons/MoreButton";
 import PropertiesList from "@/components/establishment/utills/lists/propertiesList";
 import {VariantComponent} from "@/components";
 import {SearchInputComponent} from "@/components/common/search";
@@ -17,13 +17,13 @@ interface IProps {
     id: string
 }
 
-const Userestablishments = ({id}: IProps) => {
+const UserEstablishments = ({id}: IProps) => {
 
     const translate = useTranslate();
     const {width} = useMobile();
 
     const [searchValue, setSearchValue] = useState<string>('');
-    const [establishment, setEstablishment] = useState<PropertyProps[]>([] as PropertyProps[]);
+    const [establishment, setEstablishment] = useState<IEstablishment[]>([] as IEstablishment[]);
     const [status, setStatus] = useState<"draft" | "published" | "rejected">("published");
 
     const [debounceSearchValue] = useDebounce(searchValue, 500);
@@ -35,7 +35,7 @@ const Userestablishments = ({id}: IProps) => {
         hasNextPage,
         fetchNextPage,
         isFetchingNextPage,
-    } = useInfiniteList<PropertyProps>({
+    } = useInfiniteList<IEstablishment>({
         resource: `${ESTABLISHMENT}/allByUserId/${id}`,
         pagination: {
             pageSize: 10
@@ -57,7 +57,7 @@ const Userestablishments = ({id}: IProps) => {
     useEffect(() => {
         if (data?.pages) {
             const list = [].concat(...((data?.pages as any ?? [])?.map((page: {
-                data: PropertyProps[],
+                data: IEstablishment[],
                 total: number
             }) => page?.data ?? [])));
             setEstablishment(list);
@@ -168,4 +168,4 @@ const Userestablishments = ({id}: IProps) => {
         </Box>
     );
 };
-export default Userestablishments;
+export default UserEstablishments;

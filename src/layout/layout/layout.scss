@@ -1,0 +1,109 @@
+@keyframes orbit {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+:root {
+    --size: 7px;
+    --height: 800%;
+    --width: 10%;
+    --color: #b6cbd4;
+}
+.star-blink {
+    position: absolute;
+    width: var(--size);
+    height: var(--size);
+    background-color: #b6cbd4;
+    border-radius: 50%;
+    z-index: 0;
+
+    transform: rotate(0deg) scale(0.08);
+    backface-visibility: hidden;
+    animation: blinkAfter 15s infinite linear;
+
+    div {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        transform: rotate(45deg) scale(0.75);
+        box-shadow: 0 0 2px 8px rgba(0, 0, 0, 0.4),
+        0 0 2px 9px rgba(255, 255, 255, 0.07),
+        0 0 2px 15px rgba(0, 0, 0, 0.4),
+        0 0 2px 16px rgba(255, 255, 255, 0.1);
+        backface-visibility: hidden;
+    }
+
+    &:after, &:before, div:after, div:before {
+        content: '';
+        position: absolute;
+        display: block;
+        top: calc(-1 * (var(--height) / 2 - 50%));
+        left: calc(50% - (var(--width) / 2));
+        height: var(--height);
+        width: var(--width);
+        border-radius: 50%;
+        //background-color: var(--color);
+        background: linear-gradient(to top, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.7) 50%, rgba(255, 255, 255, 0.1) 100%);
+        z-index: 1;
+
+        box-shadow: 0 0 25px white;
+        backface-visibility: hidden;
+    }
+
+    &:after {
+    }
+
+    &:before, div:before {
+        transform: rotate(90deg);
+    }
+
+    &.blue {
+        &:after, &:before, div:after, div:before {
+            box-shadow: 0 0 25px rgba(0, 0, 255, 1);
+        }
+    }
+
+    &.red {
+        &:after, &:before, div:after, div:before {
+            box-shadow: 0 0 25px rgba(255, 0, 0, 1);
+        }
+    }
+}
+
+@-webkit-keyframes blinkAfter {
+    0% {
+        transform: rotate(0deg) scale(0.08);
+    }
+    4% {
+        transform: rotate(-20deg) scale(0.9);
+    }
+    8% {
+        transform: rotate(-40deg) scale(0.08);
+    }
+    50% {
+        transform: rotate(-40deg) scale(0.08);
+    }
+    52% {
+        transform: rotate(-50deg) scale(0.3);
+    }
+    54% {
+        transform: rotate(-60deg) scale(0.08);
+    }
+    100% {
+        transform: rotate(0deg) scale(0.08);
+    }
+
+}
+
+@-webkit-keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}

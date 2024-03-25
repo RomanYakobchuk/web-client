@@ -1,13 +1,14 @@
-import {styled, alpha} from '@mui/material/styles';
-import Menu, {MenuProps} from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import ShareIcon from '@mui/icons-material/Share';
+import {Box, Button, Divider, IconButton, InputAdornment, SxProps, TextField} from "@mui/material";
+import {useNotification, useTranslate} from "@refinedev/core";
 import IosShareIcon from '@mui/icons-material/IosShare';
 import CopyIcon from '@mui/icons-material/ContentCopy';
-import {Box, Button, Divider, IconButton, SxProps} from "@mui/material";
-import {MoreHoriz} from "@mui/icons-material";
+import {styled, alpha} from '@mui/material/styles';
+import Menu, {MenuProps} from '@mui/material/Menu';
+import ShareIcon from '@mui/icons-material/Share';
+import MenuItem from '@mui/material/MenuItem';
+import {MoreHoriz, MoreHorizRounded} from "@mui/icons-material";
 import {MouseEvent, useState} from "react";
-import {useNotification, useTranslate} from "@refinedev/core";
+
 
 import {
     EmailShareButton,
@@ -26,7 +27,7 @@ import {
     ViberIcon
 } from "react-share";
 
-import BookMarkButton from "../buttons/BookMarkButton";
+import BookMarkButton from "@/components/buttons/BookMarkButton";
 import {ModalWindow} from "@/components";
 
 
@@ -85,7 +86,17 @@ type TProps = {
     sharedStyle?: SxProps,
     name?: string
 }
-const SharedComponent = ({url, title, id, isOnlyShared = false, color, type, isShowSharedText = false, bookMarkStyle, sharedStyle, name}: TProps) => {
+const SharedComponent = ({
+                             url,
+                             title,
+                             id,
+                             isOnlyShared = false,
+                             color,
+                             type,
+                             isShowSharedText = false,
+                             bookMarkStyle,
+                             sharedStyle,
+                         }: TProps) => {
 
     const translate = useTranslate();
     const {open: openNotification} = useNotification();
@@ -108,11 +119,8 @@ const SharedComponent = ({url, title, id, isOnlyShared = false, color, type, isS
         setAnchorEl(null);
     };
 
-    const handleShare = (event: MouseEvent<HTMLButtonElement>) => {
-        event.preventDefault();
-        event.stopPropagation();
-        handleClose(event);
-
+    const handleDeviceShare = (e: MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
         if (navigator.share) {
             navigator.share(dataShare)
                 .then(() => openNotification?.({
@@ -125,9 +133,14 @@ const SharedComponent = ({url, title, id, isOnlyShared = false, color, type, isS
                     description: 'Shared',
                     message: 'Error shared link'
                 }))
-        } else {
-            setOpenModal(true)
         }
+    }
+    const handleShare = (event: MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+        event.stopPropagation();
+        handleClose(event);
+
+        setOpenModal(true);
     }
     const copy = () => {
         navigator.clipboard.writeText(url)?.then(() => openNotification?.({
@@ -145,7 +158,8 @@ const SharedComponent = ({url, title, id, isOnlyShared = false, color, type, isS
         round: true
     }
     const sharedTextButtonStyle = {
-        fontSize: {xs: '18px', sm: '22px'},
+        fontSize: {xs: '16px', sm: '18px'},
+        color: 'common.white',
         fontWeight: 600
     }
     return (
@@ -255,10 +269,9 @@ const SharedComponent = ({url, title, id, isOnlyShared = false, color, type, isS
                     </>
                 )
             }
-            {/*{*/}
-            {/*    openModal && (*/}
             <ModalWindow
                 open={openModal}
+                timeOut={400}
                 setOpen={setOpenModal}
                 title={
                     <Box sx={{
@@ -269,9 +282,14 @@ const SharedComponent = ({url, title, id, isOnlyShared = false, color, type, isS
                         {translate('buttons.share')}
                     </Box>
                 }
+                bodyProps={{
+                    maxWidth: '100%',
+                    p: 2
+                }}
                 contentProps={{
                     width: '90%',
                     maxWidth: '550px',
+                    height: 'fit-content',
                     maxHeight: '70%',
                     borderRadius: '10px'
                 }}
@@ -285,96 +303,195 @@ const SharedComponent = ({url, title, id, isOnlyShared = false, color, type, isS
                     <Box sx={{
                         display: 'flex',
                         alignItems: 'center',
-                        gap: 1
+                        gap: 1,
+                        width: '100%'
                     }}>
-                        <a href={url}>{name}</a>
-                        <IconButton onClick={copy}>
-                            <CopyIcon fontSize={'small'}/>
-                        </IconButton>
+                        <TextField
+                            fullWidth
+                            type={'url'}
+                            size={'medium'}
+                            color={'info'}
+                            sx={{
+                                boxShadow: '0px 0px 2px 2px #c1c1c1',
+                                borderRadius: '10px',
+                                "& fieldset": {
+                                    border: 'unset'
+                                },
+                                "& > div": {
+                                    borderRadius: '10px',
+                                },
+                                bgcolor: 'cornflowerblue',
+                                "& input": {
+                                    color: '#f1f1f1'
+                                }
+                            }}
+                            InputProps={{
+                                readOnly: true,
+                                endAdornment: <InputAdornment position={'end'}>
+                                    <IconButton
+                                        onClick={copy}
+                                        sx={{
+                                            bgcolor: 'common.black',
+                                            borderRadius: '7px',
+                                            transition: '200ms linear',
+                                            "&:hover": {
+                                                bgcolor: 'common.white',
+                                                "& svg": {
+                                                    color: 'common.black'
+                                                }
+                                            },
+                                            "& svg": {
+                                                color: 'common.white'
+                                            }
+                                        }}
+                                    >
+                                        <CopyIcon fontSize={'small'}/>
+                                    </IconButton>
+                                </InputAdornment>
+                            }}
+                            value={url}
+                        />
                     </Box>
                     <Box sx={{
-                        display: 'flex',
-                        gap: 2,
-                        flexDirection: 'column',
-                        flexWrap: 'wrap',
+                        display: 'grid',
+                        gridTemplateColumns: {xs: '1fr 1fr 1fr', sm: '1fr 1fr', md: '1fr 1fr 1fr'},
+                        gap: 1,
                         alignItems: 'start',
                         width: '100%',
+                        "& > div": {},
                         "& button": {
+                            justifyContent: 'start',
+                            textTransform: 'inherit',
+                            p: '8px !important',
                             display: 'flex',
+                            flexDirection: {xs: 'column', sm: 'row'},
                             alignItems: 'center',
-                            gap: 2
+                            gap: 2,
+                            width: '100%',
+                            transition: '200ms linear',
+                            borderRadius: '10px',
+                            "&:hover": {
+                                bgcolor: '#2874CB !important',
+                                "& > div": {
+                                    color: '#f8f8f8'
+                                }
+                            }
                         }
                     }}>
-                        <TelegramShareButton
-                            url={url}
-                        >
-                            <TelegramIcon {...sharedIconButtonStyle}/>
-                            <Box sx={{
-                                ...sharedTextButtonStyle
-                            }}>
-                                Telegram
-                            </Box>
-                        </TelegramShareButton>
-                        <FacebookShareButton
-                            url={url}
-                        >
-                            <FacebookIcon {...sharedIconButtonStyle}/>
-                            <Box sx={{
-                                ...sharedTextButtonStyle
-                            }}>
-                                Facebook
-                            </Box>
-                        </FacebookShareButton>
-                        <TwitterShareButton
-                            url={url}
-                        >
-                            <TwitterIcon {...sharedIconButtonStyle}/>
-                            <Box sx={{
-                                ...sharedTextButtonStyle
-                            }}>
-                                Twitter
-                            </Box>
-                        </TwitterShareButton>
-                        <ViberShareButton
-                            url={url}
-                        >
-                            <ViberIcon {...sharedIconButtonStyle}/>
-                            <Box sx={{
-                                ...sharedTextButtonStyle
-                            }}>
-                                Viber
-                            </Box>
-                        </ViberShareButton>
-                        <WhatsappShareButton
-                            url={url}
-                        >
-                            <WhatsappIcon {...sharedIconButtonStyle}/>
-                            <Box sx={{
-                                ...sharedTextButtonStyle
-                            }}>
-                                Whatsapp
-                            </Box>
-                        </WhatsappShareButton>
-                        <RedditShareButton
-                            url={url}
-                        >
-                            <RedditIcon {...sharedIconButtonStyle}/>
-                            <Box sx={{
-                                ...sharedTextButtonStyle
-                            }}>
-                                Reddit
-                            </Box>
-                        </RedditShareButton>
-                        <EmailShareButton
-                            url={url}
-                        >
-                            <EmailIcon {...sharedIconButtonStyle}/>
-                            <Box sx={{
-                                ...sharedTextButtonStyle
-                            }}>
-                                Email
-                            </Box>
-                        </EmailShareButton>
+                        <Box>
+                            <TelegramShareButton
+                                url={url}
+                            >
+                                <TelegramIcon {...sharedIconButtonStyle}/>
+                                <Box sx={{
+                                    ...sharedTextButtonStyle
+                                }}>
+                                    Telegram
+                                </Box>
+                            </TelegramShareButton>
+                        </Box>
+                        <Box>
+                            <FacebookShareButton
+                                url={url}
+                            >
+                                <FacebookIcon {...sharedIconButtonStyle}/>
+                                <Box sx={{
+                                    ...sharedTextButtonStyle
+                                }}>
+                                    Facebook
+                                </Box>
+                            </FacebookShareButton>
+                        </Box>
+                        <Box>
+                            <TwitterShareButton
+                                url={url}
+                            >
+                                <TwitterIcon {...sharedIconButtonStyle}/>
+                                <Box sx={{
+                                    ...sharedTextButtonStyle
+                                }}>
+                                    Twitter
+                                </Box>
+                            </TwitterShareButton>
+                        </Box>
+                        <Box>
+                            <ViberShareButton
+                                url={url}
+                            >
+                                <ViberIcon {...sharedIconButtonStyle}/>
+                                <Box sx={{
+                                    ...sharedTextButtonStyle
+                                }}>
+                                    Viber
+                                </Box>
+                            </ViberShareButton>
+                        </Box>
+                        <Box>
+                            <WhatsappShareButton
+                                url={url}
+                            >
+                                <WhatsappIcon {...sharedIconButtonStyle}/>
+                                <Box sx={{
+                                    ...sharedTextButtonStyle
+                                }}>
+                                    Whatsapp
+                                </Box>
+                            </WhatsappShareButton>
+                        </Box>
+                        <Box>
+                            <RedditShareButton
+                                url={url}
+                            >
+                                <RedditIcon {...sharedIconButtonStyle}/>
+                                <Box sx={{
+                                    ...sharedTextButtonStyle
+                                }}>
+                                    Reddit
+                                </Box>
+                            </RedditShareButton>
+                        </Box>
+                        <Box>
+                            <EmailShareButton
+                                url={url}
+                            >
+                                <EmailIcon {...sharedIconButtonStyle}/>
+                                <Box sx={{
+                                    ...sharedTextButtonStyle
+                                }}>
+                                    Email
+                                </Box>
+                            </EmailShareButton>
+                        </Box>
+                        {
+                            !navigator?.share ? "" : (
+                                <Box>
+                                    <Button
+                                        onClick={handleDeviceShare}
+                                    >
+                                        <Box
+                                            sx={{
+                                                width: '46px',
+                                                height: '46px',
+                                                borderRadius: '50%',
+                                                bgcolor: 'silver',
+                                                display: 'flex',
+                                                justifyContent: 'center',
+                                                alignItems: 'center'
+                                            }}
+                                        >
+                                            <MoreHorizRounded
+                                                fontSize={'large'}
+                                            />
+                                        </Box>
+                                        <Box sx={{
+                                            ...sharedTextButtonStyle
+                                        }}>
+                                            {translate('buttons.more')}
+                                        </Box>
+                                    </Button>
+                                </Box>
+                            )
+                        }
                     </Box>
                 </Box>
             </ModalWindow>

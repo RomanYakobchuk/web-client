@@ -5,27 +5,27 @@ import {
     SelectChangeEvent,
     TextField,
     Typography,
-    Switch,
-    OutlinedInputProps, FilledInputProps
+    OutlinedInputProps, FilledInputProps, SxProps
 } from "@mui/material";
 import {useTranslate} from "@refinedev/core";
-import {ChangeEvent, Dispatch, SetStateAction, useEffect, useState} from "react";
+import React, {ChangeEvent, Dispatch, SetStateAction, useEffect, useState} from "react";
+import {Switch} from "antd";
 
-import {IFreeSeatsProps} from "../../../../interfaces/common";
+import {IFreeSeatsProps} from "@/interfaces/common";
 import {ESTABLISHMENT} from "@/config/names";
 
 
 type TProps = {
     freeSeats: IFreeSeatsProps,
-    setFreeSeats: Dispatch<SetStateAction<IFreeSeatsProps>>
+    setFreeSeats: Dispatch<SetStateAction<IFreeSeatsProps>>,
+    styles?: SxProps
 }
 
-const SearchByFreeSeats = ({setFreeSeats, freeSeats}: TProps) => {
+const SearchByFreeSeats = ({setFreeSeats, freeSeats, styles}: TProps) => {
 
     const translate = useTranslate();
 
-    const [currentFreeSeats, setCurrentFreeSeats] = useState({} as IFreeSeatsProps);
-
+    const [currentFreeSeats, setCurrentFreeSeats] = useState<IFreeSeatsProps>({} as IFreeSeatsProps);
     useEffect(() => {
         if (freeSeats) {
             setCurrentFreeSeats(freeSeats)
@@ -35,11 +35,15 @@ const SearchByFreeSeats = ({setFreeSeats, freeSeats}: TProps) => {
     const size = 'small';
 
     const handleChangeValue = (event: SelectChangeEvent | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setCurrentFreeSeats((prevState) => ({...prevState, [event.target.name]: event.target.name === 'status' ? event.target.value : Number(event.target.value)}))
+        setCurrentFreeSeats((prevState) => ({
+            ...prevState,
+            [event.target.name]: event.target.name === 'status' ? event.target.value : Number(event.target.value)
+        }))
     }
-    const handleChangeIsCombine = (event: ChangeEvent<HTMLInputElement>) => {
-        setCurrentFreeSeats((prevState) => ({...prevState, isCombineTheSeats: event.target.checked}))
+    const handleChangeIsCombine = (checked: boolean) => {
+        setCurrentFreeSeats((prevState) => ({...prevState, isCombineTheSeats: checked}))
     }
+    console.log(currentFreeSeats)
     const handleClickChange = () => {
         setFreeSeats(currentFreeSeats)
     }
@@ -48,6 +52,7 @@ const SearchByFreeSeats = ({setFreeSeats, freeSeats}: TProps) => {
         inputProps: {min: 0}
     };
 
+    const color = 'secondary';
     return (
         <Box sx={{
             width: '100%',
@@ -56,63 +61,86 @@ const SearchByFreeSeats = ({setFreeSeats, freeSeats}: TProps) => {
             gap: 2,
             '& div': {
                 width: '100%',
-                maxWidth: '350px'
+                // maxWidth: '350px'
             },
-            "& div.MuiInputBase-root":{
+            "& div.MuiInputBase-root": {
                 borderRadius: '7px'
-            }
+            },
+            ...styles
         }}>
             <Box>
                 <Typography>
                     {translate(`${ESTABLISHMENT}.freeSeats.isCombine`)}
                 </Typography>
                 <Switch
-                    color={'info'}
-                    sx={{
-                        "& span.MuiSwitch-track": {
-                            bgcolor: currentFreeSeats['isCombineTheSeats'] ? 'info.main' : 'common.white'
-                        }
-                    }}
+                    // defaultChecked={false}
+                    // disabled={isAllowedUser}
                     checked={currentFreeSeats['isCombineTheSeats'] ?? false}
-                    onChange={handleChangeIsCombine}
-                    inputProps={{'aria-label': 'controlled'}}
-                    size={'medium'}
+                    onChange={(checked) => {
+                        handleChangeIsCombine(checked)
+                    }}
                 />
+                {/*<Switch*/}
+                {/*    color={'info'}*/}
+                {/*    sx={{*/}
+                {/*        "& span.MuiSwitch-track": {*/}
+                {/*            bgcolor: currentFreeSeats['isCombineTheSeats'] ? 'info.main' : 'common.white'*/}
+                {/*        }*/}
+                {/*    }}*/}
+                {/*    checked={isCombineTheSeats ?? false}*/}
+                {/*    onChange={(_, checked) => {*/}
+                {/*        console.log(checked)*/}
+                {/*        handleChangeIsCombine(checked)*/}
+                {/*    }}*/}
+                {/*    inputProps={{'aria-label': 'controlled'}}*/}
+                {/*    size={'medium'}*/}
+                {/*/>*/}
             </Box>
-            <Box>
-                <Typography>
-                    {translate(`${ESTABLISHMENT}.freeSeats.tableNumber`)}
-                </Typography>
-                <TextField
-                    name={'table'}
-                    value={currentFreeSeats['table'] ?? ""}
-                    onChange={handleChangeValue}
-                    size={size}
-                    InputProps={InputProps}
-                    type={"number"}
-                />
-            </Box>
-            <Box>
-                <Typography>
-                    {translate(`${ESTABLISHMENT}.freeSeats.numberOfSeats`)}
-                </Typography>
-                <TextField
-                    name={'numberOfSeats'}
-                    value={currentFreeSeats['numberOfSeats'] ?? ""}
-                    onChange={handleChangeValue}
-                    size={size}
-                    type={"number"}
-                    InputProps={InputProps}
-                />
+            <Box
+                sx={{
+                    width: '100%',
+                    display: 'flex',
+                    gap: 1
+                }}
+            >
+                <Box>
+                    <Typography>
+                        {translate(`${ESTABLISHMENT}.freeSeats.tableNumber`)}
+                    </Typography>
+                    <TextField
+                        name={'table'}
+                        value={currentFreeSeats['table'] ?? ""}
+                        onChange={handleChangeValue}
+                        size={size}
+                        InputProps={InputProps}
+                        type={"number"}
+                        color={color}
+                    />
+                </Box>
+                <Box>
+                    <Typography>
+                        {translate(`${ESTABLISHMENT}.freeSeats.numberOfSeats`)}
+                    </Typography>
+                    <TextField
+                        name={'numberOfSeats'}
+                        value={currentFreeSeats['numberOfSeats'] ?? ""}
+                        onChange={handleChangeValue}
+                        size={size}
+                        color={color}
+                        type={"number"}
+                        InputProps={InputProps}
+                    />
+                </Box>
             </Box>
             <Box>
                 <Typography>
                     {translate(`${ESTABLISHMENT}.freeSeats.statusOfSeats.title`)}
                 </Typography>
                 <Select
-                    value={currentFreeSeats['status'] ?? ' '}
+                    value={currentFreeSeats['status'] || ' '}
                     size={'small'}
                     name={'status'}
+                    color={color}
                     onChange={(event) => handleChangeValue(event)}
                 >
                     {
