@@ -146,6 +146,8 @@ const FindNearbyPlaces = ({location, establishment, setOpenDrawer}: TProps) => {
             width: '100%',
             display: 'flex',
             overflowY: 'auto',
+            overflowX: 'hidden',
+            px: 1,
             flexDirection: 'column',
             gap: 2,
             ...barStyle
@@ -316,8 +318,8 @@ const FindNearbyPlaces = ({location, establishment, setOpenDrawer}: TProps) => {
             </Box>
             <Box sx={{
                 width: '100%',
-                paddingRight: '5px',
-                marginRight: '-5px',
+                // paddingRight: '5px',
+                // marginRight: '-5px',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: {xs: 0, sm: 1}
@@ -338,7 +340,7 @@ const FindNearbyPlaces = ({location, establishment, setOpenDrawer}: TProps) => {
                         : isError ? <div>Something went wrong (((</div>
                             : establishmentList?.length > 0 && (
                             <PropertiesList
-                                numberOfColumnsByWidth={2}
+                                numberOfColumnsByWidth={{xs: 'repeat(auto-fill, minmax(175px, 1fr))', sm: 'repeat(auto-fill, minmax(200px, 1fr))'}}
                                 items={establishmentList}
                                 setIsOpen={setOpenDrawer}
                             />

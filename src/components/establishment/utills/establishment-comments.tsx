@@ -36,7 +36,7 @@ const EstablishmentComments = ({establishment}: IProps) => {
     } = useInfiniteList<IComment>({
         resource: `comment/allByEstablishmentId/${establishmentId}`,
         pagination: {
-            pageSize: 10
+            pageSize: 20
         },
     });
     const total = data?.pages?.length && data?.pages?.length > 0 ? data?.pages[0]?.total : 0;
@@ -141,11 +141,11 @@ const EstablishmentComments = ({establishment}: IProps) => {
                                         Something went wrong (((
                                     </Box>
                                     : comments?.length > 0 && (
-                                        <CommentsList
-                                            comments={comments}
-                                            setComments={setComments}
-                                        />
-                                    )
+                                    <CommentsList
+                                        comments={comments}
+                                        setComments={setComments}
+                                    />
+                                )
                         }
                         <MoreButton
                             hasNextPage={hasNextPage}
@@ -154,70 +154,7 @@ const EstablishmentComments = ({establishment}: IProps) => {
                             total={total}
                         />
                     </Box>
-
                 </Box>
-                {/*{*/}
-                {/*    width > 1000 && commentForShowAnswers?._id && commentForShowAnswers?.repliesLength > 0 && (*/}
-                {/*        <Box sx={{*/}
-                {/*            minWidth: '350px',*/}
-                {/*            maxWidth: 'calc(40% - 8px)',*/}
-                {/*            p: 1,*/}
-                {/*            bgcolor: 'modern.modern_1.second',*/}
-                {/*            borderRadius: '10px',*/}
-                {/*            ml: 2,*/}
-                {/*            display: 'flex',*/}
-                {/*            flexDirection: 'column',*/}
-                {/*            gap: 2,*/}
-                {/*            maxHeight: '80vh',*/}
-                {/*            height: 'fit-content',*/}
-                {/*            overflowX: 'hidden',*/}
-                {/*            overflowY: 'auto',*/}
-                {/*            position: 'sticky',*/}
-                {/*            top: schema === 'schema_1' ? '100px' : '30px'*/}
-                {/*        }}>*/}
-                {/*            <Box sx={{*/}
-                {/*                display: 'flex',*/}
-                {/*                flexDirection: 'column',*/}
-                {/*                alignItems: 'end',*/}
-                {/*                gap: 2,*/}
-                {/*                pb: '15px',*/}
-                {/*                borderBottom: '1px solid siver'*/}
-                {/*            }}>*/}
-                {/*                <Button*/}
-                {/*                    onClick={() => {*/}
-                {/*                        setIsLoadCommentAnswers(false)*/}
-                {/*                        setCommentForShowAnswers({} as IComment)*/}
-                {/*                    }}*/}
-                {/*                    variant={'outlined'}*/}
-                {/*                    color={'error'}*/}
-                {/*                    startIcon={<Close/>}*/}
-                {/*                    sx={{*/}
-                {/*                        minWidth: '40px',*/}
-                {/*                        textTransform: 'inherit',*/}
-                {/*                        display: 'flex',*/}
-                {/*                        justifyContent: 'end',*/}
-                {/*                        p: '3px 16px'*/}
-                {/*                    }}*/}
-                {/*                >*/}
-                {/*                    {translate('buttons.close')}*/}
-                {/*                </Button>*/}
-                {/*                <CommentCard*/}
-                {/*                    isShowAnswer={false}*/}
-                {/*                    isShowDelete={false}*/}
-                {/*                    comment={commentForShowAnswers}*/}
-                {/*                    setNewComment={setNewCommentFromShowComments}*/}
-                {/*                />*/}
-                {/*            </Box>*/}
-                {/*            <CommentAnswers*/}
-                {/*                newComment={newCommentFromShowComments}*/}
-                {/*                comment={commentForShowAnswers}*/}
-                {/*                setComment={setCommentForShowAnswers}*/}
-                {/*                isLoadAnswers={isLoadCommentAnswers}*/}
-                {/*                setIsLoadAnswers={setIsLoadCommentAnswers}*/}
-                {/*            />*/}
-                {/*        </Box>*/}
-                {/*    )*/}
-                {/*}*/}
             </Box>
         </Box>
     );

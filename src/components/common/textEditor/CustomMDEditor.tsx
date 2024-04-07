@@ -6,7 +6,7 @@ import {useTranslate} from "@refinedev/core";
 
 type TProps = {
     value: string,
-    setValue: Dispatch<SetStateAction<string>> | ((value?: string) => void),
+    setValue: (value: string) => void,
     isDefaultStyles?: boolean,
     styles?: SxProps,
     placeholder?: string

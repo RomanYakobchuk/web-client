@@ -63,7 +63,14 @@ const Register = () => {
             onMutationError: (data) => {
                 setError(data?.response?.data)
             },
-            redirect: false
+            redirect: false,
+            onMutationSuccess: (data: any) => {
+                if (data?.data) {
+                    if (!data?.data?.isVerify) {
+                        setOpenModal(true)
+                    }
+                }
+            }
         },
         stepsProps: {
             defaultStep: 0
@@ -75,22 +82,20 @@ const Register = () => {
         try {
             if (!accept) return alert(translate("agreement.alert"));
 
-            const currentDate = new Date();
+            const currentDate = new Date(dayjs()?.date());
             currentDate?.setHours(0, 0, 0, 0);
             currentDate?.setFullYear(currentDate.getFullYear() - 18);
-
+            console.log(data?.dOB?.toISOString() < currentDate?.toISOString())
+            console.log(data?.dOB?.toISOString())
+            console.log(currentDate?.toISOString())
             if (data?.dOB?.toISOString() < currentDate?.toISOString()) {
                 return alert(translate("account.edit.alert"))
             }
-            const response: any = await onFinish({
+            await onFinish({
                 ...data,
                 registerBy: "Email"
             } as IRegister);
-            if (response?.data) {
-                if (!response?.data?.isVerify) {
-                    setOpenModal(true)
-                }
-            }
+
         } catch (e: any) {
             console.log(e)
         }

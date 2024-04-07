@@ -14,6 +14,7 @@ import {TruncateSingleText} from "@/utils";
 import {socket} from "@/socketClient";
 import {useChats} from "@/indexedDB";
 import {useMobile, useUserInfo} from "@/hook";
+import NoAvatar from "../.././../../public/images/chats/noAvatar.png";
 
 type TProps = {
     conversationId: string
@@ -288,6 +289,7 @@ type TChatHeaderProps = {
 export const ChatHeader = ({currentChat}: TChatHeaderProps) => {
     const {width} = useMobile();
     const {user} = useUserInfo();
+    const translate = useTranslate();
 
     return (
         <Box sx={{
@@ -314,29 +316,18 @@ export const ChatHeader = ({currentChat}: TChatHeaderProps) => {
                             display: 'flex',
                             justifyContent: 'center',
                             alignItems: 'center',
-                            bgcolor: currentChat?.picture ? 'transparent' : 'common.white',
                             borderRadius: '50%',
                         }}>
-                            {
-                                currentChat?.picture
-                                    ? <img
-                                        src={currentChat?.picture}
-                                        alt={currentChat?.chatName}
-                                        style={{
-                                            width: '100%',
-                                            height: '100%',
-                                            borderRadius: '50%',
-                                            objectFit: 'cover'
-                                        }}
-                                    />
-                                    : <Box sx={{
-                                        textTransform: 'capitalize',
-                                        fontSize: '20px',
-                                        color: 'common.black',
-                                    }}>
-                                        {currentChat?.chatName?.substring(0, 1)}
-                                    </Box>
-                            }
+                            <img
+                                src={currentChat?.picture || NoAvatar}
+                                alt={currentChat?.chatName}
+                                style={{
+                                    width: '100%',
+                                    height: '100%',
+                                    borderRadius: '50%',
+                                    objectFit: 'cover'
+                                }}
+                            />
                         </Box>
                         <Box
                             sx={{
@@ -357,7 +348,7 @@ export const ChatHeader = ({currentChat}: TChatHeaderProps) => {
                                     width: 'fit-content',
                                     maxWidth: '100%'
                                 }}
-                                str={currentChat?.chatName}
+                                str={currentChat?.chatName || translate("chats.user.notFound")}
                             />
                             <TypingIndicator
                                 chat={currentChat}

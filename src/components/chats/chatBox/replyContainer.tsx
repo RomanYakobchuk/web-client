@@ -1,9 +1,7 @@
 import {Box, IconButton} from "@mui/material";
 import {Clear} from "@mui/icons-material";
-import CryptoJS from "crypto-js";
 
-import {IConvMembers, IUser, ProfileProps, IConversation} from "@/interfaces/common";
-import {secretKeyCryptMessage} from "@/config/const";
+import {IConvMembers, ProfileProps, IConversation} from "@/interfaces/common";
 import {TruncateSingleText, formatText} from "@/utils";
 import parse from "html-react-parser";
 import {useStore} from "@/store";

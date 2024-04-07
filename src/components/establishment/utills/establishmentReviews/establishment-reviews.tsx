@@ -1,37 +1,37 @@
 import {
-    Box,
+    Box, Button,
     IconButton,
-    InputAdornment,
+    InputAdornment, Typography,
 } from "@mui/material";
 import React, {Dispatch, SetStateAction, useEffect, useState} from "react";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime"
-import {useTranslation} from "react-i18next";
+
 import 'dayjs/locale/uk';
 import 'dayjs/locale/en';
 import {
-    useInfiniteList,
+    useInfiniteList, useOne, useTranslate,
 } from "@refinedev/core";
-import {Close} from "@mui/icons-material";
+import {Close, StarRounded} from "@mui/icons-material";
 
 import {ReviewForm} from "@/components/establishment/utills/establishmentReviews/reviewForm";
 import MoreButton from "@/components/buttons/MoreButton";
 import ReviewCard from "../../../cards/reviewCard";
 import Loading from "../../../loading/loading";
-import {IReviews} from "@/interfaces/common";
-import {For} from "million/react";
+import {IEstablishment, IReviews} from "@/interfaces/common";
 
-dayjs.extend(relativeTime);
 
 interface IProps {
-    id: string,
+    establishment: IEstablishment,
 }
 
-const EstablishmentReviews = ({id}: IProps) => {
+type TCountStat = { "1": number, "2": number, "3": number, "4": number, "5": number };
+const EstablishmentReviews = ({establishment}: IProps) => {
 
-    const {i18n} = useTranslation();
+    const translate = useTranslate();
 
+    const [countStat, setCountStat] = useState<{ countStat: TCountStat, count: number } | null>(null);
     const [reviews, setReviews] = useState<IReviews[]>([] as IReviews[]);
+
+    const [rangeScore, setRangeScore] = useState<{ gte: number | null, lte: number | null }>({lte: null, gte: null});
 
     const {
         data,
@@ -39,18 +39,21 @@ const EstablishmentReviews = ({id}: IProps) => {
         isError,
         hasNextPage,
         fetchNextPage,
-        isFetchingNextPage
+        isFetchingNextPage,
     } = useInfiniteList<IReviews>({
-        resource: `review/allByEstablishmentId/${id}`,
+        resource: `review/allByEstablishmentId/${establishment?._id}`,
         pagination: {
             pageSize: 20
-        }
+        },
+        filters: [
+            {field: 'score', value: rangeScore?.gte, operator: 'gte'},
+            {field: 'score', value: rangeScore?.lte, operator: 'lte'},
+        ]
     });
-
-
-    useEffect(() => {
-        i18n.language === "ua" ? dayjs.locale('uk') : dayjs.locale('en')
-    }, [i18n.language])
+    const {data: dataCount} = useOne<{ countStat: TCountStat, count: number }>({
+        resource: 'review/establishmentReviewStat',
+        id: establishment?._id
+    });
 
     useEffect(() => {
         if (data?.pages) {
@@ -61,10 +64,28 @@ const EstablishmentReviews = ({id}: IProps) => {
             setReviews(list);
         }
     }, [data]);
-    const total = data?.pages?.length && data?.pages?.length > 0 ? data?.pages[0]?.total : 0;
 
+    useEffect(() => {
+        if (dataCount?.data) {
+            setCountStat({
+                countStat: dataCount?.data?.countStat,
+                count: dataCount?.data?.count
+            })
+        }
+    }, [dataCount]);
+
+    const handleFilterScore = (gte: number | null, lte: number | null) => {
+        setRangeScore({
+            lte: lte,
+            gte: gte
+        })
+    }
+
+    const total = data?.pages?.length && data?.pages?.length > 0 ? data?.pages[0]?.total : 0;
+    console.log(rangeScore)
     return (
         <Box
+            key={establishment?._id + 'reviewTab'}
             sx={{
                 display: "flex",
                 flexDirection: 'column',
@@ -72,38 +93,148 @@ const EstablishmentReviews = ({id}: IProps) => {
                 flex: 1,
                 position: 'relative',
                 width: '100%',
+                color: 'common.white'
             }}
         >
             <ReviewForm
-                establishmentId={id}
-                total={total}
+                setReviews={setReviews}
+                establishment={establishment}
+                total={countStat?.count || 0}
             />
+            <Box>
+                <Typography
+                    variant={'h5'}
+                >
+                    {translate("all-reviews.all-reviews")}:
+                    {" " + countStat?.count}
+                </Typography>
+                <Box
+                    sx={{
+                        overflowX: 'auto',
+                        overflowY: 'hidden',
+                        width: '100%',
+                        maxWidth: '100%',
+                        p: 0.5,
+                        pb: {xs: 1, md: 0.5}
+                    }}
+                >
+                    <Box
+                        sx={{
+                            width: 'fit-content',
+                            display: 'flex',
+                            gap: 1,
+                            // alignItems: 'center',
+                            justifyContent: 'start',
+                            flexWrap: 'nowrap',
+                            "& button": {
+                                transition: '200ms linear',
+                                textTransform: 'inherit',
+                                fontSize: {xs: '1rem', sm: '1.2rem'},
+                                px: 2,
+                                py: 0.25,
+                                display: 'flex',
+                                alignItems: 'center',
+                                borderRadius: '7px',
+                                justifyContent: 'center',
+                                "&:hover": {
+                                    borderColor: 'info.main',
+                                    color: 'info.main'
+                                }
+                            }
+                        }}
+                    >
+                        <Button
+                            variant={'text'}
+                            sx={{
+                                border: '2px solid transparent',
+                                borderColor: !rangeScore?.gte && !rangeScore?.lte ? 'info.main' : '#c1c1c1',
+                                color: !rangeScore?.gte && !rangeScore?.lte ? 'info.main' : 'common.white'
+                            }}
+                            onClick={() => handleFilterScore(null, null)}
+                        >
+                            {translate('favorite-places.type.all')}
+                        </Button>
+                        {
+                            [
+                                {
+                                    count: countStat?.countStat?.["1"],
+                                    title: 1,
+                                    gte: 0,
+                                    lte: 1.4
+                                },
+                                {
+                                    count: countStat?.countStat?.["2"],
+                                    title: 2,
+                                    gte: 1.5,
+                                    lte: 2.4
+                                },
+                                {
+                                    count: countStat?.countStat?.["3"],
+                                    title: 3,
+                                    gte: 2.5,
+                                    lte: 3.4
+                                },
+                                {
+                                    count: countStat?.countStat?.["4"],
+                                    title: 4,
+                                    gte: 3.5,
+                                    lte: 4.4
+                                },
+                                {
+                                    count: countStat?.countStat?.["5"],
+                                    title: 5,
+                                    gte: 4.5,
+                                    lte: 5
+                                },
+                            ]?.reverse()?.map((value) => (
+                                <Button
+                                    key={value?.title}
+                                    variant={'text'}
+                                    sx={{
+                                        gap: 1,
+                                        border: '2px solid transparent',
+                                        borderColor: rangeScore?.gte === value?.gte && rangeScore?.lte === value?.lte ? 'info.main' : '#c1c1c1',
+                                        color: rangeScore?.gte === value?.gte && rangeScore?.lte === value?.lte ? 'info.main' : 'common.white',
+                                        "& svg": {
+                                            color: rangeScore?.gte === value?.gte && rangeScore?.lte === value?.lte ? 'info.main' : 'common.white',
+                                        }
+                                    }}
+                                    onClick={() => handleFilterScore(value?.gte, value?.lte)}
+                                >
+                                    <StarRounded fontSize={'large'}/>
+                                    {value?.title}
+                                    <Box
+                                        component={'span'}
+                                    >
+                                        ({value?.count})
+                                    </Box>
+                                </Button>
+                            ))
+                        }
+                    </Box>
+                </Box>
+            </Box>
             <Box sx={{
                 height: '100%',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: 2,
-                maxWidth: '800px'
+                // maxWidth: '800px'
             }}>
                 {
                     isLoading
                         ? <Loading height={'200px'}/>
                         : isError ? <div>Something went wrong (((</div>
-                            : (
-                                <For each={reviews}>
-                                    {
-                                        (review) => (
-                                            <ReviewCard review={review} key={review?._id}/>
-                                        )
-                                    }
-                                </For>
+                            : reviews?.length > 0 && reviews?.map((review) => (
+                                <ReviewCard review={review} key={review?._id}/>
                             )
+                        )
                 }
                 <MoreButton
                     hasNextPage={hasNextPage}
                     isFetchingNextPage={isFetchingNextPage}
                     fetchNextPage={fetchNextPage}
-                    total={total}
+                    total={total || 0}
                 />
             </Box>
         </Box>

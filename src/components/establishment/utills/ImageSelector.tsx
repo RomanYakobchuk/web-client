@@ -1,25 +1,28 @@
 import React, {useContext, useState,} from 'react';
-import {Box, Button, FormControl, IconButton, Typography} from "@mui/material";
+import {Box, Button, FormControl, Typography} from "@mui/material";
 import {
     Add,
     AddCircleOutline,
-    ArrowBackIosNew,
-    ArrowForwardIos,
     DeleteForeverOutlined,
     DeleteOutline,
     Edit
 } from "@mui/icons-material";
 import {useTranslate} from "@refinedev/core";
 
+import SortableList, {SortableItem} from "react-easy-sort";
+import arrayMove from "array-move";
+
 import {ColorModeContext} from "@/contexts";
 import {antdInputStyle} from "@/styles";
 import {IPicture} from "@/interfaces/common";
 import {Input} from "antd";
 
+import "./style.css";
+
 type Props = {
-    images: string[] | any;
+    images: IPicture[] | File[] | [IPicture | File];
     defaultPictures: any;
-    setPictures: any;
+    setPictures: (value: Props["images"]) => void;
     handleChange: any;
     maxImages: number,
 }
@@ -35,10 +38,9 @@ const ImageSelector = ({
 
     const translate = useTranslate();
     const {mode} = useContext(ColorModeContext);
-
     const [addUrl, setAddUrl] = useState<string>('');
     const changeItem = (index: number) => {
-        setPictures(items.filter((_: IPicture | File, item_index: number) => item_index !== index))
+        setPictures(items?.filter((_: IPicture | File, item_index: number) => item_index !== index) as Props['images']);
     }
 
     const addImageByUrl = async () => {
@@ -49,10 +51,10 @@ const ImageSelector = ({
                 const isImageValid = await isImage(addUrl);
                 if (isImageValid) {
                     const name = addUrl?.split('/')?.pop();
-                    setPictures((prev: IPicture[] | File[]) => ([...prev, {
+                    setPictures([...items, {
                         url: addUrl,
                         name: name
-                    } as IPicture] as IPicture | File[]));
+                    } as IPicture] as Props['images']);
                     setAddUrl('')
                 }
                 return;
@@ -64,21 +66,6 @@ const ImageSelector = ({
 
     const getDefaultPictures = () => {
         setPictures(defaultPictures)
-    }
-
-    const moveBack = (index: number) => {
-        const newList = [...items];
-        const temp = newList[index];
-        newList[index] = newList[index === 0 ? items?.length - 1 : index - 1];
-        newList[index === 0 ? items?.length - 1 : index - 1] = temp;
-        setPictures(newList)
-    }
-    const moveForward = (index: number) => {
-        const newList = [...items];
-        const temp = newList[index];
-        newList[index] = newList[index === items?.length - 1 ? 0 : index + 1];
-        newList[index === items?.length - 1 ? 0 : index + 1] = temp;
-        setPictures(newList)
     }
 
     function isImage(url: string) {
@@ -100,6 +87,10 @@ const ImageSelector = ({
                 resolve(false);
             };
         });
+    }
+
+    const onSortEnd = (oldIndex: number, newIndex: number) => {
+        setPictures(arrayMove(items, oldIndex, newIndex) as Props['images'])
     }
 
     return (
@@ -138,7 +129,7 @@ const ImageSelector = ({
                                 fontSize: {xs: '20px', sm: '24px'}
                             },
                             "& button": {
-                                flex: {xs: '1 0 100px', sm: '1 0 160px'},
+                                flex: {xs: '1 0 120px', sm: '1 0 160px'},
                                 fontSize: {xs: '14px', md: '16px'},
                                 p: {xs: '3px 5px', sm: 'unset'},
                                 display: 'flex',
@@ -149,7 +140,7 @@ const ImageSelector = ({
                                 textTransform: 'inherit',
                             },
                             "& label": {
-                                flex: {xs: '1 0 100px', sm: '1 0 160px'},
+                                flex: {xs: '1 0 120px', sm: '1 0 160px'},
                                 fontSize: {xs: '14px', md: '16px'},
                                 p: {xs: '3px 5px', sm: 'unset'},
                                 display: 'flex',
@@ -167,6 +158,7 @@ const ImageSelector = ({
                                 sx={{
                                     textTransform: 'inherit',
                                     width: 'fit-content',
+                                    color: '#f9f9f9 !important',
                                 }}
                             >
                                 <Edit/>
@@ -224,6 +216,7 @@ const ImageSelector = ({
                         ...antdInputStyle
                     }}>
                         <Input
+                            disabled={items?.length >= maxImages}
                             size={'large'}
                             value={addUrl ?? ''}
                             placeholder={'Enter image url...'}
@@ -238,95 +231,72 @@ const ImageSelector = ({
                             <Add/>
                         </Button>
                     </Box>
-
-                    <Box sx={{
-                        width: '100%',
-                        display: 'grid',
-                        gap: 2,
-                        gridTemplateColumns: {xs: 'repeat(2, 1fr)', sm: 'repeat(3, 1fr)', md: 'repeat(4, 1fr)', lg: 'repeat(5, 1fr)'}
-                    }}>
+                    <SortableList
+                        className={'imageSelectorGridBody'}
+                        onSortEnd={onSortEnd}
+                    >
                         {
                             items?.map((item: IPicture | File, index: number) => (
-                                <Box
-                                    sx={{
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        width: '100%',
-                                        gap: 1,
-                                        color: 'common.white',
-                                        "& img": {
+                                <SortableItem
+                                    key={index}
+                                >
+                                    <Box
+                                        sx={{
+                                            userSelect: 'none',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            width: '100%',
+                                            cursor: 'grab',
+                                            gap: 1,
+                                            color: 'common.white',
+                                        }}
+                                    >
+                                        <Box sx={{
+                                            boxShadow: '0px 0px 3px 1px #a1a1a1',
+                                            position: 'relative',
+                                            backgroundImage: `url(${item instanceof File ? URL.createObjectURL(item) : item.url})`,
+                                            backgroundPosition: 'center',
+                                            backgroundSize: 'cover',
+                                            aspectRatio: '1 / 1',
+                                            maxHeight: '200px',
                                             borderRadius: {xs: '10px', sm: '15px'},
-                                            height: {xs: '150px', sm: '195px', md: '150px', lg: '195px'},
                                             objectFit: 'cover',
                                             width: '100%'
-                                        }
-                                    }}
-                                    key={index}>
-                                    <Box sx={{
-                                        position: 'relative',
-                                    }}>
-                                        <img
-                                            style={{
-                                                objectFit: 'cover'
-                                            }}
-                                            src={item instanceof File ? URL.createObjectURL(item) : item.url}
-                                            alt={item.name}/>
-                                        <DeleteOutline
-                                            color={'error'}
-                                            sx={{
-                                                cursor: 'pointer',
-                                                p: '5px',
-                                                bgcolor: 'silver',
-                                                borderRadius: '5px',
-                                                position: 'absolute',
-                                                top: '10px',
-                                                boxSizing: 'content-box',
-                                                right: '10px'
-                                            }}
-                                            onClick={() => changeItem(index)}
-                                        />
-                                        <Box sx={{
-                                            position: 'absolute',
-                                            bottom: '0px',
-                                            borderRadius: {xs: '0 0 10px 10px', sm: '0 0 15px 15px'},
-                                            bgcolor: 'rgba(255, 255, 255, 0.5)',
-                                            left: 0,
-                                            right: 0,
-                                            width: '100%',
-                                            display: 'flex',
-                                            justifyContent: 'space-between',
-                                            p: '0px 10px',
-                                            alignItems: 'center',
-                                            "& button": {
-                                                color: '#000'
-                                            }
                                         }}>
-                                            <IconButton
-                                                onClick={() => moveBack(index)}
-                                            >
-                                                <ArrowBackIosNew/>
-                                            </IconButton>
-                                            <IconButton
-                                                onClick={() => moveForward(index)}
-                                            >
-                                                <ArrowForwardIos/>
-                                            </IconButton>
+                                            <DeleteOutline
+                                                color={'error'}
+                                                sx={{
+                                                    cursor: 'pointer',
+                                                    p: '5px',
+                                                    bgcolor: '#f9f9f9',
+                                                    borderRadius: '5px',
+                                                    position: 'absolute',
+                                                    top: '7px',
+                                                    boxShadow: '0px 0px 3px 0px #a1a1a1',
+                                                    boxSizing: 'content-box',
+                                                    right: '7px'
+                                                }}
+                                                onClick={() => changeItem(index)}
+                                            />
                                         </Box>
+                                        {item.name?.substring(0, 15) + (item?.name?.length > 15 ? '...' : '')}
                                     </Box>
-                                    {item.name?.substring(0, 15) + (item?.name?.length > 15 ? '...' : '')}
-                                </Box>
+                                </SortableItem>
                             ))
                         }
                         {
-                            (items?.length < maxImages) && (
+                            (items?.length < maxImages) ? (
                                 <Button component={"label"} sx={{
                                     display: 'flex',
+                                    maxHeight: '200px',
                                     justifyContent: "center",
                                     alignItems: "center",
                                     cursor: "pointer",
                                     borderRadius: {xs: '10px', sm: '15px'},
                                     width: '100%',
-                                    height: '100%',
+                                    aspectRatio: '1 / 1',
                                     minHeight: '120px',
                                     mb: 2,
                                     transition: "300ms linear",
@@ -347,9 +317,9 @@ const ImageSelector = ({
                                         onChange={handleChange}
                                     />
                                 </Button>
-                            )
+                            ) : <></>
                         }
-                    </Box>
+                    </SortableList>
                 </Box>
             </FormControl>
         </>

@@ -1,14 +1,20 @@
-import {useParams} from "react-router-dom";
+import React, {Reducer, useEffect, useReducer, useState} from "react";
 import {useBack, useTranslate} from "@refinedev/core";
-import React, {useEffect, useState} from "react";
 import {useForm} from "@refinedev/react-hook-form";
-
-import {INews, INewsDateEvent, IPicture, IEstablishment} from "@/interfaces/common";
-import NewsFormData from "@/components/news/utills/newsFormData";
-import {CustomEdit} from "@/components";
-import {INewsDataProps} from "@/interfaces/formData";
+import {useParams} from "react-router-dom";
 import {Button} from "antd";
+
+import {INews, IPicture, IEstablishment} from "@/interfaces/common";
+import NewsFormData from "@/components/news/utills/newsFormData";
+import {INewsDataProps} from "@/interfaces/formData";
 import {RestartAlt} from "@mui/icons-material";
+import {CustomEdit} from "@/components";
+import {
+    ActionNews,
+    initialState,
+    reducerFormStateNews,
+    StateFormNews
+} from "@/components/news/utills/newsFormDataReducer";
 
 const Edit = () => {
     const translate = useTranslate();
@@ -45,7 +51,7 @@ const Edit = () => {
 
     });
 
-    const {isLoading: isLoadingData, isError: isErrorData} = queryResult!;
+    const {isLoading: isLoadingData} = queryResult!;
 
     const [news, setNews] = useState<INews>({} as INews);
 
@@ -55,29 +61,39 @@ const Edit = () => {
         }
     }, [queryResult])
 
-    const [establishmentInfo, setEstablishmentInfo] = useState<IEstablishment | null>(null);
-    const [defaultPictures, _] = useState<IPicture[]>([] as IPicture[])
-    const [description, setDescription] = useState<string>("");
-    const [title, setTitle] = useState<string>("");
-    const [pictures, setPictures] = useState<IPicture[] | File[]>([] as IPicture[] | File[]);
-    const [place, setPlace] = useState<INewsDataProps['place']>({} as INewsDataProps['place']);
-    const [category, setCategory] = useState<any>('general');
-    const [dateEvent, setDateEvent] = useState<INewsDateEvent[]>([] as INewsDateEvent[]);
-    const [status, setStatus] = useState<any>('published');
-    const [datePublish, setDatePublish] = useState<Date | any>();
-    const [isDatePublish, setIsDatePublish] = useState<boolean | any>(false);
+    const [defaultPictures, setDefaultPictures] = useState<IPicture[]>([] as IPicture[])
 
+    const [state, dispatch] = useReducer<Reducer<StateFormNews, ActionNews>>(reducerFormStateNews, initialState);
+
+    const {
+        title,
+        establishmentInfo,
+        // createdBy,
+        status,
+        pictures,
+        category,
+        place,
+        dateEvent,
+        description,
+        datePublish,
+        isDatePublish
+    } = state as StateFormNews;
+    const handleChange = (type: keyof StateFormNews, value: any) => {
+        dispatch({type, payload: value});
+    }
     const loadData = () => {
-        setTitle(news?.title)
-        setCategory(news?.category)
-        setDescription(news?.description)
-        setStatus(news?.status)
-        setDatePublish(news?.publishAt?.datePublish)
-        setIsDatePublish(news?.publishAt?.isPublish)
-        setPictures(news?.pictures)
-        setDateEvent(news?.dateEvent)
-        setEstablishmentInfo(news?.establishmentId as IEstablishment)
-        setPlace(news?.place)
+        handleChange("title", news?.title)
+        handleChange("description", news?.description)
+        handleChange("dateEvent", news?.dateEvent)
+        handleChange("pictures", news?.pictures)
+        handleChange("category", news?.category)
+        handleChange("status", news?.status)
+        handleChange("datePublish", news?.publishAt?.datePublish)
+        handleChange("isDatePublish", news?.publishAt?.isPublish)
+        handleChange("dateEvent", news?.dateEvent)
+        handleChange("establishmentInfo", news?.establishmentId as IEstablishment)
+        handleChange("place", news?.place)
+        setDefaultPictures(news?.pictures);
     }
     useEffect(() => {
         if (news) {
@@ -104,57 +120,24 @@ const Edit = () => {
         formData.append("title", title);
         formData.append('place', JSON.stringify(place));
         formData.append("category", category);
+        formData.append("status", status);
         // formData.append("createdBy", JSON.stringify(user?._id));
         formData.append("establishmentId", establishmentInfo?._id as string);
         formData.append("dateEvent", JSON.stringify(dateEvent));
 
         await onFinish(formData);
 
-        // if (data && data?.createdById === user?._id) {
-        //     if (data?.user) {
-        //         localStorage.setItem(
-        //             "user",
-        //             JSON.stringify(data?.user)
-        //         );
-        //     } else if (data) {
-        //         localStorage.setItem(
-        //             "user",
-        //             JSON.stringify(data)
-        //         );
-        //     }
-        // }
-        // setOpen(false);
-
         goBack();
     };
-    console.log(place)
 
-    if (isErrorData) return <div>Error</div>
+    // if (isErrorData) return <div>Error</div>
 
     const props: INewsDataProps = {
         defaultPictures,
         handleSubmit,
         onFinishHandler,
-        pictures,
-        setPictures,
-        title,
-        setTitle,
-        setDateEvent,
-        establishmentInfo,
-        category,
-        setEstablishmentInfo: setEstablishmentInfo,
-        setCategory,
-        dateEvent,
-        description,
-        setDescription,
-        status,
-        setStatus,
-        isDatePublished: isDatePublish,
-        setIsDatePublished: setIsDatePublish,
-        datePublished: datePublish,
-        setDatePublished: setDatePublish,
-        place,
-        setPlace,
+        handleChange,
+        state
     }
 
     return (

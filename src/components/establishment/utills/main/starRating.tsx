@@ -24,7 +24,7 @@ export const StarRating = ({value, disabled = false, size = 45, precision = 0.5,
                     '& .MuiRating-iconHover': {
                         color: 'cornflowerblue',
                     },
-                    "& label > span > svg":{
+                    "& span svg":{
                         width: `${size}px`,
                         height: `${size}px`,
                     }

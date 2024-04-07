@@ -43,7 +43,6 @@ const SearchByFreeSeats = ({setFreeSeats, freeSeats, styles}: TProps) => {
     const handleChangeIsCombine = (checked: boolean) => {
         setCurrentFreeSeats((prevState) => ({...prevState, isCombineTheSeats: checked}))
     }
-    console.log(currentFreeSeats)
     const handleClickChange = () => {
         setFreeSeats(currentFreeSeats)
     }

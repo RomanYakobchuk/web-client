@@ -83,7 +83,7 @@ const SearchByTypeComponent = <T, >({
             "& button": {
                 height: '30px !important',
                 borderRadius: '5px !important',
-                p: '0 10px !important',
+                p: '0 6px !important',
                 textTransform: 'inherit',
                 "&:not(:last-of-type)": {
                     position: 'relative',

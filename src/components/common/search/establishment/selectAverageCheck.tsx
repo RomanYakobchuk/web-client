@@ -6,6 +6,7 @@ import {SearchByAverageCheckComponent} from "@/components/common/search";
 import {SetFilterType} from "@/interfaces/types";
 import {ESTABLISHMENT} from "@/config/names";
 import {Loading} from "@/components";
+import { SxProps } from "@mui/material";
 
 type TProps = {
     valueGte: number,
@@ -13,7 +14,8 @@ type TProps = {
     valueLte: number,
     setValueLte: (value: number) => void,
     setFilters: SetFilterType,
-    handleSearch?: () => void
+    handleSearch?: () => void,
+    buttonsStyle?: SxProps
 }
 
 export const SelectAverageCheck = ({
@@ -22,7 +24,8 @@ export const SelectAverageCheck = ({
                                        setValueLte,
                                        setValueGte,
                                        valueGte,
-                                       valueLte
+                                       valueLte,
+                                       buttonsStyle
                                    }: TProps) => {
     const translate = useTranslate();
 
@@ -64,7 +67,8 @@ export const SelectAverageCheck = ({
     return (
         <CustomSelectPopover
             buttonStyles={{
-                height: '42px'
+                height: '42px',
+                ...buttonsStyle
             }}
             isShowSearchButton={true}
             text={title()}

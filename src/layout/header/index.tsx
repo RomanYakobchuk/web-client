@@ -164,7 +164,11 @@ export const Header: React.FC = () => {
                             </Button>
                         )
                     }
-                    <HeaderSearch openModal={openModal} setOpenModal={setOpenModal}/>
+                    {
+                        openModal && (
+                            <HeaderSearch openModal={openModal} setOpenModal={setOpenModal}/>
+                        )
+                    }
                     {
                         showUserInfo &&
                         <IconButton

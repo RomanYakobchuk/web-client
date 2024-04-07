@@ -1,11 +1,10 @@
 import {Link, useLocation} from "react-router-dom";
-import React, {useEffect, useState} from "react";
+import React, {Reducer, useEffect, useReducer, useState} from "react";
 import {useBack, useGetIdentity, useTranslate} from "@refinedev/core";
 import {useForm} from "@refinedev/react-hook-form";
 
 import {
     IGetIdentity,
-    INewsDateEvent,
     IPicture,
     ProfileProps,
     IEstablishment
@@ -13,6 +12,8 @@ import {
 import NewsFormData from "@/components/news/utills/newsFormData";
 import {CustomCreate} from "@/components";
 import {INewsDataProps} from "@/interfaces/formData";
+
+import {ActionNews, reducerFormStateNews, StateFormNews, initialState} from "@/components/news/utills/newsFormDataReducer";
 
 const Create = () => {
     const {search} = useLocation();
@@ -22,21 +23,29 @@ const Create = () => {
     const goBack = useBack();
 
     const [defaultPictures, _] = useState<IPicture[]>([] as IPicture[])
-    const [establishmentInfo, setEstablishmentInfo] = useState<IEstablishment | null>(null);
-    const [description, setDescription] = useState<string>("");
-    const [title, setTitle] = useState<string>("");
-    const [place, setPlace] = useState<INewsDataProps['place']>({} as INewsDataProps['place']);
-    const [pictures, setPictures] = useState<IPicture[] | File[]>([] as IPicture[] | File[]);
-    const [category, setCategory] = useState('general');
-    const [dateEvent, setDateEvent] = useState<INewsDateEvent[]>([] as INewsDateEvent[]);
-    const [status, setStatus] = useState('published');
-    const [datePublish, setDatePublish] = useState<Date | any>();
-    const [isDatePublish, setIsDatePublish] = useState<boolean>(false);
 
+    const [state, dispatch] = useReducer<Reducer<StateFormNews, ActionNews>>(reducerFormStateNews, initialState);
+
+    const {
+        title,
+        establishmentInfo,
+        // createdBy,
+        status,
+        pictures,
+        category,
+        place,
+        dateEvent,
+        description,
+        datePublish,
+        isDatePublish
+    } = state as StateFormNews;
+    const handleChange = (type: keyof StateFormNews, value: any) => {
+        dispatch({type, payload: value});
+    }
 
     useEffect(() => {
         if (search) {
-            setEstablishmentInfo((prevState) => ({...prevState as IEstablishment, _id: search?.split('=')[1]}))
+            handleChange("establishmentInfo", {...establishmentInfo as IEstablishment, _id: search?.split('=')[1]})
         }
     }, [search]);
 
@@ -47,6 +56,7 @@ const Create = () => {
         refineCoreProps: {
             resource: `news/create`,
             redirect: false,
+            action: 'create',
             meta: {
                 headers: {
                     'Content-Type': 'multipart/form-data'
@@ -62,7 +72,7 @@ const Create = () => {
         if (pictures.length > 6) return alert(translate("home.create.pictures.max"))
 
         const currentDate = new Date();
-        const desiredDate = new Date(datePublish);
+        const desiredDate = new Date(datePublish || '');
 
         if (desiredDate < currentDate) return alert('The publication date must be greater than the current date');
 
@@ -87,21 +97,6 @@ const Create = () => {
 
         await onFinish(formData);
 
-        // if (data && data?.createdById === user?._id) {
-        //     if (data?.user) {
-        //         localStorage.setItem(
-        //             "user",
-        //             JSON.stringify(data?.user)
-        //         );
-        //     } else if (data) {
-        //         localStorage.setItem(
-        //             "user",
-        //             JSON.stringify(data)
-        //         );
-        //     }
-        // }
-        // setOpen(false);
-
         goBack();
     }
 
@@ -109,26 +104,8 @@ const Create = () => {
         defaultPictures,
         handleSubmit,
         onFinishHandler,
-        pictures,
-        setPictures,
-        establishmentInfo,
-        setEstablishmentInfo: setEstablishmentInfo,
-        title,
-        setTitle,
-        setDateEvent,
-        category,
-        setCategory,
-        dateEvent,
-        description,
-        setDescription,
-        status,
-        setStatus,
-        isDatePublished: isDatePublish,
-        setIsDatePublished: setIsDatePublish,
-        datePublished: datePublish,
-        setDatePublished: setDatePublish,
-        place,
-        setPlace,
+        state: state,
+        handleChange
     }
     return (
         <CustomCreate

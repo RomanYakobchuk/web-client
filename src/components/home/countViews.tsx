@@ -31,46 +31,57 @@ const CountViews = () => {
             gap: 2,
             margin: '0 auto',
             width: {xs: '90vw', md: `calc(${layoutWidth}px - 10vw + 10px)`},
-            bgcolor: 'modern.modern_1.main',
-            borderRadius: '15px',
-            p: 2
-            // width: '100%'
+
         }}>
             {
                 (dataViews?.total! > 0 || isLoadingViews) &&
                 <Typography sx={{
-                    fontSize: {xs: '18px', sm: '22px'},
-                    fontWeight: 900,
-                    // mx: 6,
+                    fontWeight: {xs: 600, md: 700},
+                    fontSize: {xs: '18px', sm: '22px', lg: '24px'},
+                    pl: 2,
+                    borderLeft: '3px solid transparent',
+                    borderLeftColor: 'common.white',
                     color: 'secondary.main'
                 }}>
                     {translate("home.sortByType.popularPlace")}
                 </Typography>
             }
             <Box sx={{
-                // width: {xs: '80vw', md: `calc(${layoutWidth}px - 160px)`},
-                width: {xs: '100%', sm: 'calc(100% - 80px)'},
+                width: '100%',
+                bgcolor: 'modern.modern_1.main',
+                borderRadius: '15px',
+                px: {xs: 0, sm: 0.5, lg: 0.75},
+                pt: 9,
+                pb: '36px',
                 margin: '0 auto',
                 position: 'relative',
-                "& > div":{
+                "& > div": {
                     borderRadius: '7px'
                 },
-                "& button.react-multiple-carousel__arrow--right":{
-                    right: {sm: '-5px', xl: '-10px'},
-                    transform: {sm: 'translateX(100%)'}
+                "& button.react-multiple-carousel__arrow--right": {
+                    right: {xs: 0, sm: '12px', lg: '18px'},
+                    top: '16px',
+                    // transform: 'translateY(-100%)'
                 },
-                "& button.react-multiple-carousel__arrow--left":{
-                    left: {sm: '-5px', xl: '-10px'},
-                    transform: {sm: 'translateX(-100%)'}
+                "& button.react-multiple-carousel__arrow--left": {
+                    left: 'unset',
+                    right: {xs: 0, sm: '12px', lg: '18px'},
+                    top: '16px',
+                    transform: 'translateX(calc(-100% - 10px))'
                 },
-                "& ul.react-multi-carousel-dot-list":{
-                    bgcolor: '#f5f5fa',
-                    p: '4px 8px',
+                "& ul.react-multi-carousel-track": {
+                    "& li": {
+                        pr: {xs: 0, sm: 1, lg: 1.5},
+                        pl: {xs: 0, sm: 1, lg: 1.5},
+                    }
+                },
+                "& ul.react-multi-carousel-dot-list": {
                     width: 'fit-content',
                     margin: '0 auto 5px',
                     borderRadius: '15px',
+                    bottom: '6px',
                     gap: 1,
-                    "& li > button":{
+                    "& li > button": {
                         mr: 0,
                         display: 'flex',
                         justifyContent: 'center',
@@ -79,13 +90,36 @@ const CountViews = () => {
                 },
             }}>
                 <CarouselComponent
+                    responsive={{
+                        superLargeDesktop: {
+                            breakpoint: {max: 4000, min: 1000},
+                            items: 2
+                        },
+                        desktop: {
+                            breakpoint: {max: 1000, min: 900},
+                            items: 1
+                        },
+                        tablet: {
+                            breakpoint: {max: 900, min: 768},
+                            items: 2
+                        },
+                        mobile: {
+                            breakpoint: {max: 768, min: 0},
+                            items: 1
+                        },
+                    }}
                     autoPlay={true}
+                    partialVisible={true}
+                    centerMode={false}
                 >
                     {
                         dataViews?.data?.map((item, index) => (
                             <Box key={index} sx={{
+                                borderRadius: '10px',
+                                overflow: 'hidden',
                                 width: '100%',
-                                height: {xs: '250px', sm: '350px', lg: '450px', xl: '550px'},
+                                // height: {xs: '250px', sm: '350px', lg: '450px', xl: '550px'},
+                                height: {xs: '200px', sm: '250px', lg: '300px', xl: '350px'},
                                 // padding: '0 10px',
                                 display: 'flex',
                                 position: 'relative'
@@ -101,7 +135,7 @@ const CountViews = () => {
                                         display: 'flex',
                                         flexDirection: 'column',
                                         justifyContent: 'space-between',
-                                        "& a":{
+                                        "& a": {
                                             margin: {xs: '10px 5px 35px', md: '10px 5px'},
                                         }
                                     }}>

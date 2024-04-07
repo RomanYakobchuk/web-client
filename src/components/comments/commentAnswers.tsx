@@ -1,13 +1,11 @@
 import React, {Dispatch, SetStateAction, useEffect, useState} from "react";
-import {useInfiniteList, usePermissions, useTranslate} from "@refinedev/core";
+import {useInfiniteList} from "@refinedev/core";
 import {Box} from "@mui/material";
 import {useParams} from "react-router-dom";
 
 import {IComment} from "@/interfaces/common";
 import CommentCard from "../cards/commentCard";
-import {CustomDrawer, Loading} from "../index";
-import {useMobile} from "@/hook";
-import ChooseManagerRole from "../common/choose/chooseManagerRole";
+import {Loading} from "../index";
 import {IDataList} from "../common/lists/comments-list";
 import MoreButton from "@/components/buttons/MoreButton";
 
@@ -25,10 +23,6 @@ type TProps = {
 }
 const CommentAnswers = ({comment, setComment, isLoadAnswers, setIsLoadAnswers, newComment, isShowAnswers}: TProps) => {
 
-    const translate = useTranslate();
-    const {data: dataPermission} = usePermissions();
-    const {device, width} = useMobile();
-
     const [newAnswer, setNewAnswer] = useState<INewComment | null>(null);
     const [currentComment, setCurrentComment] = useState<IComment>(comment);
 
@@ -38,123 +32,28 @@ const CommentAnswers = ({comment, setComment, isLoadAnswers, setIsLoadAnswers, n
         }
     }, [comment]);
 
-
-    const anchor = width < 600 && device ? 'bottom' : 'right';
-
     return (
-        <Box>
+        <Box
+            sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 1,
+                alignItems: 'start',
+                justifyContent: 'start',
+                width: '100%',
+                bgcolor: 'rgba(0, 0, 0, 0.03)',
+            }}>
             {
-                !device &&
-                <Box
-                    sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: 1,
-                        alignItems: 'start',
-                        justifyContent: 'start',
-                        width: '100%',
-                        p: '16px 0px 0px 0px'
-                        // "& < div": {
-                        //     width: '100%',
-                        //     maxWidth: {xs: '100%', lg: '40%'}
-                        // },
-                    }}>
-                    {
-                        isShowAnswers && isLoadAnswers && (
-                            <AnswersComponent
-                                comment={comment}
-                                setComment={setComment}
-                                currentComment={currentComment}
-                                newAnswer={newAnswer}
-                                newComment={newComment}
-                                setNewAnswer={setNewAnswer}
-                            />
-                        )
-                    }
-                </Box>
-            }
-            {
-                device && width <= 600 &&
-                <CustomDrawer
-                    anchor={anchor}
-                    open={isLoadAnswers}
-                    maxWidth={'600px'}
-                    bgColor={'common.black'}
-                    contentStyle={{
-                        mt: '20px',
-                        mb: '20px'
-                    }}
-                    toggleDrawer={setIsLoadAnswers}
-                    title={
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            p: 1,
-                            gap: dataPermission === 'manager' ? 3 : 0
-                        }}>
-                            <Box sx={{
-                                fontSize: {xs: '18px', md: '22px'},
-                                fontWeight: 500
-                            }}>
-                                {translate('buttons.answer')}
-                            </Box>
-                            {
-                                dataPermission === 'manager' && (
-                                    <ChooseManagerRole
-                                        currentEstablishment={currentComment?.establishmentId as string}
-                                    />
-                                )
-                            }
-                        </Box>
-                    }
-                >
-                    <Box
-                        sx={{
-                            width: '100%',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: 2,
-                            alignItems: 'start',
-                            mb: '20px'
-                        }}
-                    >
-                        <Box sx={{
-                            width: '100%',
-                            py: 1.5,
-                            // borderBottom: '2px solid silver',
-                            overflow: 'hidden'
-                        }}>
-                            <CommentCard
-                                elevation={0}
-                                isAnswers={true}
-                                comment={currentComment}
-                                isShowAnswer={false}
-                                isShowDelete={false}
-                                isSwipe={false}
-                                setNewComment={setNewAnswer}
-                            />
-                        </Box>
-                        {
-                            isShowAnswers && isLoadAnswers && (
-                                <Box
-                                    sx={{
-                                        width: '100%',
-                                        // pl: 4
-                                    }}
-                                >
-                                    <AnswersComponent
-                                        comment={comment}
-                                        setComment={setComment}
-                                        currentComment={currentComment}
-                                        newAnswer={newAnswer}
-                                        newComment={newComment}
-                                        setNewAnswer={setNewAnswer}
-                                    />
-                                </Box>
-                            )
-                        }
-                    </Box>
-                </CustomDrawer>
+                isShowAnswers && isLoadAnswers && (
+                    <AnswersComponent
+                        comment={comment}
+                        setComment={setComment}
+                        currentComment={currentComment}
+                        newAnswer={newAnswer}
+                        newComment={newComment}
+                        setNewAnswer={setNewAnswer}
+                    />
+                )
             }
         </Box>
     );
@@ -244,7 +143,6 @@ const AnswersComponent = ({
         <>
             <Box sx={{
                 width: '100%',
-                pl: '20px'
             }}>
                 <CommentAnswersList
                     answers={answers}
@@ -281,7 +179,7 @@ const CommentAnswersList = ({answers, setAnswers, setNewComment, isLoading}: TCo
             width: '100%',
             display: 'flex',
             flexDirection: 'column',
-            gap: 2,
+            // gap: 2,
         }}>
             {
                 isLoading ? <Loading height={'200px'}/> :
@@ -289,24 +187,18 @@ const CommentAnswersList = ({answers, setAnswers, setNewComment, isLoading}: TCo
                     answers?.map((answer, index) => (
                         <Box
                             key={answer?._id + index}
+                            sx={{
+                                borderBottom: '1px solid silver',
+                                pl: 3
+                            }}
                         >
                             <CommentCard
-                                style={{
-                                    position: 'relative',
-                                    "&::before": {
-                                        content: "''",
-                                        position: 'absolute',
-                                        left: '-10px',
-                                        height: '100%',
-                                        top: 0,
-                                        bgcolor: 'silver',
-                                        width: '2px'
-                                    }
-                                }}
+                                elevation={0}
                                 setNewComment={setNewComment}
                                 comment={answer}
-                                isShowAnswer={false}
-                                isShowReply={false}
+                                isAnswers={true}
+                                // isShowAnswer={false}
+                                // isShowReply={false}
                                 setComments={setAnswers}
                             />
                         </Box>

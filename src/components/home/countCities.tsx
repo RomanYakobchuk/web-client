@@ -29,67 +29,78 @@ const CountCities = () => {
     return (
         <Box sx={{
             display: "flex",
-            flexDirection: {xs: 'column', md: 'row'},
+            flexDirection: 'column',
             gap: 2,
             width: '100%',
-            bgcolor: 'modern.modern_1.main',
-            borderRadius: '15px',
-            p: '20px',
-            "& a": {
-                textDecoration: 'none',
-                width: {xs: '300px', sm: '400px'},
-                height: {xs: '150px', sm: "200px"},
-                bgcolor: "silver",
-                "& span": {
-                    color: 'common.black',
-                }
-            }
         }}>
-            <Box sx={{}}>
-                <Typography sx={{
-                    fontSize: {xs: '18px', sm: '22px'},
-                    fontWeight: 900,
-                    color: (theme: any) => theme.palette.secondary.main
-                }}>
-                    {translate("home.sortByType.browseByCity")}
-                    <CanAccess action={'cityWithData'} resource={'cities'}>
-                        <IconButton
-                            color={'secondary'}
-                            onClick={() => navigate('/home/update-city')}
-                        >
-                            <EditLocationOutlined/>
-                        </IconButton>
-                    </CanAccess>
-                </Typography>
-                <Box>
-                    SOME TEXT
-                </Box>
-            </Box>
-            <ScrollContent
-                parentWidth={`calc(${layoutWidth}px - 10vw - 40px)`}
-            >
-                {
-                    isLoadingCities
-                        ? [1, 2, 3, 4]?.map((item: number) => (
-                            <Skeleton
-                                key={item}
-                                sx={{
-                                    width: {xs: '300px', sm: '400px'},
-                                    height: {xs: '150px', sm: "200px"},
-                                    borderRadius: '10px'
-                                }}
-                                animation={"wave"}
-                                variant={"rectangular"}
-                            />
-                        ))
-                        :
-                        dataCities?.data?.sort((a: ICity, b: ICity) => {
-                            return a.establishmentCount > b.establishmentCount ? -1 : 1
-                        })?.map((city: ICity, index) => (
-                            <CountCitiesCard city={city} key={index + city?.name_en}/>
-                        ))
+            <Typography sx={{
+                fontSize: {xs: '18px', sm: '22px', lg: '24px'},
+                borderLeft: '3px solid transparent',
+                borderLeftColor: 'common.white',
+                fontWeight: 900,
+                pl: 2,
+                color: "secondary.main"
+            }}>
+                {translate("home.sortByType.browseByCity")}
+                <CanAccess action={'cityWithData'} resource={'cities'}>
+                    <IconButton
+                        color={'secondary'}
+                        onClick={() => navigate('/home/update-city')}
+                    >
+                        <EditLocationOutlined/>
+                    </IconButton>
+                </CanAccess>
+            </Typography>
+            <Box sx={{
+                display: "flex",
+                // flexDirection: 'column',
+                // gap: 2,
+                width: '100%',
+                // flexDirection: {xs: 'column', md: 'row'},
+                bgcolor: 'modern.modern_1.main',
+                borderRadius: '15px',
+                p: 3,
+                "& a": {
+                    textDecoration: 'none',
+                    width: {xs: '300px', sm: '400px'},
+                    height: {xs: '150px', sm: "200px"},
+                    bgcolor: "silver",
+                    "& span": {
+                        color: 'common.black',
+                    }
                 }
-            </ScrollContent>
+            }}>
+                {/*<Box sx={{}}>*/}
+                {/*    <Box>*/}
+                {/*        SOME TEXT*/}
+                {/*    </Box>*/}
+                {/*</Box>*/}
+                <ScrollContent
+                    parentWidth={`calc(${layoutWidth}px - 10vw - 40px)`}
+                >
+                    {
+                        isLoadingCities
+                            ? [1, 2, 3, 4]?.map((item: number) => (
+                                <Skeleton
+                                    key={item}
+                                    sx={{
+                                        width: {xs: '300px', sm: '400px'},
+                                        height: {xs: '150px', sm: "200px"},
+                                        borderRadius: '10px'
+                                    }}
+                                    animation={"wave"}
+                                    variant={"rectangular"}
+                                />
+                            ))
+                            :
+                            dataCities?.data?.sort((a: ICity, b: ICity) => {
+                                return a.establishmentCount > b.establishmentCount ? -1 : 1
+                            })?.map((city: ICity, index) => (
+                                <CountCitiesCard city={city} key={index + city?.name_en}/>
+                            ))
+                    }
+                </ScrollContent>
+            </Box>
         </Box>
     );
 };

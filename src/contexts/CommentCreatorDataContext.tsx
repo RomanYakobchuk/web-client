@@ -53,7 +53,7 @@ export const CommentCreatorDataProvider: FC<PropsWithChildren> = ({children}) =>
     const [managerEstablishment, setManagerEstablishment] = useState<IEstablishment[]>(parsedManagerEstablishment);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [page, setPage] = useState<number>(1);
-    const [pageSize, setPageSize] = useState<number>(100);
+    const [pageSize, setPageSize] = useState<number>(20);
     const getManagerEstablishment = async () => {
         setIsLoading(true);
         const {data} = await axiosInstance.get(`/${ESTABLISHMENT}/userestablishments?_end=${page * pageSize}&_start=${(page - 1) * pageSize}`);
@@ -86,7 +86,7 @@ export const CommentCreatorDataProvider: FC<PropsWithChildren> = ({children}) =>
     }, [selectedInfo, managerRole, data]);
 
     const getData = async () => {
-        if (data === 'manager' && managerEstablishment?.length <= 0 || !localManagerEstablishment) {
+        if (data === 'manager' && (managerEstablishment?.length <= 0 || !localManagerEstablishment)) {
             await getManagerEstablishment()
         }
     }

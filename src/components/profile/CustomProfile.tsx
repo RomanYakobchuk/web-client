@@ -25,7 +25,6 @@ const CustomProfile = ({user}: TProps) => {
     const {mode} = useContext(ColorModeContext);
     const {schema} = useContext(SchemaContext);
     const translate = useTranslate();
-    console.log(currentUser?.status)
     const {_id, avatar, email, phone, dOB, name} = user;
 
     return (
@@ -33,9 +32,6 @@ const CustomProfile = ({user}: TProps) => {
             p: 3,
             margin: '0 auto',
             maxWidth: '1400px',
-            // "& *":{
-            //     color: 'common.white'
-            // }
         }}>
             <Box sx={{
                 width: '100%',

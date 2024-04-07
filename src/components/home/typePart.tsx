@@ -1,109 +1,107 @@
 import {Box, Paper} from "@mui/material";
 import {useTranslate} from "@refinedev/core";
-import {useContext} from "react";
-import {ColorModeContext} from "@/contexts";
 import CountType from "./countType";
 
 const TypePart = () => {
     const translate = useTranslate();
-    const {mode} = useContext(ColorModeContext);
-
-    // const bg = mode === 'dark' ? 'linear-gradient(180deg, rgb(25 22 89) 20%, rgb(71 60 109) 80%)' : 'linear-gradient(180deg, rgba(115,109,219,1) 20%, rgba(75,46,179,1) 80%)'
 
     return (
-        <Box sx={{
-            width: {xs: '90vw', md: '90%'},
-            margin: '0 auto',
-            height: {xs: 'fit-content',},
-            // clipPath: 'polygon(0 10%, 100% 0, 100% 90%, 0 100%)',
-            // background: bg,
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-evenly',
-            gap: 4,
-            alignItems: 'center',
-        }}>
+        <Box
+            sx={{
+                width: {xs: '90vw', md: '90%'},
+                margin: '0 auto',
+                height: {xs: 'fit-content',},
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 2,
+            }}
+        >
             <Box sx={{
                 display: 'flex',
-                flexDirection: {xs: 'column', lg: 'row'},
-                gap: {xs: 2, md: 3},
-                width: '100%'
+                textAlign: 'start',
+                fontWeight: {xs: 600, md: 700},
+                fontSize: {xs: '18px', sm: '22px', lg: '24px'},
+                pl: 2,
+                borderLeft: '3px solid transparent',
+                borderLeftColor: 'common.white',
+            }}>
+                {translate("home.sortByType.browseByType")}
+            </Box>
+            <Box sx={{
+               width: '100%',
+                // clipPath: 'polygon(0 10%, 100% 0, 100% 90%, 0 100%)',
+                // background: bg,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 4,
+                justifyContent: 'space-evenly',
+                alignItems: 'center',
             }}>
                 <Box sx={{
-                    // width: {xs: '90%'},
                     display: 'flex',
-                    flexDirection: {xs: 'column', md: 'row'},
-                    color: 'common.white',
-                    p: '20px',
+                    flexDirection: {xs: 'column', lg: 'row'},
                     gap: {xs: 2, md: 3},
-                    alignItems: 'center',
-                    borderRadius: '15px',
-                    bgcolor: 'modern.modern_1.main',
+                    width: '100%'
                 }}>
                     <Box sx={{
+                        // width: {xs: '90%'},
                         display: 'flex',
-                        gap: {sm: 4, md: 0},
+                        flexDirection: {xs: 'column', sm: 'row'},
+                        color: 'common.white',
+                        p: '20px',
+                        gap: {xs: 2, sm: 4},
                         alignItems: 'center',
-                        width: {xs: '100%', lg: '80%'}
+                        borderRadius: '15px',
+                        bgcolor: 'modern.modern_1.main',
                     }}>
-                        <Paper
-                            elevation={3}
-                            sx={{
-                                width: {xs: '100%', sm: '200px', md: '100%'},
-                                minWidth: {xs: '100%', sm: '200px', md: '260px'},
-                                height: {xs: '180px', sm: '140px', md: '180px', lg: '220px'},
-                                borderRadius: '7px',
-                            }}>
-                            <img
-                                style={{
-                                    borderRadius: '7px',
-                                    width: '100%',
-                                    height: '100%',
-                                    objectFit: 'cover'
-                                }}
-                                alt={'type_image'}
-                                loading={"lazy"}
-                                src={`images/restaurant.jpg`}
-                            />
-                        </Paper>
                         <Box sx={{
-                            display: {xs: 'none', sm: 'flex', md: 'none'},
-                            textAlign: 'start',
-                            fontWeight: {xs: 600, md: 700},
-                            fontSize: {sm: '30px',},
-                            whiteSpace: 'pre-wrap'
+                            display: 'flex',
+                            gap: {sm: 4, md: 0},
+                            alignItems: 'center',
+                            width: {xs: '100%', lg: '80%'}
                         }}>
-                            {translate("home.sortByType.browseByType")}
+                            <Paper
+                                elevation={3}
+                                sx={{
+                                    width: '100%',
+                                    minWidth: {xs: '100%', sm: '200px', md: '260px'},
+                                    height: {xs: '220px', md: '240px', lg: '260px'},
+                                    borderRadius: '7px',
+                                }}>
+                                <img
+                                    style={{
+                                        borderRadius: '7px',
+                                        width: '100%',
+                                        height: '100%',
+                                        objectFit: 'cover'
+                                    }}
+                                    alt={'type_image'}
+                                    loading={"lazy"}
+                                    src={`images/restaurant.jpg`}
+                                />
+                            </Paper>
+                        </Box>
+                        <Box sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: 2,
+                            width: '100%'
+                        }}>
+                            <Box sx={{
+                                textAlign: 'start',
+                                fontSize: {xs: '14px', sm: '16px', lg: '20px', sl: '22px'},
+                                whiteSpace: 'pre-wrap'
+                            }}>
+                                {translate('text.home.byType')}
+                            </Box>
                         </Box>
                     </Box>
                     <Box sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: 2,
-                        width: '100%'
+                        minWidth: '260px',
+                        display: 'contents'
                     }}>
-                        <Box sx={{
-                            display: {sm: 'none', md: 'flex'},
-                            textAlign: 'start',
-                            fontWeight: {xs: 600, md: 700},
-                            fontSize: {xs: '18px', sm: '20px', md: '24px', lg: '30px', xl: '34px'}
-                        }}>
-                            {translate("home.sortByType.browseByType")}
-                        </Box>
-                        <Box sx={{
-                            textAlign: 'start',
-                            fontSize: {xs: '14px', sm: '16px', xl: '18px'},
-                            whiteSpace: 'pre-wrap'
-                        }}>
-                            {translate('text.home.byType')}
-                        </Box>
+                        <CountType/>
                     </Box>
-                </Box>
-                <Box sx={{
-                    minWidth: '260px',
-                    display: 'contents'
-                }}>
-                    <CountType/>
                 </Box>
             </Box>
         </Box>

@@ -14,7 +14,7 @@ import {useMobile, useUserInfo} from "@/hook";
 import {ColorModeContext} from "@/contexts";
 import {CHATS, SHOW} from "@/config/names";
 import {useStore} from "@/store";
-import {TypingIndicator} from "@/components/chats/chatBox/chatBox";
+import NoAvatar from "../../../../public/images/chats/noAvatar.png";
 
 interface IProps {
     conversation: IConversation,
@@ -37,6 +37,7 @@ const ListChatCard = ({conversation, isSelectedChat, handleDeleteChat, index}: I
     const link = useLink();
     const {user} = useUserInfo();
     const {device} = useMobile();
+    const translate = useTranslate();
     const {mode} = useContext(ColorModeContext);
 
 
@@ -87,7 +88,11 @@ const ListChatCard = ({conversation, isSelectedChat, handleDeleteChat, index}: I
             initial={{opacity: 0, scale: 0.5, y: -300}}
             animate={{opacity: 1, y: 0, scale: 1}}
             exit={{opacity: 0, x: 200, scale: 1.2}}
-            transition={{duration: 0.3, type: 'just', delay: 0.2 + (0.1 * index),}}
+            transition={{
+                duration: 0.3,
+                type: 'spring',
+                delay: (0.2 + (0.1 * index))
+            }}
             style={{
                 y,
                 width: '100%',
@@ -149,26 +154,10 @@ const ListChatCard = ({conversation, isSelectedChat, handleDeleteChat, index}: I
                             objectFit: 'cover'
                         }
                     }}>
-                        {
-                            currentChat?.picture
-                                ? <img
-                                    src={currentChat?.picture}
-                                    alt={currentChat?.chatName}
-                                />
-                                : <Box sx={{
-                                    textTransform: 'capitalize',
-                                    fontSize: '20px',
-                                    height: '100%',
-                                    width: '100%',
-                                    display: 'grid',
-                                    color: 'common.black',
-                                    borderRadius: '50%',
-                                    bgcolor: 'common.white',
-                                    placeItems: 'center'
-                                }}>
-                                    {currentChat?.chatName?.substring(0, 1)}
-                                </Box>
-                        }
+                        <img
+                            src={currentChat?.picture || NoAvatar}
+                            alt={currentChat?.chatName}
+                        />
                     </Box>
                 </Box>
                 <Box sx={{
@@ -189,7 +178,7 @@ const ListChatCard = ({conversation, isSelectedChat, handleDeleteChat, index}: I
                                 width: 'calc(100% - 35px)',
                                 fontWeight: 600
                             }}
-                            str={currentChat?.chatName}
+                            str={currentChat?.chatName || translate("chats.user.notFound")}
                         />
                         {
                             !chatEditMode && (

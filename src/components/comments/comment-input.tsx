@@ -16,19 +16,21 @@ interface IProps {
     setNewComment?: Dispatch<SetStateAction<INewComment | null>>,
     isAnswer?: boolean,
     setIsAnswer?: Dispatch<SetStateAction<boolean>>,
-    parent?: IComment,
-    setParent?: Dispatch<SetStateAction<IComment>>,
-    maxTextLength?: number
+    parent?: IComment | null,
+    setParent?: Dispatch<SetStateAction<IComment | null>>,
+    maxTextLength?: number,
+    textButton?: string
 }
 
 const CommentInput = ({
                           establishmentId,
                           setNewComment,
-                          parent = {} as IComment,
+                          parent = null,
                           isAnswer = false,
                           setParent,
                           setIsAnswer,
-                          maxTextLength = 300
+                          maxTextLength = 300,
+                          textButton
                       }: IProps) => {
     const {device} = useMobile();
     const translate = useTranslate();
@@ -43,12 +45,14 @@ const CommentInput = ({
         if (value && value.length > 0) {
             try {
                 setIsLoading(true)
+                const parentId = isAnswer && parent?.parentId ? parent?.parentId : parent?._id ? parent?._id : null;
                 const data = await axiosInstance.post(`/comment/create`, {
                     establishmentId: establishmentId,
                     text: value?.trim(),
                     refFieldCreate: managerRole,
                     createdBy: selectedInfo?._id,
-                    parentId: isAnswer && parent?.parentId ? parent?.parentId : parent?._id ? parent?._id : null,
+                    parentId: parentId,
+                    answerTo: isAnswer && parentId !== parent?._id ? parent?._id : null,
                 });
                 if (data?.data) {
                     if (setNewComment) {
@@ -65,7 +69,7 @@ const CommentInput = ({
                 setValue("")
                 if (setParent && setIsAnswer) {
                     setIsAnswer(false)
-                    setParent({} as IComment)
+                    setParent(null)
                 }
                 setIsLoading(false)
             } catch (e: any) {
@@ -78,7 +82,7 @@ const CommentInput = ({
         }
     }
 
-    const bgColor = 'modern.modern_2.main';
+    const bgColor = 'modern.modern_4.main';
     return (
         <Box
             component="form"
@@ -140,9 +144,6 @@ const CommentInput = ({
                 display: 'flex',
                 alignItems: 'start',
                 justifyContent: 'space-between',
-                // borderRadius: '3px 3px 15px 15px',
-                // bgcolor: 'common.black',
-                // p: 2,
                 gap: 0.5
             }}>
                 <Box sx={{
@@ -163,11 +164,9 @@ const CommentInput = ({
                         borderRadius: '3px 3px 15px 3px',
                         bgcolor: bgColor,
                         alignItems: 'center',
-                        width: 'calc(100% - 60px)',
-                        justifyContent: value?.length > 0 ? 'space-evenly' : 'center'
-                        // pt: 1,
-                        // borderTop: '1px solid',
-                        // borderColor: 'divider',
+                        width: 'calc(100% - 64px)',
+                        p: 1,
+                        justifyContent: value?.length > 0 ? 'space-between' : 'end'
                     }}
                 >
                     {
@@ -188,19 +187,11 @@ const CommentInput = ({
                         onClick={handleSendComment}
                         sx={{
                             minWidth: '30px',
-                            // width: {xs: '36px', sm: '54px'},
                             width: 'fit-content',
                             textTransform: 'inherit',
                             fontSize: {xs: '14px', lg: '16px'},
                             height: {xs: '36px'},
-                            // borderRadius: {xs: '50%', sm: '7px'},
                             borderRadius: '7px',
-                            // ml: 'auto',
-                            // "& span": {
-                            //     width: '2em !important',
-                            //     height: '2em !important',
-                            // },
-                            // p: isLoading ? '4px' : '6px 16px',
                             bgcolor: '#1e36e8',
                             "&:hover": {
                                 bgcolor: "#4f5cc3"
@@ -211,14 +202,14 @@ const CommentInput = ({
                             isLoading
                                 ? <CircularProgress
                                     sx={{
-                                        width: {xs: '0.8em', sm: '1em'},
-                                        height: {xs: '0.8em', sm: '1em'},
+                                        width: '28px !important',
+                                        height: '28px !important',
                                     }}
                                 />
                                 : <SendOutlined sx={{color: '#fcfcfc'}}/>
                         }
                     >
-                        {translate('home.show.comments.leave')}
+                        {textButton || translate('home.show.comments.leave')}
                     </Button>
                 </Box>
             </Box>

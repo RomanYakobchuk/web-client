@@ -4,6 +4,7 @@ import {Link} from "react-router-dom";
 import {useGetLocale} from "@refinedev/core";
 import {Typography as TypographyAntd} from "antd";
 
+
 import {useMobile, useProgressiveImage} from "@/hook";
 import {ICity} from "@/components/home/countCities";
 import {ESTABLISHMENT} from "@/config/names";

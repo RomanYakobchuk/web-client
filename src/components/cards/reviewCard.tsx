@@ -1,133 +1,139 @@
-import {Box, Divider, Rating} from "@mui/material";
 import {useTranslate} from "@refinedev/core";
-import React, {useContext} from "react";
-import {Typography} from "antd";
+import {Box} from "@mui/material";
 
+import {StarRating} from "@/components/establishment/utills/main/starRating";
 import {ShowTimeComponent} from "@/components/time";
 import {IReviews} from "@/interfaces/common";
-import {ColorModeContext} from "@/contexts";
-import {useMobile} from "@/hook";
-import {StarRating} from "@/components/establishment/utills/main/starRating";
+import parse from "html-react-parser";
+import {formatText} from "@/utils";
 
 type TProps = {
     review: IReviews
 }
-const {Title, Text} = Typography;
 
 const ReviewCard = ({review}: TProps) => {
     const translate = useTranslate();
-    const {mode} = useContext(ColorModeContext);
-    const {width} = useMobile();
-
-    const textColor = mode === "dark" ? "#e8dfdf" : '#000';
 
     return (
         <Box sx={{
             display: 'flex',
             width: '100%',
-            p: '15px',
-            borderRadius: '10px',
-            bgcolor: 'common.black'
+            p: 2,
+            // borderRadius: '10px',
+            // bgcolor: 'common.black',
+            color: 'common.white',
+            "&:not(:last-of-type)": {
+                borderBottom: '1px solid silver'
+            }
         }}>
             <Box sx={{
                 display: 'flex',
                 gap: 1,
                 width: '100%'
             }}>
-                <img style={{
-                    width: '50px',
-                    height: '50px',
-                    borderRadius: '50%'
-                }} src={review?.createdBy?.avatar} alt={"avatar"}/>
+
                 <Box sx={{
                     display: 'flex',
-                    flexDirection: 'column',
-                    gap: 1,
+                    flexDirection: 'row',
+                    flexWrap: {xs: 'wrap', sm: 'nowrap'},
+                    justifyContent: 'space-between',
+                    overflow: 'hidden',
+                    gap: {xs: 1, sm: 5, lg: 8},
                     width: '100%'
                 }}>
                     <Box sx={{
                         display: 'flex',
-                        width: '100%',
-                        justifyContent: 'space-between'
+                        width: 'fit-content',
+                        justifyContent: 'start',
+                        alignItems: 'center',
+                        gap: 1,
+                        order: 1,
+                        height: 'fit-content'
                     }}>
-                        <Box sx={{
-                            color: textColor
-                        }}>
+                        <Box
+                            component="img"
+                            sx={{
+                                width: {xs: '46px', sm: '52px', md: '58px', lg: '64px'},
+                                height: {xs: '46px', sm: '52px', md: '58px', lg: '64px'},
+                                borderRadius: '7px',
+                                objectFit: 'cover'
+                            }}
+                            src={review?.createdBy?.avatar}
+                            alt={"avatar"}
+                        />
+                        <Box
+                            sx={{
+                                fontWeight: 600,
+                                fontSize: '1rem'
+                            }}
+                        >
                             {review?.createdBy?.name}
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    gap: 1,
+                                    p: '0px 8px',
+                                    bgcolor: 'common.white',
+                                    color: 'common.black',
+                                    borderRadius: '20px'
+                                }}
+                            >
+                                <Box
+                                    sx={{
+                                        textTransform: 'capitalize'
+                                    }}
+                                >
+                                    {(translate('home.create.averageCheck')?.split(" ")[1] || "Check")}:
+                                </Box>
+                                {review?.check}
+                            </Box>
                         </Box>
+                    </Box>
+                    <Box sx={{
+                        order: {xs: 3, sm: 2},
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 1,
+                        width: '100%',
+                        justifyContent: 'start',
+                        alignItems: 'start',
+                    }}>
+                        <StarRating
+                            value={review?.score}
+                            readOnly
+                            size={36}
+                        />
+                        <Box
+                            sx={{
+                                fontSize: '18px',
+                                fontWeight: 600
+                            }}
+                        >
+                            {review?.title}
+                        </Box>
+                        <Box
+                            sx={{
+                                fontSize: '14px',
+                                wordWrap: 'break-word',
+                                whiteSpace: 'break-spaces',
+                            }}
+                        >
+                            {parse(formatText({text: review?.text}))}
+                        </Box>
+                    </Box>
+                    <Box
+                        sx={{
+                            width: 'fit-content',
+                            order: {xs: 2, sm: 3}
+                        }}
+                    >
                         <ShowTimeComponent
                             isFirstAgo={true}
+                            style={{
+                                fontSize: '14px',
+                                whiteSpace: 'nowrap'
+                            }}
                             date={review?.createdAt}/>
-                    </Box>
-                    <StarRating
-                        value={review?.grade}
-                        readOnly
-                    />
-                    {/*<Rating value={review?.grade} precision={0.5} readOnly/>*/}
-                    <Box sx={{
-                        display: 'flex',
-                        flexDirection: {xs: 'column', sm: 'row'},
-                        gap: 2,
-                        width: '100%',
-                        justifyContent: {xs: 'start', sm: 'space-between'},
-                        alignItems: 'start',
-                        "& div.reviewCardIsLikePart":{
-                            width: '100%'
-                        }
-                    }}>
-                        <Box
-                            className={'reviewCardIsLikePart'}
-                        >
-                            <Title
-                                style={{
-                                    color: textColor,
-                                    marginTop: '5px',
-                                    marginBottom: 0
-                                }}
-                                level={5}
-                            >
-                                {translate('home.show.reviews.like')}
-                            </Title>
-                            <Text
-                                style={{
-                                    color: textColor,
-                                    whiteSpace: 'break-spaces'
-                                }}
-                            >
-                                {review.text?.like}
-                            </Text>
-                        </Box>
-                        {
-                            width > 600 && (
-                                <Divider
-                                    sx={{
-                                        bgcolor: 'silver'
-                                    }}
-                                    orientation={'vertical'}/>
-                            )
-                        }
-                        <Box
-                            className={'reviewCardIsLikePart'}
-                        >
-                            <Title
-                                style={{
-                                    color: textColor,
-                                    marginTop: '5px',
-                                    marginBottom: 0
-                                }}
-                                level={5}
-                            >
-                                {translate('home.show.reviews.notLike')}
-                            </Title>
-                            <Text
-                                style={{
-                                    color: textColor,
-                                    whiteSpace: 'break-spaces'
-                                }}
-                            >
-                                {review.text?.notLike}
-                            </Text>
-                        </Box>
                     </Box>
                 </Box>
             </Box>

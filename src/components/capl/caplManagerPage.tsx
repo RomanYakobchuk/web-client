@@ -192,7 +192,7 @@ const CaplManagerPage = () => {
                 field: "date",
                 headerName: translate("capl.create.date"),
                 type: "dateTime",
-                valueFormatter: params => dayjs(params?.value)?.format('DD/MM/YYYY HH:mm'),
+                valueFormatter: (params: any) => dayjs(params?.value)?.format('DD/MM/YYYY HH:mm'),
                 renderCell: function render({row}) {
                     return <TagField value={dayjs(row.date).format("DD/MM/YYYY HH:mm")}/>
                 },

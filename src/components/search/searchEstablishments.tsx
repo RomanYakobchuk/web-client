@@ -173,7 +173,6 @@ const SearchEstablishments = ({
 
     useEffect(() => {
         if (parentRef.current) {
-            console.log(parentRef?.current?.offsetWidth)
             setParentWidth(parentRef.current?.offsetWidth)
         }
     }, [parentRef, isChooseFromSaved, searchEstablishment, width]);

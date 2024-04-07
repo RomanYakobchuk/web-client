@@ -32,7 +32,9 @@ const ListForUsers = ({isLoading, allEstablishments, data, current, setCurrent, 
             {
                 isLoading ? <Loading height={'40vh'}/> :
                     allEstablishments?.length > 0 ?
-                        <PropertiesList items={allEstablishments}/>
+                        <PropertiesList
+                            numberOfColumnsByWidth={{xs: 'repeat(auto-fill, minmax(150px, 1fr))', md: 'repeat(auto-fill, minmax(200px, 1fr))'}}
+                            items={allEstablishments}/>
                         : <Box sx={{
                             width: '100%',
                             height: '250px',

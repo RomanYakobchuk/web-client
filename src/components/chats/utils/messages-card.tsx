@@ -100,8 +100,6 @@ const MessagesCard = ({item: message, lengthGroup, index, theSameUser}: IProps) 
             transition={{
                 duration: 0.4,
                 type: 'spring',
-                // bounce: 0.3,
-                ease: 'easeOut'
             }}
             viewport={{
                 once: true,

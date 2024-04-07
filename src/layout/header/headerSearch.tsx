@@ -14,6 +14,8 @@ import {useUserInfo} from "@/hook";
 import {Link, useNavigate} from "react-router-dom";
 import {ESTABLISHMENT, NEWS, SHOW} from "@/config/names";
 
+type SearchResult = { establishment: IEstablishment[], news: INews[] };
+
 type TProps = {
     openModal: boolean,
     setOpenModal: Dispatch<SetStateAction<boolean>>,
@@ -29,70 +31,68 @@ const HeaderSearch = ({openModal, setOpenModal}: TProps) => {
     const [debounceValue, _] = useDebounce(value ?? '', 500);
 
 
-    const {refetch: refetchPlaces, isRefetching: isRefetchPlace, isLoading: isLoadPlace} = useList<IEstablishment>({
-        resource: `${ESTABLISHMENT}/all`,
-        filters: [{field: "title", operator: "contains", value: value}],
+    const {
+        data,
+        isLoading,
+        isFetching,
+        refetch,
+    } = useList<any>({
+        resource: 'search/fullText',
+        filters: [{field: "search", operator: "eq", value: value}],
         queryOptions: {
             enabled: false,
-            onSuccess: (data) => {
-                const establishmentOptionGroup = data?.data.map((item, index) =>
-                    renderItem(item, `${ESTABLISHMENT}`, index, mode, setOpenModal, data?.data.length, translate, `/${ESTABLISHMENT}/${SHOW}/${item?._id}`),
-                );
-                if (establishmentOptionGroup?.length > 0) {
-                    setOptions((prevOptions) => [
-                        ...prevOptions,
-                        {
-                            label: renderTitle(translate(`${ESTABLISHMENT}.${ESTABLISHMENT}`), mode, () => {
-                                setOpenModal(false);
-                                navigate(`/${ESTABLISHMENT}`);
-                            }),
-                            options: establishmentOptionGroup,
-                        },
-                    ] as IOptions[]);
-                }
-            },
         },
-    });
-
-    const {refetch: refetchNews, isRefetching: isRefetchNews, isLoading: isLoadNews} = useList<INews>({
-        resource: `${NEWS}/all`,
-        filters: [{field: "title", operator: "contains", value: value}],
-        queryOptions: {
-            enabled: false,
-            onSuccess: (data) => {
-                const newsOptionGroup = data.data.map((item, index) =>
-                    renderItem(item, `${NEWS}`, index, mode, setOpenModal, data.data.length, translate, `/news/show/${item?._id}`),
-                );
-                if (newsOptionGroup.length > 0) {
-                    setOptions((prevOptions) => [
-                        ...prevOptions,
-                        {
-                            label: renderTitle(translate("news.news"), mode, () => {
-                                setOpenModal(false);
-                                navigate(`/${NEWS}`);
-                            }),
-                            options: newsOptionGroup,
-                        },
-                    ] as IOptions[]);
-                }
-            },
-        },
-    });
+        pagination: {
+            pageSize: 20,
+        }
+    })
 
     useEffect(() => {
         if (openModal && user?._id) {
-            (async () => {
-                setOptions([]);
-                await Promise.all([refetchNews(), refetchPlaces()]);
-            })()
+            setOptions([]);
+            refetch();
         }
-    }, [debounceValue, openModal, user]);
+    }, [debounceValue, openModal, user?._id]);
 
-    const isLoading = isLoadNews || isLoadPlace || isRefetchNews || isRefetchPlace;
-
+    useEffect(() => {
+        if (data?.data && openModal) {
+            const p: SearchResult = data?.data as any;
+            const establishmentOptionGroup = p?.establishment?.map((item, index) =>
+                renderItem(item, item?.type, index, setOpenModal, p?.establishment.length, translate, `/${ESTABLISHMENT}/${SHOW}/${item?._id}`),
+            );
+            const newsOptionGroup = p?.news?.map((item, index) =>
+                renderItem(item, undefined, index, setOpenModal, p?.news?.length, `/news/show/${item?._id}`),
+            );
+            if (establishmentOptionGroup?.length > 0) {
+                setOptions((prevOptions) => [
+                    ...prevOptions,
+                    {
+                        label: renderTitle(translate(`${ESTABLISHMENT}.${ESTABLISHMENT}`), () => {
+                            setOpenModal(false);
+                            navigate(`/${ESTABLISHMENT}`);
+                        }),
+                        options: establishmentOptionGroup,
+                    },
+                ] as IOptions[]);
+            }
+            if (newsOptionGroup?.length > 0) {
+                setOptions((prevOptions) => [
+                    ...prevOptions,
+                    {
+                        label: renderTitle(translate("news.news"), () => {
+                            setOpenModal(false);
+                            navigate(`/${NEWS}`);
+                        }),
+                        options: newsOptionGroup,
+                    },
+                ] as IOptions[]);
+            }
+        }
+    }, [data]);
     return (
         <ModalWindow
             open={openModal}
+            timeOut={400}
             setOpen={setOpenModal}
             title={
                 <Box sx={{
@@ -135,7 +135,7 @@ const HeaderSearch = ({openModal, setOpenModal}: TProps) => {
             }
         >
             <Box sx={{
-                p: '10px',
+                py: 1,
                 display: 'flex',
                 flexDirection: 'column',
                 gap: 3

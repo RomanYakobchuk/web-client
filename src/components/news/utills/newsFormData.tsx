@@ -13,48 +13,46 @@ import MDEditor from "@uiw/react-md-editor";
 
 import ImageSelector from "../../establishment/utills/ImageSelector";
 import {ColorModeContext} from "@/contexts";
-import {IMDEditor, INewsDateEvent, IPicture} from "@/interfaces/common";
+import {INewsDateEvent, IPicture} from "@/interfaces/common";
 import SearchEstablishments from "../../search/searchEstablishments";
 import DateTimeList from "./dateTimeList";
 import {INewsDataProps} from "@/interfaces/formData";
 import {ChangeLocation, CustomOpenContentBtn} from "../../index";
+import {StateFormNews} from "@/components/news/utills/newsFormDataReducer";
 
 const NewsFormData = (props: INewsDataProps) => {
     const {
-        title,
-        setEstablishmentInfo,
-        setStatus,
+        state,
+        handleChange,
         onFinishHandler,
-        status,
-        pictures,
-        setPictures,
-        description,
-        setDescription,
-        handleSubmit,
-        setIsDatePublished,
-        isDatePublished,
-        dateEvent,
-        category,
-        setCategory,
-        establishmentInfo,
-        setTitle,
-        setDateEvent,
-        datePublished, setDatePublished,
         defaultPictures,
-        setPlace: setDataPlace,
-        place: dataPlace,
+        handleSubmit
     } = props;
     const translate = useTranslate();
     const {mode} = useContext(ColorModeContext);
     const maxImages = 6;
 
+    const {
+        title,
+        status,
+        pictures,
+        establishmentInfo,
+        description,
+        place: dataPlace,
+        dateEvent,
+        category,
+        // createdBy,
+        datePublish: datePublished,
+        isDatePublish: isDatePublished
+    } = state;
+
     const [isEstablishmentLocPlace, setIsEstablishmentLocPlace] = useState<boolean>(!!dataPlace?.location?.lng ?? false);
-    const [location, setLocation] = useState<INewsDataProps['place']['location']>(dataPlace?.location);
-    const [place, setPlace] = useState<INewsDataProps['place']['place']>(dataPlace?.place);
+    const [location, setLocation] = useState<StateFormNews['place']['location']>(dataPlace?.location);
+    const [place, setPlace] = useState<StateFormNews['place']['place']>(dataPlace?.place);
 
     useEffect(() => {
         if (location?.lng && location?.lng && place?.address && place?.city) {
-            setDataPlace((prevState) => ({...prevState, location, place}))
+            handleChange("place", {...dataPlace, location, place})
         }
 
         if (location?.lng !== establishmentInfo?.location?.lng || location?.lat !== establishmentInfo?.location?.lat || place?.city !== establishmentInfo?.place?.city || place?.address !== establishmentInfo?.place?.address) {
@@ -74,19 +72,19 @@ const NewsFormData = (props: INewsDataProps) => {
                 arr.push(item)
             }
         }
-        setPictures((prevState) => ([...prevState, ...arr] as IPicture[] | File[]))
+        handleChange("pictures", [...pictures, ...arr] as IPicture[] | File[]);
     }
-    const handleAddWorkDays = (workSchedule: INewsDateEvent) => {
-        if (workSchedule?.schedule?.from || workSchedule?.schedule?.to || workSchedule?.time?.from || workSchedule?.time?.to) {
-            if (workSchedule?.schedule?.to && !workSchedule?.schedule?.from) {
-                workSchedule.schedule.from = workSchedule.schedule.to
-                delete workSchedule['schedule']['to']
+    const handleAddWorkDays = (newsDateEvent: INewsDateEvent) => {
+        if (newsDateEvent?.schedule?.from || newsDateEvent?.schedule?.to || newsDateEvent?.time?.from || newsDateEvent?.time?.to) {
+            if (newsDateEvent?.schedule?.to && !newsDateEvent?.schedule?.from) {
+                newsDateEvent.schedule.from = newsDateEvent.schedule.to
+                delete newsDateEvent['schedule']['to']
             }
-            setDateEvent((prevState) => ([...prevState, workSchedule]))
+            handleChange("dateEvent", [...dateEvent, newsDateEvent]);
         }
     }
     const handleDeleteWorkDays = (index: number | any) => {
-        setDateEvent(dateEvent.filter((_: any, i: any) => i !== index))
+        handleChange("dateEvent", dateEvent.filter((_: any, i: any) => i !== index))
     }
 
     const gridColumn = {xs: 'span 1', sm: 'span 2'};
@@ -99,31 +97,28 @@ const NewsFormData = (props: INewsDataProps) => {
     }
 
 
-    const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const handleChangeIsPlace = (event: ChangeEvent<HTMLInputElement>) => {
         const checked = event.target.checked;
         setIsEstablishmentLocPlace(checked);
         if (checked && establishmentInfo) {
             setLocation(establishmentInfo?.location)
             setPlace(establishmentInfo?.place)
         } else {
-            setLocation({} as INewsDataProps['place']['location']);
-            setPlace({} as INewsDataProps['place']['place'])
+            setLocation({} as StateFormNews['place']['location']);
+            setPlace({} as StateFormNews['place']['place'])
         }
     };
 
     const handleClearLocation = () => {
         setIsEstablishmentLocPlace(false);
-        setDataPlace({isPlace: false} as INewsDataProps['place']);
-        setLocation({} as INewsDataProps['place']['location']);
-        setPlace({} as INewsDataProps['place']['place'])}
+        handleChange("place", {isPlace: false} as StateFormNews['place']);
+        setLocation({} as StateFormNews['place']['location']);
+        setPlace({} as StateFormNews['place']['place'])}
 
     return (
         <Box>
             <Box
                 sx={{
-                    // p: '5px',
-                    // borderRadius: '15px',
-                    // bgcolor: mode === "dark" ? "#2e424d" : "#fcfcfc",
                     transition: 'all 300ms linear',
                 }}
             >
@@ -151,8 +146,10 @@ const NewsFormData = (props: INewsDataProps) => {
                                      }}
                         >
                             <SearchEstablishments
-                                typeSearch={'userEstablishments'} searchEstablishment={establishmentInfo}
-                                setSearchEstablishment={setEstablishmentInfo}/>
+                                typeSearch={'userEstablishments'}
+                                searchEstablishment={establishmentInfo}
+                                setSearchEstablishment={(value) => handleChange("establishmentInfo", value)}
+                            />
                         </FormControl>
                     </Box>
                     <Box sx={{
@@ -177,7 +174,7 @@ const NewsFormData = (props: INewsDataProps) => {
                                 color={"secondary"}
                                 variant="outlined"
                                 value={title ? title : ''}
-                                onChange={(event) => setTitle(event.target.value)}
+                                onChange={(event) => handleChange("title", event.target.value)}
                             />
                         </FormControl>
                         <FormControl>
@@ -196,7 +193,7 @@ const NewsFormData = (props: INewsDataProps) => {
                                     value={category ? category : ''}
                                     color={"secondary"}
                                     onChange={(e) =>
-                                        setCategory(e.target.value)
+                                        handleChange("category", e.target.value)
                                     }>
                                 {
                                     ["general", "promotions", "events"].map((type) => (
@@ -242,7 +239,7 @@ const NewsFormData = (props: INewsDataProps) => {
                                         <Switch
                                             color={'info'}
                                             checked={isEstablishmentLocPlace}
-                                            onChange={handleChange}
+                                            onChange={handleChangeIsPlace}
                                             inputProps={{'aria-label': 'controlled'}}
                                         />
                                         Use establishment location and place
@@ -278,7 +275,7 @@ const NewsFormData = (props: INewsDataProps) => {
                             </FormHelperText>
                             <MDEditor data-color-mode={mode === "dark" ? 'dark' : 'light'}
                                       value={description ? description : ''}
-                                      onChange={setDescription as IMDEditor['set']}
+                                      onChange={(value) => handleChange("description", value)}
                             />
                         </FormControl>
                         <FormControl fullWidth>
@@ -297,7 +294,7 @@ const NewsFormData = (props: INewsDataProps) => {
                                     }}
                                     value={status ? status : "published"}
                                     onChange={(e) => {
-                                        setStatus(e.target.value as string)
+                                        handleChange("status", e.target.value as string)
                                     }}>
                                 {
                                     [
@@ -324,7 +321,7 @@ const NewsFormData = (props: INewsDataProps) => {
                                         color={isDatePublished ? "error" : "secondary"}
                                         endIcon={isDatePublished ? '' : <Add/>}
                                         variant={"outlined"}
-                                        onClick={() => setIsDatePublished(!isDatePublished)}
+                                        onClick={() => handleChange("isDatePublish", !isDatePublished)}
                                     >
                                         {translate(isDatePublished ? 'buttons.cancel' : 'news.create.addDate')}
                                     </Button>
@@ -337,44 +334,13 @@ const NewsFormData = (props: INewsDataProps) => {
                                         color={'secondary'}
                                         type={'datetime-local'}
                                         value={datePublished ?? ''}
-                                        onChange={(event) => setDatePublished(event.target.value)}
+                                        onChange={(event) => handleChange("datePublish", event.target.value)}
                                     />
-                                    // <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                    //     <DemoContainer
-                                    //         components={['DateTimePicker']}>
-                                    //         <DateTimePicker
-                                    //             value={datePublished ? datePublished : ''}
-                                    //             onChange={(value) => {
-                                    //                 setDatePublished(value)
-                                    //             }}
-                                    //             sx={{
-                                    //                 '& .MuiInputBase-input': {
-                                    //                     color: (theme) => theme.palette.secondary.main,
-                                    //                 },
-                                    //                 '& .MuiInputLabel-root': {
-                                    //                     color: (theme) => theme.palette.secondary.main,
-                                    //                 },
-                                    //                 '& .MuiOutlinedInput-notchedOutline': {
-                                    //                     borderColor: (theme) => theme.palette.secondary.main,
-                                    //                 },
-                                    //                 '&:hover .MuiOutlinedInput-notchedOutline': {
-                                    //                     borderColor: (theme) => theme.palette.secondary.main,
-                                    //                 },
-                                    //             }}
-                                    //             label={translate('news.create.publicDate')}
-                                    //         />
-                                    //     </DemoContainer>
-                                    // </LocalizationProvider>
                                 )
                             }
                         </FormControl>
                     </Box>
-                    <FormControl sx={{
-                        bgcolor: mode === 'dark' ? "#1a1313" : '#f4f4f4',
-                        borderRadius: '10px',
-                        p: '10px',
-                        m: '-10px'
-                    }}>
+                    <FormControl>
                         <FormHelperText
                             sx={{
                                 ...formHelperStyle
@@ -384,8 +350,8 @@ const NewsFormData = (props: INewsDataProps) => {
                         </FormHelperText>
                         <ImageSelector
                             defaultPictures={defaultPictures}
-                            maxImages={maxImages} images={pictures}
-                            setPictures={setPictures}
+                            maxImages={maxImages} images={pictures as [IPicture | File]}
+                            setPictures={(value) => handleChange("pictures", value)}
                             handleChange={handlePicturesChange}/>
 
                     </FormControl>

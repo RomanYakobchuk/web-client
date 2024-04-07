@@ -8,7 +8,6 @@ import {FilterNews} from "../index";
 import ListForUsers from "./lists/listForUsers";
 import {useMobile} from "@/hook";
 import {SchemaContext} from "@/settings/schema";
-import {FullPageLoading} from "@/components/loading/fullPageLoading";
 
 const UserList = () => {
 

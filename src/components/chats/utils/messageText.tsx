@@ -27,7 +27,8 @@ export const MessageText = ({text, theSameUser, createdAt, message}: TProps) => 
     const {updateChat, findChat} = useChats();
     const {ref: refCard, inView: inViewCard} = useInView({
         threshold: 0.5,
-        delay: 500
+        delay: 500,
+        triggerOnce: true,
     });
     const [isShowSpoiler, setIsShowSpoiler] = useState(true);
 

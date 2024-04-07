@@ -1,13 +1,19 @@
+import React, {FC, Reducer, useEffect, useReducer, useState} from "react";
 import {useBack, useGetIdentity, useTranslate} from "@refinedev/core";
 import {useForm} from "@refinedev/react-hook-form";
-import React, {FC, useEffect, useState} from "react";
 
-import {IPicture, ProfileProps, IEstablishment} from "@/interfaces/common";
+import {IEstablishmentFormProps} from "@/interfaces/formData";
 import DataForm from "@/components/establishment/dataForm";
+import {ProfileProps} from "@/interfaces/common";
+import {ESTABLISHMENT} from "@/config/names";
 import {CustomCreate} from "@/components";
 import {Link} from "react-router-dom";
-import {IEstablishmentFormProps} from "@/interfaces/formData";
-import {ESTABLISHMENT} from "@/config/names";
+import {
+    ActionEstablishment,
+    initialState,
+    reducerFormStateEstablishment,
+    StateFormEstablishment
+} from "@/components/establishment/utills/formDataReducer";
 
 
 const Create: FC = () => {
@@ -17,6 +23,7 @@ const Create: FC = () => {
         handleSubmit,
     } = useForm({
         refineCoreProps: {
+            action: 'create',
             resource: `${ESTABLISHMENT}/create`,
             redirect: false,
             meta: {
@@ -24,7 +31,7 @@ const Create: FC = () => {
                     'Content-Type': 'multipart/form-data'
                 }
             }
-        }
+        },
     });
 
     const {data: currentUser} = useGetIdentity<ProfileProps>();
@@ -32,30 +39,37 @@ const Create: FC = () => {
     const goBack = useBack();
     const translate = useTranslate();
 
-    const [sendNotifications, setSendNotifications] = useState<boolean>(false);
-    const [pictures, setPictures] = useState<IPicture[] | File[]>([] as IPicture[] | File[]);
     const [defaultPictures, _] = useState([]);
-    const [type, setType] = useState<string>('');
-    const [title, setTitle] = useState<string>('');
-    const [averageCheck, setAverageCheck] = useState<string>('');
-    const [workSchedule, setWorkSchedule] = useState<IEstablishment["workSchedule"] | any>({})
 
-    const [workScheduleWeekend, setWorkScheduleWeekend] = useState<IEstablishment["workSchedule"]["weekend"]>("")
-    const [location, setLocation] = useState<IEstablishmentFormProps['location']>({} as IEstablishmentFormProps['location']);
-    const [tags, setTags] = useState<any>([]);
-    const [place, setPlace] = useState<IEstablishmentFormProps['place']>({} as IEstablishmentFormProps['place']);
-    const [features, setFeatures] = useState<any>([]);
-    const [contacts, setContacts] = useState<any>([]);
-    const [workDays, setWorkDays] = useState<Array<any>>([]);
-    const [description, setDescription] = useState<any>("");
-    const [createdBy, setCreatedBy] = useState<any>("");
+    const [state, dispatch] = useReducer<Reducer<StateFormEstablishment, ActionEstablishment>>(reducerFormStateEstablishment, initialState);
+    const {
+        type,
+        workDays,
+        workScheduleWeekend,
+        sendNotifications,
+        cuisine,
+        pictures,
+        description,
+        features,
+        location,
+        place,
+        workSchedule,
+        createdBy,
+        tags,
+        averageCheck,
+        title,
+        contacts
+    } = state as StateFormEstablishment;
+    const handleChange = (type: keyof StateFormEstablishment, value: any) => {
+        dispatch({type, payload: value});
+    }
 
     const [searchManagerInput, setSearchManagerInput] = useState<string>("");
     const [searchInputValue, setSearchInputValue] = useState<string>("");
 
     useEffect(() => {
         if (workDays && workScheduleWeekend) {
-            setWorkSchedule({
+            handleChange("workSchedule", {
                 workDays: workDays,
                 weekend: workScheduleWeekend,
             })
@@ -75,8 +89,11 @@ const Create: FC = () => {
         }
         formData.append("description", description);
         formData.append("title", title);
+        if (type === "restaurant" && cuisine) {
+            formData.append("cuisine", cuisine);
+        }
         formData.append("type", type);
-        formData.append("createdBy", createdBy?.length > 0 ? createdBy : currentUser?._id);
+        formData.append("createdBy", createdBy ? createdBy : currentUser?._id as string);
         formData.append("place", JSON.stringify(place));
 
         formData.append("contacts", JSON.stringify(contacts))
@@ -94,59 +111,19 @@ const Create: FC = () => {
 
         await onFinish(formData);
 
-        // if (data && data?.createdBy === currentUser?._id) {
-        //     if (data?.user) {
-        //         localStorage.setItem(
-        //             "user",
-        //             JSON.stringify(data?.user)
-        //         );
-        //     } else if (data) {
-        //         localStorage.setItem(
-        //             "user",
-        //             JSON.stringify(data)
-        //         );
-        //     }
-        // }
-
         goBack();
     }
 
-    const props = {
+    const props: IEstablishmentFormProps = {
         defaultPictures,
-        setPictures,
-        pictures,
-        onFinishHandler,
         handleSubmit,
-        tags,
-        setAverageCheck,
-        averageCheck,
-        setTitle,
-        title,
-        setTags,
-        setCreatedBy,
-        createdBy,
         searchInputValue,
-        setSearchInputValue,
-        setWorkScheduleWeekend,
-        setWorkDays,
         searchManagerInput,
-        contacts,
-        setContacts,
-        description,
-        features,
-        setFeatures,
-        location,
-        setDescription,
-        place,
-        setPlace,
-        setLocation,
+        state,
+        onFinishHandler,
+        setSearchInputValue,
         setSearchManagerInput,
-        setType,
-        type,
-        workDays,
-        workScheduleWeekend,
-        sendNotifications,
-        setSendNotifications
+        handleChange
     }
     return (
         <CustomCreate

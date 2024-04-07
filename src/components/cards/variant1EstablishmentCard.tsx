@@ -9,19 +9,15 @@ import {
 } from "@mui/material";
 import dayjs from "dayjs";
 import {Link} from "react-router-dom";
-import {useTranslation} from "react-i18next";
 import relativeTime from "dayjs/plugin/relativeTime"
 import {useTranslate} from "@refinedev/core";
-import React, {useContext, useEffect} from "react";
+import React, {useContext} from "react";
 
 import {IEstablishment} from "@/interfaces/common";
 import {ColorModeContext} from "@/contexts";
 import BookMarkButton from "@/components/buttons/BookMarkButton";
-import 'dayjs/locale/uk';
-import 'dayjs/locale/en';
-import {tagStyle} from "@/styles";
 import SharedComponent from "../common/shared/sharedComponent";
-import {useMobile, useNavigateWithTransition} from "@/hook";
+import {useNavigateWithTransition} from "@/hook";
 import {ESTABLISHMENT, SHOW} from "@/config/names";
 import {TruncateSingleText} from "@/utils"
 
@@ -39,20 +35,8 @@ const Variant1EstablishmentCard = ({
 
     const navigateWithTransition = useNavigateWithTransition();
     const translate = useTranslate();
-    const {i18n} = useTranslation();
-    const {width} = useMobile();
     const {mode} = useContext(ColorModeContext);
     const color = mode === "dark" ? '#f1e6e6' : "#1d1a39";
-
-    useEffect(() => {
-        i18n.language === "ua" ? dayjs.locale('uk') : dayjs.locale('en')
-    }, [i18n.language])
-
-
-    const lL = width < 450 ? 15 : (width > 600 && width < 700) ? 30 : 20;
-    const currentTitle = title?.length > lL ? title?.slice(0, lL) : title;
-
-    const isSplicedTitle = title?.length > lL;
 
     const linkTo = `/${ESTABLISHMENT}/${SHOW}/${establishment?._id}`;
 
@@ -60,8 +44,9 @@ const Variant1EstablishmentCard = ({
         <Paper
             sx={{
                 width: '100%',
-                // borderRadius: {xs: '16px', sm: '20px'},
                 borderRadius: '10px',
+                overflow: 'hidden',
+                color: 'common.white'
             }}
             elevation={4}
         >
@@ -80,7 +65,6 @@ const Variant1EstablishmentCard = ({
                 }}
             >
                 <Card
-                    color={"default"}
                     sx={{
                         display: 'flex',
                         flexDirection: 'column',
@@ -94,7 +78,7 @@ const Variant1EstablishmentCard = ({
                         "&:hover": {
                             boxShadow: "0 22px 45px 2px rgba(176, 176, 176, 0.1)",
                         },
-                        bgcolor: mode === "dark" ? "#000" : "#fff",
+                        bgcolor: 'common.black',
                         boxShadow: `0px 0px 10px 1px ${mode === 'dark' ? '#453636' : '#ebe3e3'}`
                     }}
                     elevation={0}
@@ -102,8 +86,8 @@ const Variant1EstablishmentCard = ({
                     <Box sx={{
                         display: 'flex',
                         flexDirection: 'column',
-                        gap: 1,
-                        position: 'relative'
+                        width: '100%',
+                        position: 'relative',
                     }}>
                         <Box
                             sx={{
@@ -125,7 +109,7 @@ const Variant1EstablishmentCard = ({
                                     bgcolor: '#f5841a',
                                     // width: '40px',
                                     borderRadius: '5px',
-                                    p: '5px'
+                                    p: {xs: '2px', sm: '4px'}
                                 }}
                                 showText={false} bgColor={'#f5841a'}
                                 color={'common.white'} id={_id} type={'establishment'}/>
@@ -135,25 +119,24 @@ const Variant1EstablishmentCard = ({
                                 borderRadius: '5px'
                             }}>
                                 <SharedComponent
+                                    sharedStyle={{
+                                        p: {xs: '2px', sm: '4px'}
+                                    }}
                                     type={'establishment'}
                                     isOnlyShared={true}
-                                    color={mode === 'dark' ? '#000' : '#fff'}
+                                    color={"common.black"}
                                     url={`${CLIENT_URL}/${ESTABLISHMENT}/${SHOW}/${_id}`}
                                     title={translate('buttons.share')}
                                     name={establishment?.title}
                                 />
                             </Box>
-                            {/*<Button*/}
-                            {/*    onClick={handleShare}*/}
-                            {/*>*/}
-                            {/*    SHARE*/}
-                            {/*</Button>*/}
                         </Box>
                         <Box sx={{
                             display: 'flex',
                             flexDirection: 'column',
                             position: 'relative',
                             zIndex: 5,
+                            width: '100%',
                         }}>
                             {
                                 pictures?.length > 0 && (
@@ -169,7 +152,35 @@ const Variant1EstablishmentCard = ({
                                     />
                                 )
                             }
-                            <Box color={"default"} sx={{
+                            <Typography sx={{
+                                display: 'flex',
+                                justifyContent: 'start',
+                                alignItems: 'center',
+                                fontSize: {xs: '12px', sm: '14px'},
+                                p: '3px 7px',
+                                color: 'info.contrastText',
+                                bgcolor: 'info.main',
+                                position: 'absolute',
+                                top: '-3px',
+                                left: '-3px',
+                                borderRadius: '7px'
+                                // transformOrigin: 'top',
+                                // transform: 'rotate(-45deg) translate(-35%, -30%)'
+                            }}>
+                                {
+                                    translate(`home.create.type.${type}`)
+                                }
+                            </Typography>
+                        </Box>
+                        <Box
+                            sx={{
+                                width: '100%',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: 0.5,
+                            }}
+                        >
+                            <Box sx={{
                                 display: 'flex',
                                 textDecoration: 'none',
                                 flexDirection: 'row',
@@ -219,92 +230,74 @@ const Variant1EstablishmentCard = ({
                                                 ({establishment?.reviewsLength})
                                             </Box>
                                         </Box>
-                                        <Typography sx={{
-                                            display: 'flex',
-                                            justifyContent: 'start',
-                                            alignItems: 'center',
-                                            fontSize: {xs: '12px', sm: '14px'},
-                                            ...tagStyle,
-                                            p: '3px 7px',
-                                            color: 'info.contrastText',
-                                            bgcolor: 'info.main',
-                                            position: 'absolute',
-                                            transformOrigin: 'top',
-                                            top: 0,
-                                            left: 0,
-                                            transform: 'rotate(-45deg) translate(-35%, -30%)'
-                                        }}>
-                                            {
-                                                translate(`home.create.type.${type}`)
-                                            }
-                                        </Typography>
                                     </Box>
                                 </CardContent>
                             </Box>
-                        </Box>
-                        <Box
-                            sx={{
-                                fontSize: {xs: '16px', sm: '18px'},
-                                fontWeight: 700,
-                                m: 0,
+                            <TruncateSingleText
+                                styles={{
+                                    color: 'common.white',
+                                    fontSize: {xs: '16px', sm: '18px'},
+                                    fontWeight: 700,
+                                    width: 'fit-content',
+                                    maxWidth: '100%'
+                                }}
+                                str={title}
+                            />
+                            <Box sx={{
                                 display: 'flex',
-                                justifyContent: 'start',
-                                alignItems: 'center',
-                                textTransform: 'capitalize',
-                                color: 'common.white',
-                                backdropFilter: 'blur(10px)',
+                                flexDirection: 'column',
+                                textDecoration: 'none',
+                                gap: 0.5
                             }}>
-                            {TruncateSingleText({width: '145px', str: title})}
-                        </Box>
-                        <Box color={"default"} sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            textDecoration: 'none',
-                            gap: 0.5
-                        }}>
-                            <Stack direction="row" gap={0.5} justifyContent={"start"} color={color} alignItems="center">
-                                <Place
-                                    sx={{
-                                        fontSize: 20,
-                                        color: "secondary.main",
-                                    }}
-                                />
-                                <Box sx={{
-                                    fontSize: '12px',
+                                <Stack direction="row" gap={0.5} justifyContent={"start"} color={color}
+                                       alignItems="center">
+                                    <Place
+                                        sx={{
+                                            fontSize: 20,
+                                            color: "secondary.main",
+                                        }}
+                                    />
+                                    <Box sx={{
+                                        fontSize: '12px',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        justifyContent: 'center',
+                                    }}>
+                                        <div>
+                                            {
+                                                place?.city
+                                            }
+                                        </div>
+                                    </Box>
+                                </Stack>
+                                <Stack sx={{
                                     display: 'flex',
-                                    flexDirection: 'column',
-                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    flexDirection: 'row',
+                                    justifyContent: 'end',
+                                    // width: 'fit-content',
+                                    gap: 1,
+                                    mt: '5px',
+                                    width: '100%',
+                                    // flexWrap: 'wrap',
                                 }}>
-                                    <div>
-                                        {
-                                            place?.city
-                                        }
-                                    </div>
-                                </Box>
-                            </Stack>
-                            <Stack sx={{
-                                bgcolor: 'cornflowerblue',
-                                p: '3px 5px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                flexDirection: 'row',
-                                // width: 'fit-content',
-                                justifyContent: 'center',
-                                gap: 1,
-                                m: '5px 0',
-                                width: '100%',
-                                fontSize: {xs: '12px', sm: '14px'},
-                                color: 'common.white',
-                                flexWrap: 'wrap',
-                                borderRadius: '7px'
-                            }}>
-                                <Box component={"span"}>
-                                    {translate("home.create.averageCheck")}
-                                </Box>
-                                <Box>
-                                    ~ ₴ {averageCheck}
-                                </Box>
-                            </Stack>
+                                    {/*<Box component={"span"}>*/}
+                                    {/*    {translate("home.create.averageCheck")}*/}
+                                    {/*</Box>*/}
+                                    <Box
+                                        sx={{
+                                            bgcolor: 'cornflowerblue',
+                                            p: '4px 12px',
+                                            fontSize: {xs: '14px', sm: '16px'},
+                                            fontWeight: 600,
+                                            color: '#f9f9f9',
+                                            borderRadius: '10px'
+                                        }}
+                                    >
+                                        ~ ₴ {averageCheck}
+                                    </Box>
+                                </Stack>
+                            </Box>
                         </Box>
                     </Box>
                 </Card>

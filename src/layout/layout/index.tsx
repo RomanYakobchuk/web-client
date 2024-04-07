@@ -175,7 +175,7 @@ export const Layout: React.FC<LayoutProps> = ({
                         //     ? 'radial-gradient(circle, rgba(32,31,47,1) 0%, rgba(58,58,65,1) 20%, rgba(82,79,98,1) 40%, rgba(55,52,73,1) 60%, rgba(66,62,78,1) 80%, rgba(31,30,33,1) 100%)'
                         //     : 'radial-gradient(circle, rgba(249,249,249,1) 0%, rgb(158 185 235) 20%, rgba(235,234,242,1) 40%, rgb(157 188 227) 60%, rgba(237,233,244,1) 80%, rgba(234,232,237,1) 100%)',
                         ...someStyle,
-                        "& div.MuiInputBase-root:not(.nextui)": {
+                        "& div.MuiInputBase-root": {
                             borderRadius: '7px',
                             color: 'common.white',
                             "&::placeholder": {
@@ -185,10 +185,10 @@ export const Layout: React.FC<LayoutProps> = ({
                                 borderColor: `${mode === 'dark' ? '#fff' : '#000'} !important`
                             }
                         },
-                        "& .ant-select-auto-complete:not(.nextui) input:not(.nextui)": {
+                        "& .ant-select-auto-complete input": {
                             borderColor: 'common.white'
                         },
-                        "& .nextui div[data-slot='input-wrapper']": {
+                        "& div[data-slot='input-wrapper']": {
                             bgcolor: 'common.black',
                             color: 'common.white',
                             "*": {
@@ -199,10 +199,7 @@ export const Layout: React.FC<LayoutProps> = ({
                                 border: 'transparent'
                             }
                         },
-                        '& label:not(.nextui)': {
-                            color: 'secondary.main',
-                        },
-                        '& .MuiOutlinedInput-root:not(.nextui)': {
+                        '& .MuiOutlinedInput-root': {
                             '& fieldset': {
                                 borderColor: 'common.white',
                             },
@@ -213,7 +210,7 @@ export const Layout: React.FC<LayoutProps> = ({
                                 borderColor: 'common.white',
                             },
                         },
-                        "& label:not(.nextui), & label.Mui-focused": {
+                        "& label, & label.Mui-focused": {
                             color: 'common.white'
                         },
                         "& *:not(button).Mui-disabled": {
@@ -235,7 +232,7 @@ export const Layout: React.FC<LayoutProps> = ({
                         "& .MuiDivider-root::before, & .MuiDivider-root::after":{
                             borderTop: 'thin solid rgba(173, 215, 211, 1)'
                         },
-                        "& button:not(.nextui) > div.ant-float-btn-body": {
+                        "& button > div.ant-float-btn-body": {
                             background: mode === 'light' ? '#f1f1f1' : '#070707',
                             color: mode === 'dark' ? '#f1f1f1' : '#070707',
                             transition: '0.2s linear',

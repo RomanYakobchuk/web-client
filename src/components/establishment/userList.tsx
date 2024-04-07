@@ -11,7 +11,6 @@ import {EstablishmentMaps} from "@/components/google/newMap/EstablishmentMaps";
 
 
 const UserList = () => {
-    const [isShowLoading, setIsShowLoading] = useState(true);
     const {
         tableQueryResult: {data, isLoading, isError, isFetching},
         current,
@@ -30,7 +29,7 @@ const UserList = () => {
         },
         syncWithLocation: true,
     });
-    // console.log(filters)
+
     const currentFilterValues = useMemo(() => {
         const logicalFilters = filters.flatMap((item) => ("field" in item ? item : []));
         return {
@@ -39,41 +38,32 @@ const UserList = () => {
             propertyType: logicalFilters.find((item) => item.field === 'propertyType')?.value as EstablishmentType || "" as EstablishmentType,
             averageCheck_lte: logicalFilters.find((item) => item.field === 'averageCheck' && item?.operator === 'lte')?.value || 100000,
             averageCheck_gte: logicalFilters.find((item) => item.field === 'averageCheck' && item?.operator === 'gte')?.value || 0,
+            locationLng: logicalFilters.find((item) => item?.field === 'locationLng' && item?.operator === 'eq')?.value || null,
+            locationLat: logicalFilters.find((item) => item?.field === 'locationLat' && item?.operator === 'eq')?.value || null,
+            maxDistance: logicalFilters.find((item) => item?.field === 'maxDistance' && item?.operator === 'eq')?.value || null,
+            establishmentId: logicalFilters.find((item) => item?.field === 'establishmentId' && item?.operator === 'eq')?.value || null,
         }
     }, [filters]);
     const [title, setTitle] = useState<string>(currentFilterValues?.title);
 
     const allEstablishments = data?.data || [] as IEstablishment[];
 
-    useEffect(() => {
-        setIsShowLoading(isFetching)
-    }, [isFetching]);
-    useEffect(() => {
-        if (isShowLoading) {
-            const timer = setTimeout(() => {
-                setIsShowLoading(false)
-            }, 5000)
-            return () => {
-                clearTimeout(timer);
-            }
-        }
-    }, [isShowLoading]);
-
     return (
-        <Box sx={{
-            // display: 'flex',
-            // flexDirection: {xs: 'column', lg: 'row'},
-            display: 'grid',
-            gridTemplateColumns: {xs: '1fr', lg: '65% 35%'},
-            gap: 2,
-            width: '100%',
-            margin: '0 auto',
-            px: 1,
-            maxWidth: '1500px',
-            position: 'relative'
-        }}>
+        <Box
+            sx={{
+                display: 'grid',
+                gridTemplateColumns: {xs: '1fr', lg: '65% 35%'},
+                gap: 2,
+                width: '100%',
+                margin: '0 auto',
+                px: 1,
+                maxWidth: '1500px',
+                position: 'relative',
+            }}
+        >
             <Box
                 sx={{
+                    overflow: 'hidden',
                     order: {lg: 2},
                     width: '100%',
                     position: {xs: 'unset', lg: 'sticky'},
@@ -88,20 +78,22 @@ const UserList = () => {
             </Box>
             <Box
                 sx={{
+                    px: 0.5,
                     maxWidth: '1200px',
                     display: 'flex',
                     flexDirection: 'column',
                     gap: 2,
                     width: '100%',
                     margin: '0 auto',
-                    overflow: 'hidden'
+                    overflow: 'hidden',
+                    pb: 1
                 }}
             >
                 <Box sx={{
                     display: 'flex',
                     flexDirection: 'row',
                     alignItems: 'center',
-                    p: {xs: 1, sm: 0}
+                    px: {xs: 1, sm: 0}
                 }}>
                     <Box sx={{
                         display: 'flex',
@@ -123,11 +115,10 @@ const UserList = () => {
                         </Box>
                     </Box>
                 </Box>
-                {/*<FullPageLoading isOpen={isShowLoading}/>*/}
                 <Box
                     sx={{
                         width: '100%',
-                        px: 0.5
+                        px: {xs: 1, sm: 0}
                     }}
                 >
                     {

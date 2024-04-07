@@ -35,7 +35,10 @@ const FilterBtn = ({setOpenFilter, filterLength, isShowAllFilters, btnStyle}: TP
                 borderRadius: bRButtonFilter,
                 ...btnStyle
             }}
-            onClick={() => setOpenFilter(true)}
+            onClick={(event) => {
+                event.preventDefault();
+                setOpenFilter(true)
+            }}
             size={'small'}
         >
             <FilterList sx={{

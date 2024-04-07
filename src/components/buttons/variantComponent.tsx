@@ -31,10 +31,9 @@ const VariantComponent = ({type, variant2Icon = <FormatListBulleted/>, variant1I
         <ButtonGroup variant={'contained'} sx={{
             p: '5px',
             gap: 1,
-            // bgcolor: 'common.black',
-            borderRadius: '10px',
+            borderRadius: '7px',
             border: `1px solid silver`,
-            boxShadow: '0px 0px 5px 0px #000',
+            boxShadow: '0px 0px 2px 0px #000',
             "& button": {
                 height: '30px !important',
                 borderRadius: '5px !important',

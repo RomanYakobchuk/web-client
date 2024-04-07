@@ -6,36 +6,21 @@ import {ReactNode} from "react";
 
 type TProps = {
     children: ReactNode,
-    responsive?: {
-        [key: string]:{
-            breakpoint: {max: number, min: number},
-            items: number
-        }
-    },
+    responsive?: ResponsiveType,
     autoPlay?: boolean,
-    autoPlaySpeed?: number
+    autoPlaySpeed?: number,
+    centerMode?: boolean,
+    partialVisible?: boolean
 }
 
 
 const defaultResponsive: ResponsiveType = {
-    // superLargeDesktop: {
-    //     breakpoint: {max: 4000, min: 3000},
-    //     items: 1
-    // },
-    // desktop: {
-    //     breakpoint: {max: 3000, min: 1300},
-    //     items: 1
-    // },
-    // tablet: {
-    //     breakpoint: {max: 1300, min: 600},
-    //     items: 1
-    // },
     mobile: {
         breakpoint: {max: 3000, min: 0},
         items: 1
     }
 };
-const CarouselComponent = ({children, responsive = defaultResponsive, autoPlay = true, autoPlaySpeed = 5000}: TProps) => {
+const CarouselComponent = ({children, responsive = defaultResponsive, partialVisible = false, centerMode = false, autoPlay = true, autoPlaySpeed = 5000}: TProps) => {
 
 
     if (!children) {
@@ -49,12 +34,14 @@ const CarouselComponent = ({children, responsive = defaultResponsive, autoPlay =
                 partialVisbile={false}
                 showDots
                 draggable
+                centerMode={centerMode}
                 swipeable
                 responsive={responsive}
                 infinite
                 className={'carousel'}
                 autoPlaySpeed={autoPlaySpeed}
                 autoPlay={autoPlay}
+                partialVisible={partialVisible}
             >
                 {children}
             </Carousel>

@@ -45,7 +45,15 @@ const Page = ({userId, isCurrentUser = true}: TProps) => {
         id: userId as string
     });
 
-    const {data, refetch: reFetchNotifications, isRefetching, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage} = useInfiniteList({
+    const {
+        data,
+        refetch: reFetchNotifications,
+        isRefetching,
+        isLoading,
+        isFetchingNextPage,
+        fetchNextPage,
+        hasNextPage
+    } = useInfiniteList({
         resource: `notification/allByUser/${userId}`,
         pagination: {
             pageSize: 20
@@ -83,10 +91,8 @@ const Page = ({userId, isCurrentUser = true}: TProps) => {
     useEffect(() => {
         handleUpdateNotRead();
     }, [isReading]);
-    const handleUpdate = () => {
-        (async () => {
-            await reFetchNotifications();
-        })();
+    const handleUpdate = async () => {
+        await reFetchNotifications();
     }
     const handleUpdateNotRead = () => {
         (async () => {
@@ -104,6 +110,10 @@ const Page = ({userId, isCurrentUser = true}: TProps) => {
     useEffect(() => {
         if (MainLayout) {
             MainLayout.addEventListener('scroll', handleScroll);
+
+            return () => {
+                MainLayout.removeEventListener('scroll', handleScroll)
+            }
         }
     }, [MainLayout]);
     const setData = () => {
@@ -210,9 +220,9 @@ const Page = ({userId, isCurrentUser = true}: TProps) => {
                 <MuiTypography
                     variant={'h5'}
                     style={{
-                    margin: '5px 0',
-                    width: 'fit-content'
-                }}>
+                        margin: '5px 0',
+                        width: 'fit-content'
+                    }}>
                     {translate('notifications.page.newNotification.title.title')}
                 </MuiTypography>
                 <IconButton
@@ -354,7 +364,8 @@ const Page = ({userId, isCurrentUser = true}: TProps) => {
                                     m: '80px auto',
                                 },
                             }}>
-                                <LottieComponent size={(width >= 700 && width <= 900) ? 200 : 300} loop={true} isClickToStartAnimation={false} item={NotificationLottie}/>
+                                <LottieComponent size={(width >= 700 && width <= 900) ? 200 : 300} loop={true}
+                                                 isClickToStartAnimation={false} item={NotificationLottie}/>
                             </Box>
                         )
                     }

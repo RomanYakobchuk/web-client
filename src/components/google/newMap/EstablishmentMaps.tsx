@@ -1,17 +1,14 @@
-import {useTranslate} from "@refinedev/core";
 import {Box, Button, Typography} from "@mui/material";
-import {useContext, useMemo, useState} from "react";
+import {MapRounded} from "@mui/icons-material";
+import {useTranslate} from "@refinedev/core";
+import {useContext, useState} from "react";
 
-import {computeMapZoom, findMidPoint} from "@/components/google/services/services";
-import {NewShowMap} from "@/components/google/newMap/newShowMap";
-import {Markers} from "@/components/google/newMap/Markers";
+import {EstablishmentDeviceMapList} from "@/components/google/newMap/EstablishmentDeviceMapList";
+import {LeafletMap} from "@/components/google/LeafletMap/LeafletMap";
 import {IEstablishment} from "@/interfaces/common";
+import {ColorModeContext} from "@/contexts";
 import {ModalWindow} from "@/components";
 import {useMobile} from "@/hook";
-import {MapRounded} from "@mui/icons-material";
-import {ControlPosition, MapControl} from "@vis.gl/react-google-maps";
-import {EstablishmentDeviceMapList} from "@/components/google/newMap/EstablishmentDeviceMapList";
-import {ColorModeContext} from "@/contexts";
 
 export type TValues = {
     coordinate: IEstablishment['location'],
@@ -30,6 +27,7 @@ export const EstablishmentMaps = ({establishments}: TProps) => {
     const translate = useTranslate();
     const {mode} = useContext(ColorModeContext);
 
+
     const [openModal, setOpenModal] = useState<boolean>(false);
 
     const values: TValues[] = establishments?.length > 0 ? establishments?.map((establishment) => {
@@ -43,9 +41,6 @@ export const EstablishmentMaps = ({establishments}: TProps) => {
         }
     }) : [] as TValues[];
     const coordinates = values?.map((value) => value.coordinate);
-
-    const center = findMidPoint({coordinates});
-    const zoom = computeMapZoom({coords: center, coordinates});
 
     const toggleOpenModal = () => {
         if (width < 900) {
@@ -97,53 +92,34 @@ export const EstablishmentMaps = ({establishments}: TProps) => {
                             open={openModal}
                             setOpen={setOpenModal}
                             title={
-                            <Typography
-                                variant={'h5'}
-                                color={'secondary'}
-                            >
-                                {translate('establishment.establishment')}
-                            </Typography>
-                        }
+                                <Typography
+                                    variant={'h5'}
+                                    color={'secondary'}
+                                >
+                                    {translate('establishment.establishment')}
+                                </Typography>
+                            }
                             bodyProps={{
                                 maxWidth: '100%',
                                 maxHeight: 'calc(100% - 50px)'
                             }}
                         >
-                            <NewShowMap
+                            <LeafletMap
+                                coordinates={coordinates}
+                                items={establishments}
                                 styles={{
-                                    borderRadius: '0'
+                                    borderRadius: 0
                                 }}
-                                center={center}
-                                zoom={zoom}
-                                fullscreenControl={false}
-                                streetViewControl={false}
-                                zoomControl={false}
-
                             >
-                                {
-                                    values?.length > 0 && (
-                                        <Markers points={values}/>
-                                    )
-                                }
-                                <MapControl
-                                    position={ControlPosition.BOTTOM_CENTER}
-                                >
-                                    <EstablishmentDeviceMapList
-                                        establishments={establishments}/>
-                                </MapControl>
-                            </NewShowMap>
+                                <EstablishmentDeviceMapList
+                                    establishments={establishments}/>
+                            </LeafletMap>
                         </ModalWindow>
                     </Box> : (
-                        <NewShowMap
-                            center={center}
-                            zoom={zoom}
-                        >
-                            {
-                                values?.length > 0 && (
-                                    <Markers points={values}/>
-                                )
-                            }
-                        </NewShowMap>
+                        <LeafletMap
+                            coordinates={coordinates}
+                            items={establishments}
+                        />
                     )
             }
         </>

@@ -3,9 +3,11 @@ import {Box, Button} from "@mui/material";
 import {Link} from "react-router-dom";
 import MDEditor from "@uiw/react-md-editor";
 import React from "react";
+import {IEstablishment, INews, IPicture} from "@/interfaces/common";
+import {TruncateSingleText} from "@/utils";
 
 const {Text} = TypographyAntd;
-const renderTitle = (title: string, mode: string, onClick?: () => void) => {
+const renderTitle = (title: string, onClick?: () => void) => {
     return (
         <Button
             variant={'text'}
@@ -25,7 +27,7 @@ const renderTitle = (title: string, mode: string, onClick?: () => void) => {
                 strong
                 style={{
                     fontSize: "16px",
-                    color: mode === 'dark' ? '#fcfcfc' : '#000'
+                    color: 'common.white'
                 }}>
                 {title}
             </Text>
@@ -33,9 +35,9 @@ const renderTitle = (title: string, mode: string, onClick?: () => void) => {
     );
 };
 
-const renderItem = (item: any, resource: string, index: number, mode: string, setOpen: (value: boolean) => void, length: number, t?: any, link?: string) => {
+const renderItem = (item: IEstablishment | INews, type: string | undefined, index: number, setOpen: (value: boolean) => void, length: number, t?: any, link?: string) => {
 
-    const text2 = item?.description ?? item?.text ?? '';
+    const text2 = item?.description;
 
     return {
         value: item?.title,
@@ -54,12 +56,13 @@ const renderItem = (item: any, resource: string, index: number, mode: string, se
                 flexDirection: 'row',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                paddingRight: '10px',
+                pr: 1,
                 borderRadius: '5px',
                 height: '100%',
-                p: '10px 10px 10px 20px',
+                p: 2,
                 border: '2px solid transparent',
                 position: 'relative',
+                transition: '200ms linear',
                 "&:hover": {
                     border: '2px solid #5f89bd'
                 },
@@ -88,29 +91,30 @@ const renderItem = (item: any, resource: string, index: number, mode: string, se
                     display: 'grid',
                     gridTemplateColumns: '1fr 2fr',
                     gap: 1,
-                    alignItems: 'center'
+                    alignItems: 'center',
                 }}>
                     <Box sx={{
-                        fontWeight: {xs: 500, sm: 600},
-                        color: mode === 'dark' ? '#fcfcfc' : '#000',
+                        color: 'common.white',
                         textTransform: 'capitalize',
-                        fontSize: {xs: '16px', sm: '18px'},
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'start',
                         height: '100%',
-                        gap: item?.type ? 0.5 : 0
+                        width: '100%',
+                        gap: type ? 0.5 : 0,
+                        overflow: 'hidden'
                     }}>
-                        <Box sx={{
-                            height: '100%',
-                            width: '100%',
-                            display: 'flex',
-                            alignItems: 'center'
-                        }}>
-                            {item?.title ?? ''}
-                        </Box>
+                        <TruncateSingleText
+                            styles={{
+                                fontWeight: 600,
+                                width: 'fit-content',
+                                maxWidth: '100%',
+                                fontSize: {xs: '16px', sm: '18px'},
+                            }}
+                            str={item?.title}
+                        />
                         {
-                            item?.type && (
+                            type && (
                                 <Box sx={{
                                     borderRadius: '10px',
                                     p: '3px 7px',
@@ -118,7 +122,7 @@ const renderItem = (item: any, resource: string, index: number, mode: string, se
                                     bgcolor: 'common.white',
                                     color: 'common.black'
                                 }}>
-                                    {t(`home.create.type.${item?.type}`)}
+                                    {t(`home.create.type.${type}`)}
                                 </Box>
                             )
                         }

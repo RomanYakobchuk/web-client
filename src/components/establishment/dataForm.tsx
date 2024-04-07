@@ -3,59 +3,53 @@ import {useGetIdentity, useTranslate} from "@refinedev/core";
 import {
     Box,
     FormControl,
-    FormHelperText,
-    SelectChangeEvent, TextField, Typography,
+    FormHelperText, TextField, Typography,
 } from "@mui/material";
 import {Switch} from "antd";
 
-import {IGetIdentity, IWorkDay, ProfileProps} from "@/interfaces/common";
-import {SearchManager} from "../index";
-import {ColorModeContext} from "@/contexts";
-import ImageSelector from "./utills/ImageSelector";
-import ScheduleList from "./utills/lists/scheduleList";
-import ItemsList from "./utills/lists/dataPropertyList";
-import {textFieldStyle} from "@/styles";
+import {ChooseCuisine} from "@/components/common/search/establishment/chooseCuisine";
+import {IGetIdentity, IPicture, IWorkDay, ProfileProps} from "@/interfaces/common";
+import {CustomMDEditor} from "@/components/common/textEditor/CustomMDEditor";
+import {HeadlessSelect} from "@/components/headlessUI/headlessSelect";
 import ChangeLocation from "@/components/google/changeLocation";
 import {IEstablishmentFormProps} from "@/interfaces/formData";
-import {ChooseCuisine} from "@/components/common/search/establishment/chooseCuisine";
-import {HeadlessSelect} from "@/components/headlessUI/headlessSelect";
-import {CustomMDEditor} from "@/components/common/textEditor/CustomMDEditor";
+import ItemsList from "./utills/lists/dataPropertyList";
+import ScheduleList from "./utills/lists/scheduleList";
+import ImageSelector from "./utills/ImageSelector";
+import {ColorModeContext} from "@/contexts";
+import {textFieldStyle} from "@/styles";
+import {SearchManager} from "../index";
 
 
 const DataForm = (props: IEstablishmentFormProps) => {
     const {
         handleSubmit,
         onFinishHandler,
-        pictures,
-        setPictures,
-        type,
-        setType,
-        tags,
-        setTags,
-        setWorkScheduleWeekend,
+        state,
+        // searchInputValue,
+        // setSearchInputValue,
+        // searchManagerInput,
+        // setSearchManagerInput,
+        defaultPictures,
+        handleChange,
+    } = props;
+    const {
+        cuisine,
         workScheduleWeekend,
         workDays,
-        setWorkDays,
-        setCreatedBy,
+        type,
+        title,
         createdBy,
-        setDescription,
-        description,
-        setPlace,
+        tags,
         place,
         location,
-        setLocation,
-        features,
-        setFeatures,
-        contacts,
-        setContacts,
-        title,
-        setTitle,
         averageCheck,
-        defaultPictures,
-        setAverageCheck,
-        setSendNotifications,
-        sendNotifications
-    } = props;
+        pictures,
+        features,
+        sendNotifications,
+        description,
+        contacts
+    } = state;
     const maxImages = 10;
     const {mode} = useContext(ColorModeContext);
     const translate = useTranslate();
@@ -64,21 +58,16 @@ const DataForm = (props: IEstablishmentFormProps) => {
 
     useEffect(() => {
         if (currentUser?.status !== 'admin') {
-            setCreatedBy(currentUser?._id)
+            handleChange("createdBy", currentUser?._id)
         }
     }, [currentUser]);
 
     const handleAddWorkDays = (workSchedule: IWorkDay) => {
-        setWorkDays([...workDays, workSchedule])
+        handleChange("workDays", [...workDays, workSchedule])
     }
     const handleDeleteWorkDays = (index: number | any) => {
-        setWorkDays(workDays.filter((_: any, i: any) => i !== index))
+        handleChange("workDays", workDays.filter((_: any, i: any) => i !== index))
     }
-
-    const handleChange = (event: SelectChangeEvent) => {
-        setType(event.target.value);
-    };
-
 
     const handlePicturesChange = (e: ChangeEvent<HTMLInputElement> | any) => {
         if (pictures.length > maxImages || e.target.files?.length > maxImages) return alert(translate("home.create.pictures.max") + maxImages);
@@ -91,7 +80,7 @@ const DataForm = (props: IEstablishmentFormProps) => {
                 arr.push(item)
             }
         }
-        setPictures([...pictures, ...arr]);
+        handleChange("pictures", [...pictures, ...arr]);
     }
 
     const typeOptions = [
@@ -109,15 +98,12 @@ const DataForm = (props: IEstablishmentFormProps) => {
         }
     ];
     const currentTypeValue = typeOptions?.find((value) => value?.value === type);
-    // console.log(currentTypeValue)
+
 
     return (
         <Box
             sx={{
-                // borderRadius: '15px',
                 p: {sm: 1},
-                // paddingBottom: '30px',
-                // bgcolor: 'primary.main',
             }}
         >
             <Box
@@ -149,15 +135,11 @@ const DataForm = (props: IEstablishmentFormProps) => {
                         display: 'grid',
                         gridTemplateColumns: {xs: '1fr', sm: '1fr 1fr',},
                         width: {xs: '100%'},
-                        // gridTemplateRows: '80px',
                         gap: 1,
                         alignItems: 'start'
                     }}>
                         <FormControl fullWidth>
                             <FormHelperText
-                                sx={{
-                                    // lineHeight: 'normal'
-                                }}
                             >
                                 {translate("home.create.name")}
                             </FormHelperText>
@@ -169,7 +151,7 @@ const DataForm = (props: IEstablishmentFormProps) => {
                                 id="outlined-basic"
                                 color="secondary"
                                 value={title ? title : ''}
-                                onChange={(event) => setTitle(event.target.value)}
+                                onChange={(event) => handleChange("title", event.target.value)}
                                 variant="outlined"
                             />
                         </FormControl>
@@ -190,44 +172,21 @@ const DataForm = (props: IEstablishmentFormProps) => {
                                     {/*{translate('home.create.location.title')}*/}
                                     User
                                 </FormHelperText>
-                                <SearchManager setCreatedBy={setCreatedBy} createdBy={createdBy}/>
+                                <SearchManager setCreatedBy={(item) => handleChange("createdBy", item)}
+                                               createdBy={createdBy}/>
                             </FormControl>
                         }
                         <FormControl fullWidth>
                             <FormHelperText
-                                sx={{
-                                    // margin: "10px 0",
-                                }}
                             >
                                 {translate("home.create.type.title")}
                             </FormHelperText>
                             <HeadlessSelect
                                 btnWidth={'100%'}
                                 options={typeOptions}
-                                setSortBy={setType}
+                                setSortBy={(value) => handleChange("type", value)}
                                 current={currentTypeValue}
                             />
-                            {/*<Select*/}
-                            {/*    labelId="demo-simple-select-label"*/}
-                            {/*    id="demo-simple-select"*/}
-                            {/*    value={type ? type : ''}*/}
-                            {/*    size={"small"}*/}
-                            {/*    sx={{*/}
-                            {/*        ...selectStyle,*/}
-                            {/*        fontSize: {xs: 12, sm: 16},*/}
-                            {/*    }}*/}
-                            {/*    color={"secondary"}*/}
-                            {/*    onChange={handleChange}*/}
-                            {/*>*/}
-                            {/*    {*/}
-                            {/*        typeOptions.map((type) => (*/}
-                            {/*            <MenuItem sx={{*/}
-                            {/*                fontSize: {xs: 12, sm: 16},*/}
-                            {/*            }} key={type.value}*/}
-                            {/*                      value={type.value}>{type.title}</MenuItem>*/}
-                            {/*        ))*/}
-                            {/*    }*/}
-                            {/*</Select>*/}
                             {
                                 type === 'restaurant' && (
                                     <Box sx={{
@@ -251,8 +210,11 @@ const DataForm = (props: IEstablishmentFormProps) => {
                                             {translate("cuisine.title")}
                                         </FormHelperText>
                                         <ChooseCuisine
+                                            current={cuisine}
+                                            setCurrent={(value) => handleChange("cuisine", value)}
                                             position={'right'}
-                                            styles={{width: '200px'}}/>
+                                            styles={{width: '200px'}}
+                                        />
                                     </Box>
                                 )
                             }
@@ -270,7 +232,7 @@ const DataForm = (props: IEstablishmentFormProps) => {
                     <CustomMDEditor
                         isDefaultStyles={false}
                         value={description}
-                        setValue={setDescription}
+                        setValue={(value) => handleChange("description", value)}
                     />
                 </FormControl>
                 <FormControl fullWidth>
@@ -283,32 +245,51 @@ const DataForm = (props: IEstablishmentFormProps) => {
                     </FormHelperText>
                     <ChangeLocation
                         location={location}
-                        setLocation={setLocation}
-                        setPlace={setPlace}
+                        setLocation={(value) => handleChange("location", value)}
+                        setPlace={(item) => handleChange("place", item)}
                         place={place}/>
                 </FormControl>
-                <ScheduleList dataLabel={translate("home.create.workSchedule.workDays.title")}
-                              label={translate("home.create.workSchedule.weekend.title")}
-                              onSubmit={handleAddWorkDays} onDelete={handleDeleteWorkDays}
-                              onSubmitWeekend={setWorkScheduleWeekend} workScheduleWeekend={workScheduleWeekend}
-                              elements={workDays ? workDays : []}/>
+                <ScheduleList
+                    dataLabel={translate("home.create.workSchedule.workDays.title")}
+                    label={translate("home.create.workSchedule.weekend.title")}
+                    onSubmit={handleAddWorkDays}
+                    onDelete={handleDeleteWorkDays}
+                    onSubmitWeekend={(item) => handleChange("workScheduleWeekend", item)}
+                    workScheduleWeekend={workScheduleWeekend}
+                    elements={workDays ? workDays : []}
+                />
                 <Box sx={{
                     display: 'grid',
                     gridTemplateColumns: {xs: '1fr', md: 'repeat(2, 1fr)'},
                     width: '100%',
                     alignItems: 'start',
-                    gap: 2
+                    gap: 1,
+                    "& > div.MuiFormControl-root": {
+                        p: 2,
+                        bgcolor: 'modern.modern_4.main',
+                        borderRadius: '16px'
+                    }
                 }}>
                     <FormControl fullWidth>
-                        <ItemsList elements={contacts} label={translate('home.create.contacts')}
-                                   setData={setContacts}/>
+                        <ItemsList
+                            elements={contacts}
+                            label={translate('home.create.contacts')}
+                            setData={(value) => handleChange("contacts", value)}
+                        />
                     </FormControl>
                     <FormControl fullWidth>
-                        <ItemsList elements={tags} label={translate('home.create.tags')} setData={setTags}/>
+                        <ItemsList
+                            elements={tags}
+                            label={translate('home.create.tags')}
+                            setData={(value) => handleChange("tags", value)}
+                        />
                     </FormControl>
                     <FormControl fullWidth>
-                        <ItemsList elements={features} label={translate('home.create.features')}
-                                   setData={setFeatures}/>
+                        <ItemsList
+                            elements={features}
+                            label={translate('home.create.features')}
+                            setData={(value) => handleChange("features", value)}
+                        />
                     </FormControl>
                     <FormControl fullWidth>
                         <TextField
@@ -317,11 +298,15 @@ const DataForm = (props: IEstablishmentFormProps) => {
                             label={translate("home.create.averageCheck")}
                             id="outlined-basic"
                             color={"secondary"}
+                            type={"number"}
                             size={"small"}
                             sx={textFieldStyle}
+                            inputProps={{
+                                min: 0
+                            }}
                             variant="outlined"
                             value={averageCheck ? averageCheck : ''}
-                            onChange={(event) => setAverageCheck(event.target.value)}
+                            onChange={(event) => handleChange("averageCheck", event.target.value)}
                         />
                     </FormControl>
                 </Box>
@@ -336,7 +321,7 @@ const DataForm = (props: IEstablishmentFormProps) => {
                             width: 'fit-content'
                         }}
                         checked={sendNotifications ?? false}
-                        onChange={(checked) => setSendNotifications(checked)}
+                        onChange={(checked) => handleChange("sendNotifications", checked)}
                     />
                     <Typography
                         sx={{
@@ -346,11 +331,7 @@ const DataForm = (props: IEstablishmentFormProps) => {
                         {translate('notification.send')}
                     </Typography>
                 </FormControl>
-                <FormControl sx={{
-                    bgcolor: mode === 'dark' ? "#1a1313" : '#f4f4f4',
-                    borderRadius: '10px',
-                    p: '10px'
-                }}>
+                <FormControl>
                     <FormHelperText
                         sx={{
                             margin: "10px 0",
@@ -359,9 +340,9 @@ const DataForm = (props: IEstablishmentFormProps) => {
                         {translate("home.create.pictures.title")}
                     </FormHelperText>
                     <ImageSelector
-                        maxImages={maxImages} images={pictures}
+                        maxImages={maxImages} images={pictures as [IPicture | File]}
                         defaultPictures={defaultPictures}
-                        setPictures={setPictures}
+                        setPictures={(value) => handleChange("pictures", value)}
                         handleChange={handlePicturesChange}/>
 
                 </FormControl>

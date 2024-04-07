@@ -52,7 +52,6 @@ const Login = () => {
             onMutationSuccess: (data) => {
                 const dataRes = data?.data as IData;
                 const user = dataRes?.user ? parseJwt(dataRes?.user) : null;
-                console.log(user)
                 if (user?.isActivated) {
                     return login(dataRes)
                 }

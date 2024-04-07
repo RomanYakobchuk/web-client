@@ -152,9 +152,6 @@ const TabsUserProperties = ({user}: TProps) => {
                                             <span>
                                              {label}
                                             </span>
-                                            {/*<span>*/}
-                                            {/*{count}*/}
-                                            {/*</span>*/}
                                         </Box>
                                     }
                                 />

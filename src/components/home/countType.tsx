@@ -2,11 +2,8 @@ import {Box, Paper, Skeleton} from "@mui/material";
 import {useList, useTranslate} from "@refinedev/core";
 import {Link} from "react-router-dom";
 import {Typography as TypographyAntd} from "antd";
-import {useContext} from "react";
 import {LocalCafe, Restaurant, WineBar} from "@mui/icons-material";
-import {useTranslation} from "react-i18next";
 
-import {ColorModeContext} from "@/contexts";
 import {useMobile} from "@/hook";
 import {ESTABLISHMENT} from "@/config/names";
 
@@ -14,8 +11,6 @@ const {Text} = TypographyAntd;
 const CountType = () => {
 
     const translate = useTranslate();
-    const {mode} = useContext(ColorModeContext);
-    const {i18n} = useTranslation();
     const {width} = useMobile();
 
     const {data: dataTypes, isLoading: isLoadingTypes} = useList<any>({
@@ -51,7 +46,7 @@ const CountType = () => {
             sx={{
                 display: "flex",
                 flexWrap: 'wrap',
-                maxWidth: {xs: '100%', lg: i18n?.language === 'ua' ? '260px' : '310px'},
+                maxWidth: {xs: '100%', lg: '310px'},
                 gap: 3,
                 width: {xs: '100%'},
                 margin: {xs: '0 auto', lg: 'unset'},

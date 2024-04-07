@@ -99,6 +99,7 @@
     "confirmDelete": "Are you sure you want to delete {{value}}?"
   },
   "buttons": {
+    "complain": "To complain",
     "join": "Join",
     "goTo": "Go to",
     "copy": "Copy",
@@ -695,6 +696,7 @@
   "text": {
     "text": "Text",
     "title": "Title",
+    "for": "For",
     "map": {
       "view": "View on map"
     },
@@ -741,6 +743,9 @@
   "chats": {
     "chats": "All chats",
     "one": "Chat",
+    "user": {
+      "notFound": "User not found"
+    },
     "create": {
       "uniqueIndicator": {
         "title": "Identifier",

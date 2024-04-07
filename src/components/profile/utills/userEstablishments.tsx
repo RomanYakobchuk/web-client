@@ -1,17 +1,16 @@
-import {Box, MenuItem, Select} from "@mui/material";
 import {HourglassBottom, Public, ThumbDownAltOutlined} from "@mui/icons-material";
-import React, {useEffect, useState} from "react";
 import {useInfiniteList, useTranslate} from "@refinedev/core";
+import {Box, MenuItem, Select} from "@mui/material";
+import React, {useEffect, useState} from "react";
 
-import Loading from "../../loading/loading";
-import {useMobile} from "@/hook";
-import {IEstablishment} from "@/interfaces/common";
-import MoreButton from "@/components/buttons/MoreButton";
 import PropertiesList from "@/components/establishment/utills/lists/propertiesList";
-import {VariantComponent} from "@/components";
 import {SearchInputComponent} from "@/components/common/search";
-import {useDebounce} from "use-debounce";
+import MoreButton from "@/components/buttons/MoreButton";
+import {IEstablishment} from "@/interfaces/common";
+import {VariantComponent} from "@/components";
 import {ESTABLISHMENT} from "@/config/names";
+import Loading from "../../loading/loading";
+import {useDebounce} from "use-debounce";
 
 interface IProps {
     id: string
@@ -20,7 +19,6 @@ interface IProps {
 const UserEstablishments = ({id}: IProps) => {
 
     const translate = useTranslate();
-    const {width} = useMobile();
 
     const [searchValue, setSearchValue] = useState<string>('');
     const [establishment, setEstablishment] = useState<IEstablishment[]>([] as IEstablishment[]);
@@ -38,7 +36,7 @@ const UserEstablishments = ({id}: IProps) => {
     } = useInfiniteList<IEstablishment>({
         resource: `${ESTABLISHMENT}/allByUserId/${id}`,
         pagination: {
-            pageSize: 10
+            pageSize: 20
         },
         filters: [
             {
@@ -155,7 +153,6 @@ const UserEstablishments = ({id}: IProps) => {
                         : establishment?.length > 0 && (
                         <PropertiesList
                             items={establishment}
-                            numberOfColumnsByWidth={width < 700 ? 2 : width < 1400 ? 3 : 4}
                         />
                     )
             }

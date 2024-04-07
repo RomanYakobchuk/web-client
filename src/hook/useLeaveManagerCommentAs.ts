@@ -2,7 +2,7 @@ import {
     CommentCreatorDataContext,
     TPropsCommentCreatorContext,
     TSelectOption
-} from "../contexts/CommentCreatorDataContext";
+} from "@/contexts/CommentCreatorDataContext";
 import {useContext} from "react";
 
 type TProps = {

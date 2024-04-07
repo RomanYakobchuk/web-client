@@ -2,6 +2,8 @@ import {defineConfig} from 'vite'
 import react from '@vitejs/plugin-react'
 import path from "path";
 import million from "million/compiler";
+import pluginRewriteAll from 'vite-plugin-rewrite-all';
+
 
 export default defineConfig(({command}) => {
     if (command === 'serve') {
@@ -10,6 +12,7 @@ export default defineConfig(({command}) => {
                 million.vite({
                     auto: true
                 }),
+                pluginRewriteAll(),
                 react({
                     jsxImportSource: '@emotion/react',
                     babel: {
@@ -41,11 +44,12 @@ export default defineConfig(({command}) => {
             publicDir: './public',
             build: {
                 outDir: '../client',
-            }
+            },
         }
     } else {
         return {
             plugins: [
+                pluginRewriteAll(),
                 million.vite({
                     auto: true
                 }),

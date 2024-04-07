@@ -1,7 +1,7 @@
 import {ChangeEvent, ReactNode} from "react";
 import {CredentialResponse} from "./google";
 import {ContextStore} from "@uiw/react-md-editor";
-import {INewsDataFormPlace} from "./formData";
+import {INewsDataFormPlace, TItemList} from "./formData";
 
 export interface IUserLoginProps {
     email: string,
@@ -109,6 +109,7 @@ export interface IEstablishment {
         name: string,
         url: string
     }[],
+    cuisine: string | null,
     place: {
         city: string,
         address: string
@@ -122,16 +123,14 @@ export interface IEstablishment {
         lng: number,
         lat: number
     },
-    contacts: Array<string> | any,
-    tags: Array<string>,
+    contacts: TItemList,
+    tags: TItemList,
     verify?: "draft" | "rejected" | "published",
     rating: number,
     ratings?: Array<string> | Array<object> | any,
     reviews?: Array<String> | any,
     averageCheck: string,
-    features: [{
-        value: string
-    }],
+    features: TItemList,
     createdBy?: string | any,
     variantForDisplay?: string | any,
     news?: any,
@@ -209,12 +208,11 @@ export interface IPropertyPropsFilterVariables {
 }
 
 export interface IReviews {
-    text: {
-        like: string,
-        notLike: string
-    },
+    text: string,
+    title: string,
     _id: string,
-    grade: number,
+    score: number,
+    check: number,
     establishmentId: IEstablishment | any,
     createdBy: ProfileProps | any,
     createdAt: Date
@@ -224,13 +222,21 @@ export interface INewReview {
     score: number | null,
     title: string,
     text: string,
-    quality: number | null,
-    atmosphere: number | null,
-    service: number | null
+    check: number | null,
+    // quality: number | null,
+    // atmosphere: number | null,
+    // service: number | null
 }
-
+export type ISimpleUserInfo = {
+    _id?: string,
+    name?: string,
+    avatar?: string,
+}
+export type IAnswerToComment = ISimpleUserInfo & {commentId: string | null};
 export interface IComment {
-    createdBy: ProfileProps | any,
+    createdBy: {
+        user?: string
+    } & ISimpleUserInfo,
     text: string,
     _id: string,
     createdAt: Date | any,
@@ -241,6 +247,7 @@ export interface IComment {
         type: string
     } | string,
     parentId: string | IComment,
+    answerTo: null | IAnswerToComment,
     replies: IComment[],
     containerId?: string,
     repliesLength: number

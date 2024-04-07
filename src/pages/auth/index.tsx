@@ -54,7 +54,7 @@ export const AuthRoutes = <Route
     />
 
     <Route
-        path={`/${VERIFY_NUMBER}`}
+        path={`/${VERIFY_NUMBER}/:token?`}
         element={
             <VerifyNumber/>
         }

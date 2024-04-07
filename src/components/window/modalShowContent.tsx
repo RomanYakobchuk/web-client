@@ -61,14 +61,17 @@ const ModalShowContent = ({
     } : {};
 
     useEffect(() => {
-        setTimeout(() => {
+        const t = setTimeout(() => {
             setIsVisible(isOpen)
         }, 300)
         if (isOpen) {
-            const modalRoot = document.getElementById('modalShowContent'); // Замість 'modal-root' вкажіть ID вашого контейнера модалі
+            const modalRoot = document.getElementById('modalShowContent');
             if (modalRoot) {
                 modalRoot.focus();
             }
+        }
+        return () => {
+            clearTimeout(t);
         }
     }, [isOpen]);
 

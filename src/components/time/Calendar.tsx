@@ -38,7 +38,6 @@ const Calendar: React.FC<CalendarProps> = ({
     const translate = useTranslate();
 
     const [workSchedule, setWorkSchedule] = useState<IEstablishment['workSchedule'] | null>(wS);
-    console.log(workSchedule)
     useEffect(() => {
         if (wS) {
             setWorkSchedule(wS);

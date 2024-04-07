@@ -1,11 +1,11 @@
 import {
-    Apartment, DashboardOutlined,
-    ForumOutlined,
+    ApartmentRounded, DashboardRounded,
+    ForumRounded,
     HomeRounded,
-    NewspaperOutlined,
-    Person,
+    NewspaperRounded,
+    PersonRounded,
     Star,
-    WineBar
+    WineBarRounded
 } from "@mui/icons-material";
 import React from "react";
 
@@ -17,7 +17,7 @@ const resources = [
         list: `/${DASHBOARD}`,
         meta: {
             label: `${DASHBOARD}/user`,
-            icon: <DashboardOutlined/>
+            icon: <DashboardRounded/>
         },
     },
     {
@@ -33,7 +33,7 @@ const resources = [
     {
         name: `${ESTABLISHMENT}`,
         meta: {
-            icon: <Apartment/>,
+            icon: <ApartmentRounded/>,
             canDelete: true,
         },
         list: `/${ESTABLISHMENT}`,
@@ -44,7 +44,7 @@ const resources = [
     {
         name: `${NEWS}`,
         meta: {
-            icon: <NewspaperOutlined/>,
+            icon: <NewspaperRounded/>,
         },
         list: `/${NEWS}`,
         show: `/${NEWS}/${SHOW}/:id`,
@@ -64,7 +64,7 @@ const resources = [
         name: `${CAPL}`,
         list: `/${CAPL}`,
         meta: {
-            icon: <WineBar/>,
+            icon: <WineBarRounded/>,
             label: `${CAPL}`
         },
         show: `/${CAPL}/${SHOW}/:id`,
@@ -75,7 +75,7 @@ const resources = [
         name: `${CHATS}`,
         list: `/${CHATS}`,
         meta: {
-            icon: <ForumOutlined/>,
+            icon: <ForumRounded/>,
         },
         create: `/${CHATS}/${CREATE}`,
         show: `/${CHATS}/${SHOW}/:conversationId?`
@@ -84,7 +84,7 @@ const resources = [
         name: `${PROFILE}`,
         list: `/${PROFILE}`,
         meta: {
-            icon: <Person/>,
+            icon: <PersonRounded/>,
             label: `${PROFILE}`
         },
         show: `/${PROFILE}/${SHOW}/:id`,

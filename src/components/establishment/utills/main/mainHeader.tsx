@@ -7,6 +7,7 @@ import {ESTABLISHMENT} from "@/config/names";
 import {IEstablishment} from "@/interfaces/common";
 import {useTranslate} from "@refinedev/core";
 import {ColorModeContext} from "@/contexts";
+import {AnimatedText} from "@/animation/animatedText";
 
 type TProps = {
     establishment: IEstablishment
@@ -36,17 +37,19 @@ export const MainHeader = ({establishment}: TProps) => {
                     alignItems: 'center',
                     "& a": {
                         fontSize: {xs: 14, sm: 16},
+                    },
+                    "& h1": {
+                        m: 0,
+                        color: 'common.white',
+                        fontSize: {xs: '24px', sm: '30px'},
+                        fontWeight: 700,
                     }
                 }}>
-                    <Typography
-                        sx={{
-                            color: 'common.white',
-                            textTransform: 'capitalize',
-                            fontSize: {xs: '24px', sm: '30px'},
-                            fontWeight: 700,
-                        }}>
-                        {establishment.title}
-                    </Typography>
+                    <AnimatedText
+                        el={"h1"}
+                        key={establishment?._id + establishment?.title}
+                        text={establishment.title}
+                    />
                     <Link
                         to={`/${ESTABLISHMENT}?pageSize=10&current=1&sorters[0][field]=createdAt_asc&sorters[0][order]=desc&filters[0][field]=propertyType&filters[0][operator]=eq&filters[0][value]=${establishment.type}`}
                         style={{

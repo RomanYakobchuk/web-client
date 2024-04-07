@@ -6,6 +6,7 @@ import {buttonStyle} from "@/styles";
 import {ColorModeContext} from "@/contexts";
 import {useMobile} from "@/hook";
 import {ESTABLISHMENT} from "@/config/names";
+import {AnimatedText} from "@/animation/animatedText";
 
 const WelcomePart = () => {
 
@@ -77,21 +78,21 @@ const WelcomePart = () => {
                         fontSize: {xs: '22px', sm: '28px', md: '32px'},
                         fontWeight: {xs: 600, md: 900}
                     }}>
-                        <Box>{translate('text.home.searchPlace1')}</Box>
-                        <Box sx={{
-                            p: '5px 0',
-                            bgcolor: 'rgba(0, 0, 0, 0.2)',
-                            width: 'fit-content'
-                        }}>
-                            <Box sx={{
-                                background: 'linear-gradient(to right, #8095CF 0%, #00FF00 35%, #DEC76B 60%, #CF1512 100%)',
-                                WebkitBackgroundClip: 'text',
-                                WebkitTextFillColor: 'transparent',
-                            }}>
-                                {translate('text.home.searchPlace2')}
-                            </Box>
-                        </Box>
+                        {[translate('text.home.searchPlace1'), ' ', translate('text.home.searchPlace2')]}
+                        {/*<Box>*/}
+                        {/*</Box>*/}
+                        {/*<AnimatedText*/}
+                        {/*    once={true}*/}
+                        {/*    el="h3"*/}
+                        {/*    text={[translate('text.home.searchPlace1'), translate('text.home.searchPlace2')]}*/}
+                        {/*/>*/}
                     </Box>
+                    {/*<AnimatedText*/}
+                    {/*    text={translate('text.home.byPlace')}*/}
+                    {/*    once={true}*/}
+                    {/*    el="div"*/}
+                    {/*    staggerChildren={0.03}*/}
+                    {/*/>*/}
                     <Box sx={{
                         fontSize: {xs: '14px', sm: '16px'}
                     }}>
@@ -102,6 +103,10 @@ const WelcomePart = () => {
                         justifyContent: 'space-between',
                         alignItems: 'center'
                     }}>
+                        {/*<AnimatedText*/}
+                        {/*    text={translate('text.home.findYourSelf')}*/}
+                        {/*    once={true}*/}
+                        {/*/>*/}
                         <Typography sx={{
                             width: '65%',
                             fontSize: {xs: '14px', sm: '16px'}
@@ -111,15 +116,13 @@ const WelcomePart = () => {
                         <Button
                             href={`/${ESTABLISHMENT}`}
                             variant={'contained'}
+                            color={'info'}
                             sx={{
                                 ...buttonStyle,
-                                bgcolor: mode === 'dark' ? 'common.black' : 'info.main',
+                                // bgcolor: 'info.main',
                                 textTransform: 'capitalize',
-                                color: '#fff',
+                                // color: '#fff',
                                 width: '30%',
-                                "&:hover": {
-                                    bgcolor: mode === 'dark' ? 'common.black' : 'info.main',
-                                }
                             }}
                         >
                             {translate('buttons.show')}

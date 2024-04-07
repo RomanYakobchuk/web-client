@@ -30,7 +30,7 @@ const ChooseManagerRole = ({currentEstablishment}: TChooseManagerRoleProps) => {
     const {setManagerRole, managerRole, setSelectedInfo, selectedInfo} = useLeaveManagerCommentAs();
     const {managerEstablishment, getData} = useManagerEstablishment();
 
-    const [selectOptions, setSelectOptions] = useState<TSelectOption[]>([] as TSelectOption[])
+    const [selectOptions, setSelectOptions] = useState<TSelectOption[]>([]);
 
     const userSelect = {
         picture: user?.avatar,
@@ -55,9 +55,9 @@ const ChooseManagerRole = ({currentEstablishment}: TChooseManagerRoleProps) => {
     const [anchorElPopover, setAnchorElPopover] = useState<HTMLButtonElement | null>(null);
     const handleClickPopover = (event: MouseEvent<HTMLButtonElement>) => {
         setAnchorElPopover(event.currentTarget);
-        getUserestablishments();
+        getUserEstablishments();
     }
-    const getUserestablishments = () => {
+    const getUserEstablishments = () => {
         getData();
     }
     const handleClosePopover = () => {
@@ -67,7 +67,7 @@ const ChooseManagerRole = ({currentEstablishment}: TChooseManagerRoleProps) => {
 
     useEffect(() => {
         if (user?._id) {
-            setSelectOptions((prevState) => ([...new Set([userSelect, ...prevState]?.map((value) => JSON.stringify(value)))]?.map((value) => JSON.parse(value))))
+            setSelectOptions((prevState) => ([...new Set([userSelect, ...prevState]?.map((value) => JSON.stringify(value)))]?.map((value) => JSON.parse(value))));
         }
         if (managerEstablishment?.length > 0) {
             const selectEstablishmentsOptions = managerEstablishment?.map((value) => ({
@@ -78,7 +78,7 @@ const ChooseManagerRole = ({currentEstablishment}: TChooseManagerRoleProps) => {
             } as TSelectOption))
             setSelectOptions((prevState) => ([...new Set([...prevState, ...selectEstablishmentsOptions]?.map((value) => JSON.stringify(value)))]?.map((value) => JSON.parse(value))))
         }
-    }, [managerEstablishment?.length, user?._id]);
+    }, [managerEstablishment, user?._id]);
 
     const handleSelectInfo = (option: TSelectOption) => {
         if (selectedInfo?._id !== option?._id) {

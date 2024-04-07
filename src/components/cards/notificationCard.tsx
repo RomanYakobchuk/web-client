@@ -209,10 +209,10 @@ const NotificationCard = ({
                                 margin: '0',
                                 marginBottom: 0
                             }}
+                            onSuccessText={translate('text.yes')}
                             isOpen={openModalShowContent}
                             setIsOpen={setOpenModalShowContent}
                             onClick={onSuccess}
-                            onSuccessText={translate('text.yes')}
                         >
                             <Box sx={{
                                 p: '0px 16px 16px 16px',
@@ -305,58 +305,6 @@ const NotificationCard = ({
                         </Box>
                     </Box>
                 </Box>
-                {/*<Box sx={{*/}
-                {/*    width: '70%',*/}
-                {/*    display: modalShowContentDisplay,*/}
-                {/*    flexDirection: 'column',*/}
-                {/*    transition: 'all 300ms linear',*/}
-                {/*    justifyContent: 'start',*/}
-                {/*    margin: '10px',*/}
-                {/*    gap: 3,*/}
-                {/*    borderRadius: '5px',*/}
-                {/*    p: '24px 16px 16px 16px',*/}
-                {/*    bgcolor: 'common.black',*/}
-                {/*}}>*/}
-                {/*    <Box sx={{*/}
-                {/*        display: 'flex',*/}
-                {/*        justifyContent: 'center',*/}
-                {/*        fontSize: '22px',*/}
-                {/*        width: '100%',*/}
-                {/*        fontWeight: 600*/}
-                {/*    }}>*/}
-                {/*        {translate(`buttons.${isClear ? 'delete' : 'restore'}`)}?*/}
-                {/*    </Box>*/}
-                {/*    <Box sx={{*/}
-                {/*        width: '100%%',*/}
-                {/*        display: 'flex',*/}
-                {/*        flexDirection: 'row',*/}
-                {/*        gap: 2,*/}
-                {/*        justifyContent: 'space-evenly',*/}
-                {/*        "& button": {*/}
-                {/*            textTransform: 'inherit',*/}
-                {/*            fontSize: '20px',*/}
-                {/*            fontWeight: 600,*/}
-                {/*            borderRadius: '5px',*/}
-                {/*            p: '4px 16px',*/}
-                {/*            minWidth: '80px'*/}
-                {/*        }*/}
-                {/*    }}>*/}
-                {/*        <Button*/}
-                {/*            color={'error'}*/}
-                {/*            variant={'contained'}*/}
-                {/*            onClick={handleOpenModal}*/}
-                {/*        >*/}
-                {/*            {translate('text.no')}*/}
-                {/*        </Button>*/}
-                {/*        <Button*/}
-                {/*            color={'info'}*/}
-                {/*            variant={'contained'}*/}
-                {/*            onClick={onSuccess}*/}
-                {/*        >*/}
-                {/*            {translate('text.yes')}*/}
-                {/*        </Button>*/}
-                {/*    </Box>*/}
-                {/*</Box>*/}
             </Box>
         </SwipeComponent>
     );

@@ -4,7 +4,6 @@ import React, {Dispatch, SetStateAction} from "react";
 
 import CommentCard from "../../cards/commentCard";
 import {IComment} from "@/interfaces/common";
-import {For} from "million/react";
 
 interface IProps {
     comments: IComment[],
@@ -35,17 +34,16 @@ const CommentsList = ({comments, setComments}: IProps) => {
             flexDirection: 'column',
             gap: 2,
         }}>
-            <For each={comments}>
-                {
-                    (comment, index) => (
+            {
+                comments?.length > 0 && comments?.map((comment, index) => (
                         <CommentCard
                             key={comment?._id + index}
                             setComments={setComments}
                             comment={comment}
                         />
                     )
-                }
-            </For>
+                )
+            }
         </Box>
     );
 };

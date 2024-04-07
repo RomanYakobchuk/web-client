@@ -7,33 +7,44 @@ const findMidPoint = ({coordinates}: TFindMidPoint): IEstablishment['location'] 
     if (coordinates?.length === 0) {
         return {lat: 0, lng: 0};
     }
+    // let sumLat = 0;
+    // let sumLng = 0;
+    //
+    // for (let i = 0; i < coordinates?.length; i++) {
+    //     sumLat += coordinates[i].lat;
+    //     sumLng += coordinates[i].lng;
+    // }
+    //
+    // const avgLat = sumLat / coordinates?.length;
+    // const avgLng = sumLng / coordinates?.length;
 
-    let sumLat = 0;
-    let sumLng = 0;
-
-    for (let i = 0; i < coordinates?.length; i++) {
-        sumLat += coordinates[i].lat;
-        sumLng += coordinates[i].lng;
+    return {
+        lat: getMiddle("lat", coordinates),
+        lng: getMiddle("lng", coordinates)
+    };
+}
+function getMiddle(prop: "lat" | "lng", markers: IEstablishment['location'][]) {
+    let values = markers.map(m => m[prop]);
+    let min = Math.min(...values);
+    let max = Math.max(...values);
+    if (prop === 'lng' && (max - min > 180)) {
+        values = values.map(val => val < max - 180 ? val + 360 : val);
+        min = Math.min(...values);
+        max = Math.max(...values);
     }
-
-    const avgLat = sumLat / coordinates?.length;
-    const avgLng = sumLng / coordinates?.length;
-
-    return { lat: avgLat, lng: avgLng };
+    let result = (min + max) / 2;
+    if (prop === 'lng' && result > 180) {
+        result -= 360
+    }
+    return result;
 }
 
-const computeMapZoom = ({coordinates, coords}: {coords: IEstablishment['location'], coordinates: TFindMidPoint['coordinates']}): number => {
-    const maxDistance = 1000;
-    const center = coords;
+const computeMapZoom = ({ coordinates, coords, mapWidth }: { coords: IEstablishment['location'], coordinates: TFindMidPoint['coordinates'], mapWidth: number }): number => {
+    const distances = coordinates.map(coord => getDistanceFromLatLonInKm(coords, coord));
+    const maxDistance = Math.max(...distances);
 
-    let maxDistanceInPixels = 100;
-
-    for (const coord of coordinates) {
-        const distance = getDistanceFromLatLonInKm(center, coord);
-        maxDistanceInPixels = Math.max(maxDistanceInPixels, distance);
-    }
-
-    return Math.floor(Math.log(256 * 2 * maxDistanceInPixels / maxDistance) / Math.LN2) - 1;
+    const zoom = Math.round(5 - Math.log2(maxDistance / mapWidth));
+    return (zoom);
 }
 
 function getDistanceFromLatLonInKm(coord1: IEstablishment['location'], coord2: IEstablishment['location']): number {
@@ -45,8 +56,7 @@ function getDistanceFromLatLonInKm(coord1: IEstablishment['location'], coord2: I
         Math.cos(deg2rad(coord1.lat)) * Math.cos(deg2rad(coord2.lat)) *
         Math.sin(dLon / 2) * Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const d = R * c;
-    return d;
+    return (R * c);
 }
 
 function deg2rad(deg: number): number {

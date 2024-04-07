@@ -1,11 +1,9 @@
 import {MouseEvent} from "react";
 import {Box} from "@mui/material";
-import {AnimatePresence, motion} from 'framer-motion';
 
 import {IMessage, ProfileProps} from "@/interfaces/common";
 import MessagesCard from "./messages-card";
-import {For} from "million/react";
-
+import NoAvatar from "../../../../public/images/chats/noAvatar.png";
 interface IProps {
     receiver: ProfileProps,
     theSameUser: boolean,
@@ -46,7 +44,7 @@ const MessageCardGroup = ({receiver, theSameUser, group}: IProps) => {
                             overflow: 'hidden',
                         }}>
                             <img
-                                src={receiver?.avatar}
+                                src={receiver?.avatar || NoAvatar}
                                 alt={group[0]?._id}
                                 style={{
                                     overflow: 'hidden',

@@ -37,7 +37,7 @@ const UserComments = ({id}: IProps) => {
     } = useInfiniteList({
         resource: `comment/allByUserId/${_id}`,
         pagination: {
-            pageSize: 10
+            pageSize: 20
         },
         filters: [
             {
@@ -73,7 +73,6 @@ const UserComments = ({id}: IProps) => {
     }, [data]);
     const total = data?.pages?.length && data?.pages?.length > 0 ? data?.pages[0]?.total : 0;
 
-
     return (
         <Box sx={{
             width: '100%',
@@ -99,33 +98,41 @@ const UserComments = ({id}: IProps) => {
                         ? <Loading height={'200px'}/>
                         : isError
                             ? <p>Something went wrong</p>
-                            : comments?.length > 0 && comments?.map((comment, index) => (
-                                <Box
-                                    key={comment?._id + index}
-                                    sx={{
-                                        bgcolor: 'modern.modern_1.second',
-                                        borderRadius: '10px',
-                                        p: 1
-                                    }}
-                                >
-                                    <CommentCard
-                                        isShowAnswer={false}
-                                        isShowReply={false}
-                                        isShowDelete={false}
-                                        comment={comment}
-                                    />
-                                    <Button
-                                        variant={'text'}
-                                        color={'info'}
+                            : comments?.length > 0 && comments?.map((comment, index) => {
+
+                                const link = comment?.parentId ? `${comment?.establishmentId}?commentParentId=${comment?.parentId}#comments` : `${comment?.establishmentId}#comments`;
+
+                                return (
+                                    <Box
+                                        key={comment?._id + index}
                                         sx={{
-                                            textTransform: 'inherit'
+                                            bgcolor: 'modern.modern_1.second',
+                                            borderRadius: '10px',
+                                            p: 1
                                         }}
-                                        onClick={() => navigate(`/${ESTABLISHMENT}/${SHOW}/${comment?.establishmentId}`)}
                                     >
-                                        {translate('home.one')}
-                                    </Button>
-                                </Box>
-                            )
+                                        <CommentCard
+                                            style={{
+                                                bgcolor: 'common.black'
+                                            }}
+                                            isAnswers={true}
+                                            isShowAnswer={false}
+                                            isShowReply={false}
+                                            comment={comment}
+                                        />
+                                        <Button
+                                            variant={'text'}
+                                            color={'info'}
+                                            sx={{
+                                                textTransform: 'inherit'
+                                            }}
+                                            onClick={() => navigate(`/${ESTABLISHMENT}/${SHOW}/${link}`)}
+                                        >
+                                            {translate('home.one')}
+                                        </Button>
+                                    </Box>
+                                )
+                            }
                         )
                 }
             </Box>
