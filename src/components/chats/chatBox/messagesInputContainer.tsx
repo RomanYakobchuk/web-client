@@ -21,13 +21,6 @@ export const MessagesInputContainer = ({conversation}: TProps) => {
         }
     }, [conversation?._id]);
 
-    // useEffect(() => {
-    //     if (conversation._id) {
-    //         socket?.emit('checkRoom', conversation._id)
-    //     }
-    // }, []);
-
-
     return (
         <Box sx={{
             display: 'flex',

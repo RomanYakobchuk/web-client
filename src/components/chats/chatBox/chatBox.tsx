@@ -388,9 +388,14 @@ export const TypingIndicator: React.FC<TypingIndicatorProps> = ({chat, userId}) 
         };
 
         const handleStopTyping = (data: any) => {
+            // const t = setTimeout(() => {
             if (data.chatId === chat?._id && typingUsers.includes(data.userId) && data?.userId !== userId) {
                 setTypingUsers(prevTypingUsers => prevTypingUsers.filter(user => user !== data.userId));
             }
+            // }, 500);
+            // return () => {
+            //     clearTimeout(t);
+            // }
         };
 
         socket.on('userTyping', handleUserTyping);

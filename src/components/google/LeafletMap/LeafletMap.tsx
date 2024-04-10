@@ -1,6 +1,5 @@
 import {MapContainer, TileLayer, ZoomControl} from "react-leaflet";
 import {Box, SxProps} from "@mui/material";
-import "react-leaflet-fullscreen/styles.css";
 import "leaflet/dist/leaflet.css";
 
 import Pin from "./pin/Pin";
